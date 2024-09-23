@@ -8,7 +8,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          My name is Liên 2024 - 2004
+          My name is NVK
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
         <a
