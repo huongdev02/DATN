@@ -25,6 +25,22 @@
         @endforeach
     </select>
 
+    <div>
+        <label>Kích thước:</label><br>
+        @foreach($sizes as $size)
+            <input type="checkbox" name="sizes[]" value="{{ $size->id }}" id="size_{{ $size->id }}">
+            <label for="size_{{ $size->id }}">{{ $size->size }}</label><br>
+        @endforeach
+    </div>
+
+    <div>
+        <label>Màu Sắc:</label><br>
+        @foreach($colors as $color)
+            <input type="checkbox" name="colors[]" value="{{ $color->id }}" id="color_{{ $color->id }}">
+            <label for="color_{{ $color->id }}">{{ $color->name_color }}</label><br>
+        @endforeach
+    </div>
+
     <label for="display">Display:</label>
     <input type="checkbox" name="display" value="1" checked><br>
 
