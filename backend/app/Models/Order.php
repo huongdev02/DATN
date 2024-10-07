@@ -38,4 +38,9 @@ class Order extends Model
     {
         return $this->hasMany(Order_detail::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'order_id');
+    }
 }
