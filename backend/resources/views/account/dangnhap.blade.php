@@ -1,47 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('account.master')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Đăng nhập</title>
-</head>
+@section('title')
+    Đăng nhập
+@endsection
 
-<body>
-
-    @if ($errors->any())
-        <div class="alert alert-danger text-center">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    @if (session('success'))
-        <div class="alert alert-success text-center">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <form action="{{route('login')}}" method="POST">
+@section('content')
+    <form action="{{ route('login') }}" method="POST">
         @csrf
         <h1 class="text-center m-5">Đăng nhập</h1>
         <div class="container bg-light" style="width: 400px; height: 350px;">
 
             <div class="mb-3 mt-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter email" name="email"
-                    required>
+                <label for="account" class="form-label">Tài khoản</label>
+                <input type="text" class="form-control" id="account" placeholder="Enter account"name="account" value="{{old('account')}}">
             </div>
 
             <div class="mb-4">
                 <label for="pwd" class="form-label">Password:</label>
-                <input type="password" class="form-control" id="password" placeholder="Enter password" name="password"
-                    required>
+                <input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
             </div>
 
             <button type="submit" class="btn btn-primary mb-3">Submit</button>
@@ -52,7 +28,4 @@
         </div>
         @csrf
     </form>
-
-</body>
-
-</html>
+@endsection

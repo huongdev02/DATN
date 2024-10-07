@@ -1,31 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('account.master')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Cập nhật mật khẩu</title>
-</head>
+@section('title')
+    Khôi phục tài khoản
+@endsection
 
-<body>
-    @if ($errors->any())
-        <div class="alert alert-danger text-center">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    @if (session('success'))
-        <div class="alert alert-success text-center">
-            {{ session('success') }}
-        </div>
-    @endif
-    
-    <form action="{{ route('password.update') }}" method="POST" class="container bg-light mt-5"
+@section('content')
+    <form action="{{ route('password.forgot') }}" method="POST" class="container bg-light mt-5"
         style="width: 500px; height: 350px;">
         <h1>Cập nhật mật khẩu mới</h1>
         @csrf
@@ -42,6 +22,4 @@
 
         <button type="submit" class="btn btn-success">Cập nhật mật khẩu</button>
     </form>
-</body>
-
-</html>
+@endsection
