@@ -21,14 +21,30 @@
         <label for="email">Email</label>
         <input type="email" class="form-control mb-3" name="email" id="email" value="{{ old('email', Auth::user()->email) }}">
 
+        <div class="d-flex">
+            @if(!empty(Auth::user()->email))
+                @if(Auth::user()->email_verified_at == null)
+                    <span>Trạng thái:</span>
+                    <p style="color: red" class="ms-3">Chưa xác thực</p>
+                    <div class="ms-3">
+                        <a href="{{ route('verify') }}" class="btn badge bg-success ms-3">Xác minh email</a>
+                    </div>
+                @else
+                    <span>Trạng thái email:</span>
+                    <p style="color: green" class="ms-3">Đã xác thực</p>
+                @endif
+            @endif
+        </div>
+        
         <label for="address">Address</label>
         <input type="text" class="form-control mb-3" name="address" id="address" value="{{ old('address', Auth::user()->address) }}">
 
         <label for="avatar">Avatar</label>
         <img src="{{ \Storage::url(Auth::user()->image)}}" width="50px">
-        <input type="file" class="form-control mb-3" name="avatar" id="avatar">
+        <input type="file" class="form-control mb-3 mt-3" name="avatar" id="avatar">
 
-        <button type="submit" class="btn btn-success mt-3 text-center">Cập nhật</button>
-        <a href="{{route('user.dashboard')}}" class="btn btn-secondary">Quay lai</a>
+        <button type="submit" class="btn btn-success mt-3">Cập nhật</button>
+        <a href="{{route('user.dashboard')}}" class="btn btn-secondary mt-3">Quay lai</a>
+        
     </form>
 @endsection

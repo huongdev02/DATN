@@ -8,6 +8,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
@@ -150,43 +151,47 @@ class AccountController extends Controller
         }
     }
 
-    public function verify()
+    public function verify(Request $request)
     {
-        return view('account.verifyemailform');
-    }
+        $user = Auth::user();
 
-    public function verify_(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user->hasVerifiedEmail()) {
-            Mail::to($user->email)->send(($user));
-            return redirect()->back()->with('success', 'vui lòng kiểm tra email để tiến hành xác minh');
+        // Kiểm tra xem email đã được xác thực chưa
+        if ($user->email_verified_at != null) {
+            return redirect()->back()->with('success', 'Email của bạn đã được xác thực');
         }
+    
+        // Gửi email xác minh
+        $user->sendEmailVerificationNotification();
+    
 
-        return redirect()->back()->with('info', 'email của bạn đã xác minh rồi');
+        return redirect()->back()->with('success', 'Email xác minh đã được gửi tới hòm thư của bạn');
     }
 
     public function verifydone($id, $hash)
     {
-        $user = User::findOrFail($id);
-
+        $user = User::find($id);
+    
+        // Kiểm tra xem người dùng có tồn tại không
+        if (!$user) {
+            return redirect()->route('edit')->with('error', 'Người dùng không tồn tại.');
+        }
+    
+        // Kiểm tra xem hash có hợp lệ không
         if (! hash_equals($hash, sha1($user->email . $user->created_at))) {
-            return redirect('/user')->with('error', 'liên kết không hợp lệ');
+            return redirect()->route('edit')->with('error', 'Liên kết không hợp lệ hoặc đã hết hạn.');
         }
-
+    
+        // Kiểm tra xem email đã xác minh chưa
         if ($user->hasVerifiedEmail()) {
-            return redirect('/user')->with('info', 'tài khoản của bạn đã xác thực rồi');
+            return redirect()->route('edit')->with('info', 'Tài khoản của bạn đã được xác thực trước đó.');
         }
-
-        $user->markEmailAsVerified();
-
-        return redirect('/user')->with('success', 'xác minh email thành công');
+    
+        $user->email_verified_at = now();
+        $user->save();
+    
+        return redirect()->route('edit')->with('success', 'Xác minh email thành công.');
     }
+    
 
     public function edit()
     {
@@ -198,46 +203,46 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        // Xác thực dữ liệu đầu vào
         $request->validate([
             'fullname' => 'nullable|string|max:255',
             'birth_day' => 'nullable|date',
             'phone' => 'nullable|string|max:15',
             'email' => 'nullable|email|unique:users,email,' . $user->id,
             'address' => 'nullable|string|max:255',
-            'avatar' => 'nullable|image', // Giới hạn kích thước ảnh
+            'avatar' => 'nullable|image',
         ]);
 
-        // Cập nhật thông tin người dùng
         $user->fullname = $request->input('fullname');
         $user->birth_day = $request->input('birth_day');
         $user->phone = $request->input('phone');
         $user->email = $request->input('email');
         $user->address = $request->input('address');
 
-        // Xử lý ảnh đại diện (avatar)
         if ($request->hasFile('avatar')) {
             // Xóa ảnh cũ nếu tồn tại
             if ($user->avatar && Storage::exists($user->avatar)) {
                 Storage::delete($user->avatar);
             }
-
             // Lưu ảnh mới và cập nhật đường dẫn vào cột avatar
-            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+            $user['avatar'] = Storage::put('avatar', $request->file('avatar'));
         }
-        // Lưu thông tin đã cập nhật
+        
         $user->save();
 
-        // Chuyển hướng với thông báo thành công
         return redirect()->back()->with('success', 'Thông tin tài khoản đã được cập nhật thành công.');
     }
 
-    public function changepass(Request $request)
+    public function changepass()
+    {
+        return view('account.changepass');
+    }
+
+    public function changepass_(Request $request)
     {
         // Xác thực dữ liệu đầu vào
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed', // Yêu cầu phải xác nhận mật khẩu mới
+            'new_password' => 'required|min:6|confirmed', // Yêu cầu phải xác nhận mật khẩu mới
         ]);
 
         // Lấy thông tin người dùng hiện tại

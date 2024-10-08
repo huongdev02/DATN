@@ -18,7 +18,8 @@
     </header>
     <main>
         <div class="container">
-            @if ($errors->any())
+            
+        @if ($errors->any())
             <div class="alert alert-danger text-center">
                 <ul>
                     @foreach ($errors->all() as $error)
@@ -31,6 +32,12 @@
         @if (session('success'))
             <div class="alert alert-success text-center">
                 {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('info'))
+            <div class="alert alert-info">
+                {{ session('info') }}
             </div>
         @endif
 

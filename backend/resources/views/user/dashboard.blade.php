@@ -30,19 +30,6 @@
                 @endif
             </strong>
         </p>
-        <p>Địa chỉ email của bạn là: <strong> 
-            @if (Auth::user()->email)
-                {{ Auth::user()->email }}
-            @else
-                bạn chưa thêm địa chỉ email
-            @endif</strong> </p>
-            
-        @if (Auth::user()->email_verified_at == null)
-            Trang thái email: <p style="color: red">Chưa xác thức</p>
-            <a href="{{route('verify.form')}}" class="btn btn-primary">xác minh email</a>
-        @elseif (Auth::user()->email_verified_at != null)
-            Trang thái email: <p style="color: green">Đã xác thức</p>
-        @endif
 
         <a href="{{route('edit')}}" class="btn btn-warning">Cập nhật tài khoản</a>
         <a href="{{route('changepass.form')}}" class="btn btn-primary">Thay đổi mật khẩu</a>

@@ -47,10 +47,8 @@ Route::controller(AccountController::class)->group(function () {
     Route::get('/change-password','changepass')->name('changepass.form')->middleware('auth');;
     Route::post('/change-password','changepass_')->name('password.change')->middleware('auth');;
 
-
     //Xác thực email
-    Route::get('/verify', 'verify')->name('verify.form')->middleware('auth');
-    Route::post('/verify', 'verify_')->name('verify')->middleware('auth');
+    Route::get('/verify', 'verify')->name('verify')->middleware('auth');
     Route::get('/verify/{id}/{hash}', 'verifydone')->name('verification.verify');
 
     // Đăng xuất
