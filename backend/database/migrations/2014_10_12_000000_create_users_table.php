@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('phone', 15)->nullable(); 
             $table->string('email')->unique()->nullable();
             $table->string('address')->nullable();
-            $table->foreignIdFor(Ship_address::class)->nullable()->constrained()->nullOnDelete(); //lưu giữ địa chỉ đặt hàng mặc định
             $table->tinyInteger('role')->default(0); //role: 0 user, 1 nhân viên, 2admin
             
             $table->timestamp('email_verified_at')->nullable();

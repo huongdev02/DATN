@@ -26,7 +26,7 @@
                 @if(Auth::user()->email_verified_at == null)
                     <span>Trạng thái:</span>
                     <p style="color: red" class="ms-3">Chưa xác thực</p>
-                    <div class="ms-3">
+                    <div class="">
                         <a href="{{ route('verify') }}" class="btn badge bg-success ms-3">Xác minh email</a>
                     </div>
                 @else
@@ -39,7 +39,36 @@
         <label for="address">Address</label>
         <input type="text" class="form-control mb-3" name="address" id="address" value="{{ old('address', Auth::user()->address) }}">
 
-        <label for="avatar">Avatar</label>
+        <label for="ship_address">Ship Default</label>
+        <a href="" class="btn badge bg-success ms-3 mb-2">Thêm mới</a>
+        <select name="address_id" class="form-control">
+            @if ($addresses->isNotEmpty())
+                @php
+                    $defaultAddress = $addresses->firstWhere('is_default', 1);
+                @endphp
+        
+                @if ($defaultAddress)
+                    <option value="{{ $defaultAddress->id }}">
+                        <strong style="color: red;">Địa chỉ:</strong> {{ $defaultAddress->ship_address }} - 
+                        <strong style="color: red;">Số điện thoại:</strong> {{ $defaultAddress->phone_number }} - 
+                        <strong style="color: red;">Tên người nhận:</strong> {{ $user->fullname ?? $user->account }}
+                    </option>
+                @else
+                    <option value="">Chưa có địa chỉ mặc định, hãy thêm địa chỉ mới</option>
+                @endif
+            @else
+                <option value="">Chưa có địa chỉ giao hàng nào, hãy thêm địa chỉ mới</option>
+            @endif
+        
+            <!-- Duyệt qua tất cả địa chỉ để tạo danh sách chọn -->
+            @foreach ($addresses as $address)
+                <option value="{{ $address->id }}">
+                    {{ $address->ship_address }} - {{ $address->phone_number }} - {{ $user->fullname ?? $user->account }}
+                </option>
+            @endforeach
+        </select>
+        
+        <label for="avatar" class="mt-3">Avatar</label>
         <img src="{{ \Storage::url(Auth::user()->image)}}" width="50px">
         <input type="file" class="form-control mb-3 mt-3" name="avatar" id="avatar">
 

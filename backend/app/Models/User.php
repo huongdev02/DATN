@@ -45,7 +45,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function shipAddresses()
     {
-        return $this->hasMany(Ship_address::class);
+        return $this->hasMany(Ship_Address::class);
     }
 
     public function cart()
@@ -76,5 +76,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function messages()
     {
         return $this->hasMany(Message::class);
+    }
+    public function hasVerifiedEmail()
+    {
+        return ! is_null($this->email_verified_at);
     }
 }

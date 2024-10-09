@@ -5,22 +5,21 @@
 @endsection
 
 @section('content')
-    <form action="{{ route('password.reset') }}" method="POST">
+    <form action="{{ route('password.update') }}" method="POST" class="container bg-light mt-5"
+        style="width: 500px; height: 350px;">
+        <h1 class="text-center mb-5 mt-5">Cập nhật mật khẩu mới</h1>
         @csrf
-        <h1 class="text-center m-5">Quên mật khẩu</h1>
-        <div class="container bg-light" style="width: 400px; height: 350px;">
+        <input type="hidden" name="token" value="{{ $token }}">
+        <input type="email" name="email" class="form-control mt-3 mb-3" value="{{ old('email', $email) }}" hidden>
 
-            <div class="mb-3 mt-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
-            </div>
+        <label for="password">Mật khẩu mới</label>
+        <input type="password" name="password" class="form-control mt-3 mb-3">
 
-            <button type="submit" class="btn btn-primary mb-3">Submit</button>
-
-            <p>Chưa có tài khoản: <a href="{{ route('register.form') }}">Chuyển đến đăng kí</a></p>
-            <p>Đã có tài khoản: <a href="{{ route('login') }}">Chuyển đến đăng nhập</a></p>
-            <a class="text-secondary" href="/">Quay lại rang chủ</a>
+        <label for="password_confirmation">xác nhận mật khẩu</label>
+        <input type="password" name="password_confirmation" class="form-control mt-3 mb-3">
+        
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">Cập nhật mật khẩu</button>
         </div>
-        @csrf
     </form>
 @endsection

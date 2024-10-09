@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Str;
 use Throwable;
 
@@ -50,7 +50,6 @@ class AccountController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
-
 
     public function login()
     {
@@ -102,7 +101,7 @@ class AccountController extends Controller
 
     public function rspassword()
     {
-        return view('account.resetpass');
+        return view('account.resetform');
     }
 
     public function rspassword_(Request $request)
@@ -120,11 +119,13 @@ class AccountController extends Controller
 
     public function updatepassword($token)
     {
-        return view('account.resetform', ['token' => $token]);
+        $email = request()->query('email');
+        return view('account.resetpass', ['token' => $token, 'email' => $email]);
     }
 
     public function updatepassword_(Request $request)
     {
+
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
@@ -136,7 +137,7 @@ class AccountController extends Controller
             function ($user, $password) {
                 $user->forceFill([
                     'password' => Hash::make($password)
-                ])->setRememberToken(str()::random(60));
+                ])->setRememberToken(\Str::random(60));
 
                 $user->save();
 
@@ -167,36 +168,30 @@ class AccountController extends Controller
         return redirect()->back()->with('success', 'Email xác minh đã được gửi tới hòm thư của bạn');
     }
 
-    public function verifydone($id, $hash)
-    {
-        $user = User::find($id);
-    
-        // Kiểm tra xem người dùng có tồn tại không
-        if (!$user) {
-            return redirect()->route('edit')->with('error', 'Người dùng không tồn tại.');
-        }
-    
-        // Kiểm tra xem hash có hợp lệ không
-        if (! hash_equals($hash, sha1($user->email . $user->created_at))) {
-            return redirect()->route('edit')->with('error', 'Liên kết không hợp lệ hoặc đã hết hạn.');
-        }
-    
-        // Kiểm tra xem email đã xác minh chưa
-        if ($user->hasVerifiedEmail()) {
-            return redirect()->route('edit')->with('info', 'Tài khoản của bạn đã được xác thực trước đó.');
-        }
-    
-        $user->email_verified_at = now();
-        $user->save();
-    
-        return redirect()->route('edit')->with('success', 'Xác minh email thành công.');
+  public function verifydone(Request $request, $id, $hash)
+{
+
+    $user = User::findOrFail($id);
+
+    // Kiểm tra mã hash với email đã được băm
+    if (! hash_equals((string) $hash, (string) sha1($user->getEmailForVerification()))) {
+        return redirect()->route('home')->withErrors(['email' => 'Invalid verification link.']);
     }
-    
+
+    // Xác thực email
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+    }
+
+    return redirect()->route('edit')->with('success', 'Xác minh email thành công');
+}
 
     public function edit()
     {
         $user = Auth::user();
-        return view('account.update', compact('user'));
+        $addresses = $user->shipAddresses;
+
+        return view('account.update', compact('user', 'addresses'));
     }
 
     public function update(Request $request)
@@ -225,6 +220,21 @@ class AccountController extends Controller
             }
             // Lưu ảnh mới và cập nhật đường dẫn vào cột avatar
             $user['avatar'] = Storage::put('avatar', $request->file('avatar'));
+        }
+
+        $addressId = $request->input('address_id'); // Nhận ID địa chỉ từ request
+        if ($addressId) {
+            DB::transaction(function () use ($user, $addressId) {
+                // Đặt tất cả các địa chỉ khác về 0
+                $user->shipAddresses()->update(['is_default' => 0]);
+
+                // Cập nhật địa chỉ được chọn thành mặc định
+                $address = $user->shipAddresses()->find($addressId);
+                if ($address) {
+                    $address->is_default = 1; // Đặt is_default thành 1
+                    $address->save(); // Lưu lại thay đổi
+                }
+            });
         }
         
         $user->save();

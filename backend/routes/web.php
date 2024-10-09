@@ -36,8 +36,8 @@ Route::controller(AccountController::class)->group(function () {
     Route::post('password/forgot', 'rspassword_')->name('password.forgot');
 
     // Đặt lại mật khẩu
-    Route::get('password/reset/{token}', 'updatepassword')->name('password.reset.form');
-    Route::post('password/reset', 'updatepassword_')->name('password.reset');
+    Route::get('password/reset/{token}', 'updatepassword')->name('password.reset');
+    Route::post('password/reset', 'updatepassword_')->name('password.update');
 
     //cập nhật tài khoản
     Route::get('/edit', 'edit')->name('edit')->middleware('auth');
