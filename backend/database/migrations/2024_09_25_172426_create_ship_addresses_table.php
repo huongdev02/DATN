@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('ship_addresses', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(User::class)->constrained();
+            $table->boolean('is_default')->default(false);
             $table->string('ship_address');
             $table->string('phone_number', 15);
             $table->timestamps();
