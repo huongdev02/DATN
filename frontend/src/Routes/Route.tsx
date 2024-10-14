@@ -7,6 +7,7 @@ import Checkout from '../Layout/Checkout/Checkout';
 import Contact from '../Layout/Contact/Contact';
 import Blog from '../Layout/Blog/Blog';
 import Found from '../Layout/Found/Found';
+import About from '../Layout/About/About';
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
       <Route path="/check-out" element={<Checkout />} />
       <Route path="/contact" element={<Contact />} />
       <Route path='/blog' element={<Blog />} />
+      <Route path='/about' element={<About />} />
       <Route path='*' element={<Found />} />
     </Routes>
   );

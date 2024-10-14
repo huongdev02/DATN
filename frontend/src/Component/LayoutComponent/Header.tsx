@@ -57,11 +57,11 @@ const Header: React.FC = () => {
                                     <ul className="main-menu">
                                         <li className="has-mega-menu"><Link to='/' className="active">Trang chủ</Link>
                                         </li>
-                                        <li><a href="about.html">Giới thiệu</a></li>
+                                        <li><Link to='/about'>About</Link></li>
                                         <li className="has-mega-menu"><Link to="/product">Cửa hàng</Link></li>
                                         <li className="has-children"><Link to='/blog'>Blog</Link>
                                         </li>
-                                        <li><Link to='/contact'>Liên hệ</Link></li>
+                                        <li><Link to='/contact'>Contact</Link></li>
                                     </ul>
                                 </nav>
                                 <div className="burger-icon burger-icon-white"><span className="burger-icon-top" /><span className="burger-icon-mid" /><span className="burger-icon-bottom" /></div>
