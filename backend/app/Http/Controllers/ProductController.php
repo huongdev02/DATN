@@ -14,8 +14,11 @@ class ProductController extends Controller
 {
     public function index()
     {
+        $categories = Category::all();
+        $sizes = Size::all();
+        $colors = Color::all();
         $products = Product::with(['galleries', 'categories', 'sizes', 'colors'])->get();
-        return view('products.index', compact('products'));
+        return view('products.index', compact('products', 'categories', 'sizes', 'colors'));
     }
 
     public function create()
@@ -56,7 +59,7 @@ class ProductController extends Controller
             $product->sizes()->attach($request->sizes);
         }
 
-        if($request->has('colors')) {
+        if ($request->has('colors')) {
             $product->colors()->attach($request->colors);
         }
 
