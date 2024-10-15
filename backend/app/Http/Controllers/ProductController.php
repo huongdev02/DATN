@@ -14,12 +14,21 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        $sizes = Size::all();
-        $colors = Color::all();
-        $products = Product::with(['galleries', 'categories', 'sizes', 'colors'])->get();
-        return view('products.index', compact('products', 'categories', 'sizes', 'colors'));
+        $products = Product::with(['galleries', 'categories', 'colors'])->get();
+    
+        $colorMap = [
+            'Đỏ' => '#FF0000',
+            'Đen' => '#000000',
+            'Xanh dương' => '#0000FF',
+            'Xanh lá' => '#00FF00',
+            'Vàng' => '#FFFF00',
+            'Cam' => '#FFA500',
+            'Tím' => '#800080',
+        ];
+    
+        return view('products.index', compact('products', 'colorMap'));
     }
+    
 
     public function create()
     {
@@ -79,7 +88,10 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('products.editproduct', compact('product'));
+        $categories = Category::all();
+        $sizes = Size::all();
+        $colors = Color::all();
+        return view('products.editproduct', compact('product', 'categories', 'sizes', 'colors'));
     }
 
     public function update(Request $request, Product $product)
