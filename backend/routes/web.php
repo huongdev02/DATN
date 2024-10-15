@@ -19,11 +19,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
 // Các route cho AccountController
 Route::controller(AccountController::class)->group(function () {
     // Đăng ký
@@ -67,3 +62,4 @@ Route::get('/user', [UserController::class, 'user'])->name('user.dashboard')
     ->middleware(['auth', isUser::class]);
 
 Route::resource('products', ProductController::class);
+Route::resource('dashboard', ProductController::class);
