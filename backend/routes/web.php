@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ThongkeController;
 use App\Http\Middleware\isAdmin;
 use App\Http\Middleware\isUser;
 use Illuminate\Support\Facades\Route;
@@ -67,3 +68,5 @@ Route::get('/user', [UserController::class, 'user'])->name('user.dashboard')
     ->middleware(['auth', isUser::class]);
 
 Route::resource('products', ProductController::class);
+
+Route::get('/account', [ThongkeController::class, 'account']);

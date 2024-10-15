@@ -16,6 +16,6 @@ class isUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return Auth::user()->type == 0 ? $next($request) : abort(403);
+        return Auth::user()->role == 0 ? $next($request) : abort(403);
     }
 }
