@@ -7,14 +7,13 @@ use Illuminate\Http\Request;
 
 class SizeController extends Controller
 {
-    const PATH_VIEW  = 'sizes.';
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $data = Size::latest('id')->paginate(5);
-        return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
+        return view('bienthe.sizes.index', compact('data'));
     }
 
     /**
@@ -22,7 +21,7 @@ class SizeController extends Controller
      */
     public function create()
     {
-        return view(self::PATH_VIEW . __FUNCTION__);
+        return view('bienthe.sizes.create');
     }
 
     /**
@@ -36,7 +35,7 @@ class SizeController extends Controller
 
         try {
             Size::query()->create($data);
-            return redirect()->route('sizes.index')
+            return redirect()->route('sizes')
                 ->with('success', true);
         } catch (\Throwable $th) {
             return back()
@@ -50,7 +49,7 @@ class SizeController extends Controller
      */
     public function show(Size $size)
     {
-        return view(self::PATH_VIEW . __FUNCTION__, compact('size'));
+        return view('bienthe.sizes.show', compact('size'));
     }
 
     /**
@@ -58,7 +57,7 @@ class SizeController extends Controller
      */
     public function edit(Size $size)
     {
-        return view(self::PATH_VIEW . __FUNCTION__, compact('size'));
+        return view('bienthe.sizes.edit', compact('size'));
     }
 
     /**
@@ -71,15 +70,13 @@ class SizeController extends Controller
         ]);
 
         try {
-            $size->update($data);  // Cập nhật bản ghi cụ thể
-            return redirect('sizes')->with('success', true);
+            return back()->with('success', true);
         } catch (\Throwable $th) {
             return back()
                 ->with('success', false)
                 ->with('error', $th->getMessage());
         }
     }
-
 
     /**
      * Remove the specified resource from storage.

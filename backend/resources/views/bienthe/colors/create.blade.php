@@ -1,4 +1,5 @@
-@extends('master')
+@extends('bienthe.master')
+
 @section('title')
 Thêm mới
 @endsection

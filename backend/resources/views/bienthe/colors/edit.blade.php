@@ -1,4 +1,4 @@
-@extends('master')
+@extends('bienthe.master')
 @section('title')
     Cập nhật : {{ $color->name_color }}
 @endsection

@@ -1,4 +1,4 @@
-@extends('master')
+@extends('bienthe.master')
 @section('title')
     Xem chi tiết : {{ $size->size }}
 @endsection

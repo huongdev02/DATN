@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Storage;
 
 class ColorController extends Controller
 {
-    const PATH_VIEW  = 'colors.';
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $data = Color::latest('id')->paginate(5);
-        return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
+        return view('bienthe.colors.index', compact('data'));
     }
 
     /**
@@ -23,7 +23,7 @@ class ColorController extends Controller
      */
     public function create()
     {
-        return view(self::PATH_VIEW . __FUNCTION__);
+        return view('bienthe.colors.create');
     }
 
     /**
@@ -37,7 +37,7 @@ class ColorController extends Controller
 
         try {
             Color::query()->create($data);
-            return redirect()->route('colors.index')
+            return redirect()->route('colors')
                 ->with('success', true);
         } catch (\Throwable $th) {
             return back()
@@ -51,7 +51,7 @@ class ColorController extends Controller
      */
     public function show(Color $color)
     {
-        return view(self::PATH_VIEW . __FUNCTION__, compact('color'));
+        return view('bienthe.colors.show', compact('color'));
     }
 
     /**
@@ -59,7 +59,7 @@ class ColorController extends Controller
      */
     public function edit(Color $color)
     {
-        return view(self::PATH_VIEW . __FUNCTION__, compact('color'));
+        return view('bienthe.colors.edit', compact('color'));
     }
 
     /**
