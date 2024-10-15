@@ -16,7 +16,7 @@
     <header>
         <nav class="nav justify-content-center  ">
             <a class="nav-link active" href="/" aria-current="page">Welcome</a>
-            <a class="nav-link" href="{{ route('sizes.index')}}">Quản lý khách hàng</a>
+
         </nav>
 
     </header>
