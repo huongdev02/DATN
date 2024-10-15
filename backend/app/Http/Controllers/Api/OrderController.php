@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
@@ -90,41 +91,38 @@ class OrderController extends Controller
             ], 500);
         }
     }
-
     public function update(Request $request, $id)
     {
         try {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'sometimes|exists:users,id',
-                'product_id' => 'sometimes|exists:products,id',
-                'quantity' => 'sometimes|integer|min:1',
-                'total_amount' => 'sometimes|numeric',
+                'order_id' => 'sometimes|exists:orders,id',
+                'amount' => 'sometimes|numeric',
                 'payment_method' => 'sometimes|string',
-                'ship_method' => 'sometimes|string',
                 'status' => 'sometimes|string',
             ]);
-
+    
             if ($validator->fails()) {
                 return response()->json([
                     'message' => 'Có lỗi trong dữ liệu đầu vào.',
                     'errors' => $validator->errors()
                 ], 422);
             }
-
-            $order = Order::findOrFail($id);
-            $order->update($request->all());
-
+    
+            $payment = Payment::findOrFail($id);
+            $payment->update($request->all());
+    
             return response()->json([
-                'message' => 'Cập nhật đơn hàng thành công.',
-                'data' => $order
+                'message' => 'Cập nhật thanh toán thành công.',
+                'data' => $payment
             ]);
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'Đơn hàng không tồn tại.',
+                'message' => 'Thanh toán không tồn tại.',
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Có lỗi xảy ra khi cập nhật đơn hàng.',
+                'message' => 'Có lỗi xảy ra khi cập nhật thanh toán.',
                 'error' => $e->getMessage()
             ], 500);
         }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,3 +24,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('reviews', ReviewController::class);
 Route::apiResource('orders', OrderController::class);
+Route::apiResource('payments', PayController::class);
+Route::apiResource('carts', CartController::class);
