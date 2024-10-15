@@ -30,7 +30,7 @@
             <div class="mb-3 row">
                 <label for="size" class="col-4 col-form-label">Size</label>
                 <div class="col-8">
-                    <input type="number" class="form-control" name="size" id="size"
+                    <input type="text" class="form-control" name="size" id="size"
                         value="{{ $size->size }}" />
                 </div>
             </div>

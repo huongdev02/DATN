@@ -71,13 +71,15 @@ class SizeController extends Controller
         ]);
 
         try {
-            return back()->with('success', true);
+            $size->update($data);  // Cập nhật bản ghi cụ thể
+            return redirect('sizes')->with('success', true);
         } catch (\Throwable $th) {
             return back()
                 ->with('success', false)
                 ->with('error', $th->getMessage());
         }
     }
+
 
     /**
      * Remove the specified resource from storage.

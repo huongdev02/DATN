@@ -45,7 +45,7 @@
                             <form action="{{ route('sizes.destroy', $size) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" onclick="return cònirm('Có chắc xóa không?')" class="btn btn-danger">
+                                <button type="submit" onclick="return confirm('Có chắc xóa không?')" class="btn btn-danger">
                                     Xóa
                                 </button>
 
