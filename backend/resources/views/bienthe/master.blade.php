@@ -16,8 +16,8 @@
     <header>
         <nav class="nav justify-content-center  ">
 
-            <a class="nav-link active" href="{{route('colors.create')}}" aria-current="page">Color</a>
-            <a class="nav-link active" href="{{route('sizes.create')}}" aria-current="page">Size</a>
+            <a class="nav-link active" href="{{route('colors.index')}}" aria-current="page">Color</a>
+            <a class="nav-link active" href="{{route('sizes.index')}}" aria-current="page">Size</a>
         </nav>
 
     </header>

@@ -37,7 +37,7 @@ class ColorController extends Controller
 
         try {
             Color::query()->create($data);
-            return redirect()->route('colors')
+            return redirect()->route('colors.index')
                 ->with('success', true);
         } catch (\Throwable $th) {
             return back()
@@ -66,19 +66,21 @@ class ColorController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Color $color)
-    {
-        $data = $request->validate([
-            'name_color'      => 'required|max:25',
-        ]);
+{
+    $data = $request->validate([
+        'name_color'      => 'required|max:25',
+    ]);
 
-        try {
-            return back()->with('success', true);
-        } catch (\Throwable $th) {
-            return back()
-                ->with('success', false)
-                ->with('error', $th->getMessage());
-        }
+    try {
+        $color->update($data);  // Cập nhật bản ghi cụ thể
+        return redirect('colors')->with('success', true);
+    } catch (\Throwable $th) {
+        return back()
+            ->with('success', false)
+            ->with('error', $th->getMessage());
     }
+}
+
 
     /**
      * Remove the specified resource from storage.

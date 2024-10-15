@@ -35,7 +35,7 @@ class SizeController extends Controller
 
         try {
             Size::query()->create($data);
-            return redirect()->route('sizes')
+            return redirect()->route('sizes.index')
                 ->with('success', true);
         } catch (\Throwable $th) {
             return back()
@@ -64,19 +64,21 @@ class SizeController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Size $size)
-    {
-        $data = $request->validate([
-            'size'      => 'required|max:25',
-        ]);
+{
+    $data = $request->validate([
+        'size'      => 'required|max:25',
+    ]);
 
-        try {
-            return back()->with('success', true);
-        } catch (\Throwable $th) {
-            return back()
-                ->with('success', false)
-                ->with('error', $th->getMessage());
-        }
+    try {
+        $size->update($data);  // Cập nhật bản ghi cụ thể
+        return redirect('sizes')->with('success', true);
+    } catch (\Throwable $th) {
+        return back()
+            ->with('success', false)
+            ->with('error', $th->getMessage());
     }
+}
+
 
     /**
      * Remove the specified resource from storage.
