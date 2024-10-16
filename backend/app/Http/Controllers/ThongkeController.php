@@ -144,6 +144,8 @@ class ThongkeController extends Controller
             ->count(); // thang tr c
 
     }
-    public function a() {}
+    public function test() {
+        return view('account.account');
+    }
     public function b() {}
 }

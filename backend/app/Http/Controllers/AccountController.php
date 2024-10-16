@@ -19,19 +19,14 @@ class AccountController extends Controller
 {
     public function register()
     {
-        return view('account.dangki');
+        return view('account.login', ['activeTab' => 'signup']);
     }
 
     public function register_(Request $request)
     {
         $user = $request->validate([
-            'username'      => 'required|string|unique:users',
-            'password'      => 'required|string|min:6',
-            'fullname'      => 'nullable|string|max:255',
-            'birth_day'     => 'nullable|date',
-            'phone'         => 'nullable|string|max:15',
-            'email'         => 'nullable|email|unique:users',
-            'address'       => 'nullable|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed', // Use 'confirmed' for password confirmation
         ]);
         // dd($user);
 
@@ -53,7 +48,7 @@ class AccountController extends Controller
 
     public function login()
     {
-        return view('account.dangnhap');
+        return view('account.login', ['activeTab' => 'signup']);
     }
 
     public function login_(Request $request)
@@ -86,7 +81,7 @@ class AccountController extends Controller
                 ])->onlyInput('account');
             }
     
-            if ($user->type == 0) {
+            if ($user->role == 0) {
                 return redirect()->route('user.dashboard')->with('success', 'Đăng nhập thành công');
             } else {
                 return redirect()->route('admin.dashboard')->with('success', 'Đăng nhập thành công');
@@ -109,7 +104,7 @@ class AccountController extends Controller
 
     public function rspassword()
     {
-        return view('account.resetform');
+        return view('account.login', ['activeTab' => 'forgot']);
     }
 
     public function rspassword_(Request $request)

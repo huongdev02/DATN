@@ -69,4 +69,5 @@ Route::get('/user', [UserController::class, 'user'])->name('user.dashboard')
 
 Route::resource('products', ProductController::class);
 
-Route::get('/account', [ThongkeController::class, 'account']);
+Route::get('/test', [ThongkeController::class, 'test']);
+
