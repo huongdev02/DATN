@@ -62,34 +62,42 @@ class AccountController extends Controller
             'account' => 'required',
             'password' => 'required',
         ]);
-
-        // dd  ($credentials);
-
+    
         $loginType = filter_var($credentials['account'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-
+    
         $loginCredentials = [
             $loginType => $credentials['account'],
             'password' => $credentials['password'],
         ];
-
+    
         if (Auth::attempt($loginCredentials, true)) {
             $request->session()->regenerate();
-
+    
             /**
              * @var User $user
              */
             $user = Auth::user();
+    
+            // check is_active
+            if ($user->is_active == 0) {
+                Auth::logout();
+                return back()->withErrors([
+                    'account' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
+                ])->onlyInput('account');
+            }
+    
             if ($user->type == 0) {
                 return redirect()->route('user.dashboard')->with('success', 'Đăng nhập thành công');
             } else {
                 return redirect()->route('admin.dashboard')->with('success', 'Đăng nhập thành công');
             }
         }
-
+    
         return back()->withErrors([
             'account' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu',
         ])->onlyInput('account');
     }
+    
 
     public function logout(Request $request)
     {
