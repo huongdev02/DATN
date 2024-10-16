@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ThongkeController;
 use App\Http\Middleware\isAdmin;
 use App\Http\Middleware\isUser;
 use Illuminate\Support\Facades\Route;
