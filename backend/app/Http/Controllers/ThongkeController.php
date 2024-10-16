@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Product_detail;
 use App\Models\Review;
@@ -113,4 +114,36 @@ class ThongkeController extends Controller
 
 
     }
+
+    public function order()
+    {
+        $totalOrders = Order::count();
+
+        $pendingOrders = Order::where('status', 0)->count(); // Đang chờ xử lý
+        $processedOrders = Order::where('status', 1)->count(); // Đã xử lý
+        $shippingOrders = Order::where('status', 2)->count(); // Đang vận chuyển
+        $deliveredOrders = Order::where('status', 3)->count(); // Giao hàng thành công
+        $canceledOrders = Order::where('status', 4)->count(); // Đơn hàng đã bị hủy
+        $returnedOrders = Order::where('status', 5)->count(); // Đơn hàng đã được trả lại
+
+        $totalAmountReceived = Order::sum('total_amount'); //tong tien cac don
+
+        $cashPaymentOrders = Order::where('payment_method', 0)->count(); // Tiền mặt
+        $bankTransferOrders = Order::where('payment_method', 1)->count(); // Chuyển khoản ngân hàng
+        $cardPaymentOrders = Order::where('payment_method', 2)->count(); // Thanh toán qua thẻ ATM
+
+        $standardShippingOrders = Order::where('ship_method', 0)->count(); // Giao hàng tiêu chuẩn
+        $expressShippingOrders = Order::where('ship_method', 1)->count(); // Giao hàng hỏa tốc
+
+        $ordersToday = Order::whereDate('created_at', now())->count(); //don hang hom nay
+        $ordersThisWeek = Order::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(); // tuan nay
+        $ordersThisMonth = Order::whereMonth('created_at', now()->month)->count(); // thang nay
+        $ordersLastWeek = Order::whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count(); // tuan trc
+        $ordersLastMonth = Order::whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', now()->subMonth()->year)
+            ->count(); // thang tr c
+
+    }
+    public function a() {}
+    public function b() {}
 }
