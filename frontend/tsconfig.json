@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/assets/js/vendors/bootstrap.bundle.min.js"  ]
 }

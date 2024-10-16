@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
@@ -24,6 +25,11 @@ class Product extends Model
         return $this->hasMany(Gallery::class);
     }
 
+    public function categories(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
     public function productDetail()
     {
         return $this->hasOne(Product_detail::class);
@@ -42,5 +48,15 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'product_color');
+    }
+
+    public function sizes()
+    {
+        return $this->belongsToMany(Size::class, 'product_size');
     }
 }
