@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ColorController;
+use App\Http\Controllers\SizeController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ThongkeController;
@@ -67,3 +70,9 @@ Route::get('/user', [UserController::class, 'user'])->name('user.dashboard')
 
 Route::resource('products', ProductController::class);
 Route::resource('dashboard', ProductController::class);
+
+
+Route::resource('sizes', SizeController::class);
+Route::resource('colors', ColorController::class);
+Route::resource('categories', CategoryController::class);
+
