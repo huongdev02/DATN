@@ -22,11 +22,14 @@ use Illuminate\Support\Facades\Route;
 | sẽ được gán vào nhóm "web" middleware. Hãy tạo nên điều gì đó tuyệt vời!
 |
 */
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // Các route cho AccountController
 Route::controller(AccountController::class)->group(function () {
     // Đăng ký
-    Route::get('register', 'register')->name('register.form');
+    Route::get('register', 'register')->name('register.form'); 
     Route::post('register', 'register_')->name('register');
 
     // Đăng nhập
