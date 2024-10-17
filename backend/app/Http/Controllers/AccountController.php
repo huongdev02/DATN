@@ -25,7 +25,7 @@ class AccountController extends Controller
     public function register_(Request $request)
     {
         $user = $request->validate([
-            'email' => 'required|email|unique:users,email',
+            'email' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
             'password' => 'required|string|min:6|confirmed', // Use 'confirmed' for password confirmation
         ]);
         // dd($user);
