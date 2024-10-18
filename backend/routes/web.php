@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ThongkeController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Middleware\isAdmin;
 use App\Http\Middleware\isUser;
 use Illuminate\Support\Facades\Route;
@@ -29,7 +30,7 @@ Route::get('/', function () {
 // Các route cho AccountController
 Route::controller(AccountController::class)->group(function () {
     // Đăng ký
-    Route::get('register', 'register')->name('register.form'); 
+    Route::get('register', 'register')->name('register.form');
     Route::post('register', 'register_')->name('register');
 
     // Đăng nhập
@@ -76,3 +77,5 @@ Route::resource('sizes', SizeController::class);
 Route::resource('colors', ColorController::class);
 Route::resource('categories', CategoryController::class);
 
+
+Route::resource('vouchers', VoucherController::class);
