@@ -5,6 +5,13 @@
 @endsection
 
 @section('content_admin')
+
+<div class="container">
+    <div class="d-flex nav nav-pills">
+        <a href="{{route('admin.edit')}}" class="nav-link bg-light">Hồ sơ của tôi</a>
+        <a href="{{route('admin.changepass.form')}}" class="nav-link bg-light">Cập nhật mật khẩu</a>
+    </div>
+
     <h1 class="text-center m-5">Cập nhật tài khoản</h1>
 
     <div class="container">
@@ -52,4 +59,6 @@
             
         </form>
     </div>
+</div>
+
 @endsection

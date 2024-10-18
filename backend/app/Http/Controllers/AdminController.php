@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -49,5 +50,29 @@ class AdminController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Thông tin tài khoản đã được cập nhật thành công.');
+    }
+
+    public function changepass()
+    {
+        return view('admin.changepass');
+    }
+
+    public function changepass_(Request $request)
+    {
+    
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed', 
+        ]);
+
+        $user = Auth::user();
+        if (!Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng.']);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return redirect()->back()->with('success', 'Mật khẩu đã được thay đổi thành công.');
     }
 }

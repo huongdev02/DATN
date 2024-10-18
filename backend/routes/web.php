@@ -65,6 +65,10 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/admin',  'admin')->name('admin.dashboard')
     ->middleware(['auth', 'admin']);
 
+      // Đổi mật khẩu
+    Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form')->middleware('auth');
+    Route::post('/admin/change-password', 'changepass_')->name('admin.password.change')->middleware('auth');
+
     // Cập nhật tài khoản
     Route::get('/admin/edit', 'edit')->name('admin.edit')->middleware('auth');
     Route::post('/admin/update', 'update')->name('admin.update')->middleware('auth');
