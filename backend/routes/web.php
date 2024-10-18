@@ -66,8 +66,8 @@ Route::controller(AdminController::class)->group(function () {
     ->middleware(['auth', 'admin']);
 
     // Cập nhật tài khoản
-    Route::get('/edit', 'edit')->name('edit')->middleware('auth');
-    Route::post('/update', 'update')->name('update')->middleware('auth');
+    Route::get('/admin/edit', 'edit')->name('admin.edit')->middleware('auth');
+    Route::post('/admin/update', 'update')->name('admin.update')->middleware('auth');
 });
 
 // Route cho User
