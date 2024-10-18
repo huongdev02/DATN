@@ -3,19 +3,21 @@
         <li class="nav-item nav-profile dropdown no-arrow">
             <a href="#" class="nav-link d-flex align-items-center" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="nav-profile-image">
-                    <img src="assets/images/faces/face1.jpg" alt="profile" class="img-profile rounded-circle" />
+                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="profile" class="img-profile rounded-circle" />
                     <span class="login-status online"></span>
                 </div>
                 <div class="nav-profile-text d-flex flex-column">
-                    <span class="font-weight-bold mb-2">{{ Auth::user()->username }}</span>
-                    <span class="text-secondary text-small">Admin manager</span>
+                    <span class="font-weight-bold mb-2">
+                        {{ Auth::user()->fullname ?? Auth::user()->email ?? Auth::user()->username }}
+                    </span>
+                    <span class="text-secondary text-small">Admin</span>
                 </div>
                 <!-- Dropdown toggle icon -->
                 <span class="mdi mdi-dots-vertical mdi-24px ms-3"></span>
             </a>
             <!-- Dropdown menu -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item bg-red text-center" href="">
+                <a class="dropdown-item bg-red text-center" href="{{route('edit')}}">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Profile
                 </a>

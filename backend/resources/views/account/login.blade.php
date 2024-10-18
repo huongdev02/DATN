@@ -61,8 +61,11 @@
                         <input type="submit" class="button" value="Sign In">
                     </div>
                     <div class="hr"></div>
-                    <div class="foot-lnk">
+                    <div class="foot-lnk mb-3">
                         <label for="tab-3">Forgot Password?</label>
+                    </div>
+                    <div class="foot-lnk">
+                        <a href="/" class="">Back to home</a>
                     </div>
                 </form>
 
@@ -85,8 +88,11 @@
                         <input type="submit" class="button" value="Sign Up">
                     </div>
                     <div class="hr"></div>
-                    <div class="foot-lnk">
+                    <div class="foot-lnk mb-3">
                         <label for="tab-1">Already Member?</label>
+                    </div>
+                    <div class="foot-lnk">
+                        <a href="/" class="">Back to home</a>
                     </div>
                 </form>
                 
@@ -102,8 +108,11 @@
                         <input type="submit" class="button" value="Reset Password">
                     </div>
                     <div class="hr"></div>
-                    <div class="foot-lnk">
+                    <div class="foot-lnk mb-3">
                         <label for="tab-1">Back to Sign In</label>
+                    </div>
+                    <div class="foot-lnk">
+                        <a href="/" class="">Back to home</a>
                     </div>
                 </form>
             </div>
