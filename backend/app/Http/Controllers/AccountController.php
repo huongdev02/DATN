@@ -194,7 +194,7 @@ class AccountController extends Controller
         $user = Auth::user();
         $addresses = $user->shipAddresses;
 
-        return view('account.update', compact('user', 'addresses'));
+        return view('user.update', compact('user', 'addresses'));
     }
 
     public function update(Request $request)

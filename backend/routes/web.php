@@ -61,8 +61,14 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 // Route cho Admin
-Route::get('/admin', [AdminController::class, 'admin'])->name('admin.dashboard')
-    ->middleware(['auth', isAdmin::class]);
+Route::controller(AdminController::class)->group(function () {
+    Route::get('/admin',  'admin')->name('admin.dashboard')
+    ->middleware(['auth', 'admin']);
+
+    // Cập nhật tài khoản
+    Route::get('/edit', 'edit')->name('edit')->middleware('auth');
+    Route::post('/update', 'update')->name('update')->middleware('auth');
+});
 
 // Route cho User
 Route::get('/user', [UserController::class, 'user'])->name('user.dashboard')
