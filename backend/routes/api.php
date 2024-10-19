@@ -4,6 +4,7 @@ use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\API\ColorController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\SizeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('products', ProductController::class);
+Route::apiResource('vouchers', VoucherController::class);
 
 Route::apiResource('categories', CategoryController::class);
 
