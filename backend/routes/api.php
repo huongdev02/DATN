@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\API\ColorController;
 use App\Http\Controllers\Api\ProductController;
@@ -23,6 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('products', ProductController::class);
+
+Route::apiResource('categories', CategoryController::class);
+
 
 Route::controller(AccountController::class)->group(function () {
     // Đăng ký
