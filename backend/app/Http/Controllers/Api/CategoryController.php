@@ -14,8 +14,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
-        return response()->json($categories);
+        try {
+            $categories = Category::all();
+            return response()->json($categories);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Không thể lấy danh sách categories.'], 500);
+        }
     }
 
     /**
@@ -23,71 +27,64 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:categories|max:255',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:categories,name',
+            ]);
+
+            $category = Category::create([
+                'name' => $request->name,
+            ]);
+
+            return response()->json(['message' => 'Category được thêm thành công.', 'category' => $category], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Có lỗi xảy ra khi thêm category: ' . $e->getMessage()], 500);
         }
-        $category = Category::create([
-            'name' => $request->name,
-        ]);
-        return response()->json(['message' => 'Thêm thành công', 'category' => $category], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
-        $category = Category::find($id);
-        if (!$category) {
-            return response()->json(['message' => 'Category not found'], 404);
+        try {
+            return response()->json($category);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Không thể lấy thông tin category: ' . $e->getMessage()], 500);
         }
-        return response()->json($category);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Category $category)
     {
-        $category = Category::find($id);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            ]);
 
-        if (!$category) {
-            return response()->json(['message' => 'Category not found'], 404);
+            $category->update([
+                'name' => $request->name,
+            ]);
+
+            return response()->json(['message' => 'Category được cập nhật thành công.', 'category' => $category], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Có lỗi xảy ra khi cập nhật category: ' . $e->getMessage()], 500);
         }
-
-        // Validate dữ liệu
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255|unique:categories,name,' . $category->id,
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        // Cập nhật category
-        $category->update([
-            'name' => $request->name,
-        ]);
-
-        return response()->json(['message' => 'Category updated successfully!', 'category' => $category]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        $category = Category::find($id);
+        try {
+            $category->delete();
 
-        if (!$category) {
-            return response()->json(['message' => 'Category not found'], 404);
+            return response()->json(['message' => 'Category đã được xóa thành công.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Có lỗi xảy ra khi xóa category: ' . $e->getMessage()], 500);
         }
-
-        $category->delete();
-
-        return response()->json(['message' => 'Category deleted successfully!']);
     }
 }

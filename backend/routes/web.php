@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Middleware\isAdmin;
@@ -65,5 +64,4 @@ Route::get('/user', [UserController::class, 'user'])->name('user.dashboard')
 Route::resource('products', ProductController::class);
 Route::resource('dashboard', ProductController::class);
 
-Route::get('/categories', [CategoryController::class, 'index']);
 
