@@ -16,6 +16,6 @@ class isAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return Auth::user()->type == 2 ? $next($request) : abort(403);
+        return Auth::user()->role == 2 ? $next($request) : abort(403);
     }
 }

@@ -69,7 +69,7 @@
         </select>
         
         <label for="avatar" class="mt-3">Avatar</label>
-        <img src="{{ \Storage::url(Auth::user()->image)}}" width="50px">
+        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" width="100px" class="ms-3 mt-3">
         <input type="file" class="form-control mb-3 mt-3" name="avatar" id="avatar">
 
         <button type="submit" class="btn btn-success mt-3">Cập nhật</button>
