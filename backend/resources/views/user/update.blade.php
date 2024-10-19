@@ -1,13 +1,13 @@
-@extends('account.master')
+@extends('user.master')
 
 @section('title')
     Cập nhật tài khoản
 @endsection
 
 @section('content')
-    <h1 class="text-center m-5">Cập nhật tài khoản</h1>
+    <h1 class="text-center">Cập nhật tài khoản</h1>
 
-    <form action="{{ route('update') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('user.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <label for="fullname">Full Name</label>
         <input type="text" class="form-control mb-3" name="fullname" id="fullname" value="{{ old('fullname', Auth::user()->fullname) }}">
@@ -51,7 +51,7 @@
                     <option value="{{ $defaultAddress->id }}">
                         <strong style="color: red;">Địa chỉ:</strong> {{ $defaultAddress->ship_address }} - 
                         <strong style="color: red;">Số điện thoại:</strong> {{ $defaultAddress->phone_number }} - 
-                        <strong style="color: red;">Tên người nhận:</strong> {{ $user->fullname ?? $user->account }}
+                        <strong style="color: red;">Tên người nhận:</strong> {{ $user->recipient_name ?? $user->fullname }}
                     </option>
                 @else
                     <option value="">Chưa có địa chỉ mặc định, hãy thêm địa chỉ mới</option>

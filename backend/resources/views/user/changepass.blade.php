@@ -1,13 +1,13 @@
-@extends('account.master')
+@extends('user.master')
 
 @section('title')
     Đổi mật khẩu
 @endsection
 
 @section('content')
-    <h1 class="text-center m-5">Đổi mật khẩu</h1>
+    <h1 class="text-center">Đổi mật khẩu</h1>
 
-    <form action="{{ route('password.change') }}" method="POST">
+    <form action="{{ route('user.password.change') }}" method="POST">
         @csrf
 
         <div>
