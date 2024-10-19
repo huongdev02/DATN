@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\API\ColorController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\API\SizeController;
+use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\VoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +26,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('products', ProductController::class);
+
+Route::apiResource('categories', CategoryController::class);
+
 
 Route::controller(AccountController::class)->group(function () {
     // Đăng ký
@@ -42,3 +50,7 @@ Route::controller(AccountController::class)->group(function () {
     Route::post('/change-password', 'changepass')->name('password.change')->middleware('auth');
 });
 
+Route::apiResource('sizes', SizeController::class);
+Route::apiResource('colors', ColorController::class);
+Route::apiResource('vouchers', VoucherController::class);
+Route::apiResource('users', UserController::class);
