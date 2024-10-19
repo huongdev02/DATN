@@ -20,12 +20,12 @@ return new class extends Migration
             $table->decimal('discount_value', 10, 2);
             $table->text('description')->nullable();
             $table->decimal('discount_min', 10, 2)->default(0);
-            $table->decimal('max_discount', 10, 2)->default(0); 
+            $table->decimal('max_discount', 10, 2)->default(0);
             $table->unsignedInteger('min_order_count')->default(1);
             $table->unsignedInteger('max_order_count')->default(1);
             $table->unsignedInteger('quantity')->default(1);
-            $table->unsignedInteger('used_times')->default(0); 
-            $table->dateTime('start_day')->nullable(); 
+            $table->unsignedInteger('used_times')->default(0);
+            $table->dateTime('start_day')->nullable();
             $table->dateTime('end_day')->nullable();
             $table->tinyInteger('status')->default(1);//0: Không hoạt động, 1: Đang hoạt động, 2: hết, 3: Chờ phát hành
             $table->timestamps();

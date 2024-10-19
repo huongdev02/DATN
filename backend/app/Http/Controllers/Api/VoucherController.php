@@ -14,8 +14,12 @@ class VoucherController extends Controller
      */
     public function index()
     {
-        $vouchers = Voucher::all();
-        return response()->json($vouchers);
+        try {
+            $vouchers = Voucher::all();
+            return response()->json($vouchers);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Không thể lấy danh sách vouchers.'], 500);
+        }
     }
 
     /**
@@ -23,89 +27,79 @@ class VoucherController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'code' => 'required|string|max:10|unique:vouchers',
-            'type' => 'required|integer',
-            'discount_value' => 'required|numeric',
-            'description' => 'nullable|string',
-            'discount_min' => 'nullable|numeric',
-            'max_discount' => 'nullable|numeric',
-            'min_order_count' => 'required|integer|min:1',
-            'max_order_count' => 'required|integer|min:1',
-            'quantity' => 'required|integer|min:1',
-            'start_day' => 'nullable|date',
-            'end_day' => 'nullable|date|after:start_day',
-            'status' => 'required|integer',
-        ]);
+        try {
+            $request->validate([
+                'code' => 'required|string|max:10|unique:vouchers,code',
+                'type' => 'required|integer',
+                'discount_value' => 'required|numeric',
+                'discount_min' => 'required|numeric',
+                'max_discount' => 'required|numeric',
+                'min_order_count' => 'required|integer',
+                'max_order_count' => 'required|integer',
+                'quantity' => 'required|integer',
+                'start_day' => 'nullable|date',
+                'end_day' => 'nullable|date',
+                'status' => 'required|integer',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            $voucher = Voucher::create($request->all());
+
+            return response()->json(['message' => 'Voucher được thêm thành công.', 'voucher' => $voucher], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Có lỗi xảy ra khi thêm voucher: ' . $e->getMessage()], 500);
         }
-
-        $voucher = Voucher::create($request->all());
-        return response()->json(['message' => 'Voucher created successfully!', 'voucher' => $voucher], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Voucher $voucher)
     {
-        $voucher = Voucher::find($id);
-
-        if (!$voucher) {
-            return response()->json(['message' => 'Voucher not found'], 404);
+        try {
+            return response()->json($voucher);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Không thể lấy thông tin voucher: ' . $e->getMessage()], 500);
         }
-
-        return response()->json($voucher);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Voucher $voucher)
     {
-        $voucher = Voucher::find($id);
+        try {
+            $request->validate([
+                'code' => 'required|string|max:10|unique:vouchers,code,' . $voucher->id,
+                'type' => 'required|integer',
+                'discount_value' => 'required|numeric',
+                'discount_min' => 'required|numeric',
+                'max_discount' => 'required|numeric',
+                'min_order_count' => 'required|integer',
+                'max_order_count' => 'required|integer',
+                'quantity' => 'required|integer',
+                'start_day' => 'nullable|date',
+                'end_day' => 'nullable|date',
+                'status' => 'required|integer',
+            ]);
 
-        if (!$voucher) {
-            return response()->json(['message' => 'Voucher not found'], 404);
+            $voucher->update($request->all());
+
+            return response()->json(['message' => 'Voucher được cập nhật thành công.', 'voucher' => $voucher], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Có lỗi xảy ra khi cập nhật voucher: ' . $e->getMessage()], 500);
         }
-
-        $validator = Validator::make($request->all(), [
-            'code' => 'string|max:10|unique:vouchers,code,' . $voucher->id,
-            'type' => 'integer',
-            'discount_value' => 'numeric',
-            'description' => 'nullable|string',
-            'discount_min' => 'nullable|numeric',
-            'max_discount' => 'nullable|numeric',
-            'min_order_count' => 'integer|min:1',
-            'max_order_count' => 'integer|min:1',
-            'quantity' => 'integer|min:1',
-            'start_day' => 'nullable|date',
-            'end_day' => 'nullable|date|after:start_day',
-            'status' => 'integer',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $voucher->update($request->all());
-        return response()->json(['message' => 'Voucher updated successfully!', 'voucher' => $voucher]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Voucher $voucher)
     {
-        $voucher = Voucher::find($id);
-
-        if (!$voucher) {
-            return response()->json(['message' => 'Voucher not found'], 404);
+        try {
+            $voucher->delete();
+            return response()->json(['message' => 'Voucher đã được xóa thành công.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Có lỗi xảy ra khi xóa voucher: ' . $e->getMessage()], 500);
         }
-
-        $voucher->delete();
-        return response()->json(['message' => 'Voucher deleted successfully!']);
     }
 }

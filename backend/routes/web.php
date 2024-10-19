@@ -66,4 +66,3 @@ Route::resource('products', ProductController::class);
 Route::resource('dashboard', ProductController::class);
 
 
-Route::apiResource('vouchers', VoucherController::class);
