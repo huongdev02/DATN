@@ -86,8 +86,10 @@ Route::controller(UserController::class)->group(function () {
 
 Route::resource('products', ProductController::class);
 
+
 Route::resource('sizes', SizeController::class);
 Route::resource('colors', ColorController::class);
 Route::resource('categories', CategoryController::class);
 
 Route::resource('vouchers', VoucherController::class);
+
