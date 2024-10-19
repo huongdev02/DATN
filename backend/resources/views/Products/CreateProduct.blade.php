@@ -13,9 +13,13 @@
         <input type="file" name="avatar" class="form-control" required>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3" id="gallery-container">
         <label for="images">Gallery:</label>
-        <input type="file" name="images[]" multiple class="form-control">
+        <div class="gallery-input">
+            <input type="file" name="images[]" class="form-control mb-2">
+            <button type="button" class="btn btn-danger btn-sm remove-image">Xóa</button>
+        </div>
+        <button type="button" class="btn btn-success mt-2" id="add-image">Thêm</button>
     </div>
 
     <div class="mb-3">
@@ -30,7 +34,7 @@
 
     <div class="mb-3">
         <label for="description">Description:</label>
-        <textarea name="description" class="form-control"></textarea>
+        <textarea name="description" class="form-control" rows="10"></textarea>
     </div>
 
     <div class="mb-3">
@@ -59,15 +63,51 @@
     </div>
 
     <div class="mb-3">
-        <label for="display">Display:</label>
+        <label for="display">Hiển thị</label>
         <input type="checkbox" name="display" value="1" checked>
     </div>
 
     <div class="mb-3">
         <label for="status">Status:</label>
-        <input type="text" name="status" value="1" class="form-control">
+        <select name="status" class="form-control mb-3 mt-2">
+            <option class="form-control" value="0">Không hoạt động</option>
+            <option class="form-control" value="1" selected>Đang mở bán</option>
+            <option class="form-control" value="2">Ngừng bán</option>
+            <option class="form-control" value="3">Chờ duyệt</option>
+        </select>
     </div>
 
     <button type="submit" class="btn btn-primary">Create Product</button>
 </form>
+
+<script>
+    document.getElementById('add-image').addEventListener('click', function() {
+        const galleryContainer = document.getElementById('gallery-container');
+        const newInput = document.createElement('div');
+        newInput.classList.add('gallery-input');
+
+        // Tạo input file mới
+        const inputFile = document.createElement('input');
+        inputFile.type = 'file';
+        inputFile.name = 'images[]';
+        inputFile.classList.add('form-control', 'mb-2');
+
+        // Tạo nút "Xóa"
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-image');
+        removeButton.textContent = 'Xóa';
+
+        // Thêm input file và nút "Xóa" vào div
+        newInput.appendChild(inputFile);
+        newInput.appendChild(removeButton);
+
+        galleryContainer.insertBefore(newInput, this); // Thêm input mới trước nút "+"
+        
+        // Thêm sự kiện click cho nút "Xóa"
+        removeButton.addEventListener('click', function() {
+            galleryContainer.removeChild(newInput); // Xóa input file khi nhấn nút "Xóa"
+        });
+    });
+</script>
 @endsection

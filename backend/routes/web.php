@@ -2,9 +2,17 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
+
 use App\Http\Controllers\API\VoucherController;
+
+use App\Http\Controllers\ColorController;
+use App\Http\Controllers\SizeController;
+use App\Http\Controllers\CategoryController;
+
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ThongkeController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Middleware\isAdmin;
 use App\Http\Middleware\isUser;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +27,9 @@ use Illuminate\Support\Facades\Route;
 | sẽ được gán vào nhóm "web" middleware. Hãy tạo nên điều gì đó tuyệt vời!
 |
 */
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // Các route cho AccountController
 Route::controller(AccountController::class)->group(function () {
@@ -55,8 +66,18 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 // Route cho Admin
-Route::get('/admin', [AdminController::class, 'admin'])->name('admin.dashboard')
-    ->middleware(['auth', isAdmin::class]);
+Route::controller(AdminController::class)->group(function () {
+    Route::get('/admin',  'admin')->name('admin.dashboard')
+    ->middleware(['auth', 'admin']);
+
+      // Đổi mật khẩu
+    Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form')->middleware('auth');
+    Route::post('/admin/change-password', 'changepass_')->name('admin.password.change')->middleware('auth');
+
+    // Cập nhật tài khoản
+    Route::get('/admin/edit', 'edit')->name('admin.edit')->middleware('auth');
+    Route::post('/admin/update', 'update')->name('admin.update')->middleware('auth');
+});
 
 // Route cho User
 Route::get('/user', [UserController::class, 'user'])->name('user.dashboard')
@@ -64,5 +85,14 @@ Route::get('/user', [UserController::class, 'user'])->name('user.dashboard')
 
 Route::resource('products', ProductController::class);
 Route::resource('dashboard', ProductController::class);
+
+
+
+Route::resource('sizes', SizeController::class);
+Route::resource('colors', ColorController::class);
+Route::resource('categories', CategoryController::class);
+
+
+Route::resource('vouchers', VoucherController::class);
 
 

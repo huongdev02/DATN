@@ -17,12 +17,12 @@ return new class extends Migration
             $table->id();
 
             $table->string('avatar')->nullable();
-            $table->string('username')->unique();
+            $table->string('username')->unique()->nullable();
             $table->string('password');
             $table->string('fullname')->nullable(); //sau khi dki xong có cập nhật tên hiển thị
             $table->date('birth_day')->nullable();
             $table->string('phone', 15)->nullable(); 
-            $table->string('email')->unique()->nullable();
+            $table->string('email')->unique();
             $table->string('address')->nullable();
             $table->tinyInteger('role')->default(0); //role: 0 user, 1 nhân viên, 2admin
             $table->boolean('is_active')->default(1); //0 là khóa, 1 là active
