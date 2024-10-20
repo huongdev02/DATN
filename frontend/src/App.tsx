@@ -1,25 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import Header from './Component/LayoutComponent/Header';
+import Footer from './Component/LayoutComponent/Footer';
+import AppRoutes from './Routes/Route';
+import SvgLoading from './assets/imgs/template/favicon.svg'
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          My name is NVK
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {loading && (
+        <div id="preloader-active">
+          <div className="preloader d-flex align-items-center justify-content-center">
+            <div className="preloader-inner position-relative">
+              <div className="page-loading text-center">
+                <img
+                  className="d-inline-block"
+                  src={SvgLoading}
+                  alt="Kidify"
+                />
+                <div className="page-loading-inner">
+                  <div />
+                  <div />
+                  <div />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {!loading && (
+        <>
+          <Header />
+          <main className="main">
+            <AppRoutes />
+          </main>
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

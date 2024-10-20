@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('ship_addresses', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
+            $table->string('recipient_name');
             $table->boolean('is_default')->default(false);
             $table->string('ship_address');
             $table->string('phone_number', 15);
