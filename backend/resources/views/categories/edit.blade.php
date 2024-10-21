@@ -1,6 +1,5 @@
-@extends('master')
-
-@section('content')
+@extends('Layout.Layout')
+@section('content_admin')
     <h1>Edit Category</h1>
 
     @if ($errors->any())
@@ -22,6 +21,5 @@
             <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $category->name) }}" required>
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
-        <a href="{{ route('categories.index') }}" class="btn btn-secondary">Cancel</a>
     </form>
 @endsection

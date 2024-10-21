@@ -1,22 +1,10 @@
-@extends('master')
+@extends('Layout.Layout')
 
-@section('content')
+@section('content_admin')
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Categories</h1>
-        <a href="{{ route('categories.create') }}" class="btn btn-primary">Create New Category</a>
+        <a href="{{ route('categories.create') }}" class="btn btn-outline-success mb-3">Add new category</a>
     </div>
 
-    @if (session()->has('success') && !session()->get('success'))
-        <div class="alert alert-danger">
-            {{ session()->get('error') }}
-        </div>
-    @endif
-
-    @if (session()->has('success') && session()->get('success'))
-        <div class="alert alert-info">
-            Thao tác thành công
-        </div>
-    @endif
 
     <table class="table table-bordered">
         <thead>
@@ -32,15 +20,19 @@
                     <td>{{ $category->id }}</td>
                     <td>{{ $category->name }}</td>
                     <td>
-                        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-outline-warning mb-3">Edit</a>
                         <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa không?')">Delete</button>
+                            <button type="submit" class="btn btn-outline-danger mb-3" onclick="return confirm('Bạn có chắc muốn xóa không?')">Delete</button>
                         </form>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
+    <div class="d-flex justify-content-center">
+        {{ $categories->links() }} <!-- Hiển thị phân trang nếu có -->
+    </div>
 @endsection
