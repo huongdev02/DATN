@@ -30,7 +30,7 @@
                 </a>
             </div>
         </li>
-        
+
         <li class="nav-item">
 
             <a class="nav-link" href="{{route('admin.dashboard')}}">
@@ -45,7 +45,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#ui-basic">
+            <a class="nav-link" href="{{route('categories.index')}}">
                 <span class="menu-title">Category</span>
                 <i class="mdi mdi-format-list-bulleted menu-icon"></i>
             </a>
