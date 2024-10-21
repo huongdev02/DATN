@@ -12,10 +12,10 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $products = Product::with('category', 'galleries')->get();
+            $products = Product::with('categories:id,name')->get();
             return response()->json($products);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Không thể lấy danh sách sản phẩm.'], 500);
+            return response()->json(['message' => 'Không thể lấy danh sách sản phẩm.' . $e->getMessage()], 500);
         }
     }
 

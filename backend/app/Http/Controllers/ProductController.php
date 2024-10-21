@@ -42,7 +42,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar' => 'nullable|image',
             'import_price' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
@@ -51,7 +51,7 @@ class ProductController extends Controller
             'status' => 'required|in:0,1,2,3',
             'sizes' => 'array', // Mảng chứa các kích thước
             'sizes.*' => 'exists:sizes,id', // Các id kích thước phải tồn tại trong bảng sizes
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images.*' => 'nullable|image',
         ]);
 
         $avatarPath = null;
