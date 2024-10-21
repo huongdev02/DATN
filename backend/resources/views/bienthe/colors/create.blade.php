@@ -1,24 +1,10 @@
-@extends('bienthe.master')
+@extends('Layout.Layout')
 
 @section('title')
-Thêm mới
+Create color
 @endsection
-@section('content')
-<h1>Thêm mới </h1>
-@if(session()->has('success') && !session()->get('success'))
-    <div class="alert alert-danger">
-        {{ session()->get('error')}}
-    </div>
-@endif
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+@section('content_admin')
+<h1>Create color </h1>
 <div class="container">
     <form method="POST" action="{{ route('colors.store') }}" enctype="multipart/form-data">
         @csrf

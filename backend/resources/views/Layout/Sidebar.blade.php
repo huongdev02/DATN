@@ -30,7 +30,7 @@
                 </a>
             </div>
         </li>
-        
+
         <li class="nav-item">
 
             <a class="nav-link" href="{{route('admin.dashboard')}}">
@@ -70,13 +70,13 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#tables">
+            <a class="nav-link" href="{{route('sizes.index')}}">
                 <span class="menu-title">Size</span>
                 <i class="mdi mdi-format-size menu-icon"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#tables">
+            <a class="nav-link" href="{{route('colors.index')}}">
                 <span class="menu-title">Color</span>
                 <i class="mdi mdi-format-color-fill menu-icon"></i>
             </a>

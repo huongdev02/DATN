@@ -1,19 +1,24 @@
-@extends('bienthe.master')
+@extends('Layout.Layout')
+
 @section('title')
-    Cập nhật : {{ $size->size }}
+    Cập nhật Kích Thước: {{ $size->size }}
 @endsection
-@section('content')
-    <h1>Cập nhật : {{ $size->size }}</h1>
+
+@section('content_admin')
+    <h1>Cập nhật Kích Thước: {{ $size->size }}</h1>
+
     @if (session()->has('success') && !session()->get('success'))
         <div class="alert alert-danger">
             {{ session()->get('error') }}
         </div>
     @endif
+
     @if (session()->has('success') && session()->get('success'))
         <div class="alert alert-info">
             Thao tác thành công
         </div>
     @endif
+
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -23,22 +28,23 @@
             </ul>
         </div>
     @endif
+
     <div class="container">
-        <form method="POST" action="{{ route('sizes.update', $size) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('sizes.update', $size->id) }}">
             @csrf
             @method('PUT')
+
             <div class="mb-3 row">
-                <label for="size" class="col-4 col-form-label">Size</label>
+                <label for="size" class="col-4 col-form-label">Kích Thước</label>
                 <div class="col-8">
                     <input type="text" class="form-control" name="size" id="size"
-                        value="{{ $size->size }}" />
+                        value="{{ old('size', $size->size) }}" required />
                 </div>
             </div>
+
             <div class="mb-3 row">
                 <div class="offset-sm-4 col-sm-8">
-                    <button type="submit" class="btn btn-primary">
-                        Submit
-                    </button>
+                    <button type="submit" class="btn btn-primary">Cập Nhật</button>
                 </div>
             </div>
         </form>
