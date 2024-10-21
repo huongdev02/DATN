@@ -1,60 +1,45 @@
-@extends('bienthe.master')
+@extends('Layout.Layout')
+
 @section('title')
-    Danh sách
+    DashBoard Admin - Colors
 @endsection
-@section('content')
-    <h1>
-        Danh sách
-        <a class="btn btn-info" href="{{ route('sizes.create') }}">Create</a>
-    </h1>
 
-    @if(session()->has('success') && !session()->get('success'))
-        <div class="alert alert-danger">
-            {{ session()->get('error')}}
-        </div>
-    @endif
+@section('content_admin')
 
-    @if(session()->has('success') && session()->get('success'))
-        <div class="alert alert-info">
-            Thao tác thành công
-        </div>
-    @endif
+    <a class="btn btn-outline-success mb-3" href="{{ route('sizes.create') }}">Add new size</a>
 
-    <div class="table-responsive">
-        <table class="table table-primary">
-            <thead>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Size</th>
+                <th>Created at</th>
+                <th>Updated at</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($data as $size)
                 <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">SIZE</th>
-                    <th scope="col">CREATE AT</th>
-                    <th scope="col">UPDATED AT</th>
-                    <th scope="col">ACTION</th>
+                    <td>{{ $size->id }}</td>
+                    <td>{{ $size->size }}</td>
+                    <td>{{ $size->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $size->updated_at->format('d/m/Y H:i') }}</td>
+                    <td>
+                        {{-- <a class="btn btn-info" href="{{ route('sizes.show', $size->id) }}">Xem</a> --}}
+                        <a class="btn btn-outline-warning mb-3" href="{{ route('sizes.edit', $size->id) }}">Edit</a>
+
+                        <form action="{{ route('sizes.destroy', $size->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')" class="btn btn-outline-danger mb-3">Delete</button>
+                        </form>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach ($data as $size)
-                    <tr class="">
-                        <td scope="row">{{ $size->id }}</td>
-                        <td>{{ $size->size }}</td>
-                        <td>{{ $size->created_at }}</td>
-                        <td>{{ $size->updated_at }}</td>
-                        <td>
-                            <a class="btn btn-info" href="{{ route('sizes.show', $size) }}">Show</a>
-                            <a class="btn btn-warning" href="{{ route('sizes.edit', $size) }}">Edit</a>
-
-                            <form action="{{ route('sizes.destroy', $size) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('Có chắc xóa không?')" class="btn btn-danger">
-                                    Xóa
-                                </button>
-
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        {{$data->links()}}
-    </div>
+            @endforeach
+        </tbody>
+    </table>
+    {{ $data->links() }}
+</div>
 @endsection

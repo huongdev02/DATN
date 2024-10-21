@@ -1,60 +1,47 @@
-@extends('bienthe.master')
+@extends('Layout.Layout')
+
 @section('title')
-    Danh sách
+    DashBoard Admin - Colors
 @endsection
-@section('content')
-    <h1>
-        Danh sách
-        <a class="btn btn-info" href="{{ route('colors.create') }}">Create</a>
-    </h1>
 
-    @if(session()->has('success') && !session()->get('success'))
-        <div class="alert alert-danger">
-            {{ session()->get('error')}}
-        </div>
-    @endif
+@section('content_admin')
 
-    @if(session()->has('success') && session()->get('success'))
-        <div class="alert alert-info">
-            Thao tác thành công
-        </div>
-    @endif
 
-    <div class="table-responsive">
-        <table class="table table-primary">
-            <thead>
+<a class="btn btn-outline-success mb-3" href="{{ route('colors.create') }}">Add new color</a>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name color</th>
+                <th scope="col">Created at</th>
+                <th scope="col">Updated at</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($data as $color)
                 <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">NAME</th>
-                    <th scope="col">CREATE AT</th>
-                    <th scope="col">UPDATED AT</th>
-                    <th scope="col">ACTION</th>
+                    <td>{{ $color->id }}</td>
+                    <td>{{ $color->name_color }}</td>
+                    <td>{{ $color->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $color->updated_at->format('d/m/Y H:i') }}</td>
+                    <td>
+                        {{-- <a class="btn btn-info" href="{{ route('colors.show', $color->id) }}">Xem</a> --}}
+                        <a class="btn btn-outline-warning mb-3" href="{{ route('colors.edit', $color->id) }}">Edit</a>
+                        <form action="{{ route('colors.destroy', $color->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')" class="btn btn-outline-danger mb-3">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach ($data as $color)
-                    <tr class="">
-                        <td scope="row">{{ $color->id }}</td>
-                        <td>{{ $color->name_color }}</td>
-                        <td>{{ $color->created_at }}</td>
-                        <td>{{ $color->updated_at }}</td>
-                        <td>
-                            <a class="btn btn-info" href="{{ route('colors.show', $color) }}">Show</a>
-                            <a class="btn btn-warning" href="{{ route('colors.edit', $color) }}">Edit</a>
-
-                            <form action="{{ route('colors.destroy', $color) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('Có chắc xóa không?')" class="btn btn-danger">
-                                    Xóa
-                                </button>
-
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        {{$data->links()}}
-    </div>
+            @endforeach
+        </tbody>
+    </table>
+    {{ $data->links() }}
+</div>
 @endsection

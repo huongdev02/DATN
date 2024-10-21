@@ -51,7 +51,7 @@ class ColorController extends Controller
      */
     public function show(Color $color)
     {
-        return view('bienthe.colors.show', compact('color'));
+        // return view('bienthe.colors.show', compact('color'));
     }
 
     /**
