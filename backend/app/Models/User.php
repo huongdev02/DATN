@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -20,7 +18,15 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'username', 'password', 'fullname', 'birth_day', 'phone', 'email', 'address', 'default_ship', 'role'
+        'username',
+        'password',
+        'fullname',
+        'birth_day',
+        'phone',
+        'email',
+        'address',
+        'default_ship',
+        'role'
     ];
 
     /**
@@ -43,42 +49,69 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    public function shipAddresses()
+    /**
+     * Check if the user's email has been verified.
+     *
+     * @return bool
+     */
+    public function hasVerifiedEmail()
     {
-        return $this->hasMany(Ship_Address::class);
+        return !is_null($this->email_verified_at);
     }
 
+    /**
+     * Get the ship addresses associated with the user.
+     */
+    public function shipAddresses()
+    {
+        return $this->hasMany(Ship_address::class);
+    }
+
+    /**
+     * Get the cart associated with the user.
+     */
     public function cart()
     {
         return $this->hasOne(Cart::class);
     }
 
+    /**
+     * Get the orders associated with the user.
+     */
     public function orders()
     {
         return $this->hasMany(Order::class);
     }
 
+    /**
+     * Get the reviews written by the user.
+     */
     public function reviews()
     {
         return $this->hasMany(Review::class);
     }
 
+    /**
+     * Get the voucher usage associated with the user.
+     */
     public function voucherUsage()
     {
         return $this->hasOne(Voucher_usage::class);
     }
 
+    /**
+     * Get the conversations the user is involved in.
+     */
     public function conversations()
     {
         return $this->hasMany(Conversation::class);
     }
 
+    /**
+     * Get the messages sent by the user.
+     */
     public function messages()
     {
         return $this->hasMany(Message::class);
-    }
-    public function hasVerifiedEmail()
-    {
-        return ! is_null($this->email_verified_at);
     }
 }
