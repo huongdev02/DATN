@@ -51,7 +51,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#forms">
+            <a class="nav-link" href="{{route('orders.index')}}">
                 <span class="menu-title">Order</span>
                 <i class="mdi mdi-clipboard menu-icon"></i>
             </a>
