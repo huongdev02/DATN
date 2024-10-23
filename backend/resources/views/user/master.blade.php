@@ -41,7 +41,7 @@
                 </li>
                 <li><a href="#" class="btn btn-light w-100 text-start">Đơn Mua</a></li>
                 <li><a href="#" class="btn btn-light w-100 text-start">Thông Báo</a></li>
-                <li><a href="#" class="btn btn-light w-100 text-start">Kho Voucher</a></li>
+                <li><a href="{{route('vouchers.index')}}" class="btn btn-light w-100 text-start">Kho Voucher</a></li>
                 <li>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
@@ -50,7 +50,7 @@
                 </li>
             </ul>
         </div>
-    
+
         <!-- Phần Content -->
         <div class="content-container p-4 flex-grow-1">
             @if ($errors->any())
@@ -62,23 +62,23 @@
                     </ul>
                 </div>
             @endif
-    
+
             @if (session('success'))
                 <div class="alert alert-success text-center">
                     {{ session('success') }}
                 </div>
             @endif
-    
+
             @if (session('info'))
                 <div class="alert alert-info">
                     {{ session('info') }}
                 </div>
             @endif
-    
+
             @yield('content')
         </div>
     </div>
-    
+
 
     <!-- Nhúng Bootstrap JavaScript -->
     <script src="{{ asset('user/script.js') }}"></script>
