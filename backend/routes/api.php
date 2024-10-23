@@ -39,23 +39,10 @@ Route::apiResource('categories', CategoryController::class);
 
 
 Route::controller(AccountController::class)->group(function () {
-    // Đăng ký
-    Route::post('register', 'register')->name('register');
-
     // Đăng nhập
     Route::post('login', 'login')->name('login');
-
-    // Quên mật khẩu
-    Route::post('password/forgot', 'rspassword')->name('password.forgot');
-
-    // Đặt lại mật khẩu
-    Route::post('password/reset', 'updatepassword')->name('password.update');
-
-    // Cập nhật tài khoản
-    Route::post('/update', 'update')->name('update')->middleware('auth');
-
-    // Đổi mật khẩu
-    Route::post('/change-password', 'changepass')->name('password.change')->middleware('auth');
+    //lay user
+    Route::get('/users/{id}',  'show')->name('show');;
 });
 
 Route::apiResource('sizes', SizeController::class);
