@@ -2,7 +2,7 @@
 @section('content_admin')
 <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
-
+    @method('PUT')
     <div class="mb-3">
         <label for="name">Name:</label>
         <input type="text" name="name" class="form-control" value="{{ $product->name }}" required>

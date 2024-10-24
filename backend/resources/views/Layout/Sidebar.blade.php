@@ -55,10 +55,15 @@
                 <span class="menu-title">Order</span>
                 <i class="mdi mdi-clipboard menu-icon"></i>
             </a>
-
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#charts">
+            <a class="nav-link" href="{{route('promotion.index')}}">
+                <span class="menu-title">Promotion</span>
+                <i class="mdi mdi-clipboard menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('users.index') }}">
                 <span class="menu-title">User</span>
                 <i class="mdi mdi-account menu-icon"></i>
             </a>

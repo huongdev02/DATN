@@ -3,12 +3,15 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Api\AccountController as ApiAccountController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ManagerUserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ThongkeController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
@@ -28,7 +31,7 @@ Route::get('/', function () {
 });
 
 // Các route cho AccountController
-Route::controller(AccountController::class)->group(function () {
+Route::controller(ApiAccountController::class)->group(function () {
     // Đăng ký
     Route::get('register', 'register')->name('register.form');
     Route::post('register', 'register_')->name('register');
@@ -95,3 +98,5 @@ Route::resource('categories', CategoryController::class);
 Route::resource('vouchers', VoucherController::class);
 
 Route::resource('orders', OrderController::class);
+Route::resource('promotion', PromotionController::class);
+Route::resource('users', ManagerUserController::class);
