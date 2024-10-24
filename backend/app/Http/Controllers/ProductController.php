@@ -28,8 +28,10 @@ class ProductController extends Controller
     
         return view('products.index', compact('products', 'colorMap'));
     }
-    
 
+
+
+    
     public function create()
     {
         $categories = Category::all();

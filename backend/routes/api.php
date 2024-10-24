@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,7 @@ Route::apiResource('orders', OrderController::class);
 Route::apiResource('payments', PayController::class);
 Route::apiResource('carts', CartController::class);
 Route::apiResource('products', ProductController::class);
+Route::resource('promotions', PromotionController::class);
 
 Route::apiResource('categories', CategoryController::class);
 
