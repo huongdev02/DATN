@@ -1,82 +1,45 @@
 @extends('user.master')
 
 @section('title')
-    Danh sách voucher
+    Danh sách Voucher
 @endsection
 
 @section('content')
-    <h1>
-        <a class="btn btn-outline-success mb-3" href="{{ route('vouchers.create') }}">Add new voucher</a>
-    </h1>
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row align-items-center mb-3">
+            <div class="col-md-8">
+                <h1>Kho Voucher</h1>
+            </div>
+            <div class="col-md-4 text-end">
+                <input type="text" class="form-control d-inline w-75" placeholder="Nhập mã voucher tại đây">
+                <button class="btn btn-primary d-inline">Lưu</button>
+            </div>
+        </div>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Code</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Discount Value</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Created At</th>
-                    <th scope="col">Updated At</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($vouchers as $voucher)
-                    <tr>
-                        <td>{{ $voucher->id }}</td>
-                        <td>{{ $voucher->code }}</td>
-                        <td>
-                            @if($voucher->type == 0)
-                                Giá trị cố định
-                            @else
-                                Triết khấu phần trăm
-                            @endif
-                        </td>
-                        <td>{{ $voucher->discount_value }}</td>
-                        <td>{{ $voucher->description }}</td>
-                        <td>
-                            @switch($voucher->status)
-                                @case(0)
-                                    Không hoạt động
-                                    @break
-                                @case(1)
-                                    Đang hoạt động
-                                    @break
-                                @case(2)
-                                    Đã hết hạn
-                                    @break
-                                @case(3)
-                                    Chờ phát hành
-                                    @break
-                                @default
-                                    Không rõ
-                            @endswitch
-                        </td>
-                        <td>{{ $voucher->created_at->format('d/m/Y H:i') }}</td>
-                        <td>{{ $voucher->updated_at->format('d/m/Y H:i') }}</td>
-                        <td>
-                            {{-- <a class="btn btn-info" href="{{ route('vouchers.show', $voucher->id) }}">Show</a> --}}
-                            <a class="btn btn-outline-warning mb-3" href="{{ route('vouchers.edit', $voucher->id) }}">Edit</a>
+        <!-- Voucher List -->
+        <div class="row">
+            @foreach ($vouchers as $voucher)
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <span class="badge bg-danger">{{ $voucher->type == 0 ? 'Shop Style' : 'Voucher Độc Quyền' }}</span>
+                            </div>
+                            <h5 class="card-title mt-2">Giảm {{ $voucher->discount_value }}% Giảm tối đa {{ $voucher->max_discount }}đ</h5>
+                            <p class="card-text">Đơn tối thiểu: {{ $voucher->discount_min }}đ</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Có hiệu lực: {{ $voucher->used_times }}</small>
+                                <button class="btn btn-outline-primary">Dùng Sau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
 
-                            <form action="{{ route('vouchers.destroy', $voucher->id) }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('Có chắc xóa không?')" class="btn btn-outline-danger mb-3">
-                                    Xóa
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        {{-- Phân trang --}}
-        <div class="pagination justify-content-center">
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center">
             {{ $vouchers->links() }}
         </div>
     </div>
