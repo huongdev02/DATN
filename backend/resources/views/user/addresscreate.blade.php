@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <h1 class="text-center">Thêm mới địa chỉ</h1>
+    <h2 class="text-center">Thêm mới địa chỉ</h2>
 
     <form action="{{ route('address.store') }}" method="POST">
         @csrf

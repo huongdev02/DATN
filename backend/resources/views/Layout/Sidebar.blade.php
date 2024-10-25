@@ -63,7 +63,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('users.index') }}">
+            <a class="nav-link" href="{{ route('managers.index') }}">
                 <span class="menu-title">User</span>
                 <i class="mdi mdi-account menu-icon"></i>
             </a>
