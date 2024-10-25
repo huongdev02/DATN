@@ -56,7 +56,7 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 // Route cho Admin
-Route::controller(AdminController::class)->group(function () {
+Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager'])->group(function () {
     Route::get('/admin/dashboard',  'admin')->name('admin.dashboard');
       // Đổi mật khẩu
     Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form');
@@ -77,10 +77,10 @@ Route::controller(AdminController::class)->group(function () {
     Route::resource('managers', ManagerUserController::class)
     ->middleware(['auth', 'admin']);
 
-})->middleware(['auth', 'AdminOrManager']);
+});
 
 // Route cho User
-Route::controller(UserController::class)->group(function () {
+Route::controller(UserController::class)->middleware(['auth', 'user'])->group(function () {
     Route::get('/user/dashboard', 'user')->name('user.dashboard');
        // Đổi mật khẩu
     Route::get('/user/change-password', 'changepass')->name('user.changepass.form');
@@ -93,7 +93,7 @@ Route::controller(UserController::class)->group(function () {
     //địa chỉ
     Route::resource('address', AddressController::class);
     Route::patch('ship-addresses/{id}/set-default',  [AddressController::class, 'setDefault'])->name('address.set-default');
-})  ->middleware(['auth', 'user']);
+});
 
 
 

@@ -27,7 +27,13 @@
             <input type="text" class="form-control mb-3" name="phone" id="phone" value="{{ old('phone', Auth::user()->phone) }}">
     
             <label for="email">Email</label>
-            <input type="email" class="form-control mb-3" name="email" id="email" value="{{ old('email', Auth::user()->email) }}">
+                @if(Auth::user()->role == 1)
+                    <input type="email" class="form-control mb-3" id="email" value="{{ old('email', Auth::user()->email) }}" disabled>
+                    <input type="hidden" name="email" value="{{ old('email', Auth::user()->email) }}">
+                @else
+                    <input type="email" class="form-control mb-3" name="email" id="email" value="{{ old('email', Auth::user()->email) }}">
+                @endif
+                
     
             <div class="d-flex">
                 @if(!empty(Auth::user()->email))
