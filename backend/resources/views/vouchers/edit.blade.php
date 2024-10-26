@@ -1,4 +1,4 @@
-@extends('master')
+@extends('user.master')
 
 @section('content')
     <h1>Edit Voucher</h1>

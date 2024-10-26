@@ -1,65 +1,46 @@
-@extends('master')
+@extends('user.master')
+
 @section('title')
-    Danh sách voucher
+    Danh sách Voucher
 @endsection
+
 @section('content')
-    <h1>
-        Danh sách voucher
-        <a class="btn btn-info" href="{{ route('vouchers.create') }}">Create</a>
-    </h1>
-
-    @if (session()->has('success') && !session()->get('success'))
-        <div class="alert alert-danger">
-            {{ session()->get('error') }}
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row align-items-center mb-3">
+            <div class="col-md-8">
+                <h1>Kho Voucher</h1>
+            </div>
+            <div class="col-md-4 text-end">
+                <input type="text" class="form-control d-inline w-75" placeholder="Nhập mã voucher tại đây">
+                <button class="btn btn-primary d-inline">Lưu</button>
+            </div>
         </div>
-    @endif
 
-    @if (session()->has('success') && session()->get('success'))
-        <div class="alert alert-info">
-            Thao tác thành công
+        <!-- Voucher List -->
+        <div class="row">
+            @foreach ($vouchers as $voucher)
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <span class="badge bg-danger">{{ $voucher->type == 0 ? 'Shop Style' : 'Voucher Độc Quyền' }}</span>
+                            </div>
+                            <h5 class="card-title mt-2">Giảm {{ $voucher->discount_value }}% Giảm tối đa {{ $voucher->max_discount }}đ</h5>
+                            <p class="card-text">Đơn tối thiểu: {{ $voucher->discount_min }}đ</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Có hiệu lực: {{ $voucher->used_times }}</small>
+                                <button class="btn btn-outline-primary">Dùng Sau</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
-    @endif
 
-    <div class="table-responsive">
-        <table class="table table-primary">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Code</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Discount Value</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Created_at</th>
-                    <th scope="col">Updated_at</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($vouchers as $voucher)
-                    <tr class="">
-                        <td scope="row">{{ $voucher->id }}</td>
-                        <td>{{ $voucher->code }}</td>
-                        <td>{{ $voucher->type }}</td>
-                        <td>{{ $voucher->discount_value }}</td>
-                        <td>{{ $voucher->status }}</td>
-                        <td>{{ $voucher->created_at }}</td>
-                        <td>{{ $voucher->updated_at }}</td>
-                        <td>
-                            <a class="btn btn-info" href="{{ route('vouchers.show', $voucher) }}">Show</a>
-                            <a class="btn btn-warning" href="{{ route('vouchers.edit', $voucher) }}">Edit</a>
-
-                            <form action="{{ route('vouchers.destroy', $voucher) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('Có chắc xóa không?')" class="btn btn-danger">
-                                    Xóa
-                                </button>
-
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center">
+            {{ $vouchers->links() }}
+        </div>
     </div>
 @endsection
