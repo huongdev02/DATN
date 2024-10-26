@@ -41,7 +41,7 @@
                 </li>
                 <li><a href="#" class="btn btn-light w-100 text-start">Đơn Mua</a></li>
                 <li><a href="#" class="btn btn-light w-100 text-start">Thông Báo</a></li>
-                <li><a href="{{route('vouchers.index')}}" class="btn btn-light w-100 text-start">Kho Voucher</a></li>
+                <li><a href="{{route('uservouchers.index')}}" class="btn btn-light w-100 text-start">Kho Voucher</a></li>
                 <li>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf

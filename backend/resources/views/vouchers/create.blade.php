@@ -1,8 +1,6 @@
-@extends('user.master')
-@section('title')
-    Thêm mới voucher
-@endsection
-@section('content')
+@extends('Layout.Layout')
+
+@section('content_admin')
     <h1>Thêm mới voucher</h1>
     <div class="container">
         <form method="POST" action="{{ route('vouchers.store') }}" enctype="multipart/form-data">
