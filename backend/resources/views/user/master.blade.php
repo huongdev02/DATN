@@ -39,7 +39,7 @@
                         <li><a href="#">Cài Đặt Thông Báo</a></li>
                     </ul>
                 </li>
-                <li><a href="#" class="btn btn-light w-100 text-start">Đơn Mua</a></li>
+                <li><a href="{{route('userorder.index')}}" class="btn btn-light w-100 text-start">Đơn Mua</a></li>
                 <li><a href="#" class="btn btn-light w-100 text-start">Thông Báo</a></li>
                 <li><a href="{{route('uservouchers.index')}}" class="btn btn-light w-100 text-start">Kho Voucher</a></li>
                 <li>
