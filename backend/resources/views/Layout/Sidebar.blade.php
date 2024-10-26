@@ -81,5 +81,11 @@
                 <i class="mdi mdi-format-color-fill menu-icon"></i>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('vouchers.index')}}">
+                <span class="menu-title">Voucher</span>
+                <i class="mdi mdi-format-color-fill menu-icon"></i>
+            </a>
+        </li>
     </ul>
 </nav>
