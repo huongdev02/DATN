@@ -62,7 +62,7 @@
         if (confirm('Có chắc muốn chỉnh sửa trạng thái đơn hàng này?')) {
             form.submit();
         } else {
-            selectElement.value = ''; 
+            selectElement.value = '';
         }
     }
 </script>
