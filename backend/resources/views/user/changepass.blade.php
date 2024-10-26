@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <h1 class="text-center">Đổi mật khẩu</h1>
+    <h2 class="text-center">Đổi mật khẩu</h2>
 
     <form action="{{ route('user.password.change') }}" method="POST">
         @csrf
@@ -24,8 +24,9 @@
             <label for="new_password_confirmation">Xác nhận mật khẩu mới</label>
             <input type="password" class="form-control mb-5" name="new_password_confirmation" id="new_password_confirmation" required>
         </div>
-
-        <button type="submit" class="btn btn-success text-center">Đổi mật khẩu</button>
-        <a href="{{route('user.dashboard')}}" class="btn btn-secondary">Quay lai</a>
+        <div class="text-center"> 
+            <button type="submit" class="btn btn-success text-center">Đổi mật khẩu</button>
+            <a href="{{route('user.dashboard')}}" class="btn btn-secondary">Quay lai</a>
+        </div>
     </form>
 @endsection

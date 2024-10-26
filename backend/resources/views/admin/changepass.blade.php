@@ -14,7 +14,7 @@
 
     <h1 class="text-center m-5">Đổi mật khẩu</h1>
 
-    <form action="{{ route('password.change') }}" method="POST">
+    <form action="{{ route('admin.password.change') }}" method="POST">
         @csrf
 
         <div>
@@ -34,7 +34,7 @@
 
         <div class="text-center">
             <button type="submit" class="btn btn-success text-center">Đổi mật khẩu</button>
-            <a href="{{route('user.dashboard')}}" class="btn btn-secondary">Quay lai</a>
+            <a href="{{route('admin.dashboard')}}" class="btn btn-secondary">Quay lai</a>
         </div>
     </form>
 </div>

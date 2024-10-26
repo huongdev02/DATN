@@ -1,4 +1,9 @@
 @extends('Layout.Layout')
+
+@section('title') <!-- Corrected 'tiltle' to 'title' -->
+    Thêm mới sản phẩm
+@endsection
+
 @section('content_admin')
 <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
@@ -10,16 +15,14 @@
 
     <div class="mb-3">
         <label for="avatar">Avatar:</label>
-        <input type="file" name="avatar" class="form-control" required>
+        <input type="file" name="avatar" class="form-control" accept="image/*" required> <!-- Added 'accept' for image types -->
     </div>
 
-    <div class="mb-3" id="gallery-container">
+    <div class="mb-3">
         <label for="images">Gallery:</label>
-        <div class="gallery-input">
-            <input type="file" name="images[]" class="form-control mb-2">
-            <button type="button" class="btn btn-danger btn-sm remove-image">Xóa</button>
-        </div>
-        <button type="button" class="btn btn-success mt-2" id="add-image">Thêm</button>
+        <input type="file" id="image-input" class="form-control" name="image_path[]" multiple accept="image/*" placeholder="Có thể chọn nhiều ảnh">
+        <div id="image-preview-container" class="mt-2"></div>
+        <p id="image-count" class="mt-1">Có thể chọn nhiều ảnh</p>
     </div>
 
     <div class="mb-3">
@@ -39,7 +42,7 @@
 
     <div class="mb-3">
         <label for="category_id">Category:</label>
-        <select name="category_id" id="category_id" class="form-control">
+        <select name="category_id" id="category_id" class="form-control" required>
             @foreach ($categories as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
             @endforeach
@@ -69,45 +72,85 @@
 
     <div class="mb-3">
         <label for="status">Status:</label>
-        <select name="status" class="form-control mb-3 mt-2">
-            <option class="form-control" value="0">Không hoạt động</option>
-            <option class="form-control" value="1" selected>Đang mở bán</option>
-            <option class="form-control" value="2">Ngừng bán</option>
-            <option class="form-control" value="3">Chờ duyệt</option>
+        <select name="status" class="form-control mb-3 mt-2" required>
+            <option value="0">Không hoạt động</option>
+            <option value="1" selected>Đang mở bán</option>
+            <option value="2">Ngừng bán</option>
+            <option value="3">Chờ duyệt</option>
         </select>
     </div>
 
-    <button type="submit" class="btn btn-primary">Create Product</button>
+    <div class="text-center mb-5 mt-3">
+        <button type="submit" class="btn btn-primary">Create Product</button>
+        <a href="{{ route('products.index') }}" class="btn btn-secondary">Quay lại</a>
+    </div>
 </form>
 
+<!-- Image Preview Script -->
 <script>
-    document.getElementById('add-image').addEventListener('click', function() {
-        const galleryContainer = document.getElementById('gallery-container');
-        const newInput = document.createElement('div');
-        newInput.classList.add('gallery-input');
+    const imageInput = document.getElementById('image-input');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imageCount = document.getElementById('image-count');
 
-        // Tạo input file mới
-        const inputFile = document.createElement('input');
-        inputFile.type = 'file';
-        inputFile.name = 'images[]';
-        inputFile.classList.add('form-control', 'mb-2');
+    imageInput.addEventListener('change', function() {
+        const files = Array.from(imageInput.files);
+        imageCount.textContent = `Đã chọn ${files.length} ảnh`;
+        imagePreviewContainer.innerHTML = ''; // Clear previous previews
 
-        // Tạo nút "Xóa"
-        const removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-image');
-        removeButton.textContent = 'Xóa';
+        files.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imagePreview = document.createElement('div');
+                imagePreview.classList.add('image-preview');
 
-        // Thêm input file và nút "Xóa" vào div
-        newInput.appendChild(inputFile);
-        newInput.appendChild(removeButton);
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('preview-img');
 
-        galleryContainer.insertBefore(newInput, this); // Thêm input mới trước nút "+"
-        
-        // Thêm sự kiện click cho nút "Xóa"
-        removeButton.addEventListener('click', function() {
-            galleryContainer.removeChild(newInput); // Xóa input file khi nhấn nút "Xóa"
+                // Create delete button overlay
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('delete-btn');
+                deleteButton.innerHTML = 'X';
+                deleteButton.addEventListener('click', () => {
+                    imagePreview.remove();
+                    files.splice(index, 1); // Remove the file from the list
+                    imageCount.textContent = `Đã chọn ${files.length} ảnh`;
+                });
+
+                imagePreview.appendChild(img);
+                imagePreview.appendChild(deleteButton);
+                imagePreviewContainer.appendChild(imagePreview);
+            };
+            reader.readAsDataURL(file);
         });
     });
 </script>
+
+<!-- Style for Preview Images -->
+<style>
+    .image-preview {
+        position: relative;
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .preview-img {
+        width: 150px;
+        height: 100px;
+        object-fit: cover;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .delete-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: red;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+    }
+</style>
 @endsection

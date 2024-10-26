@@ -14,8 +14,11 @@ class isAdmin
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
-        return Auth::user()->role == 2 ? $next($request) : abort(403);
+        if (Auth::check() && (Auth::user()->role == 2)) {
+            return $next($request);
+        }
+        return abort(403);
     }
 }

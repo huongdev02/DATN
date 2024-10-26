@@ -12,6 +12,7 @@
         height: auto;
     }
 </style>
+<div class="container">
     <a href="{{ route('products.create') }}" class="btn btn-outline-success mb-3">Add New Product</a>
     <table class="table table-bordered table-hover">
        <thead>
@@ -81,11 +82,12 @@
                 <form action="{{ route('products.destroy', $item->id) }}" method="POST" style="display:inline;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('chắc chắn muốn xóa sản phẩm này')">Delete</button>
                 </form>
             </td>
         </tr>
         @endforeach
        </tbody>
     </table>
+</div>
 @endsection
