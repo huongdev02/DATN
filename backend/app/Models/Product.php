@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -18,8 +19,15 @@ class Product extends Model
         'description',
         'display',
         'status',
+        'quantity',
+        'sell_quantity',
+        'view',
     ];
-
+    protected $appends = ['avatar_url'];
+    public function getAvatarUrlAttribute()
+    {
+        return Storage::url($this->avatar);
+    }
     public function galleries()
     {
         return $this->hasMany(Gallery::class);
@@ -28,11 +36,6 @@ class Product extends Model
     public function categories(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
-    }
-
-    public function productDetail()
-    {
-        return $this->hasOne(Product_detail::class);
     }
 
     public function promotions()

@@ -36,6 +36,11 @@
     </div>
 
     <div class="mb-3">
+        <label for="price">Quantity</label>
+        <input type="number" name="quantity" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
         <label for="description">Description:</label>
         <textarea name="description" class="form-control" rows="10"></textarea>
     </div>

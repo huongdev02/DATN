@@ -20,6 +20,17 @@ class CartController extends Controller
             return response()->json(['error' => 'Failed to fetch cart items'], 500);
         }
     }
+
+    public function show($id)
+    {
+        try {
+            $cartItems = Cart::findOrFail($id);
+            return response()->json($cartItems);
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch cart items:' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch cart items'], 500);
+        }
+    }
     public function store(Request $request)
     {
         try {

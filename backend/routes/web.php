@@ -58,40 +58,6 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 // Route cho Admin
-
-Route::controller(AdminController::class)->group(function () {
-    Route::get('/admin/dashboard',  'admin')->name('admin.dashboard')
-    ->middleware(['auth', 'admin']);
-
-      // Đổi mật khẩu
-    Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form')->middleware('auth');
-    Route::post('/admin/change-password', 'changepass_')->name('admin.password.change')->middleware('auth');
-
-    // Cập nhật tài khoản
-    Route::get('/admin/edit', 'edit')->name('admin.edit')->middleware('auth');
-    Route::post('/admin/update', 'update')->name('admin.update')->middleware('auth');
-});
-
-// Route cho User
-Route::controller(UserController::class)->group(function () {
-    Route::get('/user/dashboard', 'user')->name('user.dashboard')
-    ->middleware(['auth', 'user']);
-
-       // Đổi mật khẩu
-    Route::get('/user/change-password', 'changepass')->name('user.changepass.form')->middleware('auth');
-    Route::post('/user/change-password', 'changepass_')->name('user.password.change')->middleware('auth');
-
-    // Cập nhật tài khoản
-    Route::get('/user/edit', 'edit')->name('user.edit')->middleware('auth');
-    Route::post('/user/update', 'update')->name('user.update')->middleware('auth');
-
-    //địa chỉ
-    Route::resource('address', AddressController::class);
-    Route::patch('ship-addresses/{id}/set-default',  [AddressController::class, 'setDefault'])->name('address.set-default');
-});
-
-Route::resource('products', ProductController::class);
-
 Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager'])->group(function () {
     Route::get('/admin/dashboard',  'admin')->name('admin.dashboard');
       // Đổi mật khẩu
@@ -129,17 +95,7 @@ Route::controller(UserController::class)->middleware(['auth', 'user'])->group(fu
     Route::patch('ship-addresses/{id}/set-default',  [AddressController::class, 'setDefault'])->name('address.set-default');
 
     Route::resource('uservouchers', UservoucherController::class);
+    Route::resource('userorder', UserOrderController::class);
 });
 
 
-
-Route::resource('sizes', SizeController::class);
-Route::resource('colors', ColorController::class);
-Route::resource('categories', CategoryController::class);
-
-Route::resource('vouchers', VoucherController::class);
-
-Route::resource('orders', OrderController::class);
-
-Route::resource('uservouchers', UservoucherController::class);
-Route::resource('userorder', UserOrderController::class);

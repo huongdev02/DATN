@@ -23,10 +23,12 @@
             <th>Avatar</th>
             <th>Old Price</th>
             <th>Price</th>
-            <th>Description</th>
+            <th>Quantity</th>
+            <th>Sell</th>
             <th>Galleries</th>
             <th>Size</th>
             <th>Color</th>
+            <th>View</th>
             <th>Actions</th>
         </tr>
        </thead>
@@ -41,7 +43,8 @@
             </td>
             <td>{{ number_format($item->old_price, 2) }} VND</td>
             <td>{{ number_format($item->price, 2) }} VND</td>
-            <td>{{ $item->description }}</td>
+            <td>{{ $item->quantity }}</td>
+            <td>{{ $item->sell_quantity }}</td>
             <td>
                 @if($item->galleries->isNotEmpty())
                 <div class="gallery-flex">
