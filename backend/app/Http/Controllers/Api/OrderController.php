@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Order_detail;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -14,7 +15,7 @@ class OrderController extends Controller
     public function index()
     {
         try {
-            $orders = Order::all();
+            $orders = Order::with('orderDetails')->get();
             return response()->json([
                 'message' => 'Lấy tất cả đơn hàng thành công.',
                 'data' => $orders
@@ -32,13 +33,18 @@ class OrderController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|exists:users,id',
-                'product_id' => 'required|exists:products,id',
-                'quantity' => 'required|integer|min:1',
                 'total_amount' => 'required|numeric',
-                'payment_method' => 'required|string',
-                'ship_method' => 'required|string',
+                'payment_method' => 'required|integer|min:0|max:3',
+                'ship_method' => 'required|integer|min:0|max:3',
+                'status' => 'required|integer|min:0|max:3',
                 'ship_address_id' => 'required|exists:ship_addresses,id',
-                'status' => 'required|string',
+                'order_details.*.product_detail_id' => 'required|exists:product_details,id',
+                'order_details.*.quantity' => 'required|integer|min:1',
+                'order_details.*.price' => 'required|numeric',
+                'order_details.*.price' => 'required|numeric',
+                'order_details.*.name_product' => 'required|string|max:250',
+                'order_details.*.size' => 'required|string|max:50',
+                'order_details.*.color' => 'required|string|max:50',
             ]);
     
             if ($validator->fails()) {
@@ -47,17 +53,15 @@ class OrderController extends Controller
                     'errors' => $validator->errors()
                 ], 422);
             }
-    
-            $order = Order::create([
-                'user_id' => $request->user_id,
-                'product_id' => $request->product_id,
-                'quantity' => $request->quantity,
-                'total_amount' => $request->total_amount,
-                'payment_method' => $request->payment_method,
-                'ship_method' => $request->ship_method,
-                'ship_address_id' => $request->ship_address_id,
-                'status' => $request->status,
-            ]);
+
+            $data = $request->except('order_details');
+            $orderDetails = $request->only('order_details');
+
+            $order = Order::create($data);
+            foreach ($orderDetails['order_details'] as $detail){
+                $detail['order_id'] = $order->id;
+                Order_detail::insert($detail);
+            }
     
             return response()->json([
                 'message' => 'Thêm đơn hàng thành công.',
@@ -75,7 +79,7 @@ class OrderController extends Controller
     public function show($id)
     {
         try {
-            $order = Order::findOrFail($id);
+            $order = Order::with('orderDetails')->findOrFail($id);
             return response()->json([
                 'message' => 'Lấy đơn hàng thành công.',
                 'data' => $order
