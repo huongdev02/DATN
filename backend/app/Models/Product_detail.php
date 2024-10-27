@@ -32,4 +32,13 @@ class Product_detail extends Model
     {
         return $this->belongsTo(Color::class);
     }
+
+    public function cart(){
+        return $this->belongsToMany(Cart::class, 'cart_items')
+        ->wherePivot('quantity');
+    }
+
+    public function orderDetails(){
+        return $this->hasMany(Order_detail::class);
+    }
 }

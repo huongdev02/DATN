@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Cart extends Model
 {
@@ -20,8 +21,9 @@ class Cart extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function product()
+    public function productDetails()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsToMany(Product_detail::class, 'cart_items')
+        ->withPivot('quantity');
     }
 }
