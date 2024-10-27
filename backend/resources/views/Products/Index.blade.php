@@ -80,6 +80,7 @@
                     không có màu
                 @endif
             </td>
+            <td>{{$item->view}}</td>
             <td>
                 <a href="{{ route('products.edit', $item->id) }}" class="btn btn-outline-warning">Edit</a>
                 <form action="{{ route('products.destroy', $item->id) }}" method="POST" style="display:inline;">
