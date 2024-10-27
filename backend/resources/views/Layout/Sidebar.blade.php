@@ -10,7 +10,11 @@
                     <span class="font-weight-bold mb-2">
                         {{ Auth::user()->fullname ?? Auth::user()->email ?? Auth::user()->username }}
                     </span>
-                    <span class="text-secondary text-small">Admin</span>
+                    @if(Auth::user()->role == 2)
+                        <span>Admin</span>
+                    @elseif(Auth::user()->role == 1)
+                        <span>Manager</span>
+                    @endif
                 </div>
                 <!-- Dropdown toggle icon -->
                 <span class="mdi mdi-dots-vertical mdi-24px ms-3"></span>
