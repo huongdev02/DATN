@@ -33,7 +33,7 @@ const CategoriesSlider: React.FC = () => {
                                         </a>
                                     </div>
                                     <div className="cardInfo">
-                                        <a href="#">Kids Toys</a>
+                                        <a href="#">Nam</a>
                                     </div>
                                 </div>
                             </SwiperSlide>
@@ -45,7 +45,7 @@ const CategoriesSlider: React.FC = () => {
                                         </a>
                                     </div>
                                     <div className="cardInfo">
-                                        <a href="#">Teddy Bear</a>
+                                        <a href="#">Nữ</a>
                                     </div>
                                 </div>
                             </SwiperSlide>
@@ -57,7 +57,7 @@ const CategoriesSlider: React.FC = () => {
                                         </a>
                                     </div>
                                     <div className="cardInfo">
-                                        <a href="#">Boys</a>
+                                        <a href="#">Trẻ em</a>
                                     </div>
                                 </div>
                             </SwiperSlide>
