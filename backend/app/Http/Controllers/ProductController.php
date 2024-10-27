@@ -63,7 +63,7 @@ class ProductController extends Controller
         try {
             $avatarPath = null;
             if ($request->hasFile('avatar')) {
-                $avatarPath = $request->file('avatar')->store('avatars', 'public');
+                $avatarPath = $request->file('avatar')->store('ProductAvatars', 'public');
             }
 
 
@@ -83,7 +83,7 @@ class ProductController extends Controller
 
             if ($request->hasFile('image_path')) {
                 foreach ($request->file('image_path') as $image) {
-                    $imagePath = $image->store('galleries', 'public');
+                    $imagePath = $image->store('ProductGalleries', 'public');
                     Gallery::create([
                         'product_id' => $product->id,
                         'image_path' => $imagePath,
@@ -136,7 +136,7 @@ class ProductController extends Controller
                     Storage::disk('public')->delete($product->avatar);
                 }
                 // Lưu ảnh mới
-                $avatarPath = $request->file('avatar')->store('avatars', 'public');
+                $avatarPath = $request->file('avatar')->store('ProductAvatars', 'public');
                 $product->update(['avatar' => $avatarPath]);
             }
 
@@ -150,7 +150,7 @@ class ProductController extends Controller
             // Xử lý hình ảnh trong thư viện
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
-                    $imagePath = $image->store('images', 'public');
+                    $imagePath = $image->store('ProductGalleries', 'public');
                     $product->galleries()->create(['image_path' => $imagePath]);
                 }
             }
