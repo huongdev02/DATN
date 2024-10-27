@@ -55,6 +55,12 @@
     </div>
 
     <div class="mb-3">
+        <label for="price">Quantity</label>
+        <input type="number" name="quantity" class="form-control"
+            value="{{ old('price', $product->quantity) }}" required>
+    </div>
+
+    <div class="mb-3">
         <label for="description">Description:</label>
         <textarea name="description" class="form-control">{{ old('description', $product->description) }}</textarea>
     </div>
