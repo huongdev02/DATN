@@ -42,6 +42,9 @@ const CartComponent: React.FC = () => {
     }
   };
 
+  console.log("data", products);
+  
+
   const getProductById = (id: number | string) => {
     return products.find((product) => product.id === id);
   };
