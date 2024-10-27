@@ -12,6 +12,7 @@ export type IProduct = {
     id: string;
     name: string;
     avatar: string;
+    avatar_url: string;
     category_id: number;
     import_price: number;
     price: number;

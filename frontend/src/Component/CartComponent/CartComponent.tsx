@@ -91,7 +91,7 @@ const CartComponent: React.FC = () => {
                           <td>
                             <div className="box-product-cart">
                               <a className="image-product-cart" href="#">
-                                <img src={product?.avatar} alt="kidify" />
+                                <img src={product?.avatar_url} alt="kidify" />
                               </a>
                               <a
                                 className="title-product-cart"
