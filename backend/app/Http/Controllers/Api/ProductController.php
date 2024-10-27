@@ -34,7 +34,7 @@ class ProductController extends Controller
                     'id' => $gallery->id,
                     'product_id' => $gallery->product_id,
                     'image_path' => $gallery->image_path,
-                    'image_url' => $gallery->image_url, // Đảm bảo rằng image_url được lấy đúng
+                    'image_url' => $gallery->image_url,
                     'created_at' => $gallery->created_at,
                     'updated_at' => $gallery->updated_at,
                 ];
@@ -45,7 +45,8 @@ class ProductController extends Controller
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
-                'avatar_url' => $product->avatar ? asset($product->avatar) : null, // Đường dẫn hoàn chỉnh cho avatar_url
+                // Giả sử avatar_url được lưu trữ trong thư mục storage
+                'avatar_url' => $product->avatar ? asset('storage/avatars/' . basename($product->avatar)) : null,
                 'categories' => $product->categories,
                 'colors' => $product->colors,
                 'sizes' => $product->sizes,
@@ -59,6 +60,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
         }
     }
+    
     
     
 }
