@@ -15,7 +15,8 @@ export type IProduct = {
     avatar_url: string;
     category_id: number;
     import_price: number;
-    size: string;
+    sizes: Size[];
+    colors: Color[]
     price: number;
     description: string;
     display: number;
@@ -29,6 +30,24 @@ export type IProduct = {
     fullname: string;
 
   };
+
+ export interface Color {
+    id: number;
+    name_color: string;
+    pivot: {
+      product_id: number;
+      color_id: number;
+    };
+  }
+  
+ export interface Size {
+    id: number;
+    size: string; 
+    pivot: {
+      product_id: number;
+      size_id: number;
+    };
+  }
 
 
   

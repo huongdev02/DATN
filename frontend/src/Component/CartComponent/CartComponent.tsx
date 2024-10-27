@@ -6,44 +6,35 @@ import IgFour from "../../assets/imgs/page/homepage1/instagram4.png";
 import IgTwo from "../../assets/imgs/page/homepage1/instagram2.png";
 import IgFive from "../../assets/imgs/page/homepage1/instagram5.png";
 import { Link } from "react-router-dom";
-import { Cart, IProduct, UserCart } from "../../types/cart";
+import { Cart, IProduct, UserCart, Size } from "../../types/cart";
 import { useState, useEffect } from "react";
 import api from "../../configAxios/axios";
 import { message } from "antd";
 import { log } from "console";
 
-export interface Size{
-    size: string;
-}
-
 const CartComponent: React.FC = () => {
   const [carts, setCarts] = useState<Cart[]>([]);
   const [products, setProducts] = useState<IProduct[]>([]);
-  const [sizes, setSizes] = useState<Size>();
+  const [sizes, setSizes] = useState<Size[]>([]);
   const GetAllCart = async () => {
     try {
       const { data } = await api.get("/carts");
       setCarts(data);
-      if (data.sizes) { 
-        setSizes(data.sizes);
-      }
     } catch (error) {
       message.error("Lỗi api !");
     }
   };
-  console.log(" cart", products);
+
 
   const GetProduct = async () => {
     try {
-      const { data } = await api.get("/products");
+      const { data } = await api.get(`/products/`);
       setProducts(data);
     } catch (error) {
       message.error("Lỗi api !");
     }
   };
-
-  console.log("data", products);
-  
+  console.log(" cart", sizes);
 
   const getProductById = (id: number | string) => {
     return products.find((product) => product.id === id);
@@ -107,23 +98,26 @@ const CartComponent: React.FC = () => {
                               <a
                                 className="title-product-cart"
                                 href="product-single.html"
-                              >
-                              </a>
+                              ></a>
                             </div>
                           </td>
                           <td className="size">
-                            <span className="brand-1">
-                             {sizes?.size}
+                            <span>
+                              {product?.sizes.map((sizes, index) => (
+                                <span key={index} className="brand-1">
+                                  {sizes.size}
+                                </span>
+                              ))}
                             </span>
                           </td>
                           <td className="price">
-                          {Math.round(product?.price ?? 0).toLocaleString(
-                                "vi-VN",
-                                {
-                                  style: "currency",
-                                  currency: "VND",
-                                }
-                              )}
+                            {Math.round(product?.price ?? 0).toLocaleString(
+                              "vi-VN",
+                              {
+                                style: "currency",
+                                currency: "VND",
+                              }
+                            )}
                           </td>
                           <td>
                             <div className="product-quantity">
