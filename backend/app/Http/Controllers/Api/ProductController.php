@@ -25,8 +25,10 @@ class ProductController extends Controller
                 return response()->json(['message' => 'Sản phẩm không tồn tại.'], 404);
             }
     
+            // Tải các quan hệ cần thiết
             $product->load(['categories:id,name', 'colors:id,name_color', 'sizes:id,size', 'galleries']);
     
+            // Map qua galleries để lấy các thông tin cần thiết
             $product->galleries = $product->galleries->map(function ($gallery) {
                 return [
                     'id' => $gallery->id,
@@ -38,9 +40,27 @@ class ProductController extends Controller
                 ];
             });
     
-            return response()->json($product);
+            // Tạo phản hồi với avatar_url
+            $response = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                // Giả sử avatar_url được lưu trữ trong thư mục storage
+                'avatar_url' => $product->avatar ? asset('storage/avatars/' . basename($product->avatar)) : null,
+                'categories' => $product->categories,
+                'colors' => $product->colors,
+                'sizes' => $product->sizes,
+                'galleries' => $product->galleries,
+                'created_at' => $product->created_at,
+                'updated_at' => $product->updated_at,
+            ];
+    
+            return response()->json($response);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
         }
     }
+    
+    
+    
 }
