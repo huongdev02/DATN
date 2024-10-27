@@ -11,14 +11,22 @@ import { useState, useEffect } from "react";
 import api from "../../configAxios/axios";
 import { message } from "antd";
 import { log } from "console";
+
+export interface Size{
+    size: string;
+}
+
 const CartComponent: React.FC = () => {
   const [carts, setCarts] = useState<Cart[]>([]);
   const [products, setProducts] = useState<IProduct[]>([]);
-
+  const [sizes, setSizes] = useState<Size>();
   const GetAllCart = async () => {
     try {
       const { data } = await api.get("/carts");
       setCarts(data);
+      if (data.sizes) { 
+        setSizes(data.sizes);
+      }
     } catch (error) {
       message.error("Lỗi api !");
     }
@@ -97,13 +105,12 @@ const CartComponent: React.FC = () => {
                                 className="title-product-cart"
                                 href="product-single.html"
                               >
-                                {product?.name}
                               </a>
                             </div>
                           </td>
                           <td className="size">
                             <span className="brand-1">
-                             XL
+                             {sizes?.size}
                             </span>
                           </td>
                           <td className="price">
