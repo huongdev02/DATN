@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Product;
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('carts', function (Blueprint $table) {
+        Schema::create('cards', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class)->constrained();
+            $table->string('card_number')->unique();
+            $table->string('card_name'); // Tên chủ thẻ
+            $table->date('expiration_date');
+            $table->date('issue_date')->nullable(); // Ngày phát hành, có thể không bắt buộc
+            $table->string('cvv');
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('carts');
+        Schema::dropIfExists('cards');
     }
 };

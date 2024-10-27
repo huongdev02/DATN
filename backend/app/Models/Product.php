@@ -33,11 +33,6 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function productDetail()
-    {
-        return $this->hasOne(Product_detail::class);
-    }
-
     public function promotions()
     {
         return $this->hasMany(Promotion::class);

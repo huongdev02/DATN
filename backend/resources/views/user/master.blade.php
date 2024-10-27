@@ -33,7 +33,7 @@
                     </button>
                     <ul class="dropdown-content list-unstyled ps-3" style="display: block;"> <!-- Đặt display: block -->
                         <li><a href="{{route('user.edit')}}">Hồ Sơ</a></li>
-                        <li><a href="#">Ngân Hàng</a></li>
+                        <li><a href="{{route('card.index')}}">Ngân Hàng</a></li>
                         <li><a href="{{route('address.index')}}">Địa Chỉ</a></li>
                         <li><a href="{{route('user.changepass.form')}}">Đổi Mật Khẩu</a></li>
                         <li><a href="#">Cài Đặt Thông Báo</a></li>

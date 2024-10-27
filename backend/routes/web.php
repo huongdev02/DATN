@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CardController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ManagerUserController;
 use App\Http\Controllers\SizeController;
@@ -96,6 +97,8 @@ Route::controller(UserController::class)->middleware(['auth', 'user'])->group(fu
 
     Route::resource('uservouchers', UservoucherController::class);
     Route::resource('userorder', UserOrderController::class);
+    Route::resource('card', CardController::class);
+
 });
 
 
