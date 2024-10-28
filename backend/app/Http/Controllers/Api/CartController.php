@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Product_detail;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
@@ -43,17 +44,22 @@ class CartController extends Controller
                 'user_id' => 'required|exists:users,id',
                 'quantity' => 'required|integer|min:1',
             ]);
+    
             $cartItem = $request->except('user_id');
             $data = $request->only('user_id');
+    
             $isCart = Cart::where('user_id', $data['user_id'])->first();
-            if(isset($isCart)){
-                $isCart->productDetails()->attach($cartItem['product_detail_id'],['quantity' => $cartItem['quantity']]);
-                return response()->json($isCart, 201);              
+            
+            if (isset($isCart)) {
+                $isCart->productDetails()->attach($cartItem['product_detail_id'], ['quantity' => $cartItem['quantity']]);
+                return response()->json($isCart, 201);
             }
+    
+            // Nếu không có giỏ hàng, tạo giỏ hàng mới
             $cart = Cart::create($data);
-            $cart->productDetails()->attach($cartItem['product_detail_id'],['quantity' => $cartItem['quantity']]);
+            $cart->productDetails()->attach($cartItem['product_detail_id'], ['quantity' => $cartItem['quantity']]);
             return response()->json($cart, 201);
-
+    
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'error' => $e->errors()
@@ -65,6 +71,7 @@ class CartController extends Controller
             ], 500);
         }
     }
+    
 
     public function show($id){
         try {
@@ -126,6 +133,43 @@ class CartController extends Controller
             $cart = Cart::findOrFail($id);
             $cart->productDetails()->detach();
             return response()->json(null, 204);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Cart item not found'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete cart item: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroyByProductId($id, $cartId)
+    {
+        try {
+            $cart = Cart::findOrFail($cartId);
+            $cart->productDetails()->detach($id);
+            return $cart;
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Cart item not found'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete cart item: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroyByProductIdLogin($id)
+    {
+        try {
+            $user = Auth::user();
+            $cart = Cart::where('user_id', $user->id)->first();
+            $cart->productDetails()->detach($id);
+            return $cart;
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'error' => 'Cart item not found'

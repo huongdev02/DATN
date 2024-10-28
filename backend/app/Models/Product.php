@@ -25,15 +25,19 @@ class Product extends Model
         return $this->hasMany(Gallery::class);
     }
 
+  // app/Models/Product.php
+
+public function productDetails()
+{
+    return $this->hasMany(Product_detail::class);
+}
+
+
     public function categories(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function productDetail()
-    {
-        return $this->hasOne(Product_detail::class);
-    }
 
     public function promotions()
     {
@@ -50,13 +54,13 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
-    public function colors()
-    {
-        return $this->belongsToMany(Color::class, 'product_color');
-    }
-
     public function sizes()
     {
-        return $this->belongsToMany(Size::class, 'product_size');
+        return $this->belongsToMany(Size::class, 'product_details'); 
+    }
+
+    public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'product_details'); 
     }
 }

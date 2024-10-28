@@ -38,7 +38,7 @@ class ReviewController extends Controller
                 'image_path' => 'nullable|string',
                 'rating' => 'required|integer|min:1|max:5',
                 'comment' => 'nullable|string|max:255',
-                'status' => 'required|string',
+                // 'status' => 'required|string',
             ]);
 
             // Nếu có lỗi xác thực, trả về lỗi 422

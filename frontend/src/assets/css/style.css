@@ -8939,30 +8939,6 @@ h5.item-collapse.collapsed-item {
   height: 48px;
   margin-right: 8px;
 }
-.box-form-cart .form-cart .minus {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 54px;
-  height: 100%;
-  z-index: 2;
-  background-image: url(../imgs/template/icons/minus.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-}
-.box-form-cart .form-cart .plus {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 54px;
-  height: 100%;
-  z-index: 2;
-  background-image: url(../imgs/template/icons/plus.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-}
 .box-form-cart .form-cart input[type=text] {
   border: 0px;
   height: 100%;
@@ -9016,6 +8992,37 @@ h5.item-collapse.collapsed-item {
 .block-product-content {
   padding-top: 40px;
 }
+
+.quantity-input {
+  display: flex;
+  align-items: center;
+}
+
+.minus
+ {
+  position: absolute;
+  height: 100%;
+  width: 40px;
+  background: #fff;
+  border: 1px solid #000;
+}
+
+.plus {
+  position: absolute;
+  height: 100%;
+  width: 40px;
+  background: #fff;
+  border: 1px solid #000;
+  right: 0;
+  bottom: 0;
+}
+.quantity-input input {
+  width: 40px;
+  text-align: center;
+  border: 1px solid #ccc;
+  margin: 0 5px;
+}
+
 
 .zoom-image {
   position: absolute;
@@ -10461,17 +10468,7 @@ h5.item-collapse.collapsed-item {
     max-width: 100%;
     min-width: auto;
   }
-  .box-form-cart .form-cart .minus {
-    width: 44px;
-  }
-  .box-form-cart .form-cart .plus {
-    width: 44px;
-  }
-  .box-form-cart .btn {
-    margin-right: 0px;
-    margin-bottom: 20px;
-    width: 50%;
-  }
+
   .number-product {
     display: none;
   }

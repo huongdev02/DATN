@@ -4,12 +4,19 @@ import Product from "../../assets/imgs/page/homepage1/product24.png";
 import ProductTwo from "../../assets/imgs/page/homepage1/product25.png";
 import ProductThree from "../../assets/imgs/page/homepage1/product26.png";
 import Star from "../../assets/imgs/template/icons/star.svg"
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/store';
 const Header: React.FC = () => {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [isCartActice, setIsCartActice] = useState(false);
     const [isAccountActive, setIsAccountActive] = useState(false);
     const [activeTab, setActiveTab] = useState('login');
+    const location = useLocation();
+    const items = useSelector((state: RootState) => state.cart.items);
+    console.log(items);
+    
+
 
     const showLoginForm = () => {
         setActiveTab('login');
@@ -260,50 +267,45 @@ const Header: React.FC = () => {
                 </div>
             </div>
             <div className="box-popup-cart perfect-scrollbar" style={{ visibility: isCartActice ? 'visible' : 'hidden' }}>
-                <div className="box-cart-overlay" />
-                <div className={`box-cart-wrapper ${isCartActice ? 'active' : ''}`}><a onClick={closeCartPopup} href="#">
-                    <svg className="icon-16 d-inline-flex align-items-center justify-content-center" fill="#111111" stroke="#111111" width={24} height={24} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg></a>
-                    <h5 className="mb-15 mt-50">Your Cart</h5>
-                    <div className="list-product-4 mb-50">
-                        <div className="cardProduct cardProduct4">
-                            <div className="cardImage"><a href="product-single.html"><img src={Product} alt="kidify" /></a></div>
-                            <div className="cardInfo"><a href="product-single.html">
-                                <h6 className="font-md-bold cardTitle">Toddler Tutu Dress</h6></a>
-                                <div className="rating"><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /></div>
-                                <div className="product-price-bottom">
-                                    <p className="font-lg cardDesc">$185.00</p>
-                                    <p className="font-lg neutral-500 cardPriceSale">$196.00</p>
-                                </div>
-                            </div>
+                <div className="box-cart-overlay">
+                    <div className={`box-cart-wrapper ${isCartActice ? 'active' : ''}`}>
+                        <a onClick={closeCartPopup} href="#">
+                            <svg className="icon-16 d-inline-flex align-items-center justify-content-center" fill="#111111" stroke="#111111" width={24} height={24} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </a>
+                        <h5 className="mb-15 mt-50">Your Cart</h5>
+                        <div className="list-product-4 mb-50">
+                            {(Array.isArray(items) && items.length > 0) ? (
+                                items.map((item: any) => (
+                                    <div key={item.id} className="cardProduct cardProduct4">
+                                        <div className="cardImage">
+                                            <Link to={`/product/${item.id}`}>
+                                                <img src={item.avatar || Product} alt={item.name} />
+                                            </Link>
+                                        </div>
+                                        <div className="cardInfo">
+                                            <Link to={`/product/${item.id}`}>
+                                                <h6 className="font-md-bold cardTitle">{item.name}</h6>
+                                            </Link>
+                                            <div className="product-price-bottom">
+                                                <p className="font-lg cardDesc">${item.price}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>Your cart is empty.</p>
+                            )}
+
                         </div>
-                        <div className="cardProduct cardProduct4">
-                            <div className="cardImage"><a href="product-single.html"><img src={ProductTwo} alt="kidify" /></a></div>
-                            <div className="cardInfo"><a href="product-single.html">
-                                <h6 className="font-md-bold cardTitle">Baby Bear Hoodie</h6></a>
-                                <div className="rating"><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /></div>
-                                <div className="product-price-bottom">
-                                    <p className="font-lg cardDesc">$185.00</p>
-                                    <p className="font-lg neutral-500 cardPriceSale">$196.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="cardProduct cardProduct4">
-                            <div className="cardImage"><a href="product-single.html"><img src={ProductThree} alt="kidify" /></a></div>
-                            <div className="cardInfo"><a href="product-single.html">
-                                <h6 className="font-md-bold cardTitle">Petite Pinafore Dress</h6></a>
-                                <div className="rating"><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /></div>
-                                <div className="product-price-bottom">
-                                    <p className="font-lg cardDesc">$185.00</p>
-                                    <p className="font-lg neutral-500 cardPriceSale">$196.00</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div><Link to='/cart' onClick={closeCartPopup} className="btn btn-brand-1-xl-bold w-100 font-md-bold">View your cart
-                        <svg className="icon-16 ml-5" fill="none" stroke="#ffffff" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-                        </svg></Link>
+                        <Link to='/cart' onClick={closeCartPopup} className="btn btn-brand-1-xl-bold w-100 font-md-bold">
+                            View your cart
+                            <svg className="icon-16 ml-5" fill="none" stroke="#ffffff" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                            </svg>
+                        </Link>
+                    </div>
                 </div>
             </div>
             <div className="box-popup-account" style={{ visibility: isAccountActive ? 'visible' : 'hidden', display: isAccountActive ? 'block' : 'none' }}>

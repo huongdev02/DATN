@@ -16,7 +16,7 @@
     <div class="mb-3" id="gallery-container">
         <label for="images">Gallery:</label>
         <div class="gallery-input">
-            <input type="file" name="images[]" class="form-control mb-2">
+            <input type="file" name="images[]" class="form-control mb-2" multiple>
             <button type="button" class="btn btn-danger btn-sm remove-image">Xóa</button>
         </div>
         <button type="button" class="btn btn-success mt-2" id="add-image">Thêm</button>

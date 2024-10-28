@@ -12,7 +12,8 @@ class Ship_address extends Model
         'user_id',
         'ship_address',
         'phone_number',
-        'recipient_name'
+        'recipient_name',
+        'email'
     ];
 
     public function user()

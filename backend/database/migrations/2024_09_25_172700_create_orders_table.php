@@ -20,12 +20,12 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(Product::class)->constrained();
             $table->unsignedInteger('quantity');
-            $table->decimal('total_amount', 10, 2);//0: Đang chờ xử lí, 1: Đã xử lí/ đang chuẩn bị sản phẩm, 2: Đang vận chuyển, 3: Giao hàng thành công, 4: Đơn hàng đã bị hủy, 5: Đơn hàng đã được trả lại bởi người dung
-            $table->tinyInteger('payment_method')->default(1);// 0: tiền mặt, 1: chuyển khoản ngân hàng, 2: thanh toán qua thẻ atm
-            $table->tinyInteger('ship_method')->default(1);// 0: giao hàng tiêu chuẩn, 1: giao hàng hỏa tốc
+            $table->decimal('total_amount', 10, 2); //0: Đang chờ xử lí, 1: Đã xử lí/ đang chuẩn bị sản phẩm, 2: Đang vận chuyển, 3: Giao hàng thành công, 4: Đơn hàng đã bị hủy, 5: Đơn hàng đã được trả lại bởi người dung
+            $table->foreignId('payment_method_id')->constrained('payment_method')->onDelete('cascade');
+            $table->tinyInteger('ship_method')->default(1); // 0: giao hàng tiêu chuẩn, 1: giao hàng hỏa tốc
 
             $table->foreignIdFor(Ship_address::class)->constrained();
-            $table->tinyInteger('status')->default(0);
+            $table->enum('status', ['pending', 'completed', 'canceled', 'refunded']);
             $table->timestamps();
         });
         DB::statement('ALTER TABLE `orders` ADD CONSTRAINT `check_payment_method` CHECK (`payment_method` >= 0 AND `payment_method` <= 2)');

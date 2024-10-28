@@ -1,34 +1,67 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { fetchProducts } from "../API/GET/GetProduct";
+// src/redux/productSlice.ts
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-const productsSlice = createSlice({
+interface Colors {
+    id: string;
+    name_color: string;
+    hex_color: string;
+}
+
+interface Sizes {
+    id: string;
+    size: string;
+}
+
+export interface Product {
+    id: string;
+    name: string;
+    import_price: number;
+    price: number;
+    description: string;
+    avatar: string
+    colors: Colors[]; 
+    sizes: Sizes[]; 
+}
+
+interface ProductState {
+    products: Product[];
+    loading: boolean;
+    error: string | null;
+}
+
+const initialState: ProductState = {
+    products: [],
+    loading: false,
+    error: null,
+};
+
+export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
+    const response = await fetch('http://127.0.0.1:8000/api/products'); 
+    if (!response.ok) {
+        throw new Error('Failed to fetch products');
+    }
+    const data = await response.json();
+    return data;
+});
+
+const ProductReducer = createSlice({
     name: 'products',
-    initialState: {
-        products: [],
-        loading: false,
-        error: null,
-    },
+    initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(fetchProducts.pending, (state) => {
-                state.loading = true; // Đang tải
-                state.error = null; // Không có lỗi
+                state.loading = true;
             })
             .addCase(fetchProducts.fulfilled, (state, action) => {
-                state.loading = false; // Đã tải xong
-                state.products = action.payload; // Lưu dữ liệu sản phẩm
+                state.loading = false;
+                state.products = action.payload; // Giả sử API trả về một mảng sản phẩm
             })
             .addCase(fetchProducts.rejected, (state, action) => {
-                state.loading = false; // Đã tải xong
-                state.error = action.error.message; // Lưu lỗi nếu có
+                state.loading = false;
+                state.error = action.error.message || 'Something went wrong';
             });
     },
 });
 
-// Xuất các selector và reducer
-export const selectProducts = (state) => state.products.products;
-export const selectLoading = (state) => state.products.loading;
-export const selectError = (state) => state.products.error;
-
-export default productsSlice.reducer;
+export default ProductReducer.reducer;

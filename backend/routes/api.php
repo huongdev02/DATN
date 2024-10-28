@@ -8,9 +8,11 @@ use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PayController;
+use App\Http\Controllers\Api\PaymentMethod;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PromotionController;
+use App\Http\Controllers\Api\ShipAddressController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,11 +36,16 @@ Route::apiResource('reviews', ReviewController::class);
 Route::apiResource('orders', OrderController::class);
 Route::apiResource('payments', PayController::class);
 Route::apiResource('carts', CartController::class);
+Route::controller(CartController::class)->name('carts.')->prefix('carts/')->group(function () {
+    Route::delete('destroyOne/{productId}&{cartId}', 'destroyByProductId')->name('destroyOne');
+    Route::delete('destroyLogin/{productId}', 'destroyByProductIdLogin')->name('destroyLogin');
+});
+
 Route::apiResource('products', ProductController::class);
 Route::resource('promotions', PromotionController::class);
 
 Route::apiResource('categories', CategoryController::class);
-
+Route::get('/categories/{id}/products', [CategoryController::class, 'getProductsByCategory']);
 
 Route::controller(AccountController::class)->group(function () {
     // Đăng nhập
@@ -51,5 +58,5 @@ Route::apiResource('sizes', SizeController::class);
 Route::apiResource('colors', ColorController::class);
 Route::apiResource('vouchers', VoucherController::class);
 Route::apiResource('users', UserController::class);
-
-
+Route::apiResource('payment_methods', PaymentMethod::class);
+Route::apiResource('ship_addresses', ShipAddressController::class);

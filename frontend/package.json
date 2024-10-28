@@ -13,6 +13,7 @@
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
     "antd": "^5.20.6",
+    "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "glightbox": "^3.3.0",
     "iconsax": "^0.0.1",
