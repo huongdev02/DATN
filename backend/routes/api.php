@@ -41,14 +41,18 @@ Route::apiResource('categories', CategoryController::class);
 
 
 Route::controller(AccountController::class)->group(function () {
+    //dang ki
+    Route::post('register', 'register')->name('register');
     // Đăng nhập
     Route::post('login', 'login')->name('login');
     //lay user
     Route::get('/users/{id}',  'show')->name('show');;
+    //check
+    Route::middleware('auth:sanctum')->get('/check-auth',  'checkAuth');
 });
 
 
 Route::apiResource('vouchers', VoucherController::class);
-Route::apiResource('users', UserController::class);
+
 
 

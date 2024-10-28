@@ -17,15 +17,20 @@
     <div class="d-flex">
         <!-- Phần Menu -->
         <div class="menu-container bg-light p-3">
+            <a href="http://127.0.0.1:8000/user/dashboard">
             <div class="nav-profile-text d-flex align-items-center">
+              
                 <img src="{{ asset('storage/' . Auth::user()->avatar) }}" width="50px" alt="profile" class="img-profile rounded-circle" />
                 <span class="login-status online"></span>
-                <div class="ms-2">
-                    <span class="d-block" style="color: cadetblue">Xin chào</span>
-                    <span style="color: purple">{{ Auth::user()->fullname ?? Auth::user()->email ?? Auth::user()->username }}</span>
-                </div>
+
+                    <div class="ms-2">
+                        <span class="d-block" style="color: cadetblue">Xin chào</span>
+                        <span style="color: purple">{{ Auth::user()->fullname ?? Auth::user()->email ?? Auth::user()->username }}</span>
+                    </div>
+              
                 <i class="fa-solid fa-circle ms-2 mt-4" style="color: green; font-size: 10px;"></i>
             </div>
+        </a>
             <ul class="menu list-unstyled">
                 <li class="dropdown">
                     <button class="dropdown-btn btn btn-light w-100 text-start" onclick="toggleDropdown(this)">

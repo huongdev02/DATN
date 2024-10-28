@@ -5,5 +5,5 @@
 @endsection
 
 @section('content')
-    aaa
+    <a href="http://localhost:3000/" class="btn btn-primary"> Quay về trang chủ</a>
 @endsection

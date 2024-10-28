@@ -45,14 +45,14 @@
             <td>{{ $item->sell_quantity }}</td>
             <td>
                 @if($item->galleries->isNotEmpty())
-                <div class="gallery-flex">
-                    @foreach ($item->galleries as $gallery)
-                        <img src="{{ asset('storage/' . $gallery->image_path) }}" alt="Gallery Image" class="gallery-image">
-                    @endforeach
-                </div>
-            @else
-                không có ảnh
-            @endif
+                    <div class="gallery-flex">
+                        @foreach ($item->galleries as $gallery)
+                            <img src="{{ $gallery->image_path }}" alt="Gallery Image" class="gallery-image">
+                        @endforeach
+                    </div>
+                @else
+                    không có ảnh
+                @endif
             </td>
             <td>
                 @if($item->sizes->isNotEmpty())

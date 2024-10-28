@@ -65,7 +65,7 @@
                         <label for="tab-3">Forgot Password?</label>
                     </div>
                     <div class="foot-lnk">
-                        <a href="/" class="">Back to home</a>
+                        <a href="http://localhost:3000/" class="">Back to home</a>
                     </div>
                 </form>
 
@@ -92,7 +92,7 @@
                         <label for="tab-1">Already Member?</label>
                     </div>
                     <div class="foot-lnk">
-                        <a href="/" class="">Back to home</a>
+                        <a href="http://localhost:3000/" class="">Back to home</a>
                     </div>
                 </form>
                 
@@ -112,7 +112,7 @@
                         <label for="tab-1">Back to Sign In</label>
                     </div>
                     <div class="foot-lnk">
-                        <a href="/" class="">Back to home</a>
+                        <a href="http://localhost:3000/" class="">Back to home</a>
                     </div>
                 </form>
             </div>
