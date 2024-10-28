@@ -18,7 +18,7 @@ class Voucher extends Model
         'min_order_count',
         'max_order_count',
         'quantity',
-        'used_count',
+        'used_times',
         'status',
         'start_day',
         'end_day'

@@ -1,23 +1,7 @@
-@extends('master')
-@section('title')
-    Thêm mới voucher
-@endsection
-@section('content')
+@extends('Layout.Layout')
+
+@section('content_admin')
     <h1>Thêm mới voucher</h1>
-    @if (session()->has('success') && !session()->get('success'))
-        <div class="alert alert-danger">
-            {{ session()->get('error') }}
-        </div>
-    @endif
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
     <div class="container">
         <form method="POST" action="{{ route('vouchers.store') }}" enctype="multipart/form-data">
             @csrf
@@ -41,7 +25,7 @@
             <div class="mb-3 row">
                 <label for="discount_value" class="col-2 col-form-label">Discount Value:</label>
                 <div class="col-8">
-                    <input type="number" step="0.01" class="form-control" name="discount_value" id="discount_value"
+                    <input type="number" step="1" class="form-control" name="discount_value" id="discount_value"
                         value="{{ old('discount_value') }}" required/>
                 </div>
             </div>
@@ -56,14 +40,14 @@
             <div class="mb-3 row">
                 <label for="discount_min" class="col-2 col-form-label">Minimum Discount:</label>
                 <div class="col-8">
-                    <input type="number" class="form-control" step="0.01" name="discount_min" id="discount_min" value="{{ old('discount_min', 0) }}" required>
+                    <input type="number" class="form-control" step="1" name="discount_min" id="discount_min" value="{{ old('discount_min', 0) }}" required>
                 </div>
             </div>
 
             <div class="mb-3 row">
                 <label for="max_discount" class="col-2 col-form-label">Maximum Discount:</label>
                 <div class="col-8">
-                    <input type="number" class="form-control" step="0.01" name="max_discount" id="max_discount"value="{{ old('max_discount', $voucher->max_discount) }}" required>
+                    <input type="number" class="form-control" step="1" name="max_discount" id="max_discount"value="{{ old('max_discount') }}" required>
                 </div>
             </div>
 
@@ -91,7 +75,7 @@
             <div class="mb-3 row">
                 <label for="used_times" class="col-2 col-form-label">Used time:</label>
                 <div class="col-8">
-                    <input type="number" class="form-control" name="used_times" id="used_times" value="{{ old('used_times', $voucher->used_times) }}" required>
+                    <input type="number" class="form-control" name="used_times" id="used_times" value="{{ old('used_times') }}" required>
                 </div>
             </div>
 
@@ -123,7 +107,7 @@
 
             <div class="mb-3 row">
                 <div class="offset-sm-4 col-sm-8">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-outline-success mb-3">
                         Create
                     </button>
                 </div>

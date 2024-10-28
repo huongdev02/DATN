@@ -18,6 +18,9 @@ class Product extends Model
         'description',
         'display',
         'status',
+        'quantity',
+        'sell_quantity',
+        'view',
     ];
 
     public function galleries()
