@@ -48,11 +48,10 @@ Route::controller(AccountController::class)->group(function () {
     Route::post('login', 'login')->name('login');
     //lay user
     Route::get('/users/{id}',  'show')->name('show');;
-    //check
-    Route::middleware('auth:sanctum')->get('/check-auth',  'checkAuth');
 });
 
-
+Route::get('/auth/check', [AccountController::class, 'checkAuth'])->name('auth.check')
+->middleware('web');;
 Route::apiResource('vouchers', VoucherController::class);
 
 
