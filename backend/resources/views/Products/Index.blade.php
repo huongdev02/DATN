@@ -21,7 +21,6 @@
             <th>Name</th>
             <th>Category</th>
             <th>Avatar</th>
-            <th>Old Price</th>
             <th>Price</th>
             <th>Quantity</th>
             <th>Sell</th>
@@ -41,7 +40,6 @@
             <td>
                 <img src="{{ asset('storage/' . $item->avatar) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
             </td>
-            <td>{{ number_format($item->old_price, 2) }} VND</td>
             <td>{{ number_format($item->price, 2) }} VND</td>
             <td>{{ $item->quantity }}</td>
             <td>{{ $item->sell_quantity }}</td>

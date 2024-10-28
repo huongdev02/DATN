@@ -8,6 +8,7 @@ use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
@@ -16,24 +17,49 @@ class CartController extends Controller
     public function index()
     {
         try {
-            $cart = Cart::where('user_id', Auth::id())->with('items.product')->first();
-            return response()->json($cart);
+            // Lấy giỏ hàng của người dùng hiện tại, bao gồm các sản phẩm trong giỏ
+            $cart = Cart::where('user_id', Auth::id())
+                         ->with(['items.product']) // Đảm bảo có quan hệ giữa cart_items và products
+                         ->first();
+    
+            // Kiểm tra xem giỏ hàng có tồn tại không
+            if (!$cart) {
+                return response()->json(['message' => 'Giỏ hàng rỗng.'], 200);
+            }
+    
+            // Dữ liệu trả về
+            return response()->json([
+                'cart' => $cart,
+                'message' => 'Lấy giỏ hàng thành công.'
+            ], 200); // Trả về mã 200 OK
+    
         } catch (\Exception $e) {
-            Log::error('Failed to fetch cart items:' . $e->getMessage());
-            return response()->json(['error' => 'Failed to fetch cart items'], 500);
+            Log::error('Failed to fetch cart items: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch cart items' . $e->getMessage()], 500); // Trả về mã 500 Internal Server Error
         }
     }
+    
 
     public function store(Request $request)
     {
         try {
+            // Kiểm tra xem người dùng đã đăng nhập chưa
+            if (!Auth::check()) {
+                return response()->json(['message' => 'Người dùng chưa đăng nhập.'], 401);
+            }
+            
+            // Xác thực dữ liệu đầu vào
             $request->validate([
                 'product_id' => 'required|exists:products,id',
                 'quantity' => 'required|integer|min:1',
             ]);
     
-            $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+            // Tìm hoặc tạo giỏ hàng cho người dùng hiện tại
+            $cart = Cart::firstOrCreate([
+                'user_id' => Auth::id(),
+            ]);
     
+            // Lấy thông tin sản phẩm từ cơ sở dữ liệu
             $product = Product::findOrFail($request->product_id);
     
             // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
@@ -43,8 +69,8 @@ class CartController extends Controller
     
             if ($cartItem) {
                 // Cập nhật số lượng và tổng giá trị
-                $cartItem->quantity += $request->quantity;
-                $cartItem->total = $cartItem->quantity * $product->price; // Tính lại total
+                $cartItem->quantity += $request->quantity; // Cộng thêm số lượng
+                $cartItem->total = $cartItem->quantity * $product->price; // Tính lại tổng
                 $cartItem->save();
             } else {
                 // Thêm sản phẩm mới vào giỏ hàng
@@ -53,7 +79,7 @@ class CartController extends Controller
                     'product_id' => $product->id,
                     'quantity' => $request->quantity,
                     'price' => $product->price,
-                    'total' => $request->quantity * $product->price, // Tính total ngay khi thêm
+                    'total' => $request->quantity * $product->price, // Tính tổng ngay khi thêm
                 ]);
             }
     
@@ -69,11 +95,16 @@ class CartController extends Controller
             ];
     
             return response()->json($responseData, 201); // Trả về mã 201 Created
-    
+            
         } catch (\Exception $e) {
+            // Xử lý lỗi và trả về thông điệp lỗi
             return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Trả về mã 500 Internal Server Error
         }
     }
+    
+    
+    
+
     
     
 
