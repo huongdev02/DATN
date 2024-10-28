@@ -167,6 +167,7 @@ const ProductDetailComponent: React.FC = () => {
     );
 };
 
+
 export default ProductDetailComponent;
 {/* <section className="section block-may-also-like recent-viewed">
     <div className="container">
