@@ -143,8 +143,8 @@ const ProductDetailComponent: React.FC = () => {
                                                     <button className="btn btn-brand-1-border" onClick={() => handleAddToCart(detail.id)}>Add to Cart</button>
                                                 </div>
                                             ))}
-
                                         </div>
+
                                     </div>
                                     <div className="box-product-tag d-flex justify-content-between align-items-end">
                                         <div className="box-tag-left">
