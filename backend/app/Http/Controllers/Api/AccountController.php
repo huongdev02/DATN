@@ -104,7 +104,7 @@ class AccountController extends Controller
             }
     
             // Trả về thông báo lỗi nếu chưa đăng nhập
-            return response()->json(['authenticated' => false], 401);
+            return response()->json(['chua dang nhap' => false], 401);
         } catch (\Exception $e) {
             // Xử lý ngoại lệ và trả về lỗi
             return response()->json([
