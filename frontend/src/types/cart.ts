@@ -11,12 +11,13 @@ export type Category = {
 export type IProduct = {
     id: string;
     name: string;
-    avatar: string;
     avatar_url: string;
-    category_id: number;
-    import_price: number;
+    categories: Category[];
     sizes: Size[];
     colors: Color[]
+    quantity: number;
+    sell_quantity?: number;
+    view?: number;
     price: number;
     description: string;
     display: number;
