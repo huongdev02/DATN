@@ -140,7 +140,7 @@ const AsideFilter: React.FC = () => {
               </div>
               <div className="col-lg-12 col-md-6">
                 <div className="block-filter">
-                  <h6 className="item-collapse">Colors</h6>
+                  <h6 className="item-collapse">Màu sắc</h6>
                   <div className="box-collapse">
                     <ul className="list-color">
                       <li className="active">

@@ -125,7 +125,7 @@ const ProductList: React.FC = () => {
                       />
                       <img
                         className="imageHover"
-                        src={ProductTwo}
+                        src={product.avatar_url}
                         alt="kidify"
                       />
                     </Link>
@@ -222,7 +222,7 @@ const ProductList: React.FC = () => {
                         {product.name}
                       </h6>
                     </Link>
-                    <p className="font-lg cardDesc">{product.price}</p>
+                    <p className="font-lg cardDesc">{Math.round(product.price).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
                   </div>
                 </div>
               </div>

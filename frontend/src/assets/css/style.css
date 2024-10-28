@@ -1377,8 +1377,8 @@ textarea.form-control {
 
 .lbl-hot {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 5px;
+  left: 5px;
   z-index: 12;
   background-color: #EDA62A;
   border-radius: 28px;
@@ -2679,6 +2679,7 @@ a.follow-vendor {
 }
 .cardProductStyle3 .cardImage .imageMain, .cardProductStyle2 .cardImage .imageMain, .cardProduct .cardImage .imageMain, .cardProductSmall .cardImage .imageMain {
   opacity: 1;
+  height: 300px;
   visibility: visible;
   transition: all 0.3s;
 }
