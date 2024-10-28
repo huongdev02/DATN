@@ -8363,6 +8363,11 @@ h4.brush-bg::after {
   display: none;
 }
 
+.image_detail{
+  width: 460px;
+  height: 645px;
+}
+
 .block-may-also-like {
   padding: 92px 0px 50px 0px;
   border-top: 1px solid #DBE2E5;

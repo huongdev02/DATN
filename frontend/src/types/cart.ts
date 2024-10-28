@@ -8,6 +8,11 @@ export type Category = {
     id: string;
     name: string;
   };
+
+export type Gallery = {
+    id: string;
+    image_path: string
+}
 export type IProduct = {
     id: string;
     name: string;
@@ -16,6 +21,7 @@ export type IProduct = {
     sizes: Size[];
     colors: Color[]
     quantity: number;
+    galleries: Gallery[];
     sell_quantity?: number;
     view?: number;
     price: number;

@@ -1,23 +1,37 @@
 import ProductThumb from '../../assets/imgs/page/product/thumnb.png'
-import ProductThumbTwo from '../../assets/imgs/page/product/thumnb2.png'
-import ProductThumbThree from '../../assets/imgs/page/product/thumnb3.png'
-import ProductThumbFour from '../../assets/imgs/page/product/thumnb4.png'
-import ProductThumbFive from '../../assets/imgs/page/product/thumnb5.png'
-
 import Product from "../../assets/imgs/page/product/img.png"
 import ProductTwo from "../../assets/imgs/page/product/img-2.png"
 import ProductThree from "../../assets/imgs/page/product/img-3.png"
-import ProductFour from "../../assets/imgs/page/product/img-4.png"
-import ProductFive from "../../assets/imgs/page/product/img-5.png"
-import ProductSix from "../../assets/imgs/page/product/img-6.png"
-
 import Star from "../../assets/imgs/template/icons/star.svg"
-import { useState } from 'react'
+import { IProduct, Size, Color, Gallery } from "../../types/cart";
+import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import api from '../../configAxios/axios'
+import { message } from 'antd'
 const ProductDetailComponent: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState('S');
+  const {id} = useParams()
+  const [products, setProduct] = useState<IProduct | null>(null);
   const handleSizeClick = (size: any) => {
     setSelectedSize(size);
   };
+
+  const GetAllProducts = async () => {
+    try {
+      const { data } = await api.get(`/products/${id}`);
+      setProduct(data);
+    } catch (error) {
+      message.error("Lỗi api !");
+    }
+  };
+
+  console.log("Product", products);
+  
+
+  useEffect(() => {
+    GetAllProducts();
+  }, [id]);
+ 
   return (
     <>
       <main className="main">
@@ -25,82 +39,65 @@ const ProductDetailComponent: React.FC = () => {
           <div className="container">
             <div className="breadcrumbs">
               <ul>
-                <li><a href="#">Home </a></li>
-                <li><a href="#">Shop</a></li>
-                <li> <a href="#">Boys Clothing</a></li>
+                <li><a href="#">Trang chủ</a></li>
+                <li><a href="#">Cửa hàng</a></li>
+                <li> <a href="#">Chi tiết sản phẩm</a></li>
               </ul>
             </div>
           </div>
         </div>
         <section className="section block-product-content">
           <div className="container">
+          {products && (
             <div className="row">
               <div className="col-lg-5 box-images-product-left">
                 <div className="detail-gallery">
                   <div className="slider-nav-thumbnails">
-                    <div>
-                      <div className="item-thumb"><img src={ProductThumb} alt="kidify" /></div>
-                    </div>
-                    <div>
-                      <div className="item-thumb"><img src={ProductThumbTwo} alt="kidify" /></div>
-                    </div>
-                    <div>
-                      <div className="item-thumb"><img src={ProductThumbThree} alt="kidify" /></div>
-                    </div>
-                    <div>
-                      <div className="item-thumb"><img src={ProductThumbFour} alt="kidify" /></div>
-                    </div>
-                    <div>
-                      <div className="item-thumb"><img src={ProductThumbFive} alt="kidify" /></div>
-                    </div>
-                    <div>
-                    </div>
-                    <div>
-                    </div>
+                  {products.galleries.map((gallery, index) => (
+                <div key={index} className="item-thumb">
+                    <img src={gallery.image_path} alt={`Gallery Image ${index + 1}`} />
+                </div>
+                ))}
                   </div>
-                  <div className="box-main-gallery"><a className="zoom-image glightbox" href={Product} />
+                  <div className="box-main-gallery"><a className="zoom-image glightbox" href={products.avatar_url} />
                     <div className="product-image-slider">
-                      <figure className="border-radius-10"><a className="glightbox" href={Product}><img src={Product} alt="kidify" /></a></figure>
-                      <figure className="border-radius-10"><a className="glightbox" href={ProductTwo}><img src={ProductTwo} alt="kidify" /></a></figure>
-                      <figure className="border-radius-10"><a className="glightbox" href={ProductThree}><img src={ProductThree} alt="kidify" /></a></figure>
-                      <figure className="border-radius-10"><a className="glightbox" href={ProductFour}><img src={ProductFour} alt="kidify" /></a></figure>
-                      <figure className="border-radius-10"><a className="glightbox" href={ProductSix}><img src={ProductSix} alt="kidify" /></a></figure>
-                      <figure className="border-radius-10"><a className="glightbox" href={ProductFive}><img src={ProductFive} alt="kidify" /></a></figure>
+                      <figure className="border-radius-10"><a className="glightbox" href={products.avatar_url}><img className= "image_detail" src={products.avatar_url}alt="kidify" /></a></figure>
+                      <figure className="border-radius-10"><a className="glightbox" href={products.avatar_url}><img src={products.avatar_url} alt="kidify" /></a></figure>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="col-lg-5 box-images-product-middle">
                 <div className="box-product-info">
-                  <label className="flash-sale-red">Extra 2% off</label>
-                  <h2 className="font-2xl-bold">Autumn Winter Girls Kids Pants Plus Velvet Children's Leggings Cotton</h2>
+                  <h2 className="font-3xl-bold">{products.name}</h2>
                   <div className="block-rating"><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><span className="font-md neutral-500">(14 Reviews - 25 Orders)</span></div>
-                  <div className="block-price"><span className="price-main">$15.00</span><span className="price-line">$25.00</span></div>
+                  <div className="block-price"><span className="price-main"> {Math.round(products.price).toLocaleString("vi", {style: "currency", currency: "VND",})}</span><span className="price-line">{Math.round(products.price).toLocaleString("vi", {style: "currency", currency: "VND",})}</span></div>
                   <div className="block-view">
-                    <p className="font-md neutral-900">New Fashion Autumn Winter Girls Kids Pants Plus Velvet Children's Leggings Cotton Velvet Elastic Waist Warm Legging 3-8 Years</p>
+                    <p className="font-md neutral-900">{products.description}</p>
                   </div>
                   <div className="block-color"><span>Color:</span>
-                    <label>Navy</label>
+                    <label style={{textTransform:'uppercase'}}>{products.colors.length > 0 ? products.colors[0].name_color : 'Red'}</label>
                     <ul className="list-color">
-                      <li className="active"><span className="box-circle-color"><a className="color-red active" href="#" /></span></li>
-                      <li><span className="box-circle-color"><a className="color-green" href="#" /></span></li>
-                      <li><span className="box-circle-color"><a className="color-orange" href="#" /></span></li>
-                      <li><span className="box-circle-color"><a className="color-yellow" href="#" /></span></li>
-                      <li><span className="box-circle-color"><a className="color-blue" href="#" /></span></li>
-                      <li><span className="box-circle-color"><a className="color-gray" href="#" /></span></li>
+                    {products.colors.map((color) => (
+                      <li key={color.id}>
+                        <span className="box-circle-color">
+                          <a href="#" className={`color-${color.name_color}`}/>
+                        </span>
+                      </li>
+                        ))}
                     </ul>
                   </div>
                   <div className="block-size"><span>Size:</span>
                     <label>S</label>
                     <div className="box-list-sizes">
                       <div className="list-sizes">
-                        {['XS', 'S', 'M', 'XL'].map((size) => (
+                        {products.sizes.map((size) => (
                           <span
-                            key={size}
-                            className={`item-size ${selectedSize === size ? 'active' : ''} ${size === 'XS' ? 'out-stock' : ''}`}
+                            key={size.id}
+                            className='item-size'
                             onClick={() => handleSizeClick(size)}
                           >
-                            {size}
+                            {size.size}
                           </span>
                         ))}
                       </div>
@@ -137,6 +134,7 @@ const ProductDetailComponent: React.FC = () => {
                 </div>
               </div>
             </div>
+             )}
             <div className="box-detail-product">
               <ul className="nav-tabs nav-tab-product" role="tablist">
                 <li className="nav-item" role="presentation">

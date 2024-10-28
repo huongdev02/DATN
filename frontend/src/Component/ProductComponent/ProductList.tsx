@@ -7,15 +7,16 @@ import ProductSeven from "../../assets/imgs/page/homepage1/product7.png";
 import { useState, useEffect } from "react";
 import api from "../../configAxios/axios";
 import { message } from "antd";
-import { IProduct } from "../../types/cart";
+import { IProduct, Size, Color } from "../../types/cart";
 import { Link } from "react-router-dom";
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
-
+  const [sizes, setSizes] = useState<Size[]>([]);
+  const [colors, setColors] = useState<Color[]>([]);
   const GetAllProducts = async () => {
     try {
       const { data } = await api.get("/products");
-      setProducts(data);
+      setProducts(data.products);
     } catch (error) {
       message.error("Lỗi api !");
     }
@@ -63,7 +64,7 @@ const ProductList: React.FC = () => {
                   </li>
                   <li>
                     <a className="dropdown-item" href="#">
-                      Latest products{" "}
+                      Sản phẩm mới nhất{" "}
                     </a>
                   </li>
                 </ul>
@@ -78,7 +79,7 @@ const ProductList: React.FC = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  30 items
+                  30 mục
                 </button>
                 <ul
                   className="dropdown-menu dropdown-menu-light"
@@ -87,17 +88,17 @@ const ProductList: React.FC = () => {
                 >
                   <li>
                     <a className="dropdown-item active" href="#">
-                      30 items
+                      30 mục
                     </a>
                   </li>
                   <li>
                     <a className="dropdown-item" href="#">
-                      50 items
+                      50 mục
                     </a>
                   </li>
                   <li>
                     <a className="dropdown-item" href="#">
-                      100 items{" "}
+                      100 mục{" "}
                     </a>
                   </li>
                 </ul>
@@ -130,15 +131,10 @@ const ProductList: React.FC = () => {
                       />
                     </Link>
                     <div className="button-select">
-                      <Link to="/product-detail">Add to Cart</Link>
+                      <Link to={`/product-detail/${product.id}`}>Add to Cart</Link>
                     </div>
                     <div className="box-quick-button">
-                      <a
-                        className="btn"
-                        aria-label="Quick view"
-                        data-bs-toggle="modal"
-                        data-bs-target="#quickViewModal"
-                      >
+                      <a href={`/product-detail/${product.id}`} className="btn">
                         <svg
                           className="d-inline-flex align-items-center justify-content-center"
                           fill="none"
@@ -217,12 +213,15 @@ const ProductList: React.FC = () => {
                     </div>
                   </div>
                   <div className="cardInfo">
-                    <Link to="/product-detail">
-                      <h6 className="font-md-bold cardTitle">
-                        {product.name}
-                      </h6>
+                    <Link to={`/product-detail/${product.id}`}>
+                      <h6 className="font-md-bold cardTitle">{product.name}</h6>
                     </Link>
-                    <p className="font-lg cardDesc">{Math.round(product.price).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</p>
+                    <p className="font-lg cardDesc">
+                      {Math.round(product.price).toLocaleString("vi", {
+                        style: "currency",
+                        currency: "VND",
+                      })}
+                    </p>
                   </div>
                 </div>
               </div>

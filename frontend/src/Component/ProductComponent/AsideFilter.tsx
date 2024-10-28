@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Categories } from "../../types/product";
+import { IProduct, Size, Color } from "../../types/cart";
 import api from "../../configAxios/axios";
 import { message } from "antd";
 const AsideFilter: React.FC = () => {
   const [categories, setCategories] = useState<Categories[]>([]);
-
+  const [sizes, setSizes] = useState<Size[]>([]);
+  const [colors, setColors] = useState<Color[]>([]);
   const GetAllCategory = async () => {
     try {
       const { data } = await api.get("/categories");
@@ -14,8 +16,19 @@ const AsideFilter: React.FC = () => {
     }
   };
 
+  const GetAllProducts = async () => {
+    try {
+      const { data } = await api.get("/products");
+      setSizes(data.all_sizes);
+      setColors(data.all_colors);
+    } catch (error) {
+      message.error("Lỗi api !");
+    }
+  };
+
   useEffect(() => {
     GetAllCategory();
+    GetAllProducts();
   }, []);
 
   return (
@@ -122,91 +135,42 @@ const AsideFilter: React.FC = () => {
                   </div>
                 </div>
               </div>
+              {/* Size */}
               <div className="col-lg-12 col-md-6">
                 <div className="block-filter">
                   <h6 className="item-collapse">Size</h6>
                   <div className="box-collapse">
                     <div className="block-size">
                       <div className="list-sizes">
-                        <span className="item-size">XS</span>
-                        <span className="item-size active">S</span>
-                        <span className="item-size">M</span>
-                        <span className="item-size">XL</span>
-                        <span className="item-size">XXL</span>
+                        {sizes.map((size) => (
+                          <span key={size.id} >
+                            {size.size}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+              {/* end */}
+              {/* Màu sắc */}
               <div className="col-lg-12 col-md-6">
                 <div className="block-filter">
                   <h6 className="item-collapse">Màu sắc</h6>
                   <div className="box-collapse">
                     <ul className="list-color">
-                      <li className="active">
+                    {colors.map((color) => (
+                      <li key={color.id}>
                         <span className="box-circle-color">
-                          <a className="color-red active" href="#" />
+                          <a href="#" className={`color-${color.name_color}`}/>
                         </span>
-                        <span className="font-xs">Red</span>
                       </li>
-                      <li>
-                        <span className="box-circle-color">
-                          <a className="color-green" href="#" />
-                        </span>
-                        <span className="font-xs">Green</span>
-                      </li>
-                      <li>
-                        <span className="box-circle-color">
-                          <a className="color-orange" href="#" />
-                        </span>
-                        <span className="font-xs">Orange</span>
-                      </li>
-                      <li>
-                        <span className="box-circle-color">
-                          <a className="color-yellow" href="#" />
-                        </span>
-                        <span className="font-xs">Yellow</span>
-                      </li>
-                      <li>
-                        <span className="box-circle-color">
-                          <a className="color-blue" href="#" />
-                        </span>
-                        <span className="font-xs">Blue</span>
-                      </li>
-                      <li>
-                        <span className="box-circle-color">
-                          <a className="color-gray" href="#" />
-                        </span>
-                        <span className="font-xs">Gray</span>
-                      </li>
-                      <li>
-                        <span className="box-circle-color">
-                          <a className="color-brown" href="#" />
-                        </span>
-                        <span className="font-xs">Brown</span>
-                      </li>
-                      <li>
-                        <span className="box-circle-color">
-                          <a className="color-cyan" href="#" />
-                        </span>
-                        <span className="font-xs">Cyan</span>
-                      </li>
-                      <li>
-                        <span className="box-circle-color">
-                          <a className="color-cyan-2" href="#" />
-                        </span>
-                        <span className="font-xs">Cyan 2</span>
-                      </li>
-                      <li>
-                        <span className="box-circle-color">
-                          <a className="color-purple" href="#" />
-                        </span>
-                        <span className="font-xs">Purple</span>
-                      </li>
+                        ))}
                     </ul>
                   </div>
                 </div>
               </div>
+              {/* end */}
               <div className="col-lg-12 col-md-6">
                 <div className="block-filter">
                   <h6 className="item-collapse">Brand</h6>
