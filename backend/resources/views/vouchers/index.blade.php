@@ -52,8 +52,8 @@
                                     Không rõ
                             @endswitch
                         </td>
-                        <td>{{ $voucher->start_day }}</td>
-                        <td>{{ $voucher->end_day }}</td>
+                        <td>{{ \Carbon\Carbon::parse($voucher->start_day)->format('d-m-Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($voucher->end_day)->format('d-m-Y') }}</td>
                         <td>
                             {{-- <a class="btn btn-info" href="{{ route('vouchers.show', $voucher->id) }}">Show</a> --}}
                             <a class="btn btn-outline-warning mb-3" href="{{ route('vouchers.edit', $voucher->id) }}">Edit</a>

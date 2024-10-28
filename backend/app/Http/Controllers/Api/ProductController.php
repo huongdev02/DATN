@@ -2,8 +2,9 @@
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Color;
 use App\Models\Product;
-
+use App\Models\Size;
 
 class ProductController extends Controller
 {
@@ -82,9 +83,16 @@ class ProductController extends Controller
     public function getProductsByCategory($categoryId)
     {
         try {
-            // Lấy danh mục theo ID
-            $category = Category::with('products.colors:id,name_color', 'products.sizes:id,size', 'products.galleries')
-                ->findOrFail($categoryId);
+            // Lấy danh mục theo ID và tất cả sản phẩm kèm theo màu sắc và kích thước
+            $category = Category::with([
+                'products.colors:id,name_color', 
+                'products.sizes:id,size',
+                'products.galleries'
+            ])->findOrFail($categoryId);
+    
+            // Lấy tất cả màu sắc và kích thước từ bảng colors và sizes
+            $allColors = Color::all(); // Lấy tất cả các bản ghi từ bảng colors
+            $allSizes = Size::all();   // Lấy tất cả các bản ghi từ bảng sizes
     
             // Chuyển đổi dữ liệu sản phẩm
             $products = $category->products->map(function ($product) {
@@ -97,8 +105,8 @@ class ProductController extends Controller
                     'quantity' => $product->quantity,
                     'sell_quantity' => $product->sell_quantity,
                     'view' => $product->view,
-                    'colors' => $product->colors,
-                    'sizes' => $product->sizes,
+                    'colors' => $product->colors, // Màu sắc liên quan đến sản phẩm
+                    'sizes' => $product->sizes,   // Kích thước liên quan đến sản phẩm
                     'galleries' => $product->galleries->map(function ($gallery) {
                         return [
                             'id' => $gallery->id,
@@ -116,6 +124,8 @@ class ProductController extends Controller
                     'name' => $category->name,
                 ],
                 'products' => $products,
+                'all_colors' => $allColors, // Tất cả các màu sắc
+                'all_sizes' => $allSizes,   // Tất cả các kích thước
             ];
     
             return response()->json($response);
@@ -123,6 +133,8 @@ class ProductController extends Controller
             return response()->json(['message' => 'Không thể lấy sản phẩm: ' . $e->getMessage()], 500);
         }
     }
+    
+    
     
 
 }
