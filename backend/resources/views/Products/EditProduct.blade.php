@@ -30,7 +30,7 @@
             <div class="mt-2" style="display: flex; gap: 10px" id="existing-images">
                 @foreach ($product->galleries as $gallery)
                     <div class="image-preview">
-                        <img src="{{ asset('storage/' . $gallery->image_path) }}" alt="Gallery Image"
+                        <img src="{{ $gallery->image_path }}" alt="Gallery Image"
                             style="width: 100px; height: 60px; margin-right: 10px;">
                         <input type="checkbox" name="delete_gallery[]" value="{{ $gallery->id }}" class="delete-checkbox">
                         <label for="delete_gallery">Xóa</label>

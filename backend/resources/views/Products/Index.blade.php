@@ -47,7 +47,7 @@
                 @if($item->galleries->isNotEmpty())
                     <div class="gallery-flex">
                         @foreach ($item->galleries as $gallery)
-                            <img src="{{ asset('storage/' . $gallery->image_path) }}" alt="Gallery Image" class="gallery-image">
+                            <img src="{{ $gallery->image_path }}" alt="Gallery Image" class="gallery-image">
                         @endforeach
                     </div>
                 @else
