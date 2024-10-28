@@ -3,7 +3,7 @@
         <li class="nav-item nav-profile dropdown no-arrow">
             <a href="#" class="nav-link d-flex align-items-center" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="nav-profile-image">
-                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="profile" class="img-profile rounded-circle" />
+                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="profile" class="img-profile rounded-circle" style="width: 80px; height: 35px;" /> <!-- Thay đổi kích thước ở đây -->
                     <span class="login-status online"></span>
                 </div>
                 <div class="nav-profile-text d-flex flex-column">
@@ -11,14 +11,15 @@
                         {{ Auth::user()->fullname ?? Auth::user()->email ?? Auth::user()->username }}
                     </span>
                     @if(Auth::user()->role == 2)
-                        <span>Admin</span>
+                        <span style="color: green">Admin</span>
                     @elseif(Auth::user()->role == 1)
-                        <span>Manager</span>
+                        <span style="color: purple">Manager</span>
                     @endif
                 </div>
                 <!-- Dropdown toggle icon -->
                 <span class="mdi mdi-dots-vertical mdi-24px ms-3"></span>
             </a>
+            
             <!-- Dropdown menu -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item bg-red text-center" href="{{route('admin.edit')}}">

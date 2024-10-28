@@ -15,8 +15,8 @@
                     <th scope="col">Discount Value</th>
                     <th scope="col">Description</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Created At</th>
-                    <th scope="col">Updated At</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">End</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -52,8 +52,8 @@
                                     Không rõ
                             @endswitch
                         </td>
-                        <td>{{ $voucher->created_at->format('d/m/Y H:i') }}</td>
-                        <td>{{ $voucher->updated_at->format('d/m/Y H:i') }}</td>
+                        <td>{{ $voucher->start_day }}</td>
+                        <td>{{ $voucher->end_day }}</td>
                         <td>
                             {{-- <a class="btn btn-info" href="{{ route('vouchers.show', $voucher->id) }}">Show</a> --}}
                             <a class="btn btn-outline-warning mb-3" href="{{ route('vouchers.edit', $voucher->id) }}">Edit</a>
