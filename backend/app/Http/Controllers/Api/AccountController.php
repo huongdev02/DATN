@@ -14,6 +14,37 @@ use Throwable;
 class AccountController extends Controller
 {
 
+    public function register(Request $request)
+    {
+    $validatedData = $request->validate([
+        'email' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
+        'password' => 'required|string|min:6|confirmed', // Use 'confirmed' for password confirmation
+    ]);
+
+    try {
+        $validatedData['password'] = Hash::make($request->input('password'));
+        $validatedData['role'] = $request->filled('role') ? $request->input('role') : 0;
+
+        $user = User::query()->create($validatedData);
+
+        Auth::login($user);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đăng kí thành công',
+            'data' => $user
+        ], 201);
+
+    } catch (Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Đã xảy ra lỗi khi đăng kí',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
     public function login(Request $request)
     {
         try {
@@ -36,6 +67,7 @@ class AccountController extends Controller
                 }
 
                 return response()->json([
+                    'status' => true,
                     'message' => 'Đăng nhập thành công', 
                     'data' => $user
                 ], 200);

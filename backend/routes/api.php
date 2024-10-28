@@ -41,6 +41,8 @@ Route::apiResource('categories', CategoryController::class);
 
 
 Route::controller(AccountController::class)->group(function () {
+    //dang ki
+    Route::post('register', 'register')->name('register');
     // Đăng nhập
     Route::post('login', 'login')->name('login');
     //lay user
