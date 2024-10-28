@@ -49,6 +49,6 @@ Route::controller(AccountController::class)->group(function () {
 
 
 Route::apiResource('vouchers', VoucherController::class);
-Route::apiResource('users', UserController::class);
+
 
 
