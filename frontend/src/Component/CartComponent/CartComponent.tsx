@@ -15,7 +15,6 @@ import { log } from "console";
 const CartComponent: React.FC = () => {
   const [carts, setCarts] = useState<Cart[]>([]);
   const [products, setProducts] = useState<IProduct[]>([]);
-  const [sizes, setSizes] = useState<Size[]>([]);
   const GetAllCart = async () => {
     try {
       const { data } = await api.get("/carts");
@@ -34,7 +33,7 @@ const CartComponent: React.FC = () => {
       message.error("Lỗi api !");
     }
   };
-  console.log(" cart", sizes);
+  
 
   const getProductById = (id: number | string) => {
     return products.find((product) => product.id === id);
