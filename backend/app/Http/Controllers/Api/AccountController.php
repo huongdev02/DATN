@@ -94,24 +94,30 @@ class AccountController extends Controller
     public function checkAuth(Request $request)
     {
         try {
-            // Kiểm tra xem người dùng đã đăng nhập hay chưa
+            // Check if the user is logged in
             if (Auth::check()) {
-                // Trả về thông tin người dùng nếu đã đăng nhập
+                // Return authenticated status and user info
                 return response()->json([
                     'authenticated' => true,
                     'user' => Auth::user(),
                 ]);
             }
     
-            // Trả về thông báo lỗi nếu chưa đăng nhập
-            return response()->json(['chua dang nhap' => false], 401);
-        } catch (\Exception $e) {
-            // Xử lý ngoại lệ và trả về lỗi
+            // Return a 401 status if the user is not logged in
             return response()->json([
-                'error' => 'Đã xảy ra lỗi khi kiểm tra trạng thái đăng nhập.',
-                'message' => $e->getMessage(), // Ghi lại thông điệp lỗi
-            ], 500); // Trả về mã lỗi 500 cho các lỗi máy chủ
+                'authenticated' => false,
+                'message' => 'User is not logged in.',
+            ], 401);
+    
+        } catch (\Exception $e) {
+            // Handle exceptions and return error information
+            return response()->json([
+                'authenticated' => false,
+                'error' => 'An error occurred while checking authentication status.',
+                'message' => $e->getMessage(),
+            ], 500); // 500 error for server issues
         }
     }
+    
     
 }
