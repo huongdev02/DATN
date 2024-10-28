@@ -1,86 +1,187 @@
 <?php 
 
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-
+use App\Models\Gallery;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
     public function index()
     {
         try {
-            $products = Product::with(['categories:id,name', 'colors:id,name_color', 'sizes:id,size'])->get();
-            
-            $products = $products->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'description' => $product->description,
-                    'avatar_url' => $product->avatar ? asset('storage/avatars/' . basename($product->avatar)) : null,
-                    'categories' => $product->categories,
-                    'price' => $product->price,
-                    'quantity' => $product->quantity,
-                    'sell_quantity' => $product->sell_quantity,
-                    'view' => $product->view,
-                    'colors' => $product->colors,
-                    'sizes' => $product->sizes,
-                    'created_at' => $product->created_at,
-                    'updated_at' => $product->updated_at,
-                ];
-            });
-    
+            // Tải danh sách sản phẩm kèm theo categories, sizes và colors
+            $products = Product::with('categories:id,name', 'sizes', 'colors')
+            ->orderBy('id', 'desc')
+            ->get();
             return response()->json($products);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Không thể lấy danh sách sản phẩm. ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Không thể lấy danh sách sản phẩm.' . $e->getMessage()], 500);
         }
     }
-    
 
 
-    public function show(Product $product)
+
+
+    public function store(Request $request)
     {
         try {
-            if (!$product) {
-                return response()->json(['message' => 'Sản phẩm không tồn tại.'], 404);
+            // Xác thực dữ liệu đầu vào
+            $request->validate([
+                'name' => 'required|string|unique:products,name',
+                'avatar' => 'required|image',
+                'import_price' => 'required|numeric',
+                'price' => 'required|numeric',
+                'category_id' => 'required|exists:categories,id',
+                'display' => 'required|boolean',
+                'status' => 'required|integer|min:0|max:3',
+                'images.*' => 'image',
+                'sizes' => 'array',
+                'colors' => 'array',
+            ]);
+
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+
+            // Tạo sản phẩm mới
+            $product = Product::create([
+                'name' => $request->name,
+                'avatar' => $avatarPath,
+                'import_price' => $request->import_price,
+                'price' => $request->price,
+                'description' => $request->description,
+                'category_id' => $request->category_id,
+                'display' => $request->display,
+                'status' => $request->status,
+            ]);
+
+            // Lưu các hình ảnh vào gallery
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('galleries', 'public');
+                    Gallery::create([
+                        'product_id' => $product->id,
+                        'image_path' => $imagePath,
+                    ]);
+                }
             }
-    
-            $product->load(['categories:id,name', 'colors:id,name_color', 'sizes:id,size', 'galleries']);
-    
-            $product->galleries = $product->galleries->map(function ($gallery) {
-                return [
-                    'id' => $gallery->id,
-                    'product_id' => $gallery->product_id,
-                    'image_path' => $gallery->image_path,
-                    'image_url' => $gallery->image_url,
-                    'created_at' => $gallery->created_at,
-                    'updated_at' => $gallery->updated_at,
-                ];
-            });
-    
-            $response = [
-                'id' => $product->id,
-                'name' => $product->name,
-                'description' => $product->description,
-                'avatar_url' => $product->avatar ? asset('storage/avatars/' . basename($product->avatar)) : null,
-                'categories' => $product->categories,
-                'price' => $product->price,
-                'quantity' => $product->quantity,
-                'sell_quantity' => $product->sell_quantity,
-                'view' => $product->view,
-                'colors' => $product->colors,
-                'sizes' => $product->sizes,
-                'galleries' => $product->galleries,
-                'created_at' => $product->created_at,
-                'updated_at' => $product->updated_at,
-            ];
-    
-            return response()->json($response);
+
+            // Gán các sizes và colors cho sản phẩm
+            if ($request->sizes) {
+                $product->sizes()->attach($request->sizes);
+            }
+            if ($request->colors) {
+                $product->colors()->attach($request->colors);
+            }
+
+            return response()->json(['message' => 'Sản phẩm được thêm thành công.', 'product' => $product], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Có lỗi xảy ra khi thêm sản phẩm: ' . $e->getMessage()], 500);
         }
     }
-    
-    
-    
+
+    public function show(Product $product)
+{
+    try {
+        // Tải thông tin sản phẩm kèm theo các mối quan hệ
+        $productDetails = $product->productDetails; // Lấy tất cả product_details
+
+        // Kiểm tra nếu sản phẩm không tồn tại
+        if (!$product) {
+            return response()->json(['message' => 'Sản phẩm không tồn tại.'], 404);
+        }
+
+        // Trả về thông tin sản phẩm cùng với product_details
+        return response()->json([
+            'product' => $product->load('categories', 'galleries', 'sizes', 'colors'),
+            'product_details' => $productDetails // Thêm product_details vào response
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
+    }
+}
+
+
+    public function update(Request $request, Product $product)
+    {
+        try {
+            // Xác thực dữ liệu đầu vào
+            $request->validate([
+                'name' => 'required|string|unique:products,name,' . $product->id,
+                'avatar' => 'image',
+                'import_price' => 'required|numeric',
+                'price' => 'required|numeric',
+                'category_id' => 'required|exists:categories,id',
+                'display' => 'required|boolean',
+                'status' => 'required|integer|min:0|max:3',
+                'images.*' => 'image',
+                'sizes' => 'array',
+                'colors' => 'array',
+            ]);
+
+            // Cập nhật avatar nếu có
+            if ($request->hasFile('avatar')) {
+                Storage::disk('public')->delete($product->avatar);
+                $avatarPath = $request->file('avatar')->store('avatars', 'public');
+                $product->avatar = $avatarPath;
+            }
+
+            // Cập nhật thông tin sản phẩm
+            $product->update([
+                'name' => $request->name,
+                'import_price' => $request->import_price,
+                'price' => $request->price,
+                'description' => $request->description,
+                'category_id' => $request->category_id,
+                'display' => $request->display,
+                'status' => $request->status,
+            ]);
+
+            // Xóa và cập nhật sizes và colors
+            $product->sizes()->sync($request->sizes);
+            $product->colors()->sync($request->colors);
+
+            if ($request->hasFile('images')) {
+                foreach ($product->galleries as $gallery) {
+                    Storage::disk('public')->delete($gallery->image_path);
+                    $gallery->delete();
+                }
+
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $image->store('galleries', 'public');
+                    Gallery::create([
+                        'product_id' => $product->id,
+                        'image_path' => $imagePath,
+                    ]);
+                }
+            }
+
+            return response()->json(['message' => 'Sản phẩm được cập nhật thành công.', 'product' => $product]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Có lỗi xảy ra khi cập nhật sản phẩm: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy(Product $product)
+    {
+        try {
+            // Xóa avatar
+            Storage::disk('public')->delete($product->avatar);
+
+            // Xóa các ảnh trong gallery
+            foreach ($product->galleries as $gallery) {
+                Storage::disk('public')->delete($gallery->image_path);
+                $gallery->delete();
+            }
+
+            // Xóa sản phẩm
+            $product->delete();
+
+            return response()->json(['message' => 'Sản phẩm đã được xóa thành công.'], 204);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Có lỗi xảy ra khi xóa sản phẩm: ' . $e->getMessage()], 500);
+        }
+    }
 }

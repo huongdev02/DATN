@@ -5,10 +5,10 @@
 @endsection
 
 @section('content')
-    <h2 class="text-center"> Địa chỉ của tôi</h2>
+    <h1 class="text-center"> Địa chỉ của tôi</h1>
     <a href="{{ route('address.create') }}" class="btn btn-success">Thêm mới</a>
 
-    <ul class="list-group mt-2">
+    <ul class="list-group mt-5">
         @foreach ($addresses as $address)
             <li class="list-group-item {{ $address->is_default ? 'list-group-item-primary' : '' }}">
                 <strong>Tên người nhận:</strong> {{ $address->recipient_name }}<br>

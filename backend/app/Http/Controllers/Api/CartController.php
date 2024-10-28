@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
-use App\Models\CartItem;
-use App\Models\Product;
+use App\Models\Product_detail;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -16,127 +16,169 @@ class CartController extends Controller
     public function index()
     {
         try {
-            $cart = Cart::where('user_id', Auth::id())->with('items.product')->first();
-            return response()->json($cart);
+            $cartItems = Cart::with(['user', 'productDetails'])->get();
+            if(!empty($cartItems)){
+                foreach($cartItems as $cartKey => $cartItem){
+                    if(!empty($cartItem->productDetails)){
+                        foreach($cartItem->productDetails as $key => $productDetail){
+                            $product = Product_detail::with(['product', 'color', 'size'])->find($productDetail['id']);
+                            $cartItems[$cartKey]->productDetails[$key]['name'] = $product->product['name'];
+                            $cartItems[$cartKey]->productDetails[$key]['color'] = $product->color['name_color'];
+                            $cartItems[$cartKey]->productDetails[$key]['size'] = $product->size['size'];
+                            $cartItems[$cartKey]->productDetails[$key]['price'] = $product->product['price'];
+                        }
+                    }                    
+                }
+            }
+            
+            return response()->json($cartItems);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage() . $e->getLine()], 500);
         }
     }
-
     public function store(Request $request)
     {
         try {
-            $request->validate([
-                'product_id' => 'required|exists:products,id',
+            $validateData = $request->validate([
+                'product_detail_id' => 'required|exists:product_details,id',
+                'user_id' => 'required|exists:users,id',
                 'quantity' => 'required|integer|min:1',
             ]);
     
-            $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+            $cartItem = $request->except('user_id');
+            $data = $request->only('user_id');
     
-            $product = Product::findOrFail($request->product_id);
-    
-            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-            $cartItem = CartItem::where('cart_id', $cart->id)
-                                 ->where('product_id', $product->id)
-                                 ->first();
-    
-            if ($cartItem) {
-                // Cập nhật số lượng và tổng giá trị
-                $cartItem->quantity += $request->quantity;
-                $cartItem->total = $cartItem->quantity * $product->price; // Tính lại total
-                $cartItem->save();
-            } else {
-                // Thêm sản phẩm mới vào giỏ hàng
-                $cartItem = CartItem::create([
-                    'cart_id' => $cart->id,
-                    'product_id' => $product->id,
-                    'quantity' => $request->quantity,
-                    'price' => $product->price,
-                    'total' => $request->quantity * $product->price, // Tính total ngay khi thêm
-                ]);
+            $isCart = Cart::where('user_id', $data['user_id'])->first();
+            
+            if (isset($isCart)) {
+                $isCart->productDetails()->attach($cartItem['product_detail_id'], ['quantity' => $cartItem['quantity']]);
+                return response()->json($isCart, 201);
             }
     
-            // Dữ liệu trả về
-            $responseData = [
-                'id' => $cartItem->id,
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'quantity' => $cartItem->quantity,
-                'price' => $product->price,
-                'total' => $cartItem->total,
-                'message' => 'Sản phẩm đã được thêm vào giỏ hàng.'
-            ];
+            // Nếu không có giỏ hàng, tạo giỏ hàng mới
+            $cart = Cart::create($data);
+            $cart->productDetails()->attach($cartItem['product_detail_id'], ['quantity' => $cartItem['quantity']]);
+            return response()->json($cart, 201);
     
-            return response()->json($responseData, 201); // Trả về mã 201 Created
-    
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Trả về mã 500 Internal Server Error
+            Log::error('Failed to add item to cart: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage() . ' on ' . $e->getLine()
+            ], 500);
         }
     }
-    
     
 
-    public function show($itemId)
-    {
+    public function show($id){
         try {
-            $cartItem = CartItem::with(['product'])->findOrFail($itemId);
-    
-            $responseData = [
-                'id' => $cartItem->id,
-                'product_id' => $cartItem->product_id,
-                'product_name' => $cartItem->product->name,
-                'quantity' => $cartItem->quantity,
-                'price' => $cartItem->price,
-                'total' => $cartItem->total,
-                'message' => 'Thông tin sản phẩm trong giỏ hàng.'
-            ];
-    
-            return response()->json($responseData, 200); // Trả về mã 200 OK
+            $cart = Cart::with('productDetails')->findOrFail($id);
+            if(!empty($cart)){
+                foreach($cart->productDetails as $key => $productDetail){
+                    $product = Product_detail::with(['product', 'color', 'size'])->find($productDetail['id']);
+                    $cart->productDetails[$key]['name'] = $product->product['name'];
+                    $cart->productDetails[$key]['color'] = $product->color['name_color'];
+                    $cart->productDetails[$key]['size'] = $product->size['size'];
+                    $cart->productDetails[$key]['price'] = $product->product['price'];
+                }
+            }  
+            return response()->json([
+                'message' => 'Lấy đơn hàng thành công.',
+                'data' => $cart
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Đơn hàng không tồn tại.',
+            ], 404);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Trả về mã 500 Internal Server Error
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy đơn hàng.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
-    
-    public function update(Request $request, $itemId)
+
+    public function update(Request $request, $id)
     {
         try {
-            $request->validate([
+            $cart = Cart::findOrFail($id);
+            $validateData = $request->validate([
+                'product_detail_id' => 'required|exists:product_details,id',
                 'quantity' => 'required|integer|min:1',
             ]);
-    
-            $cartItem = CartItem::findOrFail($itemId);
-            $product = Product::findOrFail($cartItem->product_id); // Lấy sản phẩm để tính giá
-    
-            $cartItem->quantity = $request->quantity;
-            $cartItem->total = $cartItem->quantity * $product->price; // Cập nhật total
-            $cartItem->save();
-    
-            $responseData = [
-                'id' => $cartItem->id,
-                'product_id' => $cartItem->product_id,
-                'product_name' => $product->name,
-                'quantity' => $cartItem->quantity,
-                'price' => $product->price,
-                'total' => $cartItem->total,
-                'message' => 'Giỏ hàng đã được cập nhật.'
-            ];
-    
-            return response()->json($responseData, 200); // Trả về mã 200 OK
+            $data = $request->all();
+            $cart->productDetails()->updateExistingPivot($data['product_detail_id'],['quantity' => $data['quantity']]);;
+            return response()->json($cart);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Trả về mã 500 Internal Server Error
+            Log::error('Failed to update cart item' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
-    
-    public function destroy($itemId)
-{
-    try {
-        $cartItem = CartItem::findOrFail($itemId);
-        $cartItem->delete();
-
-        return response()->json(['message' => 'Sản phẩm đã được xóa khỏi giỏ hàng.'], 200); // Trả về mã 200 OK
-    } catch (\Exception $e) {
-        return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Trả về mã 500 Internal Server Error
+    public function destroy($id)
+    {
+        try {
+            $cart = Cart::findOrFail($id);
+            $cart->productDetails()->detach();
+            return response()->json(null, 204);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Cart item not found'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete cart item: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
+    public function destroyByProductId($id, $cartId)
+    {
+        try {
+            $cart = Cart::findOrFail($cartId);
+            $cart->productDetails()->detach($id);
+            return $cart;
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Cart item not found'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete cart item: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroyByProductIdLogin($id)
+    {
+        try {
+            $user = Auth::user();
+            $cart = Cart::where('user_id', $user->id)->first();
+            $cart->productDetails()->detach($id);
+            return $cart;
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'error' => 'Cart item not found'
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete cart item: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

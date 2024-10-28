@@ -3,18 +3,16 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CardController;
+use App\Http\Controllers\Api\AccountController as ApiAccountController;
 use App\Http\Controllers\ColorController;
-use App\Http\Controllers\ManagerUserController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ManagerUserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ThongkeController;
-use App\Http\Controllers\UserOrderController;
-use App\Http\Controllers\UservoucherController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +30,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Các route cho Account
-Route::controller(AccountController::class)->group(function () {
+// Các route cho AccountController
+Route::controller(ApiAccountController::class)->group(function () {
     // Đăng ký
     Route::get('register', 'register')->name('register.form');
     Route::post('register', 'register_')->name('register');
@@ -59,46 +57,46 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 // Route cho Admin
-Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager'])->group(function () {
-    Route::get('/admin/dashboard',  'admin')->name('admin.dashboard');
-      // Đổi mật khẩu
-    Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form');
-    Route::post('/admin/change-password', 'changepass_')->name('admin.password.change');
-    // Cập nhật tài khoản
-    Route::get('/admin/edit', 'edit')->name('admin.edit');
-    Route::post('/admin/update', 'update')->name('admin.update');
-
-    //cac route con lai
-    Route::resource('sizes', SizeController::class);
-    Route::resource('colors', ColorController::class);
-    Route::resource('categories', CategoryController::class);
-    Route::resource('vouchers', VoucherController::class);
-    Route::resource('orders', OrderController::class);
-    Route::resource('promotion', PromotionController::class);
-    Route::resource('products', ProductController::class);
-    //quan li account, route nay chi co quyen admin
-    Route::resource('managers', ManagerUserController::class)
+Route::controller(AdminController::class)->group(function () {
+    Route::get('/admin/dashboard',  'admin')->name('admin.dashboard')
     ->middleware(['auth', 'admin']);
 
+      // Đổi mật khẩu
+    Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form')->middleware('auth');
+    Route::post('/admin/change-password', 'changepass_')->name('admin.password.change')->middleware('auth');
+
+    // Cập nhật tài khoản
+    Route::get('/admin/edit', 'edit')->name('admin.edit')->middleware('auth');
+    Route::post('/admin/update', 'update')->name('admin.update')->middleware('auth');
 });
 
 // Route cho User
-Route::controller(UserController::class)->middleware(['auth', 'user'])->group(function () {
-    Route::get('/user/dashboard', 'user')->name('user.dashboard');
+Route::controller(UserController::class)->group(function () {
+    Route::get('/user/dashboard', 'user')->name('user.dashboard')
+    ->middleware(['auth', 'user']);
+
        // Đổi mật khẩu
-    Route::get('/user/change-password', 'changepass')->name('user.changepass.form');
-    Route::post('/user/change-password', 'changepass_')->name('user.password.change');
+    Route::get('/user/change-password', 'changepass')->name('user.changepass.form')->middleware('auth');
+    Route::post('/user/change-password', 'changepass_')->name('user.password.change')->middleware('auth');
+
     // Cập nhật tài khoản
-    Route::get('/user/edit', 'edit')->name('user.edit');
-    Route::post('/user/update', 'update')->name('user.update');
+    Route::get('/user/edit', 'edit')->name('user.edit')->middleware('auth');
+    Route::post('/user/update', 'update')->name('user.update')->middleware('auth');
+
     //địa chỉ
     Route::resource('address', AddressController::class);
     Route::patch('ship-addresses/{id}/set-default',  [AddressController::class, 'setDefault'])->name('address.set-default');
-
-    Route::resource('uservouchers', UservoucherController::class);
-    Route::resource('userorder', UserOrderController::class);
-    Route::resource('card', CardController::class);
-
 });
 
+Route::resource('products', ProductController::class);
 
+
+Route::resource('sizes', SizeController::class);
+Route::resource('colors', ColorController::class);
+Route::resource('categories', CategoryController::class);
+
+Route::resource('vouchers', VoucherController::class);
+
+Route::resource('orders', OrderController::class);
+Route::resource('promotion', PromotionController::class);
+Route::resource('users', ManagerUserController::class);

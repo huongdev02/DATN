@@ -54,7 +54,8 @@ Route::controller(AccountController::class)->group(function () {
     Route::get('/users/{id}',  'show')->name('show');;
 });
 
-
+Route::apiResource('sizes', SizeController::class);
+Route::apiResource('colors', ColorController::class);
 Route::apiResource('vouchers', VoucherController::class);
 Route::apiResource('users', UserController::class);
 Route::apiResource('payment_methods', PaymentMethod::class);

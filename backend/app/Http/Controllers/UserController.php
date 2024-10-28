@@ -78,7 +78,7 @@ class UserController extends Controller
                 Storage::delete($user->avatar);
             }
             // Lưu ảnh mới và cập nhật đường dẫn vào cột avatar
-            $user['avatar'] = Storage::put('UserAvatar', $request->file('avatar'));
+            $user['avatar'] = Storage::put('avatar', $request->file('avatar'));
         }
 
         $addressId = $request->input('address_id'); // Nhận ID địa chỉ từ request
