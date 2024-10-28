@@ -16,7 +16,7 @@ class ProductController extends Controller
                     'id' => $product->id,
                     'name' => $product->name,
                     'description' => $product->description,
-                    'avatar_url' => $product->avatar ? asset('storage/avatars/' . basename($product->avatar)) : null,
+                    'avatar_url' => $product->avatar ? asset('storage/ProductAvatars/' . basename($product->avatar)) : null, // Cập nhật đường dẫn avatar ở đây
                     'categories' => $product->categories,
                     'price' => $product->price,
                     'quantity' => $product->quantity,
@@ -35,6 +35,7 @@ class ProductController extends Controller
         }
     }
     
+    
 
 
     public function show(Product $product)
@@ -51,7 +52,7 @@ class ProductController extends Controller
                     'id' => $gallery->id,
                     'product_id' => $gallery->product_id,
                     'image_path' => $gallery->image_path,
-                    'image_url' => $gallery->image_url,
+                    'image_url' => asset('storage/ProductAvatars/' . basename($gallery->image_path)), // Cập nhật đường dẫn hình ảnh ở đây
                     'created_at' => $gallery->created_at,
                     'updated_at' => $gallery->updated_at,
                 ];
@@ -61,7 +62,7 @@ class ProductController extends Controller
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
-                'avatar_url' => $product->avatar ? asset('storage/avatars/' . basename($product->avatar)) : null,
+                'avatar_url' => $product->avatar ? asset('storage/ProductAvatars/' . basename($product->avatar)) : null, // Cập nhật đường dẫn avatar ở đây
                 'categories' => $product->categories,
                 'price' => $product->price,
                 'quantity' => $product->quantity,
@@ -79,6 +80,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
         }
     }
+    
     
     
     
