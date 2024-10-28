@@ -1,66 +1,41 @@
 <?php 
 namespace App\Http\Controllers\Api;
-
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\Gallery;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+
 
 class ProductController extends Controller
 {
     public function index()
     {
         try {
-            $products = Product::with('categories:id,name')->get();
+            $products = Product::with(['categories:id,name', 'colors:id,name_color', 'sizes:id,size'])->get();
+            
+            $products = $products->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'description' => $product->description,
+                    'avatar_url' => $product->avatar ? asset('storage/avatars/' . basename($product->avatar)) : null,
+                    'categories' => $product->categories,
+                    'price' => $product->price,
+                    'quantity' => $product->quantity,
+                    'sell_quantity' => $product->sell_quantity,
+                    'view' => $product->view,
+                    'colors' => $product->colors,
+                    'sizes' => $product->sizes,
+                    'created_at' => $product->created_at,
+                    'updated_at' => $product->updated_at,
+                ];
+            });
+    
             return response()->json($products);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Không thể lấy danh sách sản phẩm.' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Không thể lấy danh sách sản phẩm. ' . $e->getMessage()], 500);
         }
     }
+    
 
-    public function store(Request $request)
-    {
-        try {
-            $request->validate([
-                'name' => 'required|string|unique:products,name',
-                'avatar' => 'required|image',
-                'import_price' => 'required|numeric',
-                'price' => 'required|numeric',
-                'category_id' => 'required|exists:categories,id',
-                'display' => 'required|boolean',
-                'status' => 'required|integer|min:0|max:3',
-                'images.*' => 'image'
-            ]);
-
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-
-            $product = Product::create([
-                'name' => $request->name,
-                'avatar' => $avatarPath,
-                'import_price' => $request->import_price,
-                'price' => $request->price,
-                'description' => $request->description,
-                'category_id' => $request->category_id,
-                'display' => $request->display,
-                'status' => $request->status,
-            ]);
-
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $imagePath = $image->store('galleries', 'public');
-                    Gallery::create([
-                        'product_id' => $product->id,
-                        'image_path' => $imagePath,
-                    ]);
-                }
-            }
-
-            return response()->json(['message' => 'Sản phẩm được thêm thành công.', 'product' => $product], 201);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra khi thêm sản phẩm: ' . $e->getMessage()], 500);
-        }
-    }
 
     public function show(Product $product)
     {
@@ -69,82 +44,42 @@ class ProductController extends Controller
                 return response()->json(['message' => 'Sản phẩm không tồn tại.'], 404);
             }
     
-            return response()->json($product->load('categories', 'galleries'));
+            $product->load(['categories:id,name', 'colors:id,name_color', 'sizes:id,size', 'galleries']);
+    
+            $product->galleries = $product->galleries->map(function ($gallery) {
+                return [
+                    'id' => $gallery->id,
+                    'product_id' => $gallery->product_id,
+                    'image_path' => $gallery->image_path,
+                    'image_url' => $gallery->image_url,
+                    'created_at' => $gallery->created_at,
+                    'updated_at' => $gallery->updated_at,
+                ];
+            });
+    
+            $response = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'avatar_url' => $product->avatar ? asset('storage/avatars/' . basename($product->avatar)) : null,
+                'categories' => $product->categories,
+                'price' => $product->price,
+                'quantity' => $product->quantity,
+                'sell_quantity' => $product->sell_quantity,
+                'view' => $product->view,
+                'colors' => $product->colors,
+                'sizes' => $product->sizes,
+                'galleries' => $product->galleries,
+                'created_at' => $product->created_at,
+                'updated_at' => $product->updated_at,
+            ];
+    
+            return response()->json($response);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
         }
     }
     
-
-    public function update(Request $request, Product $product)
-    {
-        try {
-            $request->validate([
-                'name' => 'required|string|unique:products,name,' . $product->id,
-                'avatar' => 'image',
-                'import_price' => 'required|numeric',
-                'price' => 'required|numeric',
-                'category_id' => 'required|exists:categories,id',
-                'display' => 'required|boolean',
-                'status' => 'required|integer|min:0|max:3',
-                'images.*' => 'image'
-            ]);
-
-            if ($request->hasFile('avatar')) {
-                Storage::disk('public')->delete($product->avatar);
-                $avatarPath = $request->file('avatar')->store('avatars', 'public');
-                $product->avatar = $avatarPath;
-            }
-
-            $product->update([
-                'name' => $request->name,
-                'import_price' => $request->import_price,
-                'price' => $request->price,
-                'description' => $request->description,
-                'category_id' => $request->category_id,
-                'display' => $request->display,
-                'status' => $request->status,
-            ]);
-
-            if ($request->hasFile('images')) {
-                foreach ($product->galleries as $gallery) {
-                    Storage::disk('public')->delete($gallery->image_path);
-                    $gallery->delete();
-                }
-
-                foreach ($request->file('images') as $image) {
-                    $imagePath = $image->store('galleries', 'public');
-                    Gallery::create([
-                        'product_id' => $product->id,
-                        'image_path' => $imagePath,
-                    ]);
-                }
-            }
-
-            return response()->json(['message' => 'Sản phẩm được cập nhật thành công.', 'product' => $product]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra khi cập nhật sản phẩm: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function destroy(Product $product)
-    {
-        try {
-            // Xóa avatar
-            Storage::disk('public')->delete($product->avatar);
-
-            // Xóa các ảnh trong gallery
-            foreach ($product->galleries as $gallery) {
-                Storage::disk('public')->delete($gallery->image_path);
-                $gallery->delete();
-            }
-
-            // Xóa sản phẩm
-            $product->delete();
-
-            return response()->json(['message' => 'Sản phẩm đã được xóa thành công.'], 204);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra khi xóa sản phẩm: ' . $e->getMessage()], 500);
-        }
-    }
+    
+    
 }

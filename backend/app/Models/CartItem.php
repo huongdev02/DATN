@@ -4,19 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
-class Gallery extends Model
+class CartItem extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'product_id',
-        'image_path',
-    ];
-    public function getImagePathAttribute()
+
+    protected $fillable = ['cart_id', 'product_id', 'quantity', 'price', 'total'];
+
+    public function cart()
     {
-        return Storage::url($this->attributes['image_path']);
+        return $this->belongsTo(Cart::class);
     }
+
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -44,7 +44,7 @@ class AdminController extends Controller
                 Storage::delete($user->avatar);
             }
             // Lưu ảnh mới và cập nhật đường dẫn vào cột avatar
-            $user['avatar'] = Storage::put('avatar', $request->file('avatar'));
+            $user['avatar'] = Storage::put('AdminAvatar', $request->file('avatar'));
         }
         
         $user->save();

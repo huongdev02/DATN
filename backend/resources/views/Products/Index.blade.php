@@ -12,6 +12,7 @@
         height: auto;
     }
 </style>
+<div class="container">
     <a href="{{ route('products.create') }}" class="btn btn-outline-success mb-3">Add New Product</a>
     <table class="table table-bordered table-hover">
        <thead>
@@ -20,12 +21,13 @@
             <th>Name</th>
             <th>Category</th>
             <th>Avatar</th>
-            <th>Old Price</th>
             <th>Price</th>
-            <th>Description</th>
+            <th>Quantity</th>
+            <th>Sell</th>
             <th>Galleries</th>
             <th>Size</th>
             <th>Color</th>
+            <th>View</th>
             <th>Actions</th>
         </tr>
        </thead>
@@ -38,9 +40,9 @@
             <td>
                 <img src="{{ asset('storage/' . $item->avatar) }}" alt="{{ $item->name }}" style="width: 50px; height: auto;">
             </td>
-            <td>{{ number_format($item->old_price, 2) }} VND</td>
             <td>{{ number_format($item->price, 2) }} VND</td>
-            <td>{{ $item->description }}</td>
+            <td>{{ $item->quantity }}</td>
+            <td>{{ $item->sell_quantity }}</td>
             <td>
                 @if($item->galleries->isNotEmpty())
                 <div class="gallery-flex">
@@ -76,16 +78,18 @@
                     không có màu
                 @endif
             </td>
+            <td>{{$item->view}}</td>
             <td>
                 <a href="{{ route('products.edit', $item->id) }}" class="btn btn-outline-warning">Edit</a>
                 <form action="{{ route('products.destroy', $item->id) }}" method="POST" style="display:inline;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('chắc chắn muốn xóa sản phẩm này')">Delete</button>
                 </form>
             </td>
         </tr>
         @endforeach
        </tbody>
     </table>
+</div>
 @endsection

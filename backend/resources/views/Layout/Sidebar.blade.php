@@ -10,7 +10,11 @@
                     <span class="font-weight-bold mb-2">
                         {{ Auth::user()->fullname ?? Auth::user()->email ?? Auth::user()->username }}
                     </span>
-                    <span class="text-secondary text-small">Admin</span>
+                    @if(Auth::user()->role == 2)
+                        <span>Admin</span>
+                    @elseif(Auth::user()->role == 1)
+                        <span>Manager</span>
+                    @endif
                 </div>
                 <!-- Dropdown toggle icon -->
                 <span class="mdi mdi-dots-vertical mdi-24px ms-3"></span>
@@ -63,7 +67,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('users.index') }}">
+            <a class="nav-link" href="{{ route('managers.index') }}">
                 <span class="menu-title">User</span>
                 <i class="mdi mdi-account menu-icon"></i>
             </a>
@@ -83,6 +87,12 @@
         <li class="nav-item">
             <a class="nav-link" href="{{route('colors.index')}}">
                 <span class="menu-title">Color</span>
+                <i class="mdi mdi-format-color-fill menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('vouchers.index')}}">
+                <span class="menu-title">Voucher</span>
                 <i class="mdi mdi-format-color-fill menu-icon"></i>
             </a>
         </li>

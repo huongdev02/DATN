@@ -18,6 +18,9 @@ class Product extends Model
         'description',
         'display',
         'status',
+        'quantity',
+        'sell_quantity',
+        'view',
     ];
 
     public function galleries()
@@ -28,11 +31,6 @@ class Product extends Model
     public function categories(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
-    }
-
-    public function productDetail()
-    {
-        return $this->hasOne(Product_detail::class);
     }
 
     public function promotions()

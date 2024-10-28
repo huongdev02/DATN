@@ -5,9 +5,9 @@
 @endsection
 
 @section('content_admin')
-<h1 class="text-center my-4">Danh sách đơn hàng</h1>
+<h1 class="text-center mb-3">Danh sách đơn hàng</h1>
 
-<div class="container">
+<div class="container mt-2">
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
@@ -62,7 +62,7 @@
         if (confirm('Có chắc muốn chỉnh sửa trạng thái đơn hàng này?')) {
             form.submit();
         } else {
-            selectElement.value = ''; 
+            selectElement.value = '';
         }
     }
 </script>

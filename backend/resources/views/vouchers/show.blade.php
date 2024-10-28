@@ -1,6 +1,6 @@
-@extends('master')
+@extends('Layout.Layout')
 
-@section('content')
+@section('content_admin')
     <h1>Voucher Details</h1>
 
     <p><strong>Code:</strong> {{ $voucher->code }}</p>
