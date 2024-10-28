@@ -35,6 +35,7 @@ Route::apiResource('orders', OrderController::class);
 Route::apiResource('payments', PayController::class);
 Route::apiResource('carts', CartController::class);
 Route::apiResource('products', ProductController::class);
+Route::get('categories/{category}/products', [ProductController::class, 'getProductsByCategory']);
 Route::resource('promotions', PromotionController::class);
 
 Route::apiResource('categories', CategoryController::class);

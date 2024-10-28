@@ -11,6 +11,8 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th scope="col">Created at</th>
+                <th scope="col">Updated at</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -19,6 +21,8 @@
                 <tr>
                     <td>{{ $category->id }}</td>
                     <td>{{ $category->name }}</td>
+                    <td>{{ $category->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $category->updated_at->format('d/m/Y H:i') }}</td>
                     <td>
                         <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-outline-warning mb-3">Edit</a>
                         <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline;">
