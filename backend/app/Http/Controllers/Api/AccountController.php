@@ -90,4 +90,28 @@ class AccountController extends Controller
             return response()->json(['message' => 'User not found'] . $e->getMessage(), 404);
         }
     }
+
+    public function checkAuth(Request $request)
+    {
+        try {
+            // Kiểm tra xem người dùng đã đăng nhập hay chưa
+            if (Auth::check()) {
+                // Trả về thông tin người dùng nếu đã đăng nhập
+                return response()->json([
+                    'authenticated' => true,
+                    'user' => Auth::user(),
+                ]);
+            }
+    
+            // Trả về thông báo lỗi nếu chưa đăng nhập
+            return response()->json(['authenticated' => false], 401);
+        } catch (\Exception $e) {
+            // Xử lý ngoại lệ và trả về lỗi
+            return response()->json([
+                'error' => 'Đã xảy ra lỗi khi kiểm tra trạng thái đăng nhập.',
+                'message' => $e->getMessage(), // Ghi lại thông điệp lỗi
+            ], 500); // Trả về mã lỗi 500 cho các lỗi máy chủ
+        }
+    }
+    
 }

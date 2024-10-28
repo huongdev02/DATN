@@ -45,6 +45,40 @@ const Header: React.FC = () => {
     const closeCartPopup = () => {
         setIsCartActice(false);
     };
+    const handleIconClick = async () => {
+        try {
+            // Kiểm tra trạng thái đăng nhập
+            const response = await fetch('http://127.0.0.1:8000/api/check-auth', {
+                method: 'GET',
+                credentials: 'include', // Đảm bảo gửi cookie
+                headers: {
+                    'Content-Type': 'application/json', // Thêm header để chỉ định kiểu nội dung
+                },
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Auth check response:', data); // Kiểm tra phản hồi
+            
+                if (data.authenticated) {
+                    console.log('User is authenticated, redirecting to dashboard...');
+                    window.location.href = 'http://127.0.0.1:8000/user/dashboard';
+                } else {
+                    console.log('User is not authenticated, redirecting to login...');
+                    window.location.href = 'http://127.0.0.1:8000/login';
+                }
+            } else {
+                console.log('Server response not ok, redirecting to login...');
+                window.location.href = 'http://127.0.0.1:8000/login';
+            }
+        } catch (error) {
+            console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', error);
+            // Nếu có lỗi trong quá trình fetch, chuyển hướng đến trang đăng nhập
+            window.location.href = 'http://127.0.0.1:8000/login';
+        }
+    };
+    
+
     return (
         <>
             <header className="header sticky-bar header-style-1">
@@ -80,7 +114,13 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-                            <a className="account-icon account" onClick={openAccountPopup} href="#">
+
+                            
+                            <a
+                                className="account-icon account"
+                                onClick={handleIconClick}
+                                href="#"
+                            >
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_451)">
                                         <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
@@ -92,6 +132,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
+
                             <a className="account-icon wishlist" href="compare.html"><span className="number-tag">3</span>
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_452)">
