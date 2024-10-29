@@ -15,7 +15,6 @@
                     <th>ID</th>
                     <th>Người dùng</th>
                     <th>Địa chỉ giao hàng</th>
-                    <th>Sản phẩm</th>
                     <th>Số lượng</th>
                     <th>Tổng tiền</th>
                     <th>Trạng thái</th>
@@ -28,7 +27,6 @@
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->user->email }}</td>
                         <td>{{ $order->shipAddress->ship_address }}</td>
-                        <td>{{ $order->product->name }}</td>
                         <td>{{ $order->quantity }}</td>
                         <td>{{ number_format($order->total_amount, 2) }} VNĐ</td>
                         <td>
