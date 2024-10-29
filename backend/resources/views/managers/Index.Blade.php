@@ -28,7 +28,6 @@
                 <tr>
                     <th>ID</th>
                     <th>Avatar</th>
-                    <th>Tên Đăng Nhập</th>
                     <th>Họ Tên</th>
                     <th>Ngày Sinh</th>
                     <th>Số Điện Thoại</th>
@@ -44,7 +43,6 @@
                 <tr>
                     <td>{{ $user->id }}</td>
                     <td><img src="{{ asset('storage/' . $user->avatar) }}" class="rounded-circle" width="50px" height="50px"></td>
-                    <td>{{ $user->username }}</td>
                     <td>{{ $user->fullname }}</td>
                     <td>{{ $user->birth_day }}</td>
                     <td>{{ $user->phone }}</td>
