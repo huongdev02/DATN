@@ -14,34 +14,22 @@ import { log } from "console";
 
 const CartComponent: React.FC = () => {
   const [carts, setCarts] = useState<Cart[]>([]);
-  const [products, setProducts] = useState<IProduct[]>([]);
+
+  
   const GetAllCart = async () => {
     try {
       const { data } = await api.get("/carts");
-      setCarts(data);
+      setCarts(data.cart);
     } catch (error) {
       message.error("Lỗi api !");
     }
   };
+console.log("cart", carts)
 
-
-  const GetProduct = async () => {
-    try {
-      const { data } = await api.get(`/products/`);
-      setProducts(data);
-    } catch (error) {
-      message.error("Lỗi api !");
-    }
-  };
-  
-
-  const getProductById = (id: number | string) => {
-    return products.find((product) => product.id === id);
-  };
 
   useEffect(() => {
     GetAllCart();
-    GetProduct();
+  
   }, []);
 
   return (
@@ -83,7 +71,7 @@ const CartComponent: React.FC = () => {
                   </thead>
                   <tbody>
                     {carts.map((cart, index) => {
-                      const product = getProductById(cart.product_id);
+                      // const product = getProductById(cart.product_id);
                       return (
                         <tr key={index}>
                           <td>
@@ -92,7 +80,7 @@ const CartComponent: React.FC = () => {
                           <td>
                             <div className="box-product-cart">
                               <a className="image-product-cart" href="#">
-                                <img src={product?.avatar_url} alt="kidify" />
+                                {/* <img src={product?.avatar_url} alt="kidify" /> */}
                               </a>
                               <a
                                 className="title-product-cart"
@@ -102,21 +90,21 @@ const CartComponent: React.FC = () => {
                           </td>
                           <td className="size">
                             <span>
-                              {product?.sizes.map((sizes, index) => (
-                                <span key={index} className="brand-1">
+                              {/* {product?.sizes.map((sizes, index) => ( */}
+                                {/* <span key={index} className="brand-1">
                                   {sizes.size}
                                 </span>
-                              ))}
+                              ))} */}
                             </span>
                           </td>
                           <td className="price">
-                            {Math.round(product?.price ?? 0).toLocaleString(
+                            {/* {Math.round(product?.price ?? 0).toLocaleString(
                               "vi-VN",
                               {
                                 style: "currency",
                                 currency: "VND",
                               }
-                            )}
+                            )} */}
                           </td>
                           <td>
                             <div className="product-quantity">
