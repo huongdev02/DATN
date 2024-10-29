@@ -6,13 +6,14 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Str;
+use Illuminate\Support\Str;
 use Throwable;
 
 class AccountController extends Controller
@@ -80,12 +81,18 @@ class AccountController extends Controller
                     'account' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
                 ])->onlyInput('account');
             }
-    
-            if ($user->role == 0) {
-                return redirect()->route('user.dashboard')->with('success', 'Đăng nhập thành công');
-            } else {
-                return redirect()->route('admin.dashboard')->with('success', 'Đăng nhập thành công');
-            }
+
+                // Tạo token cho người dùng
+                $token = $user->createToken('YourAppName')->plainTextToken;
+        
+                // Lưu token vào cookie
+                $cookie = cookie('token', $token);
+
+                if ($user->role == 0) {
+                    return redirect()->route('user.dashboard')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
+                } else {
+                    return redirect()->route('admin.dashboard')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
+                }
         }
     
         return back()->withErrors([
@@ -94,12 +101,28 @@ class AccountController extends Controller
     }
     
 
+  
     public function logout(Request $request)
     {
+            /**
+             * @var User $user
+             */
+        $user = Auth::user();
+    
+        if ($user) {
+            // Xóa tất cả các token của người dùng
+            $user->tokens()->delete();
+        }
+    
+        // Đăng xuất người dùng
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('http://localhost:3000/')->with('success', 'Đã đăng xuất thành công');
+    
+        // Xóa cookie chứa token
+        $cookie = Cookie::forget('token');
+    
+        return redirect('/')->with('success', 'Đã đăng xuất thành công')->withCookie($cookie);
     }
 
     public function rspassword()
@@ -140,7 +163,7 @@ class AccountController extends Controller
             function ($user, $password) {
                 $user->forceFill([
                     'password' => Hash::make($password)
-                ])->setRememberToken(\Str::random(60));
+                ])->setRememberToken(Str::random(60));
 
                 $user->save();
 
@@ -157,6 +180,9 @@ class AccountController extends Controller
 
     public function verify(Request $request)
     {
+            /**
+             * @var User $user
+             */
         $user = Auth::user();
 
         // Kiểm tra xem email đã được xác thực chưa

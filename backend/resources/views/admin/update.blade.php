@@ -29,22 +29,6 @@
             <label for="email">Email</label>
             <input type="email" class="form-control mb-3" id="email" value="{{ old('email', Auth::user()->email) }}" disabled>
             <input type="hidden" name="email" value="{{ old('email', Auth::user()->email) }}">
-                
-    
-            <div class="d-flex">
-                @if(!empty(Auth::user()->email))
-                    @if(Auth::user()->email_verified_at == null)
-                        <span>Trạng thái:</span>
-                        <p style="color: red" class="ms-3">Chưa xác thực</p>
-                        <div class="">
-                            <a href="{{ route('verify') }}" class="btn badge bg-success ms-3">Xác minh email</a>
-                        </div>
-                    @else
-                        <span>Trạng thái email:</span>
-                        <p style="color: green" class="ms-3">Đã xác thực</p>
-                    @endif
-                @endif
-            </div>
             
             <label for="address">Address</label>
             <input type="text" class="form-control mb-3" name="address" id="address" value="{{ old('address', Auth::user()->address) }}">
