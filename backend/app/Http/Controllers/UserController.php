@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
 
-    public function user(){
-        return view('user.dashboard');
+    public function user(Request $request){
+        $token = $request->cookie('token');
+        return view('user.dashboard', ['token' => $token]);
     }
         public function changepass()
     {

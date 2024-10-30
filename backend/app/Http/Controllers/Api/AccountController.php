@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\Sanctum;
 use Throwable;
 
 class AccountController extends Controller
@@ -94,30 +95,42 @@ class AccountController extends Controller
     public function checkAuth(Request $request)
     {
         try {
-            // Check if the user is logged in
-            if (Auth::check()) {
-                // Return authenticated status and user info
+            // Lấy token từ header (hoặc từ cookie nếu đã được lưu)
+            $token = $request->bearerToken(); // Hoặc bạn có thể lấy từ cookie nếu cần
+    
+            // Nếu không có token, trả về thông báo chưa đăng nhập
+            if (!$token) {
+                return response()->json([
+                    'authenticated' => false,
+                    'message' => 'Token not provided.',
+                ], 401);
+            }
+    
+            // Xác thực token và lấy thông tin người dùng
+            $user = Auth::guard('sanctum')->user(); // Sử dụng guard của Sanctum để lấy người dùng
+    
+            if ($user) {
                 return response()->json([
                     'authenticated' => true,
-                    'user' => Auth::user(),
+                    'user' => $user, // Trả về thông tin người dùng
+                    'role' => $user->role, // Trả về vai trò của người dùng
                 ]);
             }
     
-            // Return a 401 status if the user is not logged in
+            // Nếu không tìm thấy người dùng, token không hợp lệ
             return response()->json([
                 'authenticated' => false,
-                'message' => 'User is not logged in.',
+                'message' => 'Invalid token.',
             ], 401);
     
         } catch (\Exception $e) {
-            // Handle exceptions and return error information
+            // Xử lý các lỗi và trả về thông tin lỗi
             return response()->json([
                 'authenticated' => false,
                 'error' => 'An error occurred while checking authentication status.',
                 'message' => $e->getMessage(),
-            ], 500); // 500 error for server issues
+            ], 500); // 500 error cho các vấn đề phía server
         }
     }
-    
     
 }

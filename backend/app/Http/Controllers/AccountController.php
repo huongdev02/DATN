@@ -41,7 +41,12 @@ class AccountController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
 
-            return redirect()->route('user.dashboard')->with('success', 'Đăng kí thành công');
+             // Tạo token cho người dùng
+             $token = $user->createToken('login')->plainTextToken;
+             // Lưu token vào cookie
+             $cookie = cookie('token', $token);
+
+            return redirect()->route('user.dashboard')->with('success', 'Đăng kí thành công')->withCookie($cookie);;
         } catch (Throwable $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -83,13 +88,13 @@ class AccountController extends Controller
             }
 
                 // Tạo token cho người dùng
-                $token = $user->createToken('YourAppName')->plainTextToken;
+                $token = $user->createToken('login')->plainTextToken;
         
                 // Lưu token vào cookie
                 $cookie = cookie('token', $token);
 
                 if ($user->role == 0) {
-                    return redirect()->route('user.dashboard')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
+                    return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
                 } else {
                     return redirect()->route('admin.dashboard')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
                 }
