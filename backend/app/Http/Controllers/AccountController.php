@@ -86,12 +86,15 @@ class AccountController extends Controller
                     'account' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
                 ])->onlyInput('account');
             }
-
-                // Tạo token cho người dùng
-                $token = $user->createToken('login')->plainTextToken;
-        
-                // Lưu token vào cookie
-                $cookie = cookie('token', $token);
+              
+            Log::info('User ID: ' . $user->id);
+            Log::info('User Type: ' . get_class($user));
+                try {
+                    $token = $user->createToken('login')->plainTextToken;
+                    $cookie = cookie('token', $token);
+                } catch (\Exception $e) {
+                    return back()->withErrors(['token' => $e->getMessage()]);
+                }
 
                 if ($user->role == 0) {
                     return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);

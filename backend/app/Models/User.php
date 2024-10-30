@@ -116,8 +116,5 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Message::class);
     }
 
-    public function tokens()
-    {
-        return $this->hasMany(PersonalAccessToken::class);
-    }
+
 }
