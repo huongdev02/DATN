@@ -8,8 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Sanctum\Sanctum;
 use Throwable;
 
@@ -117,45 +119,33 @@ class AccountController extends Controller
     return redirect('/login?logout=success')->withCookie($cookie);
 }
 
-    public function checkAuth(Request $request)
-    {
-        try {
-            // Lấy token từ header (hoặc từ cookie nếu đã được lưu)
-            $token = $request->bearerToken(); // Hoặc bạn có thể lấy từ cookie nếu cần
-    
-            // Nếu không có token, trả về thông báo chưa đăng nhập
-            if (!$token) {
-                return response()->json([
-                    'authenticated' => false,
-                    'message' => 'Token not provided.',
-                ], 401);
-            }
-    
-            // Xác thực token và lấy thông tin người dùng
-            $user = Auth::guard('sanctum')->user(); // Sử dụng guard của Sanctum để lấy người dùng
-    
-            if ($user) {
-                return response()->json([
-                    'authenticated' => true,
-                    'user' => $user, // Trả về thông tin người dùng
-                    'role' => $user->role, // Trả về vai trò của người dùng
-                ]);
-            }
-    
-            // Nếu không tìm thấy người dùng, token không hợp lệ
-            return response()->json([
-                'authenticated' => false,
-                'message' => 'Invalid token.',
-            ], 401);
-    
-        } catch (\Exception $e) {
-            // Xử lý các lỗi và trả về thông tin lỗi
-            return response()->json([
-                'authenticated' => false,
-                'error' => 'An error occurred while checking authentication status.',
-                'message' => $e->getMessage(),
-            ], 500); // 500 error cho các vấn đề phía server
-        }
+
+public function checkAuth(Request $request)
+{
+    // Lấy token từ cookie
+    $token = $request->cookie('token');
+    Log::info('Received token from cookie: ' . $token);
+
+    if (!$token) {
+        return response()->json(['authenticated' => false, 'message' => 'Token not provided.'], 401);
     }
+
+    // Mã hóa token để so sánh
+    $hashedToken = hash('sha256', $token);
+    Log::info('Hashed token: ' . $hashedToken);
     
+    // Kiểm tra token trong bảng personal_access_tokens
+    $tokenRecord = PersonalAccessToken::where('token', $hashedToken)->first();
+
+    if ($tokenRecord) {
+        $user = $tokenRecord->tokenable;
+        return response()->json([
+            'authenticated' => true,
+            'user' => $user,
+            'role' => $user->role,
+        ]);
+    }
+
+    return response()->json(['authenticated' => false, 'message' => 'Invalid token.'], 401);
+}
 }
