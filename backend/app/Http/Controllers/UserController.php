@@ -29,7 +29,9 @@ class UserController extends Controller
             'new_password' => 'required|min:6|confirmed', // Yêu cầu phải xác nhận mật khẩu mới
         ]);
 
-        // Lấy thông tin người dùng hiện tại
+           /**
+             * @var User $user
+             */
         $user = Auth::user();
 
         // Kiểm tra mật khẩu hiện tại có khớp không
@@ -85,6 +87,9 @@ class UserController extends Controller
         if ($addressId) {
             DB::transaction(function () use ($user, $addressId) {
                 // Đặt tất cả các địa chỉ khác về 0
+                   /**
+                 * @var User $user
+                 */
                 $user->shipAddresses()->update(['is_default' => 0]);
 
                 // Cập nhật địa chỉ được chọn thành mặc định
@@ -96,6 +101,9 @@ class UserController extends Controller
             });
         }
         
+           /**
+             * @var User $user
+             */
         $user->save();
 
         return redirect()->back()->with('success', 'Thông tin tài khoản đã được cập nhật thành công.');

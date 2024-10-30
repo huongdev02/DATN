@@ -15,6 +15,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Sản phẩm</th>
+                    <th>Hình ảnh</th>
                     <th>Số lượng</th>
                     <th>Giá</th>
                     <th>Tổng</th>
@@ -25,6 +26,9 @@
                     <tr>
                         <td>{{ $detail->product->id }}</td>
                         <td>{{ $detail->product->name }}</td>
+                        <td class="text-center">
+                            <img src="{{ asset('storage/' . $detail->product->avatar) }}" alt="image" style="width: 50px; height: 50px;">
+                        </td>
                         <td>{{ $detail->quantity }}</td>
                         <td>{{ number_format($detail->price) }} VNĐ</td>
                         <td>{{ number_format($detail->total) }} VNĐ</td>

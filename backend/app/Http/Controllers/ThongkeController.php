@@ -29,49 +29,6 @@ class ThongkeController extends Controller
         return view('admin.dashboard', compact('homnay', 'tuannay', 'thangnay', 'tuantruoc', 'thangtruoc'));
     }
 
-    public function product()
-    {
-        $homnay = Product_detail::whereDate('created_at', Carbon::today())
-            ->sum('sell_quantity'); //hom nay
-        $tuannay = Product_detail::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-            ->sum('sell_quantity'); //tuan nay
-        $thangnay = Product_detail::whereMonth('created_at', Carbon::now()->month)
-            ->sum('sell_quantity'); //thang nay
-        $tuantruoc = Product_detail::whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()])
-            ->sum('sell_quantity'); //tuan trc
-        $thangtruoc = Product_detail::whereMonth('created_at', Carbon::now()->subMonth()->month)
-            ->whereYear('created_at', Carbon::now()->subMonth()->year)
-            ->sum('sell_quantity'); //thang trc
-
-        $total = Product::count();
-
-        $active = Product::where('status', 1)->count();
-        $inactive = Product::where('status', 0)->count();
-
-        $product_hien = Product::where('display', 1)->count(); // Sản phẩm hiển thị
-        $product_an = Product::where('display', 0)->count(); // Sản phẩm không hiển thị
-
-        $danhmuc = Product::selectRaw('COUNT(*) as count, category_id')
-            ->groupBy('category_id')
-            ->get(); //theo danh muc
-
-        $gialoai1 = Product::where('price', '<', 100)->count(); // Sản phẩm có giá dưới 100
-        $gialoai2 = Product::whereBetween('price', [100, 500])->count(); // Sản phẩm có giá từ 100 đến 500
-        $gialoai3 = Product::where('price', '>', 500)->count(); // Sản phẩm có giá trên 500
-
-        $productnew_thang = Product::selectRaw('COUNT(*) as count, MONTH(created_at) as month')
-            ->groupBy('month')
-            ->get(); //sp new theo tung thang
-        $conhang = Product_detail::where('quantity', '>', 0)->count(); // Còn hàng
-        $hethang = Product_detail::where('quantity', 0)->count(); // Hết hàng
-
-        $topsell = Product_detail::orderBy('sell_quantity', 'desc')->first(); // ban chay nhat
-
-        $tonkho = Product_detail::where('quantity', '>', 50)
-            ->where('created_at', '<', Carbon::now()->subMonths(2))
-            ->get(); // ton kho 2 thang va co soluong>50 
-
-    }
     public function review()
     {
         $choxuli = Review::where('status', 0)->count(); // Đang chờ xử lý

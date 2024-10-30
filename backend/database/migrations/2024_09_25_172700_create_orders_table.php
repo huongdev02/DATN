@@ -18,7 +18,6 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(Product::class)->constrained();
             $table->unsignedInteger('quantity');
             $table->decimal('total_amount', 10, 2);
             $table->tinyInteger('payment_method')->default(1);// 0: tiền mặt, 1: chuyển khoản ngân hàng, 2: thanh toán qua thẻ atm
