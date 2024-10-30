@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
@@ -91,6 +92,30 @@ class AccountController extends Controller
             return response()->json(['message' => 'User not found'] . $e->getMessage(), 404);
         }
     }
+
+    public function logout(Request $request)
+{
+    /**
+     * @var User $user
+     */
+    $user = Auth::user();
+
+    if ($user) {
+        // Xóa tất cả các token của người dùng
+        $user->tokens()->delete();
+    }
+
+    // Đăng xuất người dùng
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    // Xóa cookie chứa token
+    $cookie = Cookie::forget('token');
+
+    // Chuyển hướng về frontend và gửi một thông điệp qua query parameter
+    return redirect('/login?logout=success')->withCookie($cookie);
+}
 
     public function checkAuth(Request $request)
     {
