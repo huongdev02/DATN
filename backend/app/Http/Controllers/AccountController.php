@@ -130,7 +130,7 @@ class AccountController extends Controller
         // Xóa cookie chứa token
         $cookie = Cookie::forget('token');
     
-        return redirect('/')->with('success', 'Đã đăng xuất thành công')->withCookie($cookie);
+        return redirect('http://localhost:3000/')->with('success', 'Đã đăng xuất thành công')->withCookie($cookie);
     }
 
     public function rspassword()
