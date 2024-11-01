@@ -195,7 +195,7 @@ const ProductWithCategories: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                        <div
+                        <div 
                             className="tab-pane fade"
                             id="boys"
                             role="tabpanel"
