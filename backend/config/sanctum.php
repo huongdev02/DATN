@@ -1,48 +1,28 @@
 <?php
 
-use Laravel\Sanctum\Sanctum;
-
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | Stateful Domains
+    | Statefull Domains
     |--------------------------------------------------------------------------
     |
-    | Requests from the following domains / hosts will receive stateful API
-    | authentication cookies. Typically, these should include your local
-    | and production domains which access your API via a frontend SPA.
+    | Here you may specify which domains should receive stateful authentication
+    | cookies. The domains specified here should not contain any wildcards.
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        Sanctum::currentApplicationUrlWithPort()
-    ))),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Sanctum Guards
-    |--------------------------------------------------------------------------
-    |
-    | This array contains the authentication guards that will be checked when
-    | Sanctum is trying to authenticate a request. If none of these guards
-    | are able to authenticate the request, Sanctum will use the bearer
-    | token that's present on an incoming request for authentication.
-    |
-    */
-
-    'guard' => ['web'],
+    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost:3000,localhost')),
 
     /*
     |--------------------------------------------------------------------------
     | Expiration Minutes
     |--------------------------------------------------------------------------
     |
-    | This value controls the number of minutes until an issued token will be
-    | considered expired. This will override any values set in the token's
-    | "expires_at" attribute, but first-party sessions are not affected.
+    | This value controls the number of minutes until an issued token will
+    | be considered expired. If you want to allow users to stay logged in
+    | indefinitely, you may set this value to null. Otherwise, it will
+    | expire after the specified number of minutes.
     |
     */
 
@@ -50,34 +30,44 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Token Prefix
+    | Middleware
     |--------------------------------------------------------------------------
     |
-    | Sanctum can prefix new tokens in order to take advantage of numerous
-    | security scanning initiatives maintained by open source platforms
-    | that notify developers if they commit tokens into repositories.
-    |
-    | See: https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning
-    |
-    */
-
-    'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Sanctum Middleware
-    |--------------------------------------------------------------------------
-    |
-    | When authenticating your first-party SPA with Sanctum you may need to
-    | customize some of the middleware Sanctum uses while processing the
-    | request. You may change the middleware listed below as required.
+    | You may specify the middleware that should be applied to your Sanctum
+    | routes. You may also set the middleware to the default 'web' and 
+    | 'api' middleware if necessary.
     |
     */
 
     'middleware' => [
-        'authenticate_session' => Laravel\Sanctum\Http\Middleware\AuthenticateSession::class,
-        'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
-        'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
+        'api' => ['throttle:api', 'bindings'],
+        'web' => ['web'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Prefix
+    |--------------------------------------------------------------------------
+    |
+    | This value is the prefix used when registering routes. You may modify
+    | it if you wish to have your routes under a different prefix. 
+    |
+    */
+
+    'prefix' => 'api',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Guards
+    |--------------------------------------------------------------------------
+    |
+    | Here you can specify which authentication guards should be used for 
+    | Sanctum authentication. Typically, this will be the "web" guard.
+    |
+    */
+
+    'guards' => [
+        'web',
+        'api',
+    ],
 ];

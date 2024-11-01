@@ -42,16 +42,15 @@ Route::apiResource('categories', CategoryController::class);
 
 
 Route::controller(AccountController::class)->group(function () {
-    //dang ki
     Route::post('register', 'register')->name('register');
-    // Đăng nhập
     Route::post('login', 'login')->name('login');
+    Route::post('logout', 'logout')->name('logout');
     //lay user
     Route::get('/users/{id}',  'show')->name('show');;
 });
 
-Route::get('/auth/check', [AccountController::class, 'checkAuth'])->name('auth.check')
-->middleware('web');;
+Route::get('/auth/check', [AccountController::class, 'checkAuth']);
+
 Route::apiResource('vouchers', VoucherController::class);
 
 

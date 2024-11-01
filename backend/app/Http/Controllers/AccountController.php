@@ -41,7 +41,12 @@ class AccountController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
 
-            return redirect()->route('user.dashboard')->with('success', 'Đăng kí thành công');
+             // Tạo token cho người dùng
+             $token = $user->createToken('login')->plainTextToken;
+             // Lưu token vào cookie
+             $cookie = cookie('token', $token);
+
+            return redirect('http://localhost:3000/')->with('success', 'Đăng kí thành công')->withCookie($cookie);;
         } catch (Throwable $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -81,17 +86,20 @@ class AccountController extends Controller
                     'account' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
                 ])->onlyInput('account');
             }
-
-                // Tạo token cho người dùng
-                $token = $user->createToken('YourAppName')->plainTextToken;
-        
-                // Lưu token vào cookie
-                $cookie = cookie('token', $token);
+              
+            Log::info('User ID: ' . $user->id);
+            Log::info('User Type: ' . get_class($user));
+                try {
+                    $token = $user->createToken('login')->plainTextToken;
+                    $cookie = cookie('token', $token);
+                } catch (\Exception $e) {
+                    return back()->withErrors(['token' => $e->getMessage()]);
+                }
 
                 if ($user->role == 0) {
-                    return redirect()->route('user.dashboard')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
+                    return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
                 } else {
-                    return redirect()->route('admin.dashboard')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
+                    return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
                 }
         }
     
@@ -122,7 +130,7 @@ class AccountController extends Controller
         // Xóa cookie chứa token
         $cookie = Cookie::forget('token');
     
-        return redirect('/')->with('success', 'Đã đăng xuất thành công')->withCookie($cookie);
+        return redirect('http://localhost:3000/')->with('success', 'Đã đăng xuất thành công')->withCookie($cookie);
     }
 
     public function rspassword()

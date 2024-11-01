@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\PersonalAccessToken;
+use Laravel\Sanctum\Sanctum;
 use Throwable;
 
 class AccountController extends Controller
@@ -91,33 +95,57 @@ class AccountController extends Controller
         }
     }
 
-    public function checkAuth(Request $request)
-    {
-        try {
-            // Check if the user is logged in
-            if (Auth::check()) {
-                // Return authenticated status and user info
-                return response()->json([
-                    'authenticated' => true,
-                    'user' => Auth::user(),
-                ]);
-            }
-    
-            // Return a 401 status if the user is not logged in
-            return response()->json([
-                'authenticated' => false,
-                'message' => 'User is not logged in.',
-            ], 401);
-    
-        } catch (\Exception $e) {
-            // Handle exceptions and return error information
-            return response()->json([
-                'authenticated' => false,
-                'error' => 'An error occurred while checking authentication status.',
-                'message' => $e->getMessage(),
-            ], 500); // 500 error for server issues
-        }
+    public function logout(Request $request)
+{
+    /**
+     * @var User $user
+     */
+    $user = Auth::user();
+
+    if ($user) {
+        // Xóa tất cả các token của người dùng
+        $user->tokens()->delete();
     }
+
+    // Đăng xuất người dùng
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    // Xóa cookie chứa token
+    $cookie = Cookie::forget('token');
+
+    // Chuyển hướng về frontend và gửi một thông điệp qua query parameter
+    return redirect('/login?logout=success')->withCookie($cookie);
+}
+
+
+public function checkAuth(Request $request)
+{
+    // Lấy token từ cookie
+    $token = $request->cookie('token');
+    Log::info('Received token from cookie: ' . $token);
+
+    if (!$token) {
+        return response()->json(['authenticated' => false, 'message' => 'Token not provided.'], 401);
+    }
+
+    // Mã hóa token để so sánh
+    $hashedToken = hash('sha256', $token);
+    Log::info('Hashed token: ' . $hashedToken);
     
-    
+    // Kiểm tra token trong bảng personal_access_tokens
+    $tokenRecord = PersonalAccessToken::where('token', $hashedToken)->first();
+
+    if ($tokenRecord) {
+        $user = $tokenRecord->tokenable;
+        return response()->json([
+            'authenticated' => true,
+            'user' => $user,
+            'role' => $user->role,
+        ]);
+    }
+
+    return response()->json(['authenticated' => false, 'message' => 'Invalid token.'], 401);
+}
 }
