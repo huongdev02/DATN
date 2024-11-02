@@ -107,8 +107,7 @@ const ProductDetailComponent: React.FC = () => {
                     <div className="font-sm neutral-500 mb-15">Quantity</div>
                   </div>
                   <div className="box-form-cart">
-                    <div className="form-cart"><span className="minus" />
-                      <input className="form-control" type="text" defaultValue={1} /><span className="plus" />
+                    <div className="form-cart"><span className="minus" /><input className="form-control" type="text" defaultValue={1} /><span className="plus" />
                     </div><a className="btn btn-brand-1-border" href="#">Add to Cart</a><a className="btn btn-brand-1-xl" href="#">Buy Now</a><a className="btn link-add-cart" href="#">Add to Wish list</a>
                   </div>
                   <div className="box-product-tag d-flex justify-content-between align-items-end">

@@ -15,7 +15,36 @@ import ProductDetailSix from '../../assets/imgs/page/product/img-6.png'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Star from '../../assets/imgs/template/icons/star.svg'
 import api from '../../configAxios/axios';
+import { message } from 'antd';
+import { useState , useEffect} from 'react';
+import { IProduct } from '../../types/cart';
 const ProductWithCategories: React.FC = () => {
+    const [products, setProducts] = useState<IProduct[]>([]);
+   
+    const GetProductCategory = async () => {
+        try {
+          const { data } = await api.get(`/products`);
+          setProducts(data.products);
+        } catch (error) {
+          message.error("Lỗi api !");
+        }
+      };
+
+
+      const boyProducts = products.filter(product => product.categories.name === 'Nam');
+      const girlProducts = products.filter(product => product.categories.name === 'Nữ');
+      const kidProducts = products.filter(product => product.categories.name === 'Trẻ em');
+      
+
+    console.log('sản phẩm', products);
+    
+      
+
+    useEffect(()=>{
+        GetProductCategory()
+    },[])
+
+
     return (
         <>
             <section className="section block-section-1">
@@ -71,6 +100,7 @@ const ProductWithCategories: React.FC = () => {
                             </ul>
                         </div>
                     </div>
+                    {/* sản phẩm theo danh mục */}
                     <div className="tab-content">
                         <div
                             className="tab-pane fade show active"
@@ -79,6 +109,7 @@ const ProductWithCategories: React.FC = () => {
                             aria-labelledby="girls-tab"
                         >
                             <div className="row">
+                            {boyProducts.map((product) => (
                                 <div
                                     className="col-xl-3 col-lg-4 col-md-6 col-sm-6 wow animate__animated animate__fadeIn"
                                     data-wow-delay=".5s"
@@ -89,12 +120,12 @@ const ProductWithCategories: React.FC = () => {
                                             <a href="product-single.html">
                                                 <img
                                                     className="imageMain"
-                                                    src={ProductFour}
+                                                    src={product.avatar_url}
                                                     alt="kidify"
                                                 />
                                                 <img
                                                     className="imageHover"
-                                                    src={ProductThree}
+                                                    src={product.avatar_url}
                                                     alt="kidify"
                                                 />
                                             </a>
@@ -187,12 +218,13 @@ const ProductWithCategories: React.FC = () => {
                                         </div>
                                         <div className="cardInfo">
                                             <a href="product-single.html">
-                                                <h6 className="font-md-bold cardTitle">Junior Jogger Pants</h6>
+                                                <h6 className="font-md-bold cardTitle">{product.name}</h6>
                                             </a>
-                                            <p className="font-lg cardDesc">$16.00</p>
+                                            <p className="font-lg cardDesc"> {Math.round(product.price ?? 0).toLocaleString(  "vi-VN", {style: "currency", currency: "VND",} )}</p>
                                         </div>
                                     </div>
                                 </div>
+                                   ))}
                             </div>
                         </div>
                         <div 
@@ -202,6 +234,7 @@ const ProductWithCategories: React.FC = () => {
                             aria-labelledby="boys-tab"
                         >
                             <div className="row">
+                            {girlProducts.map((product) => (
                                 <div
                                     className="col-xl-3 col-lg-4 col-md-6 col-sm-6 wow animate__animated animate__fadeIn"
                                     data-wow-delay=".1s"
@@ -212,12 +245,12 @@ const ProductWithCategories: React.FC = () => {
                                             <a href="product-single.html">
                                                 <img
                                                     className="imageMain"
-                                                    src={ProductOne}
+                                                    src={product.avatar_url}
                                                     alt="kidify"
                                                 />
                                                 <img
                                                     className="imageHover"
-                                                    src={ProductSeven}
+                                                    src={product.avatar_url}
                                                     alt="kidify"
                                                 />
                                             </a>
@@ -310,14 +343,13 @@ const ProductWithCategories: React.FC = () => {
                                         </div>
                                         <div className="cardInfo">
                                             <a href="product-single.html">
-                                                <h6 className="font-md-bold cardTitle">Little Stars Dress</h6>
+                                                <h6 className="font-md-bold cardTitle">{product.name}</h6>
                                             </a>
-                                            <p className="font-lg cardDesc">$16.00</p>
+                                            <p className="font-lg cardDesc"> {Math.round(product.price ?? 0).toLocaleString(  "vi-VN", {style: "currency", currency: "VND",} )}</p>
                                         </div>
                                     </div>
                                 </div>
-                             
-                             
+                                ))}
                             </div>
                         </div>
                         <div
@@ -327,6 +359,7 @@ const ProductWithCategories: React.FC = () => {
                             aria-labelledby="children"
                         >
                             <div className="row">
+                            {kidProducts.map((product) => (
                                 <div
                                     className="col-xl-3 col-lg-4 col-md-6 col-sm-6 wow animate__animated animate__fadeIn"
                                     data-wow-delay=".1s"
@@ -337,12 +370,12 @@ const ProductWithCategories: React.FC = () => {
                                             <a href="product-single.html">
                                                 <img
                                                     className="imageMain"
-                                                    src={ProductOne}
+                                                    src={product.avatar_url}
                                                     alt="kidify"
                                                 />
                                                 <img
                                                     className="imageHover"
-                                                    src={ProductSeven}
+                                                    src={product.avatar_url}
                                                     alt="kidify"
                                                 />
                                             </a>
@@ -435,12 +468,13 @@ const ProductWithCategories: React.FC = () => {
                                         </div>
                                         <div className="cardInfo">
                                             <a href="product-single.html">
-                                                <h6 className="font-md-bold cardTitle">Little Stars Dress</h6>
+                                                <h6 className="font-md-bold cardTitle">{product.name}</h6>
                                             </a>
-                                            <p className="font-lg cardDesc">$16.00</p>
+                                            <p className="font-lg cardDesc"> {Math.round(product.price ?? 0).toLocaleString(  "vi-VN", {style: "currency", currency: "VND",} )}</p>
                                         </div>
                                     </div>
                                 </div>
+                              ))}
                             </div>
                         </div>
                     </div>

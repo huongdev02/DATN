@@ -5,7 +5,7 @@ export type Cart = {
     total: number;
   };
 export type Category = {
-    id: string;
+  
     name: string;
   };
 
@@ -17,7 +17,7 @@ export type IProduct = {
     id: string;
     name: string;
     avatar_url: string;
-    categories: Category[];
+    categories: Category;
     sizes: Size[];
     colors: Color[]
     quantity: number;
