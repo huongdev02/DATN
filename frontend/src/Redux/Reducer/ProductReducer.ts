@@ -55,7 +55,7 @@ const ProductReducer = createSlice({
             })
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.loading = false;
-                state.products = action.payload; // Giả sử API trả về một mảng sản phẩm
+                state.products = action.payload; 
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.loading = false;

@@ -15,7 +15,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['galleries', 'categories', 'sizes', 'colors'])->get(); // Thêm sizes và colors
+        $products = Product::with(['galleries', 'categories', 'sizes', 'colors'])->get();
     
         $colorMap = [
             'Đỏ' => '#FF0000',

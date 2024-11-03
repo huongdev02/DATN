@@ -26,6 +26,13 @@ class CategoryController extends Controller
     public function getProductsByCategory($id)
     {
         $products = Product::where('category_id', $id)->get();
+        $products->each(function ($product) {
+            $product->avatar = $product->avatar ? asset('storage/' . $product->avatar) : null;
+
+            $product->galleries->each(function ($gallery) {
+                $gallery->image_path = asset('storage/' . $gallery->image_path);
+            });
+        });
         return response()->json($products);
     }
 

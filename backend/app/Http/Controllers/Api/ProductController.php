@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers\Api;
 
@@ -15,8 +15,15 @@ class ProductController extends Controller
         try {
             // Tải danh sách sản phẩm kèm theo categories, sizes và colors
             $products = Product::with('categories:id,name', 'sizes', 'colors')
-            ->orderBy('id', 'desc')
-            ->get();
+                ->orderBy('id', 'desc')
+                ->get();
+            $products->each(function ($product) {
+                $product->avatar = $product->avatar ? asset('storage/' . $product->avatar) : null;
+
+                $product->galleries->each(function ($gallery) {
+                    $gallery->image_path = asset('storage/' . $gallery->image_path);
+                });
+            });
             return response()->json($products);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Không thể lấy danh sách sản phẩm.' . $e->getMessage()], 500);
@@ -83,25 +90,25 @@ class ProductController extends Controller
     }
 
     public function show(Product $product)
-{
-    try {
-        // Tải thông tin sản phẩm kèm theo các mối quan hệ
-        $productDetails = $product->productDetails; // Lấy tất cả product_details
+    {
+        try {
+            // Tải thông tin sản phẩm kèm theo các mối quan hệ
+            $productDetails = $product->productDetails; // Lấy tất cả product_details
 
-        // Kiểm tra nếu sản phẩm không tồn tại
-        if (!$product) {
-            return response()->json(['message' => 'Sản phẩm không tồn tại.'], 404);
+            // Kiểm tra nếu sản phẩm không tồn tại
+            if (!$product) {
+                return response()->json(['message' => 'Sản phẩm không tồn tại.'], 404);
+            }
+
+            // Trả về thông tin sản phẩm cùng với product_details
+            return response()->json([
+                'product' => $product->load('categories', 'galleries', 'sizes', 'colors'),
+                'product_details' => $productDetails // Thêm product_details vào response
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
         }
-
-        // Trả về thông tin sản phẩm cùng với product_details
-        return response()->json([
-            'product' => $product->load('categories', 'galleries', 'sizes', 'colors'),
-            'product_details' => $productDetails // Thêm product_details vào response
-        ]);
-    } catch (\Exception $e) {
-        return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
     }
-}
 
 
     public function update(Request $request, Product $product)

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Image from '../../assets/imgs/template/icons/CategoryIcon24-1.svg';
 import { RootState, useAppDispatch } from '../../Redux/store';
 import { fetchCategories, fetchProductsByCategory, setActiveTab } from '../../Redux/Reducer/CategoriesReducer';
+import { Link } from 'react-router-dom';
 
 const ShopByCategory: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -51,17 +52,16 @@ const ShopByCategory: React.FC = () => {
                                     <div className="cardProduct wow fadeInUp">
                                         <div className="cardImage">
                                             <label className="lbl-hot">hot</label>
-                                            <a href={`product-single.html?id=${product.id}`}>
-                                                <img className="imageMain" src={product.avatar} alt={product.name} />
-                                            </a>
-                                            <div className="button-select"><a href={`product-single.html?id=${product.id}`}>Add to Cart</a></div>
-                                            {/* Add your quick view buttons here */}
+                                            <Link to={`/product-detail/${product.id}`}>
+                                                <img className="imageMain" src={`${product.avatar}`} alt={product.name} />
+                                            </Link>
+                                            <div className="button-select"><Link to={`/product-detail/${product.id}`}>Add to Cart</Link></div>
                                         </div>
                                         <div className="cardInfo">
-                                            <a href={`product-single.html?id=${product.id}`}>
+                                            <Link to={`/product-detail/${product.id}`}>
                                                 <h6 className="font-md-bold cardTitle">{product.name}</h6>
-                                            </a>
-                                            <p className="font-lg cardDesc">${product.price.toFixed(2)}</p>
+                                            </Link>
+                                            <p className="font-lg cardDesc">${product.price}</p>
                                         </div>
                                     </div>
                                 </div>
