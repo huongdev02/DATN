@@ -95,10 +95,10 @@ class AccountController extends Controller
                 $tokenParts = explode('|', $token);
                 $actualToken = isset($tokenParts[1]) ? $tokenParts[1] : $token; // Lấy phần thứ hai nếu có
     
-                // Lưu vào cookie
+                // Lưu vào cookie không có thời gian sống (sống đến khi đóng trình duyệt)
                 $cookie = cookie('token', $actualToken);
                 $userId = $user->id; 
-                $userCookie = cookie('user_id', $userId, 60 * 24); 
+                $userCookie = cookie('user_id', $userId); // Không chỉ định thời gian sống
     
                 // Lưu ID và token vào storage
                 Storage::disk('local')->put('user_' . $userId . '.txt', json_encode([
@@ -124,16 +124,30 @@ class AccountController extends Controller
     
     
     
+    
     public function logout(Request $request)
     {
-            /**
-             * @var User $user
-             */
+        /** @var User $user */
         $user = Auth::user();
     
         if ($user) {
             // Xóa tất cả các token của người dùng
             $user->tokens()->delete();
+    
+            // Lấy ID người dùng từ Auth
+            $userId = Auth::id(); // Sử dụng Auth::id() để lấy ID người dùng
+            
+            if ($userId) {
+                // Tạo đường dẫn file chính xác
+                $filePath = 'user_' . $userId . '.txt';
+    
+                // Kiểm tra sự tồn tại của file và xóa nếu có
+                if (Storage::exists($filePath)) {
+                    Storage::delete($filePath);
+                } else {
+                    Log::info("File không tồn tại: " . $filePath);
+                }
+            }
         }
     
         // Đăng xuất người dùng
@@ -141,11 +155,19 @@ class AccountController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
     
-        // Xóa cookie chứa token
-        $cookie = Cookie::forget('token');
+        // Xóa cookie chứa token và user_id
+        $cookieToken = Cookie::forget('token');
+        $cookieUserId = Cookie::forget('user_id');
     
-        return redirect('http://localhost:3000/')->with('success', 'Đã đăng xuất thành công')->withCookie($cookie);
+        // Chuyển hướng và xóa cả hai cookie
+        return redirect('http://localhost:3000/')
+            ->with('success', 'Đã đăng xuất thành công')
+            ->withCookie($cookieToken)
+            ->withCookie($cookieUserId);
     }
+    
+    
+
 
     public function rspassword()
     {

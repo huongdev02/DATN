@@ -32,7 +32,13 @@
                                 <p class="card-text" id="changeIndicator">
                                     So với kỳ trước:
                                     <span id="changeValue" class="font-weight-bold">{{ $account['change'] }}</span>
-                                    <i id="changeIcon" class="fas"></i>
+                                    @if($account['change'] > 0)
+                                        <i class="fas fa-arrow-up" style="color: green;"></i> <!-- Mũi tên lên màu xanh -->
+                                    @elseif($account['change'] < 0)
+                                        <i class="fas fa-arrow-down" style="color: red;"></i> <!-- Mũi tên xuống màu đỏ -->
+                                    @else
+                                        <i class="fas fa-arrow-right" style="color: gray;"></i> <!-- Mũi tên bên phải cho không thay đổi -->
+                                    @endif
                                 </p>
                             </div>
                         </div>
@@ -63,7 +69,13 @@
                                         <p class="card-text" id="revenueChangeIndicator">
                                             So với kỳ trước:
                                             <span id="revenueChangeValue" class="font-weight-bold">{{ $order['change'] }}</span>
-                                            <i id="revenueChangeIcon" class="fas"></i>
+                                            @if($order['change'] > 0)
+                                                <i class="fas fa-arrow-up" style="color: green;"></i> <!-- Mũi tên lên màu xanh -->
+                                            @elseif($order['change'] < 0)
+                                                <i class="fas fa-arrow-down" style="color: red;"></i> <!-- Mũi tên xuống màu đỏ -->
+                                            @else
+                                                <i class="fas fa-arrow-right" style="color: gray;"></i> <!-- Mũi tên bên phải cho không thay đổi -->
+                                            @endif
                                         </p>
                                     </div>
                                     <div class="col-6">
@@ -72,7 +84,13 @@
                                         <p class="card-text" id="orderChangeIndicator">
                                             So với kỳ trước:
                                             <span id="orderChangeValue" class="font-weight-bold">{{ $order['order_count'] - $order['lastOrderCount'] }}</span>
-                                            <i id="orderChangeIcon" class="fas"></i>
+                                            @if(($order['order_count'] - $order['lastOrderCount']) > 0)
+                                                <i class="fas fa-arrow-up" style="color: green;"></i> <!-- Mũi tên lên màu xanh -->
+                                            @elseif(($order['order_count'] - $order['lastOrderCount']) < 0)
+                                                <i class="fas fa-arrow-down" style="color: red;"></i> <!-- Mũi tên xuống màu đỏ -->
+                                            @else
+                                                <i class="fas fa-arrow-right" style="color: gray;"></i> <!-- Mũi tên bên phải cho không thay đổi -->
+                                            @endif
                                         </p>
                                     </div>
                                 </div>
@@ -83,6 +101,8 @@
             </div>
         </div>
     </div>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <script>
         function submitForm(select) {
