@@ -37,7 +37,7 @@ const ProductWithCategories: React.FC = () => {
       const girlProducts = products.filter(product => product.categories.name === 'Nữ');
       const kidProducts = products.filter(product => product.categories.name === 'Trẻ em');
       
-      const userId = Cookies.get('XSRF-TOKEN');
+      const userId = Cookies.get('user_id');
       console.log("user",userId);
 
      
