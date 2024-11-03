@@ -89,12 +89,12 @@ class AccountController extends Controller
     
             Log::info('User ID: ' . $user->id);
             Log::info('User Type: ' . get_class($user));
-            
+    
             try {
                 $token = $user->createToken('login')->plainTextToken;
                 $cookie = cookie('token', $token);
-                
-                // Lưu ID người dùng vào cookie (hoặc thông tin khác nếu cần)
+    
+                // Lưu ID người dùng vào cookie (không mã hóa)
                 $userData = json_encode(['id' => $user->id]); // Lưu ID người dùng
                 $userCookie = cookie('user_data', $userData); // Tạo cookie với dữ liệu người dùng
             } catch (\Exception $e) {
@@ -113,9 +113,6 @@ class AccountController extends Controller
         ])->onlyInput('account');
     }
     
-    
-
-  
     public function logout(Request $request)
     {
             /**
