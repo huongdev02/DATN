@@ -110,8 +110,6 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-
-                            
                             <a
                                 className="account-icon account"
                                 onClick={handleIconClick}

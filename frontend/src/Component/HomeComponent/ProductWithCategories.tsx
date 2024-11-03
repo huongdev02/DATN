@@ -18,6 +18,7 @@ import api from '../../configAxios/axios';
 import { message } from 'antd';
 import { useState , useEffect} from 'react';
 import { IProduct } from '../../types/cart';
+import Cookies from 'js-cookie';
 const ProductWithCategories: React.FC = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
    
@@ -38,7 +39,22 @@ const ProductWithCategories: React.FC = () => {
 
     console.log('sản phẩm', products);
     
-      
+    const encryptedUserData = Cookies.get('user_data');
+    try {
+        if (encryptedUserData) {
+            const decodedUserData = atob(encryptedUserData);
+            console.log('Decoded Data:', decodedUserData);
+    
+            // Nếu dữ liệu là JSON, parse nó thành đối tượng
+            const userData = JSON.parse(decodedUserData);
+            console.log('User Data Object:', userData);
+        } else {
+            console.log('No user data found in cookies');
+        }
+    } catch (error) {
+        console.error('Failed to decode user data:', error);
+    }
+    
 
     useEffect(()=>{
         GetProductCategory()
