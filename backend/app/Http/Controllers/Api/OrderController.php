@@ -8,6 +8,7 @@ use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Order_detail;
 use App\Models\Payment;
+use App\Models\Product;
 use App\Models\Ship_address;
 use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
@@ -96,10 +97,11 @@ class OrderController extends Controller
                     'total' => $cartItem->quantity * $cartItem->price, // Calculate total for each item
                 ]);
         
-                // Trừ số lượng sản phẩm trong bảng products
+                // Cập nhật số lượng sản phẩm trong bảng products
                 $product = Product::find($cartItem->product_id);
                 if ($product) {
                     $product->quantity -= $cartItem->quantity; // Trừ số lượng sản phẩm
+                    $product->sell_quantity += $cartItem->quantity; // Tăng số lượng đã bán
                     $product->save(); // Lưu lại thay đổi
                 }
         
@@ -126,6 +128,7 @@ class OrderController extends Controller
             return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
+    
     
     
 

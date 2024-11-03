@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Order_detail;
 use App\Models\Product;
 use App\Models\Product_detail;
 use App\Models\Review;
@@ -117,16 +118,39 @@ class ThongkeController extends Controller
                 break;
         }
     
-        // Fetch top products based on the selected timeframe
-        $topProducts = Product::select('name', DB::raw('COUNT(*) as sales_count'))
-            ->where('created_at', '>=', $startDate) // Use the determined start date
-            ->groupBy('name')
-            ->orderBy('sales_count', 'desc')
-            ->take(3)
-            ->get();
+        // Fetch top products based on the selected timeframe from order_detail
+        $topProducts = Order_detail::select('product_id', 
+            DB::raw('SUM(quantity) as total_quantity'), 
+            DB::raw('COUNT(order_id) as sales_count'),
+            DB::raw('SUM(total) as total_revenue')
+        )
+        ->whereHas('order', function ($query) use ($startDate) {
+            $query->where('created_at', '>=', $startDate); // Filter orders based on the timeframe
+        })
+        ->groupBy('product_id')
+        ->orderBy('total_quantity', 'desc')
+        ->take(3)
+        ->get();
     
-        return $topProducts; // Return the top products
+        // Prepare product details
+        $topProducts = $topProducts->map(function ($item) {
+            $product = Product::find($item->product_id);
+            return [
+                'product_id' => $item->product_id,
+                'product_name' => $product ? $product->name : 'Unknown Product',
+                'image' => $product ? $product->avatar : null, // Assuming there's an 'avatar' field
+                'total_quantity' => $item->total_quantity,
+                'sales_count' => $item->sales_count,
+                'total_revenue' => $item->total_revenue, // Sum of revenue from order_details
+            ];
+        })->toArray(); // Chuyển đổi thành mảng
+    
+        return response()->json($topProducts); // Return the top products
     }
+    
+    
+    
+    
     
 
 }

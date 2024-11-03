@@ -121,18 +121,34 @@
                     <option value="this_quarter" {{ request('product_timeframe') === 'this_quarter' ? 'selected' : '' }}>Quý này</option>
                 </select>
             </div>
-        
+            
             <div class="mt-3">
                 <ul class="list-group">
                     @foreach ($topProducts as $product)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>{{ $product->name }}</span>
-                            <span class="badge badge-primary badge-pill">{{ $product->sales_count }} bán</span>
+                        <li class="list-group-item">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ asset('storage/' . $product['image']) }}" alt="{{ $product['product_name'] }}" class="rounded-circle mb-2" style="width: 60px; height: 60px; margin-right: 15px;">
+                                <div class="product-details">
+                                    <h5 class="mb-1">{{ $product['product_name'] }}</h5>
+                                    <div class="product-info">
+                                        <span class="text-muted">Số đơn: {{ $product['sales_count'] }}</span>
+                                        <span class="text-muted">Số lượng bán: {{ $product['total_quantity'] }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="badge badge-primary badge-pill">{{ $product['sales_count'] }} đơn</span>
+                                <span class="badge badge-success badge-pill">{{ $product['total_quantity'] }} bán</span>
+                                <span class="badge badge-info badge-pill">{{ number_format($product['total_revenue'], 0, ',', '.') }} VNĐ</span>
+                            </div>
                         </li>
                     @endforeach
                 </ul>
             </div>
         </div>
+        
+        
+        
         
     </div>
 
