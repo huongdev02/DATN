@@ -123,8 +123,19 @@ class AccountController extends Controller
 public function checkAuth(Request $request)
 {
     // Lấy token từ cookie
-    $token = $request->cookie('token');
-    Log::info('Received token from cookie: ' . $token);
+    $tokenFromCookie = $request->cookie('token');
+    // Lấy token từ header
+    $tokenFromHeader = $request->header('Authorization');
+
+    // Nếu token từ header có dạng "Bearer token", tách ra để lấy token
+    if ($tokenFromHeader && preg_match('/Bearer\s(\S+)/', $tokenFromHeader, $matches)) {
+        $tokenFromHeader = $matches[1]; // Lấy phần token sau "Bearer "
+    }
+
+    // Chọn token từ cookie nếu có, nếu không thì lấy từ header
+    $token = $tokenFromCookie ?: $tokenFromHeader;
+
+    Log::info('Received token: ' . $token);
 
     if (!$token) {
         return response()->json(['authenticated' => false, 'message' => 'Token not provided.'], 401);
@@ -148,4 +159,5 @@ public function checkAuth(Request $request)
 
     return response()->json(['authenticated' => false, 'message' => 'Invalid token.'], 401);
 }
+
 }
