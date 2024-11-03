@@ -21,7 +21,6 @@ import { IProduct } from '../../types/cart';
 import Cookies from 'js-cookie';
 const ProductWithCategories: React.FC = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
-   
     const GetProductCategory = async () => {
         try {
           const { data } = await api.get(`/products`);
@@ -31,19 +30,17 @@ const ProductWithCategories: React.FC = () => {
         }
       };
 
-     
 
       const boyProducts = products.filter(product => product.categories.name === 'Nam');
       const girlProducts = products.filter(product => product.categories.name === 'Nữ');
       const kidProducts = products.filter(product => product.categories.name === 'Trẻ em');
       
-      console.log("user", document.cookie);
-
-     
-
+    
     useEffect(()=>{
         GetProductCategory();
     },[])
+
+
 
 
     return (

@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Logo from '../../assets/imgs/template/logo.svg'
 import Product from "../../assets/imgs/page/homepage1/product24.png";
 import ProductTwo from "../../assets/imgs/page/homepage1/product25.png";
 import ProductThree from "../../assets/imgs/page/homepage1/product26.png";
 import Star from "../../assets/imgs/template/icons/star.svg"
 import { Link } from 'react-router-dom';
+import { message } from 'antd';
+import api from '../../configAxios/axios';
 const Header: React.FC = () => {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [isCartActice, setIsCartActice] = useState(false);
     const [isAccountActive, setIsAccountActive] = useState(false);
     const [activeTab, setActiveTab] = useState('login');
+    const [userId, setUserId] = useState<string>();
+
 
     const showLoginForm = () => {
         setActiveTab('login');
@@ -73,6 +77,27 @@ const Header: React.FC = () => {
             window.location.href = 'http://127.0.0.1:8000/login';
         }
     };
+
+    const GetUser = async () => {
+        try {
+          const { data } = await api.get(`http://127.0.0.1:8000/api/data/users/${userId}`);
+          console.log(data.token);
+          
+        } catch (error) {
+          message.error("Lỗi api !");
+        }
+      };
+
+   
+
+    useEffect(()=>{
+        GetUser();
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('user_id');
+        if (id) {
+           setUserId(id)
+        }
+    },[])  
     
 
     return (
