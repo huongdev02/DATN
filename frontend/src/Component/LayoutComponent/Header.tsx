@@ -47,33 +47,29 @@ const Header: React.FC = () => {
     };
     const handleIconClick = async () => {
         try {
-            // Kiểm tra trạng thái đăng nhập
             const response = await fetch('http://127.0.0.1:8000/api/check-auth', {
                 method: 'GET',
-                credentials: 'include', // Đảm bảo gửi cookie
-                headers: {
-                    'Content-Type': 'application/json', // Thêm header để chỉ định kiểu nội dung
-                },
+                credentials: 'include',
             });
     
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Auth check response:', data); // Kiểm tra phản hồi
-            
-                if (data.authenticated) {
-                    console.log('User is authenticated, redirecting to dashboard...');
-                    window.location.href = 'http://127.0.0.1:8000/user/dashboard';
-                } else {
-                    console.log('User is not authenticated, redirecting to login...');
-                    window.location.href = 'http://127.0.0.1:8000/login';
-                }
-            } else {
+            if (!response.ok) {
                 console.log('Server response not ok, redirecting to login...');
+                window.location.href = 'http://127.0.0.1:8000/login';
+                return;
+            }
+    
+            const data = await response.json();
+            console.log('Auth check response:', data);
+    
+            if (data.authenticated) {
+                console.log('User is authenticated, redirecting to dashboard...');
+                window.location.href = 'http://127.0.0.1:8000/user/dashboard';
+            } else {
+                console.log('User is not authenticated, redirecting to login...');
                 window.location.href = 'http://127.0.0.1:8000/login';
             }
         } catch (error) {
             console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', error);
-            // Nếu có lỗi trong quá trình fetch, chuyển hướng đến trang đăng nhập
             window.location.href = 'http://127.0.0.1:8000/login';
         }
     };
