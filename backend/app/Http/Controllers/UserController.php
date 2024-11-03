@@ -13,13 +13,17 @@ use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
 
-    public function user(Request $request){
-        $token = $request->cookie('token');
-        return view('user.dashboard', ['token' => $token]);
-    }
-        public function changepass()
+    public function user(Request $request)
     {
-        return view('user.changepass');
+        $token = $request->cookie('token');
+    
+        // Nếu token có định dạng "ID|token", chỉ lấy phần token
+        if ($token && strpos($token, '|') !== false) {
+            $tokenParts = explode('|', $token);
+            $token = end($tokenParts); // Lấy phần sau dấu '|'
+        }
+    
+        return view('user.dashboard', ['token' => $token]);
     }
 
     public function changepass_(Request $request)

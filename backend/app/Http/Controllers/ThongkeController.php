@@ -14,20 +14,100 @@ use Illuminate\Support\Facades\DB;
 
 class ThongkeController extends Controller
 {
-    public function account()
-    {
-        $homnay = User::whereDate('created_at', Carbon::today())->count();
-        $tuannay = User::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
-        $thangnay = User::whereMonth('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year)
-            ->count();
-        $tuantruoc = User::whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()])->count();
-        $thangtruoc = User::whereMonth('created_at', Carbon::now()->subMonth()->month)
-            ->whereYear('created_at', Carbon::now()->subMonth()->year)
-            ->count();
-
-        return view('admin.dashboard', compact('homnay', 'tuannay', 'thangnay', 'tuantruoc', 'thangtruoc'));
+    public function account(Request $request) {
+        $timeframe = $request->input('timeframe', 'this_week');
+        $query = User::where('role', 0);
+        $count = 0;
+        $change = 0;
+    
+        switch ($timeframe) {
+            case 'this_week':
+                $count = $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()])->count();
+                $lastCount = $query->whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()])->count();
+                $change = $count - $lastCount;
+                break;
+            case 'this_month':
+                $count = $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()])->count();
+                $lastCount = $query->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
+                $change = $count - $lastCount;
+                break;
+            case 'last_week':
+                $count = $query->whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()])->count();
+                break;
+            case 'last_month':
+                $count = $query->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
+                break;
+        }
+    
+        // Trả về dữ liệu
+        return [
+            'count' => $count,
+            'change' => $change
+        ];
     }
+    
+
+    public function order(Request $request)
+    {
+        $timeframe = $request->input('timeframe', 'this_week'); // Mặc định là 'this_week' nếu không chọn
+        
+        // Chỉ tính cho các đơn hàng có status = 3 (đã hoàn thành)
+        $query = Order::where('status', 3); 
+        $revenue = 0;
+        $change = 0;
+    
+        $today = now();
+    
+        switch ($timeframe) {
+            case 'today':
+                // Tính doanh thu hôm nay
+                $revenue = $query->whereDate('created_at', $today)->sum('total_amount');
+                // Tính doanh thu hôm qua để so sánh
+                $yesterdayRevenue = $query->whereDate('created_at', $today->subDay())->sum('total_amount');
+                $change = $revenue - $yesterdayRevenue;
+                break;
+    
+            case 'this_week':
+                // Tính doanh thu từ đầu tuần đến hôm nay
+                $revenue = $query->whereBetween('created_at', [$today->startOfWeek(), $today])->sum('total_amount');
+                // Tính doanh thu của tuần trước để so sánh
+                $lastWeekRevenue = $query->whereBetween('created_at', [$today->subWeek()->startOfWeek(), $today->subWeek()->endOfWeek()])->sum('total_amount');
+                $change = $revenue - $lastWeekRevenue;
+                break;
+    
+            case 'this_month':
+                // Tính doanh thu từ đầu tháng đến hôm nay
+                $revenue = $query->whereMonth('created_at', $today->month)->sum('total_amount');
+                // Tính doanh thu của tháng trước để so sánh
+                $lastMonthRevenue = $query->whereMonth('created_at', $today->subMonth()->month)->sum('total_amount');
+                $change = $revenue - $lastMonthRevenue;
+                break;
+    
+            case 'last_week':
+                // Tính doanh thu của tuần trước
+                $revenue = $query->whereBetween('created_at', [$today->subWeek()->startOfWeek(), $today->subWeek()->endOfWeek()])->sum('total_amount');
+                break;
+    
+            case 'last_month':
+                // Tính doanh thu của tháng trước
+                $revenue = $query->whereMonth('created_at', $today->subMonth()->month)->sum('total_amount');
+                break;
+    
+            default:
+                break;
+        }
+    
+        // Trả về dữ liệu dưới dạng JSON
+        return response()->json([
+            'total_amount' => $revenue,
+            'order_count' => $query->count(), // Cập nhật số lượng đơn hàng đã hoàn thành
+            'change' => $change // Trả về giá trị thay đổi
+        ]);
+    }
+    
+    
+    
+    
 
     public function review()
     {
@@ -72,35 +152,7 @@ class ThongkeController extends Controller
 
     }
 
-    public function order()
-    {
-        $totalOrders = Order::count();
-
-        $pendingOrders = Order::where('status', 0)->count(); // Đang chờ xử lý
-        $processedOrders = Order::where('status', 1)->count(); // Đã xử lý
-        $shippingOrders = Order::where('status', 2)->count(); // Đang vận chuyển
-        $deliveredOrders = Order::where('status', 3)->count(); // Giao hàng thành công
-        $canceledOrders = Order::where('status', 4)->count(); // Đơn hàng đã bị hủy
-        $returnedOrders = Order::where('status', 5)->count(); // Đơn hàng đã được trả lại
-
-        $totalAmountReceived = Order::sum('total_amount'); //tong tien cac don
-
-        $cashPaymentOrders = Order::where('payment_method', 0)->count(); // Tiền mặt
-        $bankTransferOrders = Order::where('payment_method', 1)->count(); // Chuyển khoản ngân hàng
-        $cardPaymentOrders = Order::where('payment_method', 2)->count(); // Thanh toán qua thẻ ATM
-
-        $standardShippingOrders = Order::where('ship_method', 0)->count(); // Giao hàng tiêu chuẩn
-        $expressShippingOrders = Order::where('ship_method', 1)->count(); // Giao hàng hỏa tốc
-
-        $ordersToday = Order::whereDate('created_at', now())->count(); //don hang hom nay
-        $ordersThisWeek = Order::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(); // tuan nay
-        $ordersThisMonth = Order::whereMonth('created_at', now()->month)->count(); // thang nay
-        $tuantruoc = Order::whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count(); // tuan trc
-        $thangtruoc = Order::whereMonth('created_at', now()->subMonth()->month)
-            ->whereYear('created_at', now()->subMonth()->year)
-            ->count(); // thang trc
-
-    }
+ 
     public function test() {
         return view('account.account');
     }

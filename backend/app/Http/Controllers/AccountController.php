@@ -89,6 +89,7 @@ class AccountController extends Controller
               
             Log::info('User ID: ' . $user->id);
             Log::info('User Type: ' . get_class($user));
+            
                 try {
                     $token = $user->createToken('login')->plainTextToken;
                     $cookie = cookie('token', $token);

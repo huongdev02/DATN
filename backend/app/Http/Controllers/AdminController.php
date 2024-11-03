@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -10,9 +11,23 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
-    public function admin(){
-        return view('admin.dashboard');
+    public function admin(Request $request) {
+        // Khởi tạo ThongkeController
+        $thongkeController = app(ThongkeController::class);
+        
+        // Gọi phương thức account
+        $accountData = $thongkeController->account($request);
+        
+        // Gọi phương thức order
+        $orderData = $thongkeController->order($request);
+    
+        // Trả về view với dữ liệu đã thu thập
+        return view('admin.dashboard', [
+            'account' => $accountData,
+            'order' => $orderData,
+        ]);
     }
+    
     public function edit()
     {
         $user = Auth::user();
