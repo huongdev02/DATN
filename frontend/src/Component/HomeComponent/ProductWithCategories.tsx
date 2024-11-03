@@ -31,33 +31,40 @@ const ProductWithCategories: React.FC = () => {
         }
       };
 
+      const getUserData = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/users', {
+                method: 'GET',
+                credentials: 'include' // Đảm bảo gửi cookie
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            console.log('Data từ API:', data);
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
+    
+    // Gọi hàm
+    getUserData();
+    
+    
 
       const boyProducts = products.filter(product => product.categories.name === 'Nam');
       const girlProducts = products.filter(product => product.categories.name === 'Nữ');
       const kidProducts = products.filter(product => product.categories.name === 'Trẻ em');
       
+      const userId = Cookies.get('XSRF-TOKEN');
+      console.log("user",userId);
 
-    console.log('sản phẩm', products);
-    
-    const encryptedUserData = Cookies.get('user_data');
-    try {
-        if (encryptedUserData) {
-            const decodedUserData = atob(encryptedUserData);
-            console.log('Decoded Data:', decodedUserData);
-    
-            // Nếu dữ liệu là JSON, parse nó thành đối tượng
-            const userData = JSON.parse(decodedUserData);
-            console.log('User Data Object:', userData);
-        } else {
-            console.log('No user data found in cookies');
-        }
-    } catch (error) {
-        console.error('Failed to decode user data:', error);
-    }
-    
+     
 
     useEffect(()=>{
-        GetProductCategory()
+        GetProductCategory();
     },[])
 
 
