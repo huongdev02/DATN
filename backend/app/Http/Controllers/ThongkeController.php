@@ -15,146 +15,89 @@ use Illuminate\Support\Facades\DB;
 class ThongkeController extends Controller
 {
     public function account(Request $request) {
-        $timeframe = $request->input('timeframe', 'this_week');
+        // Retrieve the timeframe from the request
+        $timeframe = $request->input('timeframe', 'today'); // Default to 'today' if not set
         $query = User::where('role', 0);
         $count = 0;
-        $change = 0;
+        $lastCount = 0;
     
         switch ($timeframe) {
+            case 'today':
+                $count = $query->whereDate('created_at', now())->count();
+                $lastCount = $query->whereDate('created_at', now()->subDay())->count();
+                break;
             case 'this_week':
-                $count = $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()])->count();
-                $lastCount = $query->whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()])->count();
-                $change = $count - $lastCount;
+                $count = $query->whereBetween('created_at', [now()->startOfWeek(), now()])->count();
+                $lastCount = $query->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count();
                 break;
             case 'this_month':
-                $count = $query->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()])->count();
-                $lastCount = $query->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
-                $change = $count - $lastCount;
+                $count = $query->whereBetween('created_at', [now()->startOfMonth(), now()])->count();
+                $lastCount = $query->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->count();
                 break;
-            case 'last_week':
-                $count = $query->whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()])->count();
-                break;
-            case 'last_month':
-                $count = $query->whereBetween('created_at', [Carbon::now()->subMonth()->startOfMonth(), Carbon::now()->subMonth()->endOfMonth()])->count();
+            case 'this_quarter':
+                $count = $query->whereBetween('created_at', [now()->firstOfQuarter(), now()])->count();
+                $lastCount = $query->whereBetween('created_at', [now()->subQuarter()->firstOfQuarter(), now()->subQuarter()->lastOfQuarter()])->count();
                 break;
         }
     
-        // Trả về dữ liệu
+        $change = $count - $lastCount;
+    
         return [
             'count' => $count,
             'change' => $change
         ];
     }
     
-
-    public function order(Request $request)
-    {
-        $timeframe = $request->input('timeframe', 'this_week'); // Mặc định là 'this_week' nếu không chọn
-        
-        // Chỉ tính cho các đơn hàng có status = 3 (đã hoàn thành)
-        $query = Order::where('status', 3); 
+    public function order(Request $request) {
+        $query = Order::where('status', 3); // Only completed orders
         $revenue = 0;
-        $change = 0;
+        $orderCount = 0;
+        $lastRevenue = 0;
+        $lastOrderCount = 0; // To store the previous order count
     
-        $today = now();
+        // Get the timeframe from the request, default to 'today' if not provided
+        $timeframe = $request->input('timeframe', 'today');
     
         switch ($timeframe) {
             case 'today':
-                // Tính doanh thu hôm nay
-                $revenue = $query->whereDate('created_at', $today)->sum('total_amount');
-                // Tính doanh thu hôm qua để so sánh
-                $yesterdayRevenue = $query->whereDate('created_at', $today->subDay())->sum('total_amount');
-                $change = $revenue - $yesterdayRevenue;
+                $revenue = $query->whereDate('created_at', now())->sum('total_amount');
+                $orderCount = $query->whereDate('created_at', now())->count();
+                $lastRevenue = $query->whereDate('created_at', now()->subDay())->sum('total_amount');
+                $lastOrderCount = $query->whereDate('created_at', now()->subDay())->count(); // Previous day count
                 break;
-    
             case 'this_week':
-                // Tính doanh thu từ đầu tuần đến hôm nay
-                $revenue = $query->whereBetween('created_at', [$today->startOfWeek(), $today])->sum('total_amount');
-                // Tính doanh thu của tuần trước để so sánh
-                $lastWeekRevenue = $query->whereBetween('created_at', [$today->subWeek()->startOfWeek(), $today->subWeek()->endOfWeek()])->sum('total_amount');
-                $change = $revenue - $lastWeekRevenue;
+                $revenue = $query->whereBetween('created_at', [now()->startOfWeek(), now()])->sum('total_amount');
+                $orderCount = $query->whereBetween('created_at', [now()->startOfWeek(), now()])->count();
+                $lastRevenue = $query->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->sum('total_amount');
+                $lastOrderCount = $query->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count(); // Previous week count
                 break;
-    
             case 'this_month':
-                // Tính doanh thu từ đầu tháng đến hôm nay
-                $revenue = $query->whereMonth('created_at', $today->month)->sum('total_amount');
-                // Tính doanh thu của tháng trước để so sánh
-                $lastMonthRevenue = $query->whereMonth('created_at', $today->subMonth()->month)->sum('total_amount');
-                $change = $revenue - $lastMonthRevenue;
+                $revenue = $query->whereBetween('created_at', [now()->startOfMonth(), now()])->sum('total_amount');
+                $orderCount = $query->whereBetween('created_at', [now()->startOfMonth(), now()])->count();
+                $lastRevenue = $query->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->sum('total_amount');
+                $lastOrderCount = $query->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->count(); // Previous month count
                 break;
-    
-            case 'last_week':
-                // Tính doanh thu của tuần trước
-                $revenue = $query->whereBetween('created_at', [$today->subWeek()->startOfWeek(), $today->subWeek()->endOfWeek()])->sum('total_amount');
-                break;
-    
-            case 'last_month':
-                // Tính doanh thu của tháng trước
-                $revenue = $query->whereMonth('created_at', $today->subMonth()->month)->sum('total_amount');
-                break;
-    
-            default:
+            case 'this_quarter':
+                $revenue = $query->whereBetween('created_at', [now()->firstOfQuarter(), now()])->sum('total_amount');
+                $orderCount = $query->whereBetween('created_at', [now()->firstOfQuarter(), now()])->count();
+                $lastRevenue = $query->whereBetween('created_at', [now()->subQuarter()->firstOfQuarter(), now()->subQuarter()->lastOfQuarter()])->sum('total_amount');
+                $lastOrderCount = $query->whereBetween('created_at', [now()->subQuarter()->firstOfQuarter(), now()->subQuarter()->lastOfQuarter()])->count(); // Previous quarter count
                 break;
         }
     
-        // Trả về dữ liệu dưới dạng JSON
-        return response()->json([
+        $changeRevenue = $revenue - $lastRevenue; // Calculate revenue change
+        $changeOrderCount = $orderCount - $lastOrderCount; // Calculate order count change
+    
+        return [
             'total_amount' => $revenue,
-            'order_count' => $query->count(), // Cập nhật số lượng đơn hàng đã hoàn thành
-            'change' => $change // Trả về giá trị thay đổi
-        ]);
+            'order_count' => $orderCount,
+            'change' => $changeRevenue,
+            'lastOrderCount' => $lastOrderCount, // Return the previous order count
+            'order_count_change' => $changeOrderCount // Optional, if you want to track changes
+        ];
     }
     
     
     
-    
 
-    public function review()
-    {
-        $choxuli = Review::where('status', 0)->count(); // Đang chờ xử lý
-        $daduyet = Review::where('status', 1)->count(); // Đã được duyệt
-        $tuchoi = Review::where('status', 2)->count(); // Bị từ chối
-
-        $theosp = Review::select('product_id', DB::raw('count(*) as total_reviews'))
-            ->groupBy('product_id')
-            ->get(); //theo sp
-        $toprate = Review::select('product_id', DB::raw('avg(rating) as average_rating'))
-            ->groupBy('product_id')
-            ->orderBy('average_rating', 'desc')
-            ->first(); //rate tb cao nhat
-        $minrate = Review::select('product_id', DB::raw('avg(rating) as average_rating'))
-            ->groupBy('product_id')
-            ->orderBy('average_rating', 'asc')
-            ->first(); //rate tb thap nhat
-    }
-
-    public function voucher()
-    {
-        $total = Voucher::count();
-
-        $active = Voucher::where('status', 1)->count(); // Đang hoạt động
-        $inactive= Voucher::where('status', 0)->count(); // Không hoạt động
-
-        $fixed_voucher = Voucher::where('type', 0)->count(); // Giá trị cố định
-        $percentage_voucher = Voucher::where('type', 1)->count(); // Triết khấu %
-
-        $conhieuluc = Voucher::where('start_day', '<=', now())
-            ->where('end_day', '>=', now())
-            ->count(); //con hieu luc
-        $hethan = Voucher::where('end_day', '<', now())->count(); // het han
-
-        $dasudung = Voucher::where('used_times', '>', 0)->count(); // da su dung
-
-        $homnay = Voucher::whereDate('created_at', now())->count(); // hom nay
-        $tuannay = Voucher::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(); // tuan nay
-        $thangnay = Voucher::whereMonth('created_at', now()->month)->count(); // thang nay
-
-
-    }
-
- 
-    public function test() {
-        return view('account.account');
-    }
-    public function b() {}
 }

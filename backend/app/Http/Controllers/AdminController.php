@@ -8,20 +8,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Services\StatisticsService;
 
 class AdminController extends Controller
 {
     public function admin(Request $request) {
-        // Khởi tạo ThongkeController
+        // Create an instance of ThongkeController
         $thongkeController = app(ThongkeController::class);
         
-        // Gọi phương thức account
+        // Call the methods from ThongkeController
         $accountData = $thongkeController->account($request);
-        
-        // Gọi phương thức order
         $orderData = $thongkeController->order($request);
-    
-        // Trả về view với dữ liệu đã thu thập
+
+        // Return the view with the retrieved data
         return view('admin.dashboard', [
             'account' => $accountData,
             'order' => $orderData,
