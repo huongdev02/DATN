@@ -123,17 +123,29 @@ class AccountController extends Controller
     }
     
     
-    
     public function logout(Request $request)
     {
-            /**
-             * @var User $user
-             */
+        /** @var User $user */
         $user = Auth::user();
     
         if ($user) {
             // Xóa tất cả các token của người dùng
             $user->tokens()->delete();
+    
+            // Lấy ID người dùng từ Auth
+            $userId = Auth::id(); // Sử dụng Auth::id() để lấy ID người dùng
+            
+            if ($userId) {
+                // Tạo đường dẫn file chính xác
+                $filePath = 'user_' . $userId . '.txt';
+    
+                // Kiểm tra sự tồn tại của file và xóa nếu có
+                if (Storage::exists($filePath)) {
+                    Storage::delete($filePath);
+                } else {
+                    Log::info("File không tồn tại: " . $filePath);
+                }
+            }
         }
     
         // Đăng xuất người dùng
@@ -146,6 +158,8 @@ class AccountController extends Controller
     
         return redirect('http://localhost:3000/')->with('success', 'Đã đăng xuất thành công')->withCookie($cookie);
     }
+    
+
 
     public function rspassword()
     {

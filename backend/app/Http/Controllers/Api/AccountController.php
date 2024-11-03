@@ -95,6 +95,21 @@ class AccountController extends Controller
         }
     }
 
+    public function data($id)
+    {
+        $filePath = storage_path('app/user_' . $id . '.txt'); // Đường dẫn đầy đủ đến file
+
+        // Kiểm tra xem file có tồn tại không
+        if (file_exists($filePath)) {
+            // Đọc nội dung của file
+            $data = file_get_contents($filePath);
+            return response()->json(json_decode($data)); // Trả về dữ liệu dưới dạng JSON
+        }
+    
+        return response()->json(['message' => 'Data not found'], 404);
+    }
+    
+
     public function logout(Request $request)
 {
     /**
