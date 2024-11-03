@@ -56,7 +56,7 @@ const Header: React.FC = () => {
                 console.log('Server response not ok, redirecting to login...');
                 window.location.href = 'http://127.0.0.1:8000/login';
                 return;
-            }
+            } 
     
             const data = await response.json();
             console.log('Auth check response:', data);
