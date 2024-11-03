@@ -92,11 +92,17 @@ class AccountController extends Controller
     
             try {
                 $token = $user->createToken('login')->plainTextToken;
-                $cookie = cookie('token', $token);
+    
+                // Tách chuỗi token để lấy phần token thực tế
+                $tokenParts = explode('|', $token);
+                $actualToken = isset($tokenParts[1]) ? $tokenParts[1] : $token; // Lấy phần thứ hai nếu có
+    
+                $cookie = cookie('token', $actualToken); // Lưu phần token thực tế vào cookie
     
                 // Lưu ID người dùng vào cookie (không mã hóa)
-                $userData = json_encode(['id' => $user->id]); // Lưu ID người dùng
-                $userCookie = cookie('user_data', $userData); // Tạo cookie với dữ liệu người dùng
+                $userId = $user->id; // Lấy ID người dùng
+                $userCookie = cookie('user_id', $userId, 60 * 24); // Tạo cookie với ID người dùng, sống 1 ngày
+    
             } catch (\Exception $e) {
                 return back()->withErrors(['token' => $e->getMessage()]);
             }
@@ -105,13 +111,15 @@ class AccountController extends Controller
             return redirect('http://localhost:3000/')
                 ->with('success', 'Đăng nhập thành công')
                 ->withCookie($cookie)
-                ->withCookie($userCookie); // Thêm cookie chứa dữ liệu người dùng
+                ->withCookie($userCookie); // Thêm cookie chứa ID người dùng
         }
     
         return back()->withErrors([
             'account' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu',
         ])->onlyInput('account');
     }
+    
+    
     
     public function logout(Request $request)
     {
