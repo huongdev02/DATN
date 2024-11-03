@@ -74,9 +74,7 @@ class AccountController extends Controller
         if (Auth::attempt($loginCredentials, true)) {
             $request->session()->regenerate();
     
-            /**
-             * @var User $user
-             */
+            /** @var User $user */
             $user = Auth::user();
     
             // Check if the user is active
@@ -97,11 +95,16 @@ class AccountController extends Controller
                 $tokenParts = explode('|', $token);
                 $actualToken = isset($tokenParts[1]) ? $tokenParts[1] : $token; // Lấy phần thứ hai nếu có
     
-                $cookie = cookie('token', $actualToken); // Lưu phần token thực tế vào cookie
+                // Lưu vào cookie
+                $cookie = cookie('token', $actualToken);
+                $userId = $user->id; 
+                $userCookie = cookie('user_id', $userId, 60 * 24); 
     
-                // Lưu ID người dùng vào cookie (không mã hóa)
-                $userId = $user->id; // Lấy ID người dùng
-                $userCookie = cookie('user_id', $userId, 60 * 24); // Tạo cookie với ID người dùng, sống 1 ngày
+                // Lưu ID và token vào storage
+                Storage::disk('local')->put('user_' . $userId . '.txt', json_encode([
+                    'user_id' => $userId,
+                    'token' => $actualToken,
+                ]));
     
             } catch (\Exception $e) {
                 return back()->withErrors(['token' => $e->getMessage()]);
@@ -111,7 +114,7 @@ class AccountController extends Controller
             return redirect('http://localhost:3000/')
                 ->with('success', 'Đăng nhập thành công')
                 ->withCookie($cookie)
-                ->withCookie($userCookie); // Thêm cookie chứa ID người dùng
+                ->withCookie($userCookie); 
         }
     
         return back()->withErrors([
