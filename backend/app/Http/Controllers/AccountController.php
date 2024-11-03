@@ -95,10 +95,10 @@ class AccountController extends Controller
                 $tokenParts = explode('|', $token);
                 $actualToken = isset($tokenParts[1]) ? $tokenParts[1] : $token; // Lấy phần thứ hai nếu có
     
-                // Lưu vào cookie không có thời gian sống (sống đến khi đóng trình duyệt)
-                $cookie = cookie('token', $actualToken);
+                // Lưu vào cookie mà JavaScript có thể truy cập
+                $cookie = cookie('token', $actualToken, 0, null, null, false, false); // không HttpOnly
                 $userId = $user->id; 
-                $userCookie = cookie('user_id', $userId); // Không chỉ định thời gian sống
+                $userCookie = cookie('user_id', $userId, 0, null, null, false, false); // không HttpOnly
     
                 // Lưu ID và token vào storage
                 Storage::disk('local')->put('user_' . $userId . '.txt', json_encode([
@@ -121,6 +121,7 @@ class AccountController extends Controller
             'account' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu',
         ])->onlyInput('account');
     }
+    
     
     
     
