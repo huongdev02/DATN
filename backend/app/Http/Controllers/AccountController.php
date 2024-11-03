@@ -41,11 +41,12 @@ class AccountController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
 
-             // Tạo token cho người dùng
-             $token = $user->createToken('login')->plainTextToken;
-             // Lưu token vào cookie
-             $cookie = cookie('token', $token);
-
+            try {
+                $token = $user->createToken('login')->plainTextToken;
+                $cookie = cookie('token', $token);
+            } catch (\Exception $e) {
+                return back()->withErrors(['token' => $e->getMessage()]);
+            }
             return redirect('http://localhost:3000/')->with('success', 'Đăng kí thành công')->withCookie($cookie);;
         } catch (Throwable $e) {
             return back()->with('error', $e->getMessage());
@@ -92,15 +93,12 @@ class AccountController extends Controller
             
                 try {
                     $token = $user->createToken('login')->plainTextToken;
-                    $cookie = cookie('token', $token);
                 } catch (\Exception $e) {
                     return back()->withErrors(['token' => $e->getMessage()]);
                 }
 
                 if ($user->role == 0) {
-                    return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
-                } else {
-                    return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
+                    return redirect('http://localhost:3000/?user=' . json_encode($user->id) . '&token=' . $token);
                 }
         }
     

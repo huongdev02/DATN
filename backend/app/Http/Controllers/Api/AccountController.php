@@ -124,6 +124,12 @@ public function checkAuth(Request $request)
 {
     // Lấy token từ cookie
     $tokenFromCookie = $request->cookie('token');
+    
+    // Xóa 4 ký tự đầu nếu token từ cookie tồn tại
+    if ($tokenFromCookie && strlen($tokenFromCookie) > 4) {
+        $tokenFromCookie = substr($tokenFromCookie, 4); // Xóa 4 ký tự đầu tiên
+    }
+
     // Lấy token từ header
     $tokenFromHeader = $request->header('Authorization');
 
@@ -159,5 +165,6 @@ public function checkAuth(Request $request)
 
     return response()->json(['authenticated' => false, 'message' => 'Invalid token.'], 401);
 }
+
 
 }
