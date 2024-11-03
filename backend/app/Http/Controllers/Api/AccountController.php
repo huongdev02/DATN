@@ -80,7 +80,7 @@ class AccountController extends Controller
             return response()->json([
                 'error' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu'
             ], 401);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }

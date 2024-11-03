@@ -9,116 +9,103 @@
         <h2>DashBoard Admin</h2>
     </div>
 
-    <div class="row container mt-3 mb-3">
-        <!-- Earnings (Daily) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2" style="background-color: #e7f3ff;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Lượt truy cập website hôm nay
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-dark">1,764</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Thống kê người dùng -->
+    <div class="container mt-4">
+        <h4>Thống kê người dùng mới</h4>
+        <div class="form-group">
+            <select id="timeframe-select" class="form-control">
+                <option value="this_week">--- Chọn khoảng thời gian ---</option>
+                <option value="this_week">Tuần này</option>
+                <option value="this_month">Tháng này</option>
+                <option value="last_week">Tuần trước</option>
+                <option value="last_month">Tháng trước</option>
+            </select>
         </div>
-    
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2" style="background-color: #d4edda;">
+
+        <div id="statistics" class="mt-3">
+            <div class="card text-white bg-primary">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Lượt truy cập website tháng này
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-dark">76,434</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- New Users Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2" style="background-color: #d1ecf1;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Người dùng mới trong tháng này
-                            </div>
-                            <div class="row no-gutters align-items-center">
-                                <div class="col-auto">
-                                    <div class="h5 mb-0 mr-3 font-weight-bold text-dark">12</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Total Users Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2" style="background-color:#fff3cd;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Tổng người dùng
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-dark">1898</div>
-                        </div>
-                    </div>
+                    <h5 class="card-title">Số lượng người dùng mới</h5>
+                    <p class="card-text" id="userCount">0 người dùng mới</p>
+                    <p class="card-text" id="changeIndicator">
+                        So với tuần trước/tháng trước:
+                        <span id="changeValue" class="font-weight-bold">0</span>
+                        <i id="changeIcon" class="fas"></i> <!-- Biểu tượng mũi tên -->
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-    
- 
-    <div class="row container mt-3 mb-3">
 
-        <!-- Area Chart -->
-        <div class="col-xl-8 col-lg-7">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #f8f9fa;">
-                    <h6 class="m-0 font-weight-bold text-primary">Tổng quan về thu nhập</h6>
-                </div>
+    <!-- Thống kê doanh thu -->
+    <div class="container mt-4">
+        <h4>Thống kê doanh thu</h4>
+        <div id="revenueStatistics" class="mt-3">
+            <div class="card text-white bg-success">
                 <div class="card-body">
-                    <div class="chart-area">
-                        <canvas id="myAreaChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pie Chart -->
-        <div class="col-xl-4 col-lg-5">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #f8f9fa;">
-                    <h6 class="m-0 font-weight-bold text-primary">Nguồn thu nhập</h6>
-                </div>
-                <div class="card-body">
-                    <div class="chart-pie pt-4 pb-2">
-                        <canvas id="myPieChart"></canvas>
-                    </div>
-                    <div class="mt-4 text-center small">
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-primary"></i> Chuyển khoản
-                        </span>
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-success"></i> Thanh toán khi nhận hàng
-                        </span>
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-info"></i> Khác
-                        </span>
-                    </div>
+                    <h5 class="card-title">Tổng Doanh Thu</h5>
+                    <p class="card-text" id="totalRevenue">0 VNĐ</p>
+                    <p class="card-text" id="revenueChangeIndicator">
+                        Thay đổi:
+                        <span id="revenueChangeValue" class="font-weight-bold">0</span>
+                        <i id="revenueChangeIcon" class="fas"></i> <!-- Biểu tượng mũi tên doanh thu -->
+                    </p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Font Awesome cho biểu tượng mũi tên -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#timeframe-select').change(function() {
+                let timeframe = $(this).val();
+
+                $.ajax({
+                    url: '{{ route("admin.dashboard") }}',
+                    type: 'GET',
+                    data: { timeframe: timeframe },
+                    success: function(data) {
+                        // Cập nhật thông tin người dùng
+                        $('#userCount').text(data.account.count + ' người dùng mới');
+
+                        let changeText = data.account.change >= 0 ? '+' + data.account.change : data.account.change;
+                        $('#changeValue').text(changeText);
+                        
+                        // Cập nhật biểu tượng thay đổi người dùng
+                        $('#changeIcon').removeClass('fa-arrow-up fa-arrow-down text-success text-danger');
+                        if (data.account.change > 0) {
+                            $('#changeIcon').addClass('fa-arrow-up text-success');
+                        } else if (data.account.change < 0) {
+                            $('#changeIcon').addClass('fa-arrow-down text-danger');
+                        } else {
+                            $('#changeIcon').addClass('fa-equals text-muted');
+                        }
+
+                        // Cập nhật thông tin doanh thu
+                        $('#totalRevenue').text(data.order.total + ' VNĐ');
+                        
+                        let revenueChangeText = data.order.change >= 0 ? '+' + data.order.change : data.order.change;
+                        $('#revenueChangeValue').text(revenueChangeText);
+                        
+                        // Cập nhật biểu tượng thay đổi doanh thu
+                        $('#revenueChangeIcon').removeClass('fa-arrow-up fa-arrow-down text-success text-danger');
+                        if (data.order.change > 0) {
+                            $('#revenueChangeIcon').addClass('fa-arrow-up text-success');
+                        } else if (data.order.change < 0) {
+                            $('#revenueChangeIcon').addClass('fa-arrow-down text-danger');
+                        } else {
+                            $('#revenueChangeIcon').addClass('fa-equals text-muted');
+                        }
+                    }
+                });
+            });
+
+            // Gọi AJAX ban đầu để load dữ liệu mặc định (Tuần này)
+            $('#timeframe-select').trigger('change');
+        });
+    </script>
 @endsection

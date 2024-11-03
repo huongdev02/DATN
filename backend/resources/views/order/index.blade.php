@@ -33,7 +33,7 @@
                             <form action="{{ route('orders.index') }}" method="GET" id="orderStatusForm-{{ $order->id }}">
                                 <input type="hidden" name="order_id" value="{{ $order->id }}">
                                 <select name="status" class="form-select" onchange="confirmAndSubmit(this)">
-                                    <option value="0" style="color: gray;" {{ $order->status == 0 ? 'selected' : '' }}>Chờ xử lý</option>
+                                    <option value="0" style="color: gray;" {{ $order->status == 0 ? 'selected' : '' }} {{ $order->status >= 1 ? 'disabled' : '' }}>Chờ xử lý</option>
                                     <option value="1" style="color: blue;" {{ $order->status == 1 ? 'selected' : '' }}>Đã xử lý</option>
                                     <option value="2" style="color: orange;" {{ $order->status == 2 ? 'selected' : '' }}>Đang vận chuyển</option>
                                     <option value="3" style="color: green;" {{ $order->status == 3 ? 'selected' : '' }}>Giao hàng thành công</option>
