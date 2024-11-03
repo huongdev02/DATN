@@ -41,15 +41,15 @@ class OrderController extends Controller
             if (!Auth::check()) {
                 return response()->json(['message' => 'User not logged in.'], 401);
             }
-    
+        
             $userId = Auth::id();
-    
+        
             // Get the default or most recent shipping address
             $shippingAddress = Ship_address::where('user_id', $userId)
                 ->orderByDesc('is_default') // Prioritize default address if it exists
                 ->orderByDesc('created_at') // Otherwise, get the most recent address
                 ->first();
-    
+        
             // Check if a shipping address is found
             if (!$shippingAddress) {
                 return response()->json([
@@ -57,22 +57,22 @@ class OrderController extends Controller
                     'redirect_url' => route('address.create') // Replace with your route
                 ], 400);
             }
-    
+        
             // Retrieve user's cart
             $cart = Cart::where('user_id', $userId)->first();
             if (!$cart) {
                 return response()->json(['message' => 'No items in the cart.'], 400);
             }
-    
+        
             $cartItems = CartItem::where('cart_id', $cart->id)->get();
             if ($cartItems->isEmpty()) {
                 return response()->json(['message' => 'No items in the cart.'], 400);
             }
-    
+        
             // Calculate total quantity and amount
             $totalQuantity = $cartItems->sum('quantity');
             $totalAmount = $cartItems->sum(fn($item) => $item->quantity * $item->price);
-    
+        
             // Create a new order
             $order = Order::create([
                 'user_id' => $userId,
@@ -83,9 +83,9 @@ class OrderController extends Controller
                 'ship_address_id' => $shippingAddress->id,
                 'status' => 0, // default to pending
             ]);
-    
+        
             $orderDetails = [];
-    
+        
             // Create order details for each cart item
             foreach ($cartItems as $cartItem) {
                 $orderDetail = Order_detail::create([
@@ -95,14 +95,21 @@ class OrderController extends Controller
                     'price' => $cartItem->price,
                     'total' => $cartItem->quantity * $cartItem->price, // Calculate total for each item
                 ]);
-    
+        
+                // Trừ số lượng sản phẩm trong bảng products
+                $product = Product::find($cartItem->product_id);
+                if ($product) {
+                    $product->quantity -= $cartItem->quantity; // Trừ số lượng sản phẩm
+                    $product->save(); // Lưu lại thay đổi
+                }
+        
                 // Add order detail to the array for response
                 $orderDetails[] = $orderDetail;
             }
-    
+        
             // Clear the cart items for this user
             CartItem::where('cart_id', $cart->id)->delete();
-    
+        
             // Prepare response data including order details
             $responseData = [
                 'status' => true,
@@ -111,11 +118,10 @@ class OrderController extends Controller
                 'total_quantity' => $totalQuantity,
                 'total_amount' => $totalAmount,
                 'order_details' => $orderDetails,
-            
             ];
-    
+        
             return response()->json($responseData, 201);
-    
+        
         } catch (\Exception $e) {
             return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }

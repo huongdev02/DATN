@@ -62,6 +62,11 @@ class CartController extends Controller
             // Lấy thông tin sản phẩm từ cơ sở dữ liệu
             $product = Product::findOrFail($request->product_id);
     
+            // Kiểm tra xem số lượng thêm vào giỏ hàng có vượt quá số lượng trong bảng products không
+            if ($request->quantity > $product->quantity) {
+                return response()->json(['message' => 'Số lượng yêu cầu vượt quá số lượng có sẵn trong kho.'], 400); // Trả về mã 400 Bad Request
+            }
+    
             // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
             $cartItem = CartItem::where('cart_id', $cart->id)
                                  ->where('product_id', $product->id)
@@ -69,12 +74,15 @@ class CartController extends Controller
     
             if ($cartItem) {
                 // Cập nhật số lượng và tổng giá trị
+                if (($cartItem->quantity + $request->quantity) > $product->quantity) {
+                    return response()->json(['message' => 'Số lượng tổng cộng sau khi thêm vượt quá số lượng có sẵn trong kho.'], 400); // Trả về mã 400 Bad Request
+                }
                 $cartItem->quantity += $request->quantity; // Cộng thêm số lượng
                 $cartItem->total = $cartItem->quantity * $product->price; // Tính lại tổng
                 $cartItem->save();
             } else {
                 // Thêm sản phẩm mới vào giỏ hàng
-                $cartItem = CartItem::create([
+                CartItem::create([
                     'cart_id' => $cart->id,
                     'product_id' => $product->id,
                     'quantity' => $request->quantity,
@@ -101,10 +109,6 @@ class CartController extends Controller
             return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Trả về mã 500 Internal Server Error
         }
     }
-    
-    
-    
-
     
     
 
