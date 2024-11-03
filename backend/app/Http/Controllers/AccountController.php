@@ -79,29 +79,33 @@ class AccountController extends Controller
              */
             $user = Auth::user();
     
-            // check is_active
+            // Check if the user is active
             if ($user->is_active == 0) {
                 Auth::logout();
                 return back()->withErrors([
                     'account' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
                 ])->onlyInput('account');
             }
-              
+    
             Log::info('User ID: ' . $user->id);
             Log::info('User Type: ' . get_class($user));
-            
-                try {
-                    $token = $user->createToken('login')->plainTextToken;
-                    $cookie = cookie('token', $token);
-                } catch (\Exception $e) {
-                    return back()->withErrors(['token' => $e->getMessage()]);
-                }
-
-                if ($user->role == 0) {
-                    return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
-                } else {
-                    return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
-                }
+    
+            try {
+                $token = $user->createToken('login')->plainTextToken;
+                $cookie = cookie('token', $token);
+    
+                // Lưu ID người dùng vào cookie (không mã hóa)
+                $userData = json_encode(['id' => $user->id]); // Lưu ID người dùng
+                $userCookie = cookie('user_data', $userData); // Tạo cookie với dữ liệu người dùng
+            } catch (\Exception $e) {
+                return back()->withErrors(['token' => $e->getMessage()]);
+            }
+    
+            // Chuyển hướng với cả hai cookie
+            return redirect('http://localhost:3000/')
+                ->with('success', 'Đăng nhập thành công')
+                ->withCookie($cookie)
+                ->withCookie($userCookie); // Thêm cookie chứa dữ liệu người dùng
         }
     
         return back()->withErrors([
@@ -109,8 +113,6 @@ class AccountController extends Controller
         ])->onlyInput('account');
     }
     
-
-  
     public function logout(Request $request)
     {
             /**
