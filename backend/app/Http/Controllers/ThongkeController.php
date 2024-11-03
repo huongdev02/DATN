@@ -97,7 +97,36 @@ class ThongkeController extends Controller
         ];
     }
     
+    public function topproduct(Request $request)
+    {
+        $productTimeframe = $request->input('product_timeframe', 'this_week');
     
+        // Determine the start date based on the selected timeframe
+        switch ($productTimeframe) {
+            case 'this_week':
+                $startDate = now()->startOfWeek();
+                break;
+            case 'this_month':
+                $startDate = now()->startOfMonth();
+                break;
+            case 'this_quarter':
+                $startDate = now()->firstOfQuarter();
+                break;
+            default: // 'today'
+                $startDate = now()->startOfDay();
+                break;
+        }
+    
+        // Fetch top products based on the selected timeframe
+        $topProducts = Product::select('name', DB::raw('COUNT(*) as sales_count'))
+            ->where('created_at', '>=', $startDate) // Use the determined start date
+            ->groupBy('name')
+            ->orderBy('sales_count', 'desc')
+            ->take(3)
+            ->get();
+    
+        return $topProducts; // Return the top products
+    }
     
 
 }

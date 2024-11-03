@@ -19,13 +19,18 @@ class AdminController extends Controller
         // Call the methods from ThongkeController
         $accountData = $thongkeController->account($request);
         $orderData = $thongkeController->order($request);
-
+        
+        // Call the topproduct method to get top products
+        $topProducts = $thongkeController->topproduct($request);
+    
         // Return the view with the retrieved data
         return view('admin.dashboard', [
             'account' => $accountData,
             'order' => $orderData,
+            'topProducts' => $topProducts, // Pass top products data to the view
         ]);
     }
+    
     
     public function edit()
     {

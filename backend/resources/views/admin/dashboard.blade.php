@@ -18,9 +18,12 @@
                     <div class="form-group">
                         <select id="timeframe-select-account" class="form-control" onchange="submitForm(this)">
                             <option value="today" {{ request('timeframe') === 'today' ? 'selected' : '' }}>Hôm nay</option>
-                            <option value="this_week" {{ request('timeframe') === 'this_week' ? 'selected' : '' }}>Tuần này</option>
-                            <option value="this_month" {{ request('timeframe') === 'this_month' ? 'selected' : '' }}>Tháng này</option>
-                            <option value="this_quarter" {{ request('timeframe') === 'this_quarter' ? 'selected' : '' }}>Quý này</option>
+                            <option value="this_week" {{ request('timeframe') === 'this_week' ? 'selected' : '' }}>Tuần này
+                            </option>
+                            <option value="this_month" {{ request('timeframe') === 'this_month' ? 'selected' : '' }}>Tháng
+                                này</option>
+                            <option value="this_quarter" {{ request('timeframe') === 'this_quarter' ? 'selected' : '' }}>Quý
+                                này</option>
                         </select>
                     </div>
 
@@ -32,12 +35,12 @@
                                 <p class="card-text" id="changeIndicator">
                                     So với kỳ trước:
                                     <span id="changeValue" class="font-weight-bold">{{ $account['change'] }}</span>
-                                    @if($account['change'] > 0)
-                                        <i class="fas fa-arrow-up" style="color: green;"></i> <!-- Mũi tên lên màu xanh -->
+                                    @if ($account['change'] > 0)
+                                        <i class="fas fa-arrow-up" style="color: green;"></i>
                                     @elseif($account['change'] < 0)
-                                        <i class="fas fa-arrow-down" style="color: red;"></i> <!-- Mũi tên xuống màu đỏ -->
+                                        <i class="fas fa-arrow-down" style="color: red;"></i>
                                     @else
-                                        <i class="fas fa-arrow-right" style="color: gray;"></i> <!-- Mũi tên bên phải cho không thay đổi -->
+                                        <i class="fas fa-arrow-right" style="color: gray;"></i>
                                     @endif
                                 </p>
                             </div>
@@ -53,9 +56,12 @@
                     <div class="form-group">
                         <select id="timeframe-select-revenue" class="form-control" onchange="submitForm(this)">
                             <option value="today" {{ request('timeframe') === 'today' ? 'selected' : '' }}>Hôm nay</option>
-                            <option value="this_week" {{ request('timeframe') === 'this_week' ? 'selected' : '' }}>Tuần này</option>
-                            <option value="this_month" {{ request('timeframe') === 'this_month' ? 'selected' : '' }}>Tháng này</option>
-                            <option value="this_quarter" {{ request('timeframe') === 'this_quarter' ? 'selected' : '' }}>Quý này</option>
+                            <option value="this_week" {{ request('timeframe') === 'this_week' ? 'selected' : '' }}>Tuần này
+                            </option>
+                            <option value="this_month" {{ request('timeframe') === 'this_month' ? 'selected' : '' }}>Tháng
+                                này</option>
+                            <option value="this_quarter" {{ request('timeframe') === 'this_quarter' ? 'selected' : '' }}>Quý
+                                này</option>
                         </select>
                     </div>
 
@@ -68,13 +74,14 @@
                                         <p class="card-text" id="totalRevenue">{{ $order['total_amount'] }} VNĐ</p>
                                         <p class="card-text" id="revenueChangeIndicator">
                                             So với kỳ trước:
-                                            <span id="revenueChangeValue" class="font-weight-bold">{{ $order['change'] }}</span>
-                                            @if($order['change'] > 0)
-                                                <i class="fas fa-arrow-up" style="color: green;"></i> <!-- Mũi tên lên màu xanh -->
+                                            <span id="revenueChangeValue"
+                                                class="font-weight-bold">{{ $order['change'] }}</span>
+                                            @if ($order['change'] > 0)
+                                                <i class="fas fa-arrow-up" style="color: green;"></i>
                                             @elseif($order['change'] < 0)
-                                                <i class="fas fa-arrow-down" style="color: red;"></i> <!-- Mũi tên xuống màu đỏ -->
+                                                <i class="fas fa-arrow-down" style="color: red;"></i>
                                             @else
-                                                <i class="fas fa-arrow-right" style="color: gray;"></i> <!-- Mũi tên bên phải cho không thay đổi -->
+                                                <i class="fas fa-arrow-right" style="color: gray;"></i>
                                             @endif
                                         </p>
                                     </div>
@@ -83,13 +90,14 @@
                                         <p class="card-text" id="completedOrders">{{ $order['order_count'] }} đơn</p>
                                         <p class="card-text" id="orderChangeIndicator">
                                             So với kỳ trước:
-                                            <span id="orderChangeValue" class="font-weight-bold">{{ $order['order_count'] - $order['lastOrderCount'] }}</span>
-                                            @if(($order['order_count'] - $order['lastOrderCount']) > 0)
-                                                <i class="fas fa-arrow-up" style="color: green;"></i> <!-- Mũi tên lên màu xanh -->
-                                            @elseif(($order['order_count'] - $order['lastOrderCount']) < 0)
-                                                <i class="fas fa-arrow-down" style="color: red;"></i> <!-- Mũi tên xuống màu đỏ -->
+                                            <span id="orderChangeValue"
+                                                class="font-weight-bold">{{ $order['order_count'] - $order['lastOrderCount'] }}</span>
+                                            @if ($order['order_count'] - $order['lastOrderCount'] > 0)
+                                                <i class="fas fa-arrow-up" style="color: green;"></i>
+                                            @elseif($order['order_count'] - $order['lastOrderCount'] < 0)
+                                                <i class="fas fa-arrow-down" style="color: red;"></i>
                                             @else
-                                                <i class="fas fa-arrow-right" style="color: gray;"></i> <!-- Mũi tên bên phải cho không thay đổi -->
+                                                <i class="fas fa-arrow-right" style="color: gray;"></i>
                                             @endif
                                         </p>
                                     </div>
@@ -100,14 +108,41 @@
                 </div>
             </div>
         </div>
+
+        <!-- Top 3 Best-Selling Products Section -->
+        <div class="container mt-4">
+            <h4 class="text-center mb-4">Top 3 Sản Phẩm Bán Chạy Nhất</h4>
+            
+            <div class="form-group">
+                <label for="timeframe-select-products">Chọn Thời Gian:</label>
+                <select id="timeframe-select-products" class="form-control" onchange="submitProductForm(this)">
+                    <option value="this_week" {{ request('product_timeframe') === 'this_week' ? 'selected' : '' }}>Tuần này</option>
+                    <option value="this_month" {{ request('product_timeframe') === 'this_month' ? 'selected' : '' }}>Tháng này</option>
+                    <option value="this_quarter" {{ request('product_timeframe') === 'this_quarter' ? 'selected' : '' }}>Quý này</option>
+                </select>
+            </div>
+        
+            <div class="mt-3">
+                <ul class="list-group">
+                    @foreach ($topProducts as $product)
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ $product->name }}</span>
+                            <span class="badge badge-primary badge-pill">{{ $product->sales_count }} bán</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+        
     </div>
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <script>
         function submitForm(select) {
             const selectedValue = select.value;
-            window.location.href = '{{ route("admin.dashboard") }}?timeframe=' + selectedValue;
+            window.location.href = '{{ route('admin.dashboard') }}?timeframe=' + selectedValue + (select.id ===
+                'timeframe-select-products' ? '&product_timeframe=' + selectedValue : '');
         }
     </script>
 @endsection

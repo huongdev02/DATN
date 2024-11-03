@@ -29,28 +29,46 @@ class AccountController extends Controller
             'email' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
             'password' => 'required|string|min:6|confirmed', // Use 'confirmed' for password confirmation
         ]);
-        // dd($user);
-
+    
         try {
             $user['password'] = Hash::make($request->input('password'));
-
             $user['role'] = $request->filled('role') ? $request->input('role') : 0;
-
+    
             $user = User::query()->create($user);
-
+    
             Auth::login($user);
             $request->session()->regenerate();
-
-             // Tạo token cho người dùng
-             $token = $user->createToken('login')->plainTextToken;
-             // Lưu token vào cookie
-             $cookie = cookie('token', $token);
-
-            return redirect('http://localhost:3000/')->with('success', 'Đăng kí thành công')->withCookie($cookie);;
+    
+            try {
+                $token = $user->createToken('login')->plainTextToken;
+    
+                // Tách chuỗi token để lấy phần token thực tế
+                $tokenParts = explode('|', $token);
+                $actualToken = isset($tokenParts[1]) ? $tokenParts[1] : $token; // Lấy phần thứ hai nếu có
+    
+                // Lưu vào cookie mà JavaScript có thể truy cập
+                $cookie = cookie('token', $actualToken, 0, null, null, false, false); // không HttpOnly
+                $userId = $user->id; 
+                $userCookie = cookie('user_id', $userId, 0, null, null, false, false); // không HttpOnly
+    
+                // Lưu ID và token vào storage
+                Storage::disk('local')->put('user_' . $userId . '.txt', json_encode([
+                    'user_id' => $userId,
+                    'token' => $actualToken,
+                ]));
+            } catch (\Exception $e) {
+                return back()->withErrors(['token' => $e->getMessage()]);
+            }
+    
+            return redirect("http://localhost:3000/?user_id={$userId}")
+                ->with('success', 'Đăng kí tài khoản thành công')
+                ->withCookie($cookie)
+                ->withCookie($userCookie); 
         } catch (Throwable $e) {
             return back()->with('error', $e->getMessage());
         }
     }
+    
 
     public function login()
     {
@@ -110,8 +128,8 @@ class AccountController extends Controller
                 return back()->withErrors(['token' => $e->getMessage()]);
             }
     
-            // Chuyển hướng với cả hai cookie
-            return redirect('http://localhost:3000/')
+            // Chuyển hướng với ID người dùng qua URL
+            return redirect("http://localhost:3000/?user_id={$userId}")
                 ->with('success', 'Đăng nhập thành công')
                 ->withCookie($cookie)
                 ->withCookie($userCookie); 
@@ -121,6 +139,7 @@ class AccountController extends Controller
             'account' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu',
         ])->onlyInput('account');
     }
+    
     
     
     
