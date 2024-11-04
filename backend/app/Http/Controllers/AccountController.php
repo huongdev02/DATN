@@ -29,28 +29,46 @@ class AccountController extends Controller
             'email' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
             'password' => 'required|string|min:6|confirmed', // Use 'confirmed' for password confirmation
         ]);
-        // dd($user);
-
+    
         try {
             $user['password'] = Hash::make($request->input('password'));
-
             $user['role'] = $request->filled('role') ? $request->input('role') : 0;
-
+    
             $user = User::query()->create($user);
-
+    
             Auth::login($user);
             $request->session()->regenerate();
-
-             // Tạo token cho người dùng
-             $token = $user->createToken('login')->plainTextToken;
-             // Lưu token vào cookie
-             $cookie = cookie('token', $token);
-
-            return redirect('http://localhost:3000/')->with('success', 'Đăng kí thành công')->withCookie($cookie);;
+    
+            try {
+                $token = $user->createToken('login')->plainTextToken;
+    
+                // Tách chuỗi token để lấy phần token thực tế
+                $tokenParts = explode('|', $token);
+                $actualToken = isset($tokenParts[1]) ? $tokenParts[1] : $token; // Lấy phần thứ hai nếu có
+    
+                // Lưu vào cookie mà JavaScript có thể truy cập
+                $cookie = cookie('token', $actualToken, 0, null, null, false, false); // không HttpOnly
+                $userId = $user->id; 
+                $userCookie = cookie('user_id', $userId, 0, null, null, false, false); // không HttpOnly
+    
+                // Lưu ID và token vào storage
+                Storage::disk('local')->put('user_' . $userId . '.txt', json_encode([
+                    'user_id' => $userId,
+                    'token' => $actualToken,
+                ]));
+            } catch (\Exception $e) {
+                return back()->withErrors(['token' => $e->getMessage()]);
+            }
+    
+            return redirect("http://localhost:3000/?user_id={$userId}")
+                ->with('success', 'Đăng kí tài khoản thành công')
+                ->withCookie($cookie)
+                ->withCookie($userCookie); 
         } catch (Throwable $e) {
             return back()->with('error', $e->getMessage());
         }
     }
+    
 
     public function login()
     {
@@ -74,33 +92,47 @@ class AccountController extends Controller
         if (Auth::attempt($loginCredentials, true)) {
             $request->session()->regenerate();
     
-            /**
-             * @var User $user
-             */
+            /** @var User $user */
             $user = Auth::user();
     
-            // check is_active
+            // Check if the user is active
             if ($user->is_active == 0) {
                 Auth::logout();
                 return back()->withErrors([
                     'account' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
                 ])->onlyInput('account');
             }
-              
+    
             Log::info('User ID: ' . $user->id);
             Log::info('User Type: ' . get_class($user));
-                try {
-                    $token = $user->createToken('login')->plainTextToken;
-                    $cookie = cookie('token', $token);
-                } catch (\Exception $e) {
-                    return back()->withErrors(['token' => $e->getMessage()]);
-                }
-
-                if ($user->role == 0) {
-                    return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
-                } else {
-                    return redirect('http://localhost:3000/')->with('success', 'Đăng nhập thành công')->withCookie($cookie);
-                }
+    
+            try {
+                $token = $user->createToken('login')->plainTextToken;
+    
+                // Tách chuỗi token để lấy phần token thực tế
+                $tokenParts = explode('|', $token);
+                $actualToken = isset($tokenParts[1]) ? $tokenParts[1] : $token; // Lấy phần thứ hai nếu có
+    
+                // Lưu vào cookie mà JavaScript có thể truy cập
+                $cookie = cookie('token', $actualToken, 0, null, null, false, false); // không HttpOnly
+                $userId = $user->id; 
+                $userCookie = cookie('user_id', $userId, 0, null, null, false, false); // không HttpOnly
+    
+                // Lưu ID và token vào storage
+                Storage::disk('local')->put('user_' . $userId . '.txt', json_encode([
+                    'user_id' => $userId,
+                    'token' => $actualToken,
+                ]));
+    
+            } catch (\Exception $e) {
+                return back()->withErrors(['token' => $e->getMessage()]);
+            }
+    
+            // Chuyển hướng với ID người dùng qua URL
+            return redirect("http://localhost:3000/?user_id={$userId}")
+                ->with('success', 'Đăng nhập thành công')
+                ->withCookie($cookie)
+                ->withCookie($userCookie); 
         }
     
         return back()->withErrors([
@@ -108,18 +140,34 @@ class AccountController extends Controller
         ])->onlyInput('account');
     }
     
-
-  
+    
+    
+    
+    
+    
     public function logout(Request $request)
     {
-            /**
-             * @var User $user
-             */
+        /** @var User $user */
         $user = Auth::user();
     
         if ($user) {
             // Xóa tất cả các token của người dùng
             $user->tokens()->delete();
+    
+            // Lấy ID người dùng từ Auth
+            $userId = Auth::id(); // Sử dụng Auth::id() để lấy ID người dùng
+            
+            if ($userId) {
+                // Tạo đường dẫn file chính xác
+                $filePath = 'user_' . $userId . '.txt';
+    
+                // Kiểm tra sự tồn tại của file và xóa nếu có
+                if (Storage::exists($filePath)) {
+                    Storage::delete($filePath);
+                } else {
+                    Log::info("File không tồn tại: " . $filePath);
+                }
+            }
         }
     
         // Đăng xuất người dùng
@@ -127,11 +175,19 @@ class AccountController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
     
-        // Xóa cookie chứa token
-        $cookie = Cookie::forget('token');
+        // Xóa cookie chứa token và user_id
+        $cookieToken = Cookie::forget('token');
+        $cookieUserId = Cookie::forget('user_id');
     
-        return redirect('http://localhost:3000/')->with('success', 'Đã đăng xuất thành công')->withCookie($cookie);
+        // Chuyển hướng và xóa cả hai cookie
+        return redirect('http://localhost:3000/')
+            ->with('success', 'Đã đăng xuất thành công')
+            ->withCookie($cookieToken)
+            ->withCookie($cookieUserId);
     }
+    
+    
+
 
     public function rspassword()
     {

@@ -46,7 +46,7 @@ Route::controller(AccountController::class)->group(function () {
     Route::post('login', 'login')->name('login');
     Route::post('logout', 'logout')->name('logout');
     //lay user
-    Route::get('/users/{id}',  'show')->name('show');;
+    Route::get('/users/{id}',  'show')->name('show');
 });
 
 Route::get('/auth/check', [AccountController::class, 'checkAuth']);

@@ -51,15 +51,15 @@
                         </span>
                     </div>
                 </div>
-
+                
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-2">
-                            <img src="{{ $order->product->avatar ?? 'path_to_placeholder_image' }}" alt="{{ $order->product->name }}" class="img-fluid">
+                            <img src="{{ $order->product->avatar ?? 'path_to_placeholder_image' }}" alt="" class="img-fluid">
                         </div>
                         <div class="col-md-6">
-                            <h5>{{ $order->product->name }}</h5>
-                            <p>Phân loại hàng: {{ $order->product->category->name ?? 'Không rõ' }}</p>
+                            <h5>{{ $order->product->name ?? 'Không rõ' }}</h5>
+                            <p>Phân loại hàng: {{ $order->product && $order->product->category ? $order->product->category->name : 'Không rõ' }}</p>
                             <p>Số lượng: x{{ $order->quantity }}</p>
                         </div>
                         <div class="col-md-4 text-end">

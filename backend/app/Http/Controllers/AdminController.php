@@ -3,16 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Services\StatisticsService;
 
 class AdminController extends Controller
 {
-    public function admin(){
-        return view('admin.dashboard');
+    public function admin(Request $request) {
+        try {
+            // Create an instance of ThongkeController
+            $thongkeController = app(ThongkeController::class);
+            
+            // Call the methods from ThongkeController
+            $accountData = $thongkeController->account($request);
+            $orderData = $thongkeController->order($request);
+            
+            // Call the topproduct method to get top products
+            $topProducts = $thongkeController->topproduct($request);
+    
+            // Kiểm tra kiểu dữ liệu trả về để đảm bảo rằng nó là mảng
+            if (is_a($topProducts, 'Illuminate\Http\JsonResponse')) {
+                $topProducts = json_decode($topProducts->getContent(), true); // Chuyển đổi thành mảng
+            }
+    
+            // Return the view with the retrieved data
+            return view('admin.dashboard', [
+                'account' => $accountData,
+                'order' => $orderData,
+                'topProducts' => $topProducts, // Pass top products data to the view
+            ]);
+        } catch (\Exception $e) {
+            // Xử lý lỗi, có thể trả về một thông điệp lỗi hoặc redirect
+            return redirect()->back()->withErrors(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
+        }
     }
+    
+    
+    
     public function edit()
     {
         $user = Auth::user();

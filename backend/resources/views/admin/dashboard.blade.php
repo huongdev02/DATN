@@ -1,6 +1,6 @@
 @extends('Layout.Layout')
 
-@section('tiltle')
+@section('title')
     DashBoard Admin
 @endsection
 
@@ -9,51 +9,98 @@
         <h2>DashBoard Admin</h2>
     </div>
 
-    <div class="row container mt-3 mb-3">
-        <!-- Earnings (Daily) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2" style="background-color: #e7f3ff;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Lượt truy cập website hôm nay
+    <div class="container mt-4">
+        <div class="row">
+            <!-- User statistics -->
+            <div class="col-md-6 d-flex align-items-stretch">
+                <div class="w-100">
+                    <h4>Thống kê người dùng mới</h4>
+                    <div class="form-group">
+                        <select id="timeframe-select-account" class="form-control" onchange="submitForm(this)">
+                            <option value="today" {{ request('timeframe') === 'today' ? 'selected' : '' }}>Hôm nay</option>
+                            <option value="this_week" {{ request('timeframe') === 'this_week' ? 'selected' : '' }}>Tuần này
+                            </option>
+                            <option value="this_month" {{ request('timeframe') === 'this_month' ? 'selected' : '' }}>Tháng
+                                này</option>
+                            <option value="this_quarter" {{ request('timeframe') === 'this_quarter' ? 'selected' : '' }}>Quý
+                                này</option>
+                        </select>
+                    </div>
+
+                    <div id="statistics" class="mt-3">
+                        <div class="card text-white bg-primary h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Số lượng người dùng mới</h5>
+                                <p class="card-text" id="userCount">{{ $account['count'] }} người dùng mới</p>
+                                <p class="card-text" id="changeIndicator">
+                                    So với kỳ trước:
+                                    <span id="changeValue" class="font-weight-bold">{{ $account['change'] }}</span>
+                                    @if ($account['change'] > 0)
+                                        <i class="fas fa-arrow-up" style="color: green;"></i>
+                                    @elseif($account['change'] < 0)
+                                        <i class="fas fa-arrow-down" style="color: red;"></i>
+                                    @else
+                                        <i class="fas fa-arrow-right" style="color: gray;"></i>
+                                    @endif
+                                </p>
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-dark">1,764</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2" style="background-color: #d4edda;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Lượt truy cập website tháng này
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-dark">76,434</div>
-                        </div>
+
+            <!-- Revenue and order statistics -->
+            <div class="col-md-6 d-flex align-items-stretch">
+                <div class="w-100">
+                    <h4>Thống kê doanh thu và đơn hàng hoàn thành</h4>
+                    <div class="form-group">
+                        <select id="timeframe-select-revenue" class="form-control" onchange="submitForm(this)">
+                            <option value="today" {{ request('timeframe') === 'today' ? 'selected' : '' }}>Hôm nay</option>
+                            <option value="this_week" {{ request('timeframe') === 'this_week' ? 'selected' : '' }}>Tuần này
+                            </option>
+                            <option value="this_month" {{ request('timeframe') === 'this_month' ? 'selected' : '' }}>Tháng
+                                này</option>
+                            <option value="this_quarter" {{ request('timeframe') === 'this_quarter' ? 'selected' : '' }}>Quý
+                                này</option>
+                        </select>
                     </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- New Users Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2" style="background-color: #d1ecf1;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Người dùng mới trong tháng này
-                            </div>
-                            <div class="row no-gutters align-items-center">
-                                <div class="col-auto">
-                                    <div class="h5 mb-0 mr-3 font-weight-bold text-dark">12</div>
+
+                    <div id="revenueStatistics" class="mt-3">
+                        <div class="card text-white bg-success h-100">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h5 class="card-title">Tổng Doanh Thu</h5>
+                                        <p class="card-text" id="totalRevenue">{{ $order['total_amount'] }} VNĐ</p>
+                                        <p class="card-text" id="revenueChangeIndicator">
+                                            So với kỳ trước:
+                                            <span id="revenueChangeValue"
+                                                class="font-weight-bold">{{ $order['change'] }}</span>
+                                            @if ($order['change'] > 0)
+                                                <i class="fas fa-arrow-up" style="color: green;"></i>
+                                            @elseif($order['change'] < 0)
+                                                <i class="fas fa-arrow-down" style="color: red;"></i>
+                                            @else
+                                                <i class="fas fa-arrow-right" style="color: gray;"></i>
+                                            @endif
+                                        </p>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5 class="card-title">Số lượng đơn hoàn thành</h5>
+                                        <p class="card-text" id="completedOrders">{{ $order['order_count'] }} đơn</p>
+                                        <p class="card-text" id="orderChangeIndicator">
+                                            So với kỳ trước:
+                                            <span id="orderChangeValue"
+                                                class="font-weight-bold">{{ $order['order_count'] - $order['lastOrderCount'] }}</span>
+                                            @if ($order['order_count'] - $order['lastOrderCount'] > 0)
+                                                <i class="fas fa-arrow-up" style="color: green;"></i>
+                                            @elseif($order['order_count'] - $order['lastOrderCount'] < 0)
+                                                <i class="fas fa-arrow-down" style="color: red;"></i>
+                                            @else
+                                                <i class="fas fa-arrow-right" style="color: gray;"></i>
+                                            @endif
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -61,64 +108,57 @@
                 </div>
             </div>
         </div>
-    
-        <!-- Total Users Card Example -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2" style="background-color:#fff3cd;">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Tổng người dùng
+
+        <!-- Top 3 Best-Selling Products Section -->
+        <div class="container mt-4">
+            <h4 class="text-center mb-4">Top 3 Sản Phẩm Bán Chạy Nhất</h4>
+            
+            <div class="form-group">
+                <label for="timeframe-select-products">Chọn Thời Gian:</label>
+                <select id="timeframe-select-products" class="form-control" onchange="submitProductForm(this)">
+                    <option value="this_week" {{ request('product_timeframe') === 'this_week' ? 'selected' : '' }}>Tuần này</option>
+                    <option value="this_month" {{ request('product_timeframe') === 'this_month' ? 'selected' : '' }}>Tháng này</option>
+                    <option value="this_quarter" {{ request('product_timeframe') === 'this_quarter' ? 'selected' : '' }}>Quý này</option>
+                </select>
+            </div>
+            
+            <div class="mt-3">
+                <ul class="list-group">
+                    @foreach ($topProducts as $product)
+                        <li class="list-group-item">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ asset('storage/' . $product['image']) }}" alt="{{ $product['product_name'] }}" class="rounded-circle mb-2" style="width: 60px; height: 60px; margin-right: 15px;">
+                                <div class="product-details">
+                                    <h5 class="mb-1">{{ $product['product_name'] }}</h5>
+                                    <div class="product-info">
+                                        <span class="text-muted">Số đơn: {{ $product['sales_count'] }}</span>
+                                        <span class="text-muted">Số lượng bán: {{ $product['total_quantity'] }}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-dark">1898</div>
-                        </div>
-                    </div>
-                </div>
+                            <div>
+                                <span class="badge badge-primary badge-pill">{{ $product['sales_count'] }} đơn</span>
+                                <span class="badge badge-success badge-pill">{{ $product['total_quantity'] }} bán</span>
+                                <span class="badge badge-info badge-pill">{{ number_format($product['total_revenue'], 0, ',', '.') }} VNĐ</span>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
         </div>
+        
+        
+        
+        
     </div>
-    
- 
-    <div class="row container mt-3 mb-3">
 
-        <!-- Area Chart -->
-        <div class="col-xl-8 col-lg-7">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #f8f9fa;">
-                    <h6 class="m-0 font-weight-bold text-primary">Tổng quan về thu nhập</h6>
-                </div>
-                <div class="card-body">
-                    <div class="chart-area">
-                        <canvas id="myAreaChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-        <!-- Pie Chart -->
-        <div class="col-xl-4 col-lg-5">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style="background-color: #f8f9fa;">
-                    <h6 class="m-0 font-weight-bold text-primary">Nguồn thu nhập</h6>
-                </div>
-                <div class="card-body">
-                    <div class="chart-pie pt-4 pb-2">
-                        <canvas id="myPieChart"></canvas>
-                    </div>
-                    <div class="mt-4 text-center small">
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-primary"></i> Chuyển khoản
-                        </span>
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-success"></i> Thanh toán khi nhận hàng
-                        </span>
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-info"></i> Khác
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <script>
+        function submitForm(select) {
+            const selectedValue = select.value;
+            window.location.href = '{{ route('admin.dashboard') }}?timeframe=' + selectedValue + (select.id ===
+                'timeframe-select-products' ? '&product_timeframe=' + selectedValue : '');
+        }
+    </script>
 @endsection

@@ -20,4 +20,22 @@ class UserOrderController extends Controller
     
         return view('user.order', compact('orders'));
     }
+
+    public function show($id)
+{
+    // Retrieve the order by ID, including product and user relationships
+    $order = Order::with(['product', 'user'])->find($id);
+
+    // Check if the order exists
+    if (!$order) {
+        return back()->with('error', 'Đơn hàng không tồn tại.');
+    }
+
+    // Flash the order data to the session
+    session(['selected_order' => $order]);
+
+    // Redirect to the index view to display the selected order details
+    return redirect()->route('userorder.show')->with('message', 'Chi tiết đơn hàng đã được hiển thị.');
+}
+
 }

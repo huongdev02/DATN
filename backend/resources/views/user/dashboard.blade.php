@@ -5,10 +5,10 @@
 @endsection
 
 @section('content')
-    <a href="http://localhost:3000/" class="btn btn-primary"> Quay về trang chủ</a>
+    <a href="http://localhost:3000/" class="btn btn-primary mb-5"> Quay về trang chủ</a>
 
     @if(isset($token))
-        <p>Token của bạn: {{ $token }}</p>
+        <p>Token của bạn:   {{ $token }}</p>
     @else
         <p>Không tìm thấy token.</p>
     @endif

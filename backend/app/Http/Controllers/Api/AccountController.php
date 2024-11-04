@@ -80,20 +80,51 @@ class AccountController extends Controller
             return response()->json([
                 'error' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu'
             ], 401);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 
     public function show($userId)
     {
-        try{
+        try {
+            // Retrieve the user with related ship addresses
             $user = User::with('shipAddresses')->find($userId);
-            return response()->json($user);
-        }catch(Throwable $e){
-            return response()->json(['message' => 'User not found'] . $e->getMessage(), 404);
+            
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+    
+            // Generate token for the user and remove the first three characters
+            $token = substr($user->createToken('API Token')->plainTextToken, 3);
+    
+            // Full path for the avatar
+            $user->avatar = asset('storage/' . $user->avatar);
+    
+            $filePath = storage_path('app/user_' . $userId . '.txt');
+    
+            // Check if the file exists
+            if (file_exists($filePath)) {
+                $data = json_decode(file_get_contents($filePath), true);
+                $data['token'] = $token;
+                $data['user'] = $user;
+    
+                return response()->json($data);
+            }
+    
+            // Return user data with token
+            return response()->json([
+                'token' => $token,
+                'user' => $user
+            ]);
+    
+        } catch (Throwable $e) {
+            return response()->json(['message' => 'Error occurred: ' . $e->getMessage()], 404);
         }
     }
+    
+    
+
 
     public function logout(Request $request)
 {
@@ -123,8 +154,25 @@ class AccountController extends Controller
 public function checkAuth(Request $request)
 {
     // Lấy token từ cookie
-    $token = $request->cookie('token');
-    Log::info('Received token from cookie: ' . $token);
+    $tokenFromCookie = $request->cookie('token');
+    
+    // Xóa 4 ký tự đầu nếu token từ cookie tồn tại
+    if ($tokenFromCookie && strlen($tokenFromCookie) > 4) {
+        $tokenFromCookie = substr($tokenFromCookie, 4); // Xóa 4 ký tự đầu tiên
+    }
+
+    // Lấy token từ header
+    $tokenFromHeader = $request->header('Authorization');
+
+    // Nếu token từ header có dạng "Bearer token", tách ra để lấy token
+    if ($tokenFromHeader && preg_match('/Bearer\s(\S+)/', $tokenFromHeader, $matches)) {
+        $tokenFromHeader = $matches[1]; // Lấy phần token sau "Bearer "
+    }
+
+    // Chọn token từ cookie nếu có, nếu không thì lấy từ header
+    $token = $tokenFromCookie ?: $tokenFromHeader;
+
+    Log::info('Received token: ' . $token);
 
     if (!$token) {
         return response()->json(['authenticated' => false, 'message' => 'Token not provided.'], 401);
@@ -148,4 +196,6 @@ public function checkAuth(Request $request)
 
     return response()->json(['authenticated' => false, 'message' => 'Invalid token.'], 401);
 }
+
+
 }
