@@ -100,9 +100,9 @@ const Header: React.FC = () => {
     const GetUser = async () => {
         try {
           const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
-          console.log(data.token);
-        } catch (error) {
          
+        } catch (error) {
+           console.log(error);
         }
       };
     
