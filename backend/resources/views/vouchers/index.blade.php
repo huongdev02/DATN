@@ -5,6 +5,31 @@
         <a class="btn btn-outline-success mb-3" href="{{ route('vouchers.create') }}">Add new voucher</a>
     </h1>
 
+    <!-- Bộ lọc -->
+    <form method="GET" action="{{ route('vouchers.index') }}" class="mb-3 p-3 rounded bg-light shadow-sm" id="filterForm">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="status" class="form-label fw-bold">Trạng thái</label>
+                <select name="status" id="status" class="form-select text-white bg-primary" onchange="document.getElementById('filterForm').submit()">
+                    <option value="" class="text-dark">Tất cả trạng thái</option>
+                    <option value="1" class="text-dark" {{ request('status') == '1' ? 'selected' : '' }}>Đang hoạt động</option>
+                    <option value="0" class="text-dark" {{ request('status') == '0' ? 'selected' : '' }}>Không hoạt động</option>
+                    <option value="2" class="text-dark" {{ request('status') == '2' ? 'selected' : '' }}>Đã hết hạn</option>
+                    <option value="3" class="text-dark" {{ request('status') == '3' ? 'selected' : '' }}>Chờ phát hành</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="type" class="form-label fw-bold">Loại Voucher</label>
+                <select name="type" id="type" class="form-select text-white bg-success" onchange="document.getElementById('filterForm').submit()">
+                    <option value="" class="text-dark">Tất cả loại</option>
+                    <option value="0" class="text-dark" {{ request('type') == '0' ? 'selected' : '' }}>Giá trị cố định</option>
+                    <option value="1" class="text-dark" {{ request('type') == '1' ? 'selected' : '' }}>Triết khấu phần trăm</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <!-- Danh sách voucher -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead>
@@ -25,13 +50,7 @@
                     <tr>
                         <td>{{ $voucher->id }}</td>
                         <td>{{ $voucher->code }}</td>
-                        <td>
-                            @if($voucher->type == 0)
-                                Giá trị cố định
-                            @else
-                                Triết khấu phần trăm
-                            @endif
-                        </td>
+                        <td>{{ $voucher->type == 0 ? 'Giá trị cố định' : 'Triết khấu phần trăm' }}</td>
                         <td>{{ $voucher->discount_value }}</td>
                         <td>{{ $voucher->description }}</td>
                         <td>
@@ -55,15 +74,11 @@
                         <td>{{ \Carbon\Carbon::parse($voucher->start_day)->format('d-m-Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($voucher->end_day)->format('d-m-Y') }}</td>
                         <td>
-                            {{-- <a class="btn btn-info" href="{{ route('vouchers.show', $voucher->id) }}">Show</a> --}}
                             <a class="btn btn-outline-warning mb-3" href="{{ route('vouchers.edit', $voucher->id) }}">Edit</a>
-
                             <form action="{{ route('vouchers.destroy', $voucher->id) }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" onclick="return confirm('Có chắc xóa không?')" class="btn btn-outline-danger mb-3">
-                                    Xóa
-                                </button>
+                                <button type="submit" onclick="return confirm('Có chắc xóa không?')" class="btn btn-outline-danger mb-3">Xóa</button>
                             </form>
                         </td>
                     </tr>
@@ -71,7 +86,7 @@
             </tbody>
         </table>
 
-        {{-- Phân trang --}}
+        <!-- Phân trang -->
         <div class="pagination justify-content-center">
             {{ $vouchers->links() }}
         </div>

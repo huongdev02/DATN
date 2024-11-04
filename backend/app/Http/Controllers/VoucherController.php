@@ -12,10 +12,22 @@ class VoucherController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $vouchers = Voucher::latest('id')->paginate(5);
-        return view('vouchers.index', compact('vouchers'));
+        $query = Voucher::query();
+
+    // Áp dụng lọc theo status nếu có
+    if ($request->has('status') && $request->status != '') {
+        $query->where('status', $request->status);
+    }
+
+    // Áp dụng lọc theo type nếu có
+    if ($request->has('type') && $request->type != '') {
+        $query->where('type', $request->type);
+    }
+
+    $vouchers = $query->paginate(10);
+    return view('vouchers.index', compact('vouchers'));
     }
 
     /**
