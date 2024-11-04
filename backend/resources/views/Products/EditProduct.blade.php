@@ -84,7 +84,7 @@
             <label for="size_{{ $size->id }}">{{ $size->size }}</label><br>
         @endforeach
     </div>
-
+    
     <div class="mb-3">
         <label>Màu Sắc:</label><br>
         @foreach ($colors as $color)
@@ -93,6 +93,7 @@
             <label for="color_{{ $color->id }}">{{ $color->name_color }}</label><br>
         @endforeach
     </div>
+    
 
     <div class="mb-3">
         <label for="display">Display:</label>
