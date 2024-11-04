@@ -71,7 +71,7 @@
                         <td>{{ $item->categories->name }}</td>
                         <td>
                             <img src="{{ asset('storage/' . $item->avatar) }}" alt="{{ $item->name }}"
-                                style="width: 50px; height: auto;">
+                                style="width: 50px; height: 50px">
                         </td>
                         <td>{{ number_format($item->price, 2) }} VND</td>
                         <td>{{ $item->quantity }}</td>
