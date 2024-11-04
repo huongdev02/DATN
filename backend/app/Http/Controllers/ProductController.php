@@ -19,21 +19,29 @@ class ProductController extends Controller
     {
         $sort = $request->get('sort', 'name');
         $order = $request->get('order', 'asc');
-
+        $status = $request->get('status'); 
+        $display = $request->get('display'); 
+    
         $products = Product::with(['galleries', 'categories', 'product_detail']);
+    
+        // Lọc theo trạng thái
+        if ($status !== null) {
+            $products = $products->where('status', $status);
+        }
 
-        if ($sort == 'name') {
-            $products = $products->orderBy('name', 'asc');
-        } elseif ($sort == 'name_desc') {
-            $products = $products->orderBy('name', 'desc');
-        } elseif ($sort == 'price') {
+        if ($display !== null) {
+            $products = $products->where('display', $display);
+        }
+    
+        // Sắp xếp theo giá
+        if ($sort == 'price') {
             $products = $products->orderBy('price', 'asc');
         } elseif ($sort == 'price_desc') {
             $products = $products->orderBy('price', 'desc');
         }
-
+    
         $products = $products->get();
-
+    
         $colorMap = [
             'Đỏ' => '#FF0000',
             'Đen' => '#000000',
@@ -43,10 +51,10 @@ class ProductController extends Controller
             'Cam' => '#FFA500',
             'Tím' => '#800080',
         ];
-
+    
         return view('products.index', compact('products', 'colorMap', 'sort', 'order'));
     }
-
+    
 
     public function create()
     {

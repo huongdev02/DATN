@@ -15,16 +15,36 @@
     <div class="container">
         <div class="d-flex justify-content-between">
             <a href="{{ route('products.create') }}" class="btn btn-outline-success mb-3">Add New Product</a>
-            <form style="width: 200px;" method="GET" action="{{ route('products.index') }}">
-                <div class="mb-3">
-                    <select style="padding: 15px" name="sort" id="sort" class="form-control" onchange="this.form.submit()">
-                        <option value="name" {{ $sort == 'name' ? 'selected' : '' }} selected>Tên A-Z</option>
-                        <option value="name_desc" {{ $sort == 'name_desc' ? 'selected' : '' }}>Tên Z-A</option>
-                        <option value="price" {{ $sort == 'price' ? 'selected' : '' }}>Giá tăng dần</option>
-                        <option value="price_desc" {{ $sort == 'price_desc' ? 'selected' : '' }}>Giá giảm dần</option>
+            <div class="d-flex gap-2">
+                <form style="width: 200px;" method="GET" action="{{ route('products.index') }}" id="filterForm"> 
+                    <div class="mb-3">
+                        <select style="padding: 15px" name="sort" id="sort" class="form-control" onchange="this.form.submit()">
+                            <option value="price" {{ $sort == 'price' ? 'selected' : '' }}>Giá tăng dần</option>
+                            <option value="price_desc" {{ $sort == 'price_desc' ? 'selected' : '' }}>Giá giảm dần</option>
+                        </select>
+                    </div>
+                </form>
+                <form  style="width: 200px;" action="{{ route('products.index') }}" method="GET" id="filterForm">
+                   <div class="mb-3">
+                    <select style="padding: 15px" name="status" id="statusFilter" class="form-control" onchange="this.form.submit()">
+                        <option value="">Tất cả</option>
+                        <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Không hoạt động</option>
+                        <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Đang mở bán</option>
+                        <option value="2" {{ request('status') == '2' ? 'selected' : '' }}>Ngừng bán</option>
+                        <option value="3" {{ request('status') == '3' ? 'selected' : '' }}>Chờ duyệt</option>
                     </select>
-                </div>
-            </form>
+                   </div>
+                </form>
+                <form  style="width: 200px;" action="{{ route('products.index') }}" method="GET" id="filterForm">
+                  <div class="mb-3">
+                    <select style="padding: 15px" name="display" id="displayFilter" class="form-control" onchange="this.form.submit()">
+                        <option value="">Tất cả</option>
+                        <option value="1" {{ request('display') == '1' ? 'selected' : '' }}>Hiển thị</option>
+                        <option value="0" {{ request('display') == '0' ? 'selected' : '' }}>Không hiện thị</option>
+                    </select>
+                  </div>
+                </form>
+            </div>
         </div>
         <table class="table table-bordered table-hover">
             <thead>
