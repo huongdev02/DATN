@@ -21,9 +21,6 @@ return new class extends Migration
             $table->foreignIdFor(Product::class)->constrained();
             $table->foreignIdFor(Size::class)->constrained();
             $table->foreignIdFor(Color::class)->constrained();
-            $table->unsignedInteger('quantity')->check('quantity >= 0');
-            $table->unsignedInteger('sell_quantity')->default(0);
-            $table->unsignedInteger('number_statictis')->default(0);
             $table->timestamps();
         });
         DB::statement('ALTER TABLE `product_details` ADD CONSTRAINT `check_quantity_productdetail` CHECK (`quantity` >= 0)'); //dkien: số lượng > 0
