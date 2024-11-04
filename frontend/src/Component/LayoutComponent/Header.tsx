@@ -9,15 +9,16 @@ import { message } from 'antd';
 import { Button, Modal } from 'antd';
 import {SettingOutlined} from '@ant-design/icons';
 import api from '../../configAxios/axios';
+import { useSearchParams } from 'react-router-dom';
 import { log } from 'console';
 const Header: React.FC = () => {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [isCartActice, setIsCartActice] = useState(false);
     const [isAccountActive, setIsAccountActive] = useState(false);
     const [activeTab, setActiveTab] = useState('login');
-    const [userId, setUserId] = useState<string>();
     const [open, setOpen] = useState(false);
-
+    const [searchParams] = useSearchParams();
+    const userId = searchParams.get('user_id');
     const showLoginForm = () => {
         setActiveTab('login');
     };
@@ -81,27 +82,32 @@ const Header: React.FC = () => {
         }
     };
 
+   
+    const hanldeNavigate = async () =>{
+        try {
+            const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
+             if(data.user.role === 2){
+                window.location.href = 'http://127.0.0.1:8000/admin/dashboard';
+             }else{
+                window.location.href = 'http://127.0.0.1:8000/user/dashboard';
+             }
+          } catch (error) {
+            window.location.href = 'http://127.0.0.1:8000/login';
+          }
+        
+    }
+
     const GetUser = async () => {
         try {
           const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
           console.log(data.token);
         } catch (error) {
-          message.error("Lỗi api !");
+         
         }
       };
-
-
-    console.log("user", userId);
     
-   
-
     useEffect(()=>{
         GetUser();
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get('user_id');
-        if (id) {
-           setUserId(id)
-        }
     },[])  
     
 
@@ -142,8 +148,8 @@ const Header: React.FC = () => {
                             </a>
                             <a
                                 className="account-icon account"
-                                onClick={handleIconClick}
                                 href="#"
+                                onClick={handleIconClick}
                             >
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_451)">
@@ -156,7 +162,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-                            <SettingOutlined style={{fontSize: '18p'}}/>
+                            <SettingOutlined  onClick={hanldeNavigate} style={{fontSize: '18px'}}/>
                             <a className="account-icon wishlist" href="compare.html"><span className="number-tag">3</span>
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_452)">

@@ -3716,6 +3716,9 @@ a.follow-vendor {
   width: 100%;
   text-align: left;
 }
+.anticon svg {
+  padding-top: 3px;
+}
 .header .main-header .header-account {
   width: auto;
   min-width: 190px;
