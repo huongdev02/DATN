@@ -87,28 +87,44 @@ class AccountController extends Controller
 
     public function show($userId)
     {
-        try{
+        try {
+            // Retrieve the user with related ship addresses
             $user = User::with('shipAddresses')->find($userId);
-            return response()->json($user);
-        }catch(Throwable $e){
-            return response()->json(['message' => 'User not found'] . $e->getMessage(), 404);
+            
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+    
+            // Generate token for the user and remove the first three characters
+            $token = substr($user->createToken('API Token')->plainTextToken, 3);
+    
+            // Full path for the avatar
+            $user->avatar = asset('storage/' . $user->avatar);
+    
+            $filePath = storage_path('app/user_' . $userId . '.txt');
+    
+            // Check if the file exists
+            if (file_exists($filePath)) {
+                $data = json_decode(file_get_contents($filePath), true);
+                $data['token'] = $token;
+                $data['user'] = $user;
+    
+                return response()->json($data);
+            }
+    
+            // Return user data with token
+            return response()->json([
+                'token' => $token,
+                'user' => $user
+            ]);
+    
+        } catch (Throwable $e) {
+            return response()->json(['message' => 'Error occurred: ' . $e->getMessage()], 404);
         }
     }
-
-    public function data($id)
-    {
-        $filePath = storage_path('app/user_' . $id . '.txt'); // Đường dẫn đầy đủ đến file
-
-        // Kiểm tra xem file có tồn tại không
-        if (file_exists($filePath)) {
-            // Đọc nội dung của file
-            $data = file_get_contents($filePath);
-            return response()->json(json_decode($data)); // Trả về dữ liệu dưới dạng JSON
-        }
     
-        return response()->json(['message' => 'Data not found'], 404);
-    }
     
+
 
     public function logout(Request $request)
 {
