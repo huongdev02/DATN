@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Định nghĩa kiểu cho sản phẩm
 export interface ProductDetail {
     id: number;
     product_id: number;
@@ -10,6 +9,7 @@ export interface ProductDetail {
     quantity: number;
     sell_quantity: number;
     number_statictis: number;
+    avatar: string;
     name: string;
     color: string;
     size: string;
@@ -21,14 +21,12 @@ export interface ProductDetail {
     };
 }
 
-// Định nghĩa trạng thái giỏ hàng
 interface CartState {
     items: ProductDetail[];
     loading: boolean;
     error: string | null;
 }
 
-// Trạng thái khởi tạo
 const initialState: CartState = {
     items: [],
     loading: false,
@@ -41,7 +39,7 @@ export const fetchCart = createAsyncThunk(
     async (userId: number, { rejectWithValue }) => {
         try {
             const response = await axios.get(`http://localhost:8000/api/carts/${userId}`);
-            return response.data.data.product_details; // Thay đổi theo cấu trúc API của bạn
+            return response.data.data.product_details; 
         } catch (error) {
             return rejectWithValue('Failed to fetch cart');
         }
@@ -68,12 +66,11 @@ export const addToCart = createAsyncThunk(
     }
 );
 
-// Thunk để xóa sản phẩm khỏi giỏ hàng
 export const removeFromCart = createAsyncThunk(
     'cart/removeFromCart',
     async ({ cartId, productDetailId }: { cartId: number; productDetailId: number }) => {
         const response = await axios.delete(`http://127.0.0.1:8000/api/carts/destroyOne/${cartId}&${productDetailId}`);
-        return response.data; // Giả sử API trả về dữ liệu cần thiết
+        return response.data; 
     }
 );
 

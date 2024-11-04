@@ -1,4 +1,3 @@
-import Product from '../../assets/imgs/page/product/img-detail2.png';
 import Ig from '../../assets/imgs/page/homepage1/instagram6.png'
 import IgOne from '../../assets/imgs/page/homepage1/instagram.png'
 import IgThree from '../../assets/imgs/page/homepage1/instagram3.png'
@@ -16,11 +15,11 @@ const CartComponent: React.FC = () => {
     const dispatch = useAppDispatch();
     const items = useSelector((state: RootState) => state.cart.items);
     console.log(items);
-    
+
     const navigate = useNavigate();
 
     const handleCheckout = () => {
-        navigate("/check-out", { state: { items } }); // Truyền dữ liệu giỏ hàng
+        navigate("/check-out", { state: { items } });
     };
 
     useEffect(() => {
@@ -31,7 +30,6 @@ const CartComponent: React.FC = () => {
     const handleRemoveFromCart = async (cartId: number, productDetailId: number) => {
         const resultAction = await dispatch(removeFromCart({ cartId, productDetailId }));
         if (removeFromCart.fulfilled.match(resultAction)) {
-            // Hiển thị thông báo xóa thành công
             notification.success({
                 message: 'Xóa sản phẩm thành công!',
             })
@@ -85,7 +83,7 @@ const CartComponent: React.FC = () => {
                                                         <input type="checkbox" />
                                                     </td>
                                                     <td>
-                                                        <div className="box-product-cart"><a className="image-product-cart" href="#"><img src={Product} alt="kidify" /></a><a className="title-product-cart" href="product-single.html">{item.name}</a></div>
+                                                        <div className="box-product-cart"><a className="image-product-cart" href="#"><img src={item.avatar} alt="kidify" /></a><a className="title-product-cart" href="product-single.html">{item.name}</a></div>
                                                     </td>
                                                     <td><span className="size-product">{item.size}</span></td>
                                                     <td><span className="brand-1">{item.price}</span></td>
@@ -179,10 +177,10 @@ const CartComponent: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="col-lg-3 mb-30">
-                                    <div className="box-button-checkout"><a className="btn btn-brand-1-border-2 mr-10" href="#">Continue Shopping
+                                    <div className="box-button-checkout"><Link to='/product' className="btn btn-brand-1-border-2 mr-10" >Continue Shopping
                                         <svg className="icon-16 ml-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-                                        </svg></a><a className="btn btn-brand-1-bold" href="#">
+                                        </svg></Link><a className="btn btn-brand-1-bold" href="#">
                                             <svg className="icon-16 mr-5" width={16} height={16} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M2.00002 8C2.00002 4.68629 4.68631 2 8.00002 2C9.88486 2 11.5667 2.86911 12.6667 4.22844" stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
                                                 <path d="M13 2L13 4.66667L10.3333 4.66667" stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />

@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 /***
  Theme Name: Kidify
  Description: Kid fashion store
@@ -153,6 +154,51 @@ nav,
 section {
   display: block;
 }
+
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  padding: 30px 0;
+}
+
+.menu_dropdown {
+  width: 133px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: start;
+  padding: 10px;
+}
+
+.menu_dropdown > button {
+  width: 100%;
+  display: flex;
+  background: none;
+  border: none;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #ebebeb;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  left: 0;
+  margin-top: 10px;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+}
+
+.dropdown-content p:hover {background-color: #fff;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
 
 body {
   line-height: 1;
@@ -710,9 +756,6 @@ a {
 }
 a * {
   color: #1C1D1D;
-}
-a:hover, a:hover * {
-  color: #E35946;
 }
 
 img {
@@ -1968,7 +2011,7 @@ body {
   border-color: transparent;
 }
 
-.dropdown-language {
+/* .dropdown-language {
   display: inline-block;
 }
 .dropdown-language .dropdown-toggle::after {
@@ -1976,7 +2019,7 @@ body {
 }
 .dropdown-language .btn {
   padding: 0px;
-}
+} */
 
 .btn-tooltip {
   position: relative;
@@ -3326,16 +3369,16 @@ a.follow-vendor {
   border-width: 5px 5px 0 5px;
 }
 
-.select2-search--dropdown {
+/* .select2-search--dropdown {
   padding: 0px;
-}
+} */
 
-.select2-container--default .select2-search--dropdown .select2-search__field {
+/* .select2-container--default .select2-search--dropdown .select2-search__field {
   border: 1px solid #ccc;
   margin-bottom: 15px;
   border-radius: 4px;
   padding: 8px;
-}
+} */
 
 .select2-container--default .select2-results > .select2-results__options {
   max-height: 200px;
@@ -4003,7 +4046,7 @@ a.follow-vendor {
   min-width: 280px;
   text-align: right;
 }
-.header .top-header .lang-currency .dropdown {
+/* .header .top-header .lang-currency .dropdown {
   display: inline-block;
 }
 .header .top-header .lang-currency .dropdown .btn.btn-line-bottom {
@@ -4014,7 +4057,7 @@ a.follow-vendor {
 }
 .header .top-header .lang-currency .dropdown:last-child .btn.btn-line-bottom {
   padding-right: 0px;
-}
+} */
 .header .header-search {
   min-width: 345px;
 }
@@ -4389,7 +4432,7 @@ a.follow-vendor {
   visibility: visible;
 }
 
-.dropdown-menu {
+/* .dropdown-menu {
   border: 0px solid #3D565F;
   border-radius: 4px;
   z-index: 2345;
@@ -4463,8 +4506,8 @@ a.follow-vendor {
   transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
   border-radius: 0 0 4px 4px;
   border: 1px solid #3D565F;
-}
-.dropdown-cart.dropdown-open {
+} */
+/* .dropdown-cart.dropdown-open {
   display: block;
   visibility: visible;
 }
@@ -4502,7 +4545,7 @@ a.follow-vendor {
 }
 .dropdown-account ul li a:hover {
   color: #9F86D9;
-}
+} */
 
 .item-cart {
   display: flex;
@@ -8206,7 +8249,7 @@ h4.brush-bg::after {
   margin-right: 16px;
 }
 
-.dropdown-sort .btn {
+/* .dropdown-sort .btn {
   font-size: 17px;
   line-height: 24px;
   font-weight: 400;
@@ -8218,14 +8261,14 @@ h4.brush-bg::after {
   outline: 0;
   padding-top: 0px;
   padding-bottom: 0px;
-}
-.dropdown-sort .btn:focus, .dropdown-sort .btn:active, .dropdown-sort .btn:first-child:active, .dropdown-sort .btn.show {
+} */
+/* .dropdown-sort .btn:focus, .dropdown-sort .btn:active, .dropdown-sort .btn:first-child:active, .dropdown-sort .btn.show {
   outline: 0;
   border-color: transparent;
 }
 .dropdown-sort .dropdown-toggle::after {
   display: none;
-}
+} */
 
 .box-sort {
   display: flex;

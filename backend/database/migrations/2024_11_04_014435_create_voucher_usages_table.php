@@ -16,9 +16,9 @@ return new class extends Migration
     {
         Schema::create('voucher_usages', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(Order::class)->constrained();
-            $table->foreignIdFor(Voucher::class)->constrained();
+            $table->foreignId('user_id')->constrained(); // Đảm bảo foreign key cho user
+            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade'); // Đảm bảo foreign key cho order
+            $table->foreignId('voucher_id')->constrained('vouchers')->onDelete('cascade'); // Đảm bảo foreign key cho voucher
             $table->decimal('discount_value', 10, 2);
             $table->timestamps();
         });

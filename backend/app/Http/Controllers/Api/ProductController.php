@@ -31,8 +31,6 @@ class ProductController extends Controller
     }
 
 
-
-
     public function store(Request $request)
     {
         try {
@@ -92,21 +90,25 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         try {
-            // Tải thông tin sản phẩm kèm theo các mối quan hệ
-            $productDetails = $product->productDetails; // Lấy tất cả product_details
-
-            // Kiểm tra nếu sản phẩm không tồn tại
             if (!$product) {
                 return response()->json(['message' => 'Sản phẩm không tồn tại.'], 404);
             }
 
-            // Trả về thông tin sản phẩm cùng với product_details
+            $product = $product->load('categories', 'productDetails.size', 'productDetails.color', 'galleries');
+
             return response()->json([
-                'product' => $product->load('categories', 'galleries', 'sizes', 'colors'),
-                'product_details' => $productDetails // Thêm product_details vào response
+                'product' => $product,
+                'galleries' => $product->galleries,
+                'product_details' => $product->productDetails->map(function ($detail) {
+                    return [
+                        'id' => $detail->id,
+                        'size' => $detail->size ? $detail->size->size : null,
+                        'color' => $detail->color ? $detail->color->name_color : null,
+                    ];
+                })
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Không thể lấy thông tin sản phẩm. ' . $e->getMessage()], 500);
         }
     }
 
@@ -174,16 +176,13 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         try {
-            // Xóa avatar
             Storage::disk('public')->delete($product->avatar);
 
-            // Xóa các ảnh trong gallery
             foreach ($product->galleries as $gallery) {
                 Storage::disk('public')->delete($gallery->image_path);
                 $gallery->delete();
             }
 
-            // Xóa sản phẩm
             $product->delete();
 
             return response()->json(['message' => 'Sản phẩm đã được xóa thành công.'], 204);

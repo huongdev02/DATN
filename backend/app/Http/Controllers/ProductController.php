@@ -176,15 +176,17 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         Storage::disk('public')->delete($product->avatar);
+    
         foreach ($product->galleries as $gallery) {
             Storage::disk('public')->delete($gallery->image_path);
             $gallery->delete();
         }
-
-        // Xóa các thông tin liên quan trong bảng product_details
+    
         Product_detail::where('product_id', $product->id)->delete();
-
+    
         $product->delete();
+    
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
+    
 }

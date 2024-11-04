@@ -1,21 +1,89 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Logo from '../../assets/imgs/template/logo.svg'
 import Product from "../../assets/imgs/page/homepage1/product24.png";
-import ProductTwo from "../../assets/imgs/page/homepage1/product25.png";
-import ProductThree from "../../assets/imgs/page/homepage1/product26.png";
-import Star from "../../assets/imgs/template/icons/star.svg"
 import { Link, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../Redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../Redux/store';
+import { login } from '../../Redux/Reducer/AuthReducer';
+import { Button, Dropdown, Flex, MenuProps, notification, Space } from 'antd';
+
+interface User {
+    id: number;
+    fullname: string;
+    avatar: string | null;
+    role: string[];
+    branch_id: number;
+}
+
 const Header: React.FC = () => {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [isCartActice, setIsCartActice] = useState(false);
     const [isAccountActive, setIsAccountActive] = useState(false);
     const [activeTab, setActiveTab] = useState('login');
-    const location = useLocation();
-    const items = useSelector((state: RootState) => state.cart.items);
-    console.log(items);
-    
+    const itemsCart = useSelector((state: RootState) => state.cart.items);
+    console.log(itemsCart);
+    const dispatch = useDispatch<AppDispatch>();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const loading = useSelector((state: RootState) => state.auth.loading);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState<User | null>(null)
+    useEffect(() => {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            setIsLoggedIn(true);
+            setUser(JSON.parse(userData) as User);
+        }
+    }, []);
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Email:', email);
+        console.log('Password:', password);
+        if (!password.trim() || !email.trim()) {
+            notification.error(
+                {
+                    message: 'Vui lòng nhập đầy đủ thông tin'
+                }
+            )
+            return false;
+        }
+        try {
+            const resultAction = await dispatch(login({ email, password }));
+
+            if (login.fulfilled.match(resultAction)) {
+                const userData = resultAction.payload;
+                localStorage.setItem('user', JSON.stringify(userData));
+                window.location.reload();
+
+                notification.success({
+                    message: 'Đăng nhập thành công',
+                    description: `Chào mừng, ${resultAction.payload.email}! đẹp traiii`,
+                });
+                setTimeout(() => {
+                }, 1000);
+            } else {
+                notification.error({
+                    message: 'Tài khoản không chính khác'
+                })
+                setPassword('')
+            }
+        } catch (err) {
+            console.error('Đăng nhập thất bại:', err);
+        }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        setIsLoggedIn(false);
+        notification.success({
+            message: 'Đăng xuất thành công'
+        })
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    };
+
 
 
     const showLoginForm = () => {
@@ -87,18 +155,53 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-                            <a className="account-icon account" onClick={openAccountPopup} href="#">
-                                <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-                                    <g clipPath="url(#clip0_116_451)">
-                                        <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip0_116_451">
-                                            <rect width={24} height={24} fill="white" transform="translate(2 2)" />
-                                        </clipPath>
-                                    </defs>
-                                </svg>
-                            </a>
+                            {!isLoggedIn ? (
+                                <a className="account-icon account" onClick={openAccountPopup} href="#">
+                                    <svg
+                                        className="d-inline-flex align-items-center justify-content-center"
+                                        width={28}
+                                        height={28}
+                                        viewBox="0 0 28 28"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <g clipPath="url(#clip0_116_451)">
+                                            <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_116_451">
+                                                <rect width={24} height={24} fill="white" transform="translate(2 2)" />
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                </a>
+                            ) : (
+                                <a className="account-icon account dropdown" href="#">
+                                    <svg
+                                        className="d-inline-flex align-items-center justify-content-center"
+                                        width={28}
+                                        height={28}
+                                        viewBox="0 0 28 28"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <g clipPath="url(#clip0_116_451)">
+                                            <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_116_451">
+                                                <rect width={24} height={24} fill="white" transform="translate(2 2)" />
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                    <div className="dropdown-content">
+                                        <p className='menu_dropdown'>
+                                            <button>{user?.fullname || 'Khôi'}</button>
+                                        </p>
+                                        <p className='menu_dropdown'>
+                                            <button onClick={() => handleLogout()}>Đăng Xuất</button>
+                                        </p>
+                                    </div>
+                                </a>
+                            )}
                             <a className="account-icon wishlist" href="compare.html"><span className="number-tag">3</span>
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_452)">
@@ -276,8 +379,8 @@ const Header: React.FC = () => {
                         </a>
                         <h5 className="mb-15 mt-50">Your Cart</h5>
                         <div className="list-product-4 mb-50">
-                            {(Array.isArray(items) && items.length > 0) ? (
-                                items.map((item: any) => (
+                            {(Array.isArray(itemsCart) && itemsCart.length > 0) ? (
+                                itemsCart.map((item: any) => (
                                     <div key={item.id} className="cardProduct cardProduct4">
                                         <div className="cardImage">
                                             <Link to={`/product/${item.id}`}>
@@ -331,23 +434,39 @@ const Header: React.FC = () => {
                             Sign Up
                         </a>
                         {activeTab === 'login' && (
-                            <div className="form-login">
-                                <div className="form-group">
-                                    <input className="form-control" type="text" placeholder="Email" />
+                            <form action="" onSubmit={handleLogin}>
+                                <div className="form-login">
+                                    <div className="form-group">
+                                        <input
+                                            className="form-control"
+                                            type="email"
+                                            placeholder="Email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+
+                                    </div>
+                                    <div className="form-group">
+                                        <input
+                                            className="form-control"
+                                            type="password"
+                                            placeholder="Password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <a className="brand-1 font-sm buttun-forgotpass" href="#">Forgot your password?</a>
+                                    </div>
+                                    <div className="form-group">
+                                        <button className="btn btn-login d-block" disabled={loading}>{loading ? 'Login...' : 'Login'}</button>
+                                    </div>
+                                    <div className="form-group mt-100 text-center">
+                                        <a className="font-sm" href="#">Privacy &amp; Terms</a>
+                                    </div>
                                 </div>
-                                <div className="form-group">
-                                    <input className="form-control" type="password" placeholder="Password" />
-                                </div>
-                                <div className="form-group">
-                                    <a className="brand-1 font-sm buttun-forgotpass" href="#">Forgot your password?</a>
-                                </div>
-                                <div className="form-group">
-                                    <button className="btn btn-login d-block">Login</button>
-                                </div>
-                                <div className="form-group mt-100 text-center">
-                                    <a className="font-sm" href="#">Privacy &amp; Terms</a>
-                                </div>
-                            </div>
+                            </form>
+
                         )}
 
                         {activeTab === 'signup' && (

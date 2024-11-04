@@ -7,6 +7,12 @@ interface Colors {
     hex_color: string;
 }
 
+interface Gallery {
+    id: number;
+    product_id: number;
+    image_path: string;
+}
+
 interface Sizes {
     id: string;
     size: string;
@@ -19,8 +25,9 @@ export interface Product {
     price: number;
     description: string;
     avatar: string
-    colors: Colors[]; 
-    sizes: Sizes[]; 
+    colors: Colors[];
+    sizes: Sizes[];
+    galleries: Gallery[];
 }
 
 interface ProductState {
@@ -36,7 +43,7 @@ const initialState: ProductState = {
 };
 
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-    const response = await fetch('http://127.0.0.1:8000/api/products'); 
+    const response = await fetch('http://127.0.0.1:8000/api/products');
     if (!response.ok) {
         throw new Error('Failed to fetch products');
     }
@@ -55,7 +62,7 @@ const ProductReducer = createSlice({
             })
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.loading = false;
-                state.products = action.payload; 
+                state.products = action.payload;
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.loading = false;

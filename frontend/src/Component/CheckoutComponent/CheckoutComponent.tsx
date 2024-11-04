@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { notification } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../Redux/store';
@@ -12,30 +12,27 @@ const CheckoutComponent: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const { items } = location.state || { items: [] };
-  console.log(items);
-  
-
   const subtotal = items.reduce((acc: number, item: any) => acc + (Number(item.price) * Number(item.pivot.quantity)), 0).toLocaleString();
-  const total = subtotal; // Assuming total is the same as subtotal
-
+  const total = subtotal;
+  const navigate = useNavigate();
   const paymentMethod = useSelector((state: RootState) => state.paymentMethod.methods);
-
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const [formData, setFormData] = useState<ShipAddress>({
     recipient_name: '',
     email: '',
     phone_number: '',
     ship_address: '',
-    user_id: null,
+    user_id: user.id || null,
   });
 
   const [orderData, setOrderData] = useState<Order>({
-    user_id: null,
+    user_id: user.id,
     total_amount: parseFloat(total.replace(/,/g, '')),
     ship_method: 1,
     payment_method_id: 1,
     ship_address_id: 1,
     status: 1,
-    order_details: [] // Include order_details
+    order_details: []
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -50,19 +47,19 @@ const CheckoutComponent: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const shipAddressResponse = await dispatch(postShipAddress(formData)).unwrap();
       const shipAddressId = shipAddressResponse.id;
-      const updatedOrderData = { 
-        ...orderData, 
+      const updatedOrderData = {
+        ...orderData,
         ship_address_id: shipAddressId,
         order_details: items.map((item: any) => ({
           product_detail_id: item.id,
           quantity: item.pivot.quantity,
           price: item.price,
           name_product: item.name,
-          size: item.size || '', 
+          size: item.size || '',
           color: item.color || '',
           total: item.pivot.quantity * Number(item.price)
         }))
@@ -70,8 +67,13 @@ const CheckoutComponent: React.FC = () => {
 
       console.log('Dữ liệu gửi đi:', updatedOrderData);
       await dispatch(postOrder(updatedOrderData)).unwrap();
+      notification.success({
 
-      handleOrderSuccess();
+        message: 'Bạn đã đặt hàng thành công'
+      })
+      dispatch(clearCart());
+      navigate('/product');
+
     } catch (error) {
       console.error('Đã xảy ra lỗi:', error);
       notification.error({
@@ -79,15 +81,6 @@ const CheckoutComponent: React.FC = () => {
         description: 'Vui lòng kiểm tra lại thông tin và thử lại.'
       });
     }
-  };
-
-  const handleOrderSuccess = () => {
-    notification.success({
-      message: 'Đặt hàng thành công'
-    });
-
-    // Clear the cart after a successful order
-    dispatch(clearCart());
   };
 
   useEffect(() => {

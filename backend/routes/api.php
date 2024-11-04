@@ -48,12 +48,12 @@ Route::resource('promotions', PromotionController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::get('/categories/{id}/products', [CategoryController::class, 'getProductsByCategory']);
 
-Route::controller(AccountController::class)->group(function () {
-    // Đăng nhập
-    Route::post('login', 'login')->name('login');
-    //lay user
-    Route::get('/users/{id}',  'show')->name('show');;
-});
+// Route::controller(AccountController::class)->group(function () {
+//     // Đăng nhập
+//     Route::post('login', 'login')->name('login');
+//     //lay user
+//     Route::get('/users/{id}',  'show')->name('show');;
+// });
 
 Route::apiResource('sizes', SizeController::class);
 Route::apiResource('colors', ColorController::class);
@@ -61,5 +61,5 @@ Route::apiResource('vouchers', VoucherController::class);
 Route::apiResource('users', UserController::class);
 Route::apiResource('payment_methods', PaymentMethod::class);
 Route::apiResource('ship_addresses', ShipAddressController::class);
-// Route::post('/login', [LoginController::class, 'login']);
-// Route::post('/logout', [LoginController::class, 'logout']);
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout']);

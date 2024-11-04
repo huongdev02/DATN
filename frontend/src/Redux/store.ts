@@ -7,6 +7,7 @@ import PaymentMethodReducer from './Reducer/PaymentMethodReducer'
 import ShipAddressReducer from './Reducer/ShipAddressReducer'
 import OrderReducer from './Reducer/OrderReducer'
 import CategoryReducer from './Reducer/CategoriesReducer'
+import AuthReducer from './Reducer/AuthReducer'
 export const store = configureStore({
     reducer: {
         products: ProductReducer,
@@ -14,7 +15,8 @@ export const store = configureStore({
         paymentMethod: PaymentMethodReducer,
         shipAdress: ShipAddressReducer,
         order: OrderReducer,
-        categories: CategoryReducer
+        categories: CategoryReducer,
+        auth: AuthReducer
     },
 });
 

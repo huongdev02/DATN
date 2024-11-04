@@ -33,12 +33,19 @@ class Product_detail extends Model
         return $this->belongsTo(Color::class);
     }
 
-    public function cart(){
+    public function cart()
+    {
         return $this->belongsToMany(Cart::class, 'cart_items')
-        ->wherePivot('quantity');
+            ->wherePivot('quantity');
     }
 
-    public function orderDetails(){
+    public function orderDetails()
+    {
         return $this->hasMany(Order_detail::class);
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
     }
 }
