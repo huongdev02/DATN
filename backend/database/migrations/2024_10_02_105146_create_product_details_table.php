@@ -26,7 +26,7 @@ return new class extends Migration
             $table->unsignedInteger('number_statictis')->default(0);
             $table->timestamps();
         });
-        DB::statement('ALTER TABLE `product_details` ADD CONSTRAINT `check_quantity` CHECK (`quantity` >= 0)'); //dkien: số lượng > 0
+        DB::statement('ALTER TABLE `product_details` ADD CONSTRAINT `check_quantity_productdetail` CHECK (`quantity` >= 0)'); //dkien: số lượng > 0
     }
 
     /**
