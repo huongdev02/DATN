@@ -6,14 +6,17 @@ import ProductThree from "../../assets/imgs/page/homepage1/product26.png";
 import Star from "../../assets/imgs/template/icons/star.svg"
 import { Link } from 'react-router-dom';
 import { message } from 'antd';
+import { Button, Modal } from 'antd';
+import {SettingOutlined} from '@ant-design/icons';
 import api from '../../configAxios/axios';
+import { log } from 'console';
 const Header: React.FC = () => {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [isCartActice, setIsCartActice] = useState(false);
     const [isAccountActive, setIsAccountActive] = useState(false);
     const [activeTab, setActiveTab] = useState('login');
     const [userId, setUserId] = useState<string>();
-
+    const [open, setOpen] = useState(false);
 
     const showLoginForm = () => {
         setActiveTab('login');
@@ -80,14 +83,16 @@ const Header: React.FC = () => {
 
     const GetUser = async () => {
         try {
-          const { data } = await api.get(`http://127.0.0.1:8000/api/data/users/${userId}`);
+          const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
           console.log(data.token);
-          
         } catch (error) {
           message.error("Lỗi api !");
         }
       };
 
+
+    console.log("user", userId);
+    
    
 
     useEffect(()=>{
@@ -151,7 +156,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-
+                            <SettingOutlined style={{fontSize: '18p'}}/>
                             <a className="account-icon wishlist" href="compare.html"><span className="number-tag">3</span>
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_452)">
