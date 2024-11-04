@@ -15,20 +15,52 @@ class VoucherController extends Controller
     public function index(Request $request)
     {
         $query = Voucher::query();
-
-    // Áp dụng lọc theo status nếu có
-    if ($request->has('status') && $request->status != '') {
-        $query->where('status', $request->status);
+    
+        // Apply filter by status if provided
+        if ($request->has('status') && $request->status != '') {
+            switch ($request->status) {
+                case '0': // Không hoạt động
+                    $query->where('status', 0);
+                    break;
+                    
+                case '1': // Đang hoạt động
+                    $query->where('status', 1)
+                          ->whereDate('start_day', '<=', now())
+                          ->whereDate('end_day', '>=', now());
+                    break;
+    
+                case '2': // Đã hết hạn
+                    $query->where('status', 1)
+                          ->whereDate('end_day', '<', now());
+                    break;
+    
+                case '3': // Chờ phát hành
+                    $query->where('status', 3)
+                          ->whereDate('start_day', '>', now());
+                    break;
+            }
+        }
+    
+        // Apply filter by type if provided
+        if ($request->has('type') && $request->type != '') {
+            $query->where('type', $request->type);
+        }
+    
+        // Select specific columns and paginate results
+        $vouchers = $query->select('id', 'code', 'type', 'discount_min', 'max_discount', 'min_order_count', 'max_order_count', 'status', 'end_day')
+                          ->paginate(10);
+    
+        // Pass filter values back to the view for retention
+        return view('vouchers.index', [
+            'vouchers' => $vouchers,
+            'status' => $request->status,
+            'type' => $request->type,
+        ]);
     }
-
-    // Áp dụng lọc theo type nếu có
-    if ($request->has('type') && $request->type != '') {
-        $query->where('type', $request->type);
-    }
-
-    $vouchers = $query->paginate(10);
-    return view('vouchers.index', compact('vouchers'));
-    }
+    
+    
+    
+    
 
     /**
      * Show the form for creating a new resource.
