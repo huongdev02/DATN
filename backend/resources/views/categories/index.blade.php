@@ -5,12 +5,12 @@
         <a href="{{ route('categories.create') }}" class="btn btn-outline-success mb-3">Add new category</a>
     </div>
 
-
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th scope="col">SỐ lượng sản phẩm</th> <!-- Cột mới để hiển thị số lượng sản phẩm -->
                 <th scope="col">Created at</th>
                 <th scope="col">Updated at</th>
                 <th>Actions</th>
@@ -21,6 +21,7 @@
                 <tr>
                     <td>{{ $category->id }}</td>
                     <td>{{ $category->name }}</td>
+                    <td>{{ $category->products()->count() }}</td> <!-- Hiển thị số lượng sản phẩm -->
                     <td>{{ $category->created_at->format('d/m/Y H:i') }}</td>
                     <td>{{ $category->updated_at->format('d/m/Y H:i') }}</td>
                     <td>
