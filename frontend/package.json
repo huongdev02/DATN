@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.5.1",
     "@glidejs/glide": "^3.6.2",
     "@reduxjs/toolkit": "^2.3.0",
     "@testing-library/jest-dom": "^5.17.0",
@@ -13,10 +14,12 @@
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
     "antd": "^5.20.6",
+    "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "glightbox": "^3.3.0",
     "iconsax": "^0.0.1",
     "jquery": "^3.7.1",
+    "js-cookie": "^3.0.5",
     "perfect-scrollbar": "^1.5.5",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
@@ -56,5 +59,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.6"
   }
 }
