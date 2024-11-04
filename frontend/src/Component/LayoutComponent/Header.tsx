@@ -1,16 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Logo from '../../assets/imgs/template/logo.svg'
 import Product from "../../assets/imgs/page/homepage1/product24.png";
 import ProductTwo from "../../assets/imgs/page/homepage1/product25.png";
 import ProductThree from "../../assets/imgs/page/homepage1/product26.png";
 import Star from "../../assets/imgs/template/icons/star.svg"
 import { Link } from 'react-router-dom';
+import { message } from 'antd';
+import { Button, Modal } from 'antd';
+import {SettingOutlined} from '@ant-design/icons';
+import api from '../../configAxios/axios';
+import { useSearchParams } from 'react-router-dom';
+import { log } from 'console';
 const Header: React.FC = () => {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [isCartActice, setIsCartActice] = useState(false);
     const [isAccountActive, setIsAccountActive] = useState(false);
     const [activeTab, setActiveTab] = useState('login');
-
+    const [open, setOpen] = useState(false);
+    const [searchParams] = useSearchParams();
+    const userId = searchParams.get('user_id');
     const showLoginForm = () => {
         setActiveTab('login');
     };
@@ -47,36 +55,60 @@ const Header: React.FC = () => {
     };
     const handleIconClick = async () => {
         try {
-            // Kiểm tra trạng thái đăng nhập
             const response = await fetch('http://127.0.0.1:8000/api/check-auth', {
                 method: 'GET',
-                credentials: 'include', // Đảm bảo gửi cookie
-                headers: {
-                    'Content-Type': 'application/json', // Thêm header để chỉ định kiểu nội dung
-                },
+                credentials: 'include',
             });
     
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Auth check response:', data); // Kiểm tra phản hồi
-            
-                if (data.authenticated) {
-                    console.log('User is authenticated, redirecting to dashboard...');
-                    window.location.href = 'http://127.0.0.1:8000/user/dashboard';
-                } else {
-                    console.log('User is not authenticated, redirecting to login...');
-                    window.location.href = 'http://127.0.0.1:8000/login';
-                }
-            } else {
+            if (!response.ok) {
                 console.log('Server response not ok, redirecting to login...');
+                window.location.href = 'http://127.0.0.1:8000/login';
+                return;
+            } 
+    
+            const data = await response.json();
+            console.log('Auth check response:', data);
+    
+            if (data.authenticated) {
+                console.log('User is authenticated, redirecting to dashboard...');
+                window.location.href = 'http://127.0.0.1:8000/user/dashboard';
+            } else {
+                console.log('User is not authenticated, redirecting to login...');
                 window.location.href = 'http://127.0.0.1:8000/login';
             }
         } catch (error) {
             console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', error);
-            // Nếu có lỗi trong quá trình fetch, chuyển hướng đến trang đăng nhập
             window.location.href = 'http://127.0.0.1:8000/login';
         }
     };
+
+   
+    const hanldeNavigate = async () =>{
+        try {
+            const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
+             if(data.user.role === 2){
+                window.location.href = 'http://127.0.0.1:8000/admin/dashboard';
+             }else{
+                window.location.href = 'http://127.0.0.1:8000/user/dashboard';
+             }
+          } catch (error) {
+            window.location.href = 'http://127.0.0.1:8000/login';
+          }
+        
+    }
+
+    const GetUser = async () => {
+        try {
+          const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
+          console.log(data.token);
+        } catch (error) {
+         
+        }
+      };
+    
+    useEffect(()=>{
+        GetUser();
+    },[])  
     
 
     return (
@@ -114,12 +146,10 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-
-                            
                             <a
                                 className="account-icon account"
-                                onClick={handleIconClick}
                                 href="#"
+                                onClick={handleIconClick}
                             >
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_451)">
@@ -132,7 +162,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-
+                            <SettingOutlined  onClick={hanldeNavigate} style={{fontSize: '18px'}}/>
                             <a className="account-icon wishlist" href="compare.html"><span className="number-tag">3</span>
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_452)">

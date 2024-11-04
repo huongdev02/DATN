@@ -33,3 +33,4 @@ class Product_Detail extends Model
         return $this->belongsTo(Color::class);
     }
 }
+
