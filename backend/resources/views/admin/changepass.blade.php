@@ -34,7 +34,7 @@
 
         <div class="text-center">
             <button type="submit" class="btn btn-success text-center">Đổi mật khẩu</button>
-            <a href="{{route('admin.dashboard')}}" class="btn btn-secondary">Quay lai</a>
+            <a href="{{route('admin.dashboard')}}" class="btn btn-secondary">Quay lại</a>
         </div>
     </form>
 </div>

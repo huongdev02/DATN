@@ -23,7 +23,7 @@
     
 
     <div class="table-responsive mt-3">
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover text-center">
             <thead class="thead-dark">
                 <tr>
                     <th>ID</th>
@@ -35,7 +35,7 @@
                     <th>Email</th>
                     <th>Vai Trò</th>
                     <th>is_active</th>
-                    <th>Action</th>
+                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
