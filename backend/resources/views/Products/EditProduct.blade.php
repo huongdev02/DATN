@@ -1,5 +1,9 @@
 @extends('Layout.Layout')
 
+@section('title')
+    Chỉnh sửa sản phẩm
+@endsection
+
 @section('content_admin')
 
 <h1>Edit Product</h1>

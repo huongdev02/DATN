@@ -5,8 +5,9 @@
 @endsection
 
 @section('content_admin')
+<h1 class="text-center mb-3">Danh sách đơn hàng</h1>
     <div class="d-flex justify-content-between px-3">
-        <h1 class="text-center mb-3">Danh sách đơn hàng</h1>
+       
     <form action="{{ route('orders.index') }}" method="GET" class="mb-3">
         <select name="status" class="form-select" onchange="this.form.submit()">
             <option value="">Tất cả trạng thái</option>

@@ -1,6 +1,6 @@
 @extends('Layout.Layout')
 
-@section('title') <!-- Corrected 'tiltle' to 'title' -->
+@section('title')
     Thêm mới sản phẩm
 @endsection
 
@@ -10,15 +10,18 @@
 
     <div class="mb-3">
         <label for="name">Name:</label>
-        <input type="text" name="name" class="form-control" required>
+        <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
     </div>
 
     <div class="mb-3">
         <label for="avatar">Avatar:</label>
-        <input type="file" name="avatar" class="form-control" accept="image/*" required> <!-- Added 'accept' for image types -->
+        <input type="file" name="avatar" id="avatarInput" class="form-control" accept="image/*" required>
+    </div>
+    <div id="previewContainer" style="display: none;">
+        <img id="avatarPreview" src="#" alt="Preview" style="width: 100%; max-width: 200px; border-radius: 8px; margin-top: 10px;">
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 mt-3">
         <label for="images">Gallery:</label>
         <input type="file" id="image-input" class="form-control" name="image_path[]" multiple accept="image/*" placeholder="Có thể chọn nhiều ảnh">
         <div id="image-preview-container" class="mt-2"></div>
@@ -27,27 +30,27 @@
 
     <div class="mb-3">
         <label for="import_price">Import Price:</label>
-        <input type="number" name="import_price" step="0.01" class="form-control" required>
+        <input type="number" name="import_price" step="0.01" class="form-control" value="{{ old('import_price') }}" required>
     </div>
 
     <div class="mb-3">
         <label for="price">Price:</label>
-        <input type="number" name="price" step="0.01" class="form-control" required>
+        <input type="number" name="price" step="0.01" class="form-control" value="{{ old('price') }}" required>
     </div>
 
     <div class="mb-3">
         <label for="price">Quantity</label>
-        <input type="number" name="quantity" class="form-control" required>
+        <input type="number" name="quantity" class="form-control" value="{{ old('quantity') }}" required>
     </div>
 
     <div class="mb-3">
         <label for="description">Description:</label>
-        <textarea name="description" class="form-control" rows="10"></textarea>
+        <textarea name="description" class="form-control" value="{{ old('description') }}" rows="10"></textarea>
     </div>
 
     <div class="mb-3">
         <label for="category_id">Category:</label>
-        <select name="category_id" id="category_id" class="form-control" required>
+        <select name="category_id" id="category_id" class="form-control" value="{{ old('category_id') }}" required>
             @foreach ($categories as $item)
                 <option value="{{ $item->id }}">{{ $item->name }}</option>
             @endforeach
@@ -90,6 +93,27 @@
         <a href="{{ route('products.index') }}" class="btn btn-secondary">Quay lại</a>
     </div>
 </form>
+
+
+<!-- avatar Preview Script -->
+<script>
+    const avatarInput = document.getElementById('avatarInput');
+    const previewContainer = document.getElementById('previewContainer');
+    const avatarPreview = document.getElementById('avatarPreview');
+
+    // Sự kiện khi chọn ảnh
+    avatarInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                avatarPreview.src = e.target.result;
+                previewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 
 <!-- Image Preview Script -->
 <script>
