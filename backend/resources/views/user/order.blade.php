@@ -1,7 +1,7 @@
 @extends('user.master')
 
 @section('title')
-    Danh sách Voucher
+    Danh sách Đơn hàng
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
             <a class="nav-link {{ request()->get('status') == 0 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 0]) }}">Chờ thanh toán</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->get('status') == 1 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 1]) }}">Đã xử lí</a>
+            <a class="nav-link {{ request()->get('status') == 1 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 1]) }}">Đã xử lý</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ request()->get('status') == 2 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 2]) }}">Vận chuyển</a>
@@ -70,6 +70,13 @@
 
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <div>
+                        @if ($order->status == 0 || $order->status == 1) <!-- Chờ thanh toán hoặc đã xử lý -->
+                            <button class="btn btn-outline-danger btn-sm" onclick="showCancelReasons({{ $order->id }})">Hủy</button>
+                        @elseif ($order->status == 2) <!-- Vận chuyển -->
+                            <span>Đơn hàng đang vận chuyển không thể hủy</span>
+                        @elseif ($order->status == 3) <!-- Hoàn thành -->
+                            <button class="btn btn-outline-success btn-sm" onclick="confirmReceiveOrder({{ $order->id }})">Đã nhận hàng</button>
+                        @endif
                         <button class="btn btn-outline-primary btn-sm">15 ngày trả hàng</button>
                         <button class="btn btn-outline-danger btn-sm">Trả hàng miễn phí 15 ngày</button>
                     </div>
@@ -94,6 +101,74 @@
         <div class="d-flex justify-content-center">
             {{ $orders->links() }}
         </div>
+
+        <!-- Modal for Cancel Reasons -->
+        <div class="modal fade" id="cancelReasonsModal" tabindex="-1" aria-labelledby="cancelReasonsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cancelReasonsModalLabel">Lý do hủy đơn hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="cancelOrderForm">
+                            <label for="cancelReason">Chọn lý do hủy:</label>
+                            <select class="form-select" id="cancelReason" name="cancelReason">
+                                <option value="1">Không còn nhu cầu</option>
+                                <option value="2">Chưa nhận hàng</option>
+                                <option value="3">Khác</option>
+                            </select>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-primary" onclick="submitCancelOrder()">Xác nhận hủy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     @endif
 </div>
+
+<script>
+    function showCancelReasons(orderId) {
+        $('#cancelReasonsModal').modal('show');
+        $('#cancelOrderForm').data('orderId', orderId);
+    }
+
+    function submitCancelOrder() {
+        const orderId = $('#cancelOrderForm').data('orderId');
+        const reason = $('#cancelReason').val();
+
+        // Gửi yêu cầu hủy đơn hàng
+        $.ajax({
+            url: `/order/${orderId}/cancel`, // Thay đổi đường dẫn nếu cần
+            type: 'POST',
+            data: { reason: reason, _token: '{{ csrf_token() }}' },
+            success: function(response) {
+                location.reload(); // Tải lại trang sau khi hủy
+            },
+            error: function(error) {
+                alert('Có lỗi xảy ra! Vui lòng thử lại.');
+            }
+        });
+    }
+
+    function confirmReceiveOrder(orderId) {
+        if (confirm("Bạn có chắc chắn đã nhận hàng?")) {
+            // Gửi yêu cầu xác nhận đã nhận hàng
+            $.ajax({
+                url: `/order/${orderId}/confirm-receive`, // Thay đổi đường dẫn nếu cần
+                type: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    location.reload(); // Tải lại trang sau khi xác nhận
+                },
+                error: function(error) {
+                    alert('Có lỗi xảy ra! Vui lòng thử lại.');
+                }
+            });
+        }
+    }
+</script>
 @endsection

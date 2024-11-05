@@ -20,6 +20,40 @@ class UserOrderController extends Controller
     
         return view('user.order', compact('orders'));
     }
+    public function cancelOrder(Request $request, $id)
+{
+    $order = Order::findOrFail($id);
+    // Kiểm tra trạng thái đơn hàng có thể hủy hay không
+    if ($order->status == 0 || $order->status == 1) {
+        // Cập nhật trạng thái đơn hàng thành đã hủy
+        $order->status = 4; // Giả sử 4 là trạng thái đã hủy
+        $order->save();
+
+        // Bạn có thể thêm logic ghi lại lý do hủy nếu cần
+        // $order->cancel_reason = $request->reason;
+        // $order->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false, 'message' => 'Đơn hàng không thể hủy']);
+}
+
+public function confirmReceiveOrder(Request $request, $id)
+{
+    $order = Order::findOrFail($id);
+    // Kiểm tra trạng thái đơn hàng có thể xác nhận hay không
+    if ($order->status == 3) { // Giả sử 3 là trạng thái đã hoàn thành
+        // Cập nhật trạng thái đơn hàng thành đã nhận
+        // $order->status = ...; // Cập nhật trạng thái nếu cần
+        // $order->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false, 'message' => 'Đơn hàng không thể xác nhận']);
+}
+
 
     public function show($id)
 {
