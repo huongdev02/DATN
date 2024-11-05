@@ -26,6 +26,10 @@ class UserController extends Controller
         return view('user.dashboard', ['token' => $token]);
     }
 
+    public function changepass()
+    {
+        return view('user.changepass');
+    }
     public function changepass_(Request $request)
     {
         // Xác thực dữ liệu đầu vào

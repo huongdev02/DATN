@@ -97,7 +97,6 @@ Route::controller(UserController::class)->middleware(['auth', 'user'])->group(fu
 
     Route::resource('uservouchers', UservoucherController::class);
     Route::resource('userorder', UserOrderController::class);
-    Route::resource('card', CardController::class);
 
 });
 

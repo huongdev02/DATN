@@ -18,36 +18,6 @@ use Throwable;
 class AccountController extends Controller
 {
 
-    public function register(Request $request)
-    {
-    $validatedData = $request->validate([
-        'email' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
-        'password' => 'required|string|min:6|confirmed', // Use 'confirmed' for password confirmation
-    ]);
-
-    try {
-        $validatedData['password'] = Hash::make($request->input('password'));
-        $validatedData['role'] = $request->filled('role') ? $request->input('role') : 0;
-
-        $user = User::query()->create($validatedData);
-
-        Auth::login($user);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Đăng kí thành công',
-            'data' => $user
-        ], 201);
-
-    } catch (Throwable $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Đã xảy ra lỗi khi đăng kí',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-}
-
 
     public function login(Request $request)
     {
@@ -123,33 +93,6 @@ class AccountController extends Controller
         }
     }
     
-    
-
-
-    public function logout(Request $request)
-{
-    /**
-     * @var User $user
-     */
-    $user = Auth::user();
-
-    if ($user) {
-        // Xóa tất cả các token của người dùng
-        $user->tokens()->delete();
-    }
-
-    // Đăng xuất người dùng
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    // Xóa cookie chứa token
-    $cookie = Cookie::forget('token');
-
-    // Chuyển hướng về frontend và gửi một thông điệp qua query parameter
-    return redirect('/login?logout=success')->withCookie($cookie);
-}
-
 
 public function checkAuth(Request $request)
 {
