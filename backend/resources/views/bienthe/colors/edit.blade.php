@@ -1,21 +1,11 @@
 @extends('Layout.Layout')
 
 @section('title')
-    Cập nhật Màu: {{ $color->name_color }}
+    Cập nhật màu sắc
 @endsection
 
 @section('content_admin')
-    <h1>Cập nhật Màu: {{ $color->name_color }}</h1>
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    <h1 class="text-center">Cập nhật màu sắc</h1>
 
     <div class="container">
         <form method="POST" action="{{ route('colors.update', $color->id) }}" enctype="multipart/form-data">
@@ -24,15 +14,16 @@
 
             <div class="mb-3 row">
                 <label for="name_color" class="col-4 col-form-label">Tên Màu</label>
-                <div class="col-8">
-                    <input type="text" class="form-control" name="name_color" id="name_color"
-                        value="{{ old('name_color', $color->name_color) }}" required />
-                </div>
+
+                <input type="text" class="form-control" name="name_color" id="name_color"
+                    value="{{ old('name_color', $color->name_color) }}" required />
+
             </div>
 
             <div class="mb-3 row">
                 <div class="offset-sm-4 col-sm-8">
-                    <button type="submit" class="btn btn-primary">Cập Nhật</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    <a href="{{route('colors.index')}}" class="btn btn-secondary">Quay lại</a>
                 </div>
             </div>
         </form>

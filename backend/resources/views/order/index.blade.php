@@ -23,7 +23,7 @@
     <div class="container mt-2">
      
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered text-center">
                 <thead class="thead-dark">
                     <tr>
                         <th>ID</th>
@@ -32,7 +32,7 @@
                         <th>Số lượng</th>
                         <th>Tổng tiền</th>
                         <th>Trạng thái</th>
-                        <th>Hành động</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
