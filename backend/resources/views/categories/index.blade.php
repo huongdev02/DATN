@@ -29,8 +29,9 @@
                     <td>{{ $category->id }}</td>
                     <td>{{ $category->name }}</td>
                     <td>{{ $category->products()->count() }}</td> <!-- Hiển thị số lượng sản phẩm -->
-                    <td>{{ $category->created_at->format('d/m/Y H:i') }}</td>
-                    <td>{{ $category->updated_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $category->created_at ? $category->created_at->format('d/m/Y H:i') : 'N/A' }}</td>
+                    <td>{{ $category->updated_at ? $category->updated_at->format('d/m/Y H:i') : 'N/A' }}</td>
+                    
                     <td>
                         <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-outline-warning mb-3">Edit</a>
                         <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline;">
