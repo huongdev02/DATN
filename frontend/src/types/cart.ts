@@ -5,7 +5,7 @@ export type Cart = {
     total: number;
   };
 export type Category = {
-  
+
     name: string;
   };
 
