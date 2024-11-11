@@ -24,10 +24,11 @@
             <tbody>
                 @foreach ($order->orderDetails as $detail)
                     <tr>
-                        <td>{{ $detail->product->id }}</td>
-                        <td>{{ $detail->product->name }}</td>
+                        <!-- Lấy product_id thông qua productDetail -->
+                        <td>{{ $detail->productDetail->product->id }}</td>
+                        <td>{{ $detail->productDetail->product->name }}</td>
                         <td class="text-center">
-                            <img src="{{ asset('storage/' . $detail->product->avatar) }}" alt="image" style="width: 50px; height: 50px;">
+                            <img src="{{ asset('storage/' . $detail->productDetail->product->avatar) }}" alt="image" style="width: 50px; height: 50px;">
                         </td>
                         <td>{{ $detail->quantity }}</td>
                         <td>{{ number_format($detail->price) }} VNĐ</td>

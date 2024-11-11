@@ -23,6 +23,8 @@ class ProductController extends Controller
         $display = $request->get('display'); 
     
         $products = Product::with(['galleries', 'categories', 'product_detail']);
+
+    
     
         // Lọc theo trạng thái
         if ($status !== null) {
@@ -51,7 +53,7 @@ class ProductController extends Controller
             'Cam' => '#FFA500',
             'Tím' => '#800080',
         ];
-    
+     
         return view('products.index', compact('products', 'colorMap', 'sort', 'order'));
     }
     

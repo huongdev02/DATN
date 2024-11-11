@@ -23,7 +23,8 @@
                 <tr>
                     <td>{{ $size->id }}</td>
                     <td>{{ $size->size }}</td>
-                    <td>{{ $size->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $size->created_at ? $size->created_at->format('d/m/Y H:i') : 'N/A' }}</td>
+
                     <td>
                         {{-- <a class="btn btn-info" href="{{ route('sizes.show', $size->id) }}">Xem</a> --}}
                         <a class="btn btn-outline-warning mb-3" href="{{ route('sizes.edit', $size->id) }}">Edit</a>

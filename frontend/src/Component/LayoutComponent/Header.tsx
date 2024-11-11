@@ -59,7 +59,7 @@ const Header: React.FC = () => {
     const hanldeNavigate = async () =>{
         try {
             const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
-             if(data.user.role === 2){
+             if(data.user.role === 1 || data.user.role === 2){
                 window.location.href = 'http://127.0.0.1:8000/admin/dashboard';
              }else{
                 window.location.href = 'http://127.0.0.1:8000/user/dashboard';

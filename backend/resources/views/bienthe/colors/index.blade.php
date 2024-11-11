@@ -24,7 +24,8 @@
                 <tr>
                     <td>{{ $color->id }}</td>
                     <td>{{ $color->name_color }}</td>
-                    <td>{{ $color->created_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $color->created_at ? $color->created_at->format('d/m/Y H:i') : 'N/A' }}</td>
+
                     <td>
                         {{-- <a class="btn btn-info" href="{{ route('colors.show', $color->id) }}">Xem</a> --}}
                         <a class="btn btn-outline-warning mb-3" href="{{ route('colors.edit', $color->id) }}">Cập nhật</a>
