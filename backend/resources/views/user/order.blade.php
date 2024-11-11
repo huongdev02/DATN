@@ -1,90 +1,79 @@
 @extends('user.master')
 
 @section('title')
-    Danh sách Voucher
+    Danh sách Đơn hàng
 @endsection
 
 @section('content')
-<h1 class="text-center mb-3">Danh sách đơn hàng</h1>
+<h1 class="text-center mb-4">Danh sách Đơn hàng</h1>
 
 <div class="container mt-2">
     <!-- Navigation Tabs for Filtering by Order Status -->
     <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link {{ request()->get('status') === null ? 'active' : '' }}" href="{{ route('userorder.index') }}">Tất cả</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->get('status') == 0 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 0]) }}">Chờ thanh toán</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->get('status') == 1 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 1]) }}">Đã xử lí</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->get('status') == 2 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 2]) }}">Vận chuyển</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->get('status') == 3 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 3]) }}">Hoàn thành</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->get('status') == 4 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 4]) }}">Đã hủy</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request()->get('status') == 5 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 5]) }}">Trả hàng/Hoàn tiền</a>
-        </li>
+        <li class="nav-item"><a class="nav-link {{ request()->get('status') === null ? 'active' : '' }}" href="{{ route('userorder.index') }}">Tất cả</a></li>
+        <li class="nav-item"><a class="nav-link {{ request()->get('status') == 0 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 0]) }}">Chờ thanh toán</a></li>
+        <li class="nav-item"><a class="nav-link {{ request()->get('status') == 1 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 1]) }}">Đã xử lý</a></li>
+        <li class="nav-item"><a class="nav-link {{ request()->get('status') == 2 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 2]) }}">Vận chuyển</a></li>
+        <li class="nav-item"><a class="nav-link {{ request()->get('status') == 3 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 3]) }}">Hoàn thành</a></li>
+        <li class="nav-item"><a class="nav-link {{ request()->get('status') == 4 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 4]) }}">Đã hủy</a></li>
+        <li class="nav-item"><a class="nav-link {{ request()->get('status') == 5 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 5]) }}">Trả hàng/Hoàn tiền</a></li>
     </ul>
 
     <!-- Order List -->
     @if($orders->isEmpty())
-        <p class="text-center mt-4">Vui lòng mua sắm</p>
+        <p class="text-center mt-4">Không có đơn hàng nào. Vui lòng mua sắm.</p>
     @else
         @foreach ($orders as $order)
-            <div class="card my-3">
-                <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card my-4 shadow-sm border-0">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
                     <span><strong>Mall</strong> {{ $order->shop_name ?? 'Shop' }}</span>
-                    <div>
-                        <span class="badge 
-                            @if($order->status == 3) bg-success 
-                            @elseif($order->status == 4) bg-danger 
-                            @else bg-info 
-                            @endif">
-                            {{ $order->status == 3 ? 'Giao hàng thành công' : ($order->status == 4 ? 'Đã hủy' : 'Đang xử lý') }}
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <img src="{{ $order->product->avatar ?? 'path_to_placeholder_image' }}" alt="" class="img-fluid">
-                        </div>
-                        <div class="col-md-6">
-                            <h5>{{ $order->product->name ?? 'Không rõ' }}</h5>
-                            <p>Phân loại hàng: {{ $order->product && $order->product->category ? $order->product->category->name : 'Không rõ' }}</p>
-                            <p>Số lượng: x{{ $order->quantity }}</p>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <h5 class="text-danger">₫{{ number_format($order->total_amount, 0, ',', '.') }}</h5>
-                        </div>
-                    </div>
+                    <span class="badge 
+                        @if($order->status == 3) bg-success 
+                        @elseif($order->status == 4) bg-danger 
+                        @else bg-info 
+                        @endif">
+                        {{ $order->status == 3 ? 'Giao hàng thành công' : ($order->status == 4 ? 'Đã hủy' : 'Đang xử lý') }}
+                    </span>
                 </div>
 
-                <div class="card-footer d-flex justify-content-between align-items-center">
-                    <div>
-                        <button class="btn btn-outline-primary btn-sm">15 ngày trả hàng</button>
-                        <button class="btn btn-outline-danger btn-sm">Trả hàng miễn phí 15 ngày</button>
-                    </div>
-                    <div>
-                        <a href="#" class="btn btn-outline-secondary btn-sm">Đánh Giá</a>
-                        <a href="#" class="btn btn-outline-secondary btn-sm">Yêu Cầu Trả Hàng/Hoàn Tiền</a>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Thêm
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Liên hệ hỗ trợ</a></li>
-                                <li><a class="dropdown-item" href="#">Xem chi tiết</a></li>
-                            </ul>
+                <div class="card-body p-4">
+                    <!-- Display Order Details -->
+                    @php
+                        $orderTotal = 0;
+                    @endphp
+                    @foreach ($order->orderDetails as $orderDetail)
+                        <div class="d-flex align-items-start mb-3">
+                            <!-- Product Image -->
+                            <img src="{{ asset('storage/' . ($orderDetail->product->avatar ?? 'default-avatar.png')) }}" alt="Product Image" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                            <div style="flex: 1;">
+                                <!-- Product Name and Category -->
+                                <h6 class="mb-1 fw-bold">{{ $orderDetail->product->name ?? 'Không rõ' }}</h6>
+                                <p class="mb-1 text-muted"><small>Danh mục: {{ $orderDetail->product->category->name ?? 'Không rõ' }}</small></p>
+                                <p class="mb-0 text-muted"><small>Số lượng: <strong>x{{ $orderDetail->quantity }}</strong></small></p>
+                            </div>
+                            <!-- Unit Price and Total Price for Each Product -->
+                            <div class="d-flex flex-column align-items-center" style="width: 100px;">
+                                <p class="mb-0">Đơn giá:</p>
+                                <p class="mb-0 fw-bold">₫{{ number_format($orderDetail->price, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="d-flex flex-column align-items-end" style="width: 120px;">
+                                <p class="mb-0">Tổng:</p>
+                                <p class="mb-0 text-danger fw-bold">₫{{ number_format($orderDetail->total, 0, ',', '.') }}</p>
+                            </div>
                         </div>
+                        @php
+                            $orderTotal += $orderDetail->total;
+                        @endphp
+                    @endforeach
+                </div>
+
+                <!-- Display Order Total -->
+                <div class="card-footer bg-light d-flex justify-content-between align-items-center py-3">
+                    <h6 class=" m-0">Thành tiền: <span class="fw-bold text-danger">₫{{ number_format($orderTotal, 0, ',', '.') }}</span></h6>
+                    <div>
+                        <button class="btn btn-outline-primary btn-sm me-2">Trả hàng trong 15 ngày</button>
+                        <button class="btn btn-outline-danger btn-sm me-2">Miễn phí trả hàng</button>
+                        <button class="btn btn-outline-secondary btn-sm">Đánh giá</button>
                     </div>
                 </div>
             </div>

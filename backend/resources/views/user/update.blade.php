@@ -40,7 +40,7 @@
         <input type="text" class="form-control mb-3" name="address" id="address" value="{{ old('address', Auth::user()->address) }}">
 
         <label for="ship_address">Ship Default</label>
-        <a href="" class="btn badge bg-success ms-3 mb-2">Thêm mới</a>
+        <a href="{{route('address.create')}}" class="btn badge bg-success ms-3 mb-2">Thêm mới</a>
         <select name="address_id" class="form-control">
             @if ($addresses->isNotEmpty())
                 @php

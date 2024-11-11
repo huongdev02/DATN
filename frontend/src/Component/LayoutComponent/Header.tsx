@@ -53,40 +53,13 @@ const Header: React.FC = () => {
     const closeCartPopup = () => {
         setIsCartActice(false);
     };
-    const handleIconClick = async () => {
-        try {
-            const response = await fetch('http://127.0.0.1:8000/api/check-auth', {
-                method: 'GET',
-                credentials: 'include',
-            });
-    
-            if (!response.ok) {
-                console.log('Server response not ok, redirecting to login...');
-                window.location.href = 'http://127.0.0.1:8000/login';
-                return;
-            } 
-    
-            const data = await response.json();
-            console.log('Auth check response:', data);
-    
-            if (data.authenticated) {
-                console.log('User is authenticated, redirecting to dashboard...');
-                window.location.href = 'http://127.0.0.1:8000/user/dashboard';
-            } else {
-                console.log('User is not authenticated, redirecting to login...');
-                window.location.href = 'http://127.0.0.1:8000/login';
-            }
-        } catch (error) {
-            console.error('Lỗi khi kiểm tra trạng thái đăng nhập:', error);
-            window.location.href = 'http://127.0.0.1:8000/login';
-        }
-    };
+
 
    
     const hanldeNavigate = async () =>{
         try {
             const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
-             if(data.user.role === 2){
+             if(data.user.role === 1 || data.user.role === 2){
                 window.location.href = 'http://127.0.0.1:8000/admin/dashboard';
              }else{
                 window.location.href = 'http://127.0.0.1:8000/user/dashboard';
@@ -149,7 +122,7 @@ const Header: React.FC = () => {
                             <a
                                 className="account-icon account"
                                 href="#"
-                                onClick={handleIconClick}
+                                onClick={hanldeNavigate}  
                             >
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_451)">
@@ -162,7 +135,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-                            <SettingOutlined  onClick={hanldeNavigate} style={{fontSize: '18px'}}/>
+                            {/* <SettingOutlined style={{fontSize: '18px'}}/> */}
                             <a className="account-icon wishlist" href="compare.html"><span className="number-tag">3</span>
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_452)">

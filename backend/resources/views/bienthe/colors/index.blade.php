@@ -1,23 +1,22 @@
 @extends('Layout.Layout')
 
 @section('title')
-    DashBoard Admin - Colors
+    Danh sách màu sắc
 @endsection
 
 @section('content_admin')
 
-
-<a class="btn btn-outline-success mb-3" href="{{ route('colors.create') }}">Add new color</a>
+<h1 class="text-center">  Danh sách màu sắc</h1>
+<a class="btn btn-outline-success mb-3" href="{{ route('colors.create') }}">Thêm mới</a>
 
 <div class="table-responsive">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover text-center">
         <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Name color</th>
-                <th scope="col">Created at</th>
-                <th scope="col">Updated at</th>
-                <th scope="col">Actions</th>
+                <th scope="col">Tên màu sắc</th>
+                <th scope="col">Tạo</th>
+                <th scope="col">Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -25,16 +24,16 @@
                 <tr>
                     <td>{{ $color->id }}</td>
                     <td>{{ $color->name_color }}</td>
-                    <td>{{ $color->created_at->format('d/m/Y H:i') }}</td>
-                    <td>{{ $color->updated_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $color->created_at ? $color->created_at->format('d/m/Y H:i') : 'N/A' }}</td>
+
                     <td>
                         {{-- <a class="btn btn-info" href="{{ route('colors.show', $color->id) }}">Xem</a> --}}
-                        <a class="btn btn-outline-warning mb-3" href="{{ route('colors.edit', $color->id) }}">Edit</a>
+                        <a class="btn btn-outline-warning mb-3" href="{{ route('colors.edit', $color->id) }}">Cập nhật</a>
                         <form action="{{ route('colors.destroy', $color->id) }}" method="POST" style="display:inline-block;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')" class="btn btn-outline-danger mb-3">
-                                Delete
+                                Xóa
                             </button>
                         </form>
                     </td>

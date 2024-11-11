@@ -9,17 +9,21 @@ class UserOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['product', 'user']); 
-    
+        $query = Order::with(['orderDetails.product', 'user']); // Eager load orderDetails và product
+        
         if ($request->has('status')) {
             $status = $request->get('status');
             $query->where('status', $status);
         }
     
-        $orders = $query->latest()->paginate(5);
+        $orders = $query->latest()->paginate(2);
     
         return view('user.order', compact('orders'));
     }
+    
+
+
+
 
     public function show($id)
 {

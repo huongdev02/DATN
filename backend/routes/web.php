@@ -96,8 +96,10 @@ Route::controller(UserController::class)->middleware(['auth', 'user'])->group(fu
     Route::patch('ship-addresses/{id}/set-default',  [AddressController::class, 'setDefault'])->name('address.set-default');
 
     Route::resource('uservouchers', UservoucherController::class);
+    Route::post('/order/{id}/cancel', [UservoucherController::class, 'cancelOrder'])->name('order.cancel');
+    Route::post('/order/{id}/confirm-receive', [UservoucherController::class, 'confirmReceiveOrder'])->name('order.confirmReceive');
+
     Route::resource('userorder', UserOrderController::class);
-    Route::resource('card', CardController::class);
 
 });
 

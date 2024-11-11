@@ -18,9 +18,6 @@ class Product extends Model
         'description',
         'display',
         'status',
-        'quantity',
-        'sell_quantity',
-        'view',
     ];
 
     public function galleries()
@@ -48,13 +45,19 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
-    public function colors()
-    {
-        return $this->belongsToMany(Color::class, 'product_color');
-    }
-
     public function sizes()
     {
-        return $this->belongsToMany(Size::class, 'product_size');
+        return $this->belongsToMany(Size::class, 'product_size', 'product_id', 'size_id');
+    }
+    
+
+    public function colors()
+    {
+        return $this->belongsToMany(Color::class, 'product_color', 'product_id', 'color_id');
+    }
+
+    public function product_detail()
+    {
+        return $this->hasMany(Product_Detail::class);
     }
 }

@@ -31,11 +31,11 @@
     <div class="login-wrap">
         <div class="login-html">
             <input id="tab-1" type="radio" name="tab" class="sign-in" checked>
-            <label for="tab-1" class="tab" onclick="changeTitle('Sign In')">Sign In</label>
+            <label for="tab-1" class="tab" onclick="changeTitle('Sign In')">Đăng nhập</label>
             <input id="tab-2" type="radio" name="tab" class="sign-up">
-            <label for="tab-2" class="tab" onclick="changeTitle('Sign Up')">Sign Up</label>
+            <label for="tab-2" class="tab" onclick="changeTitle('Sign Up')">Đăng kí</label>
             <input id="tab-3" type="radio" name="tab" class="forgot">
-            <label for="tab-3" class="tab" onclick="changeTitle('Forgot Password')">Forgot</label>
+            <label for="tab-3" class="tab" onclick="changeTitle('Forgot Password')">Quên</label>
 
             <div class="login-form">
                 <!-- Sign In Section -->

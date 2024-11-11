@@ -27,19 +27,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255|unique:categories,name',
-            ]);
-
-            $category = Category::create([
-                'name' => $request->name,
-            ]);
-
-            return response()->json(['message' => 'Category được thêm thành công.', 'category' => $category], 201);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra khi thêm category: ' . $e->getMessage()], 500);
-        }
+       
     }
 
     /**
@@ -59,19 +47,6 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            ]);
-
-            $category->update([
-                'name' => $request->name,
-            ]);
-
-            return response()->json(['message' => 'Category được cập nhật thành công.', 'category' => $category], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra khi cập nhật category: ' . $e->getMessage()], 500);
-        }
     }
 
     /**
@@ -79,12 +54,5 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        try {
-            $category->delete();
-
-            return response()->json(['message' => 'Category đã được xóa thành công.'], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra khi xóa category: ' . $e->getMessage()], 500);
-        }
     }
 }

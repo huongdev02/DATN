@@ -1,22 +1,21 @@
 @extends('Layout.Layout')
 
 @section('title')
-    DashBoard Admin - Colors
+    Danh sách Size
 @endsection
 
 @section('content_admin')
 
-    <a class="btn btn-outline-success mb-3" href="{{ route('sizes.create') }}">Add new size</a>
+    <a class="btn btn-outline-success mb-3" href="{{ route('sizes.create') }}">Thêm mới</a>
 
 <div class="table-responsive">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover text-center">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Size</th>
-                <th>Created at</th>
-                <th>Updated at</th>
-                <th>Actions</th>
+                <th>Tạo</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -24,8 +23,8 @@
                 <tr>
                     <td>{{ $size->id }}</td>
                     <td>{{ $size->size }}</td>
-                    <td>{{ $size->created_at->format('d/m/Y H:i') }}</td>
-                    <td>{{ $size->updated_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $size->created_at ? $size->created_at->format('d/m/Y H:i') : 'N/A' }}</td>
+
                     <td>
                         {{-- <a class="btn btn-info" href="{{ route('sizes.show', $size->id) }}">Xem</a> --}}
                         <a class="btn btn-outline-warning mb-3" href="{{ route('sizes.edit', $size->id) }}">Edit</a>

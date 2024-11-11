@@ -25,7 +25,11 @@
             <input type="password" class="form-control" name="password_confirmation" required>
         </div>
         
-        <button type="submit" class="btn btn-primary mt-3">Thêm Quản lý</button>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Thêm Quản lý</button>
+            <a href="{{route('managers.index')}}" class="btn btn-secondary">Quay lại</a>
+        </div>
+       
     </form>
 </div>
 @endsection

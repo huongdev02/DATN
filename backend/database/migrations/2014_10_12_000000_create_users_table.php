@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('password');
             $table->string('fullname')->nullable();
             $table->date('birth_day')->nullable();
-            $table->string('phone', 15)->nullable();
+            $table->string('phone', 15)->nullable()->unique();
             $table->string('email')->unique()->nullable();
             $table->string('address')->nullable();
             $table->tinyInteger('role')->default(0); // 0: user, 1: nhân viên, 2: admin

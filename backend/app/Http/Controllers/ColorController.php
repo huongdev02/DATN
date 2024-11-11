@@ -33,12 +33,14 @@ class ColorController extends Controller
     {
         $data = $request->validate([
             'name_color'      => 'required|max:25',
+            'hex_color'        => 'required|max:25'
         ]);
+
 
         try {
             Color::query()->create($data);
             return redirect()->route('colors.index')
-                ->with('success', true);
+                ->with('success', 'Thêm mới màu sắc thành công');
         } catch (\Throwable $th) {
             return back()
                 ->with('success', false)
