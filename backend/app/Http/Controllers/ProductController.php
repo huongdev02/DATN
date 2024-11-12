@@ -15,56 +15,54 @@ use Throwable;
 class ProductController extends Controller
 {
     public function index(Request $request)
-    {
-        // Initialize query
-        $query = Product::with(['galleries', 'categories', 'colors']);
-        
-        // Filter by status
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+{
+    // Initialize query with relations
+    $query = Product::with(['galleries', 'categories', 'colors']);
     
-        // Filter by display
-        if ($request->filled('display')) {
-            $query->where('display', $request->display);
-        }
-    
-        // Filter by price range
-        if ($request->filled('price_range')) {
-            if ($request->price_range == 'under_200k') {
-                $query->where('price', '<', 200000);
-            } elseif ($request->price_range == '200k_500k') {
-                $query->whereBetween('price', [200000, 500000]);
-            } elseif ($request->price_range == 'over_500k') {
-                $query->where('price', '>', 500000);
-            }
-        }
-    
-        // Sort by price order
-        if ($request->filled('price_order')) {
-            $query->orderBy('price', $request->price_order);
-        }
-    
-        // Get paginated results
-        $products = $query->latest()->paginate(5);
-    
-        // Color mapping
-        $colorMap = [
-            'Đỏ' => '#FF0000',
-            'Đen' => '#000000',
-            'Xanh dương' => '#0000FF',
-            'Xanh lá' => '#00FF00',
-            'Vàng' => '#FFFF00',
-            'Cam' => '#FFA500',
-            'Tím' => '#800080',
-        ];
-    
-        return view('products.index', compact('products', 'colorMap'));
+    // Filter by status
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
     }
-    
-    
 
+    // Filter by display
+    if ($request->filled('display')) {
+        $query->where('display', $request->display);
+    }
 
+    // Filter by price range
+    if ($request->filled('price_range')) {
+        if ($request->price_range == 'under_200k') {
+            $query->where('price', '<', 200000);
+        } elseif ($request->price_range == '200k_500k') {
+            $query->whereBetween('price', [200000, 500000]);
+        } elseif ($request->price_range == 'over_500k') {
+            $query->where('price', '>', 500000);
+        }
+    }
+
+    // Sort by price order
+    if ($request->filled('price_order')) {
+        $query->orderBy('price', $request->price_order);
+    }
+
+    // Get paginated results
+    $products = $query->latest()->paginate(5);
+
+    // Define color mapping
+    $colorMap = [
+        'Đỏ' => '#FF0000',
+        'Đen' => '#000000',
+        'Xanh dương' => '#0000FF',
+        'Xanh lá' => '#00FF00',
+        'Vàng' => '#FFFF00',
+        'Cam' => '#FFA500',
+        'Tím' => '#800080',
+    ];
+
+    return view('products.index', compact('products', 'colorMap'));
+}
+
+    
     public function create()
     {
         $categories = Category::all();
