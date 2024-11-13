@@ -43,11 +43,6 @@ class CartController extends Controller
     public function store(Request $request)
     {
         try {
-            // Kiểm tra xem người dùng đã đăng nhập chưa
-            if (!Auth::check()) {
-                return response()->json(['message' => 'Người dùng chưa đăng nhập.'], 401);
-            }
-            
             // Xác thực dữ liệu đầu vào
             $request->validate([
                 'product_id' => 'required|exists:products,id',
@@ -56,7 +51,7 @@ class CartController extends Controller
     
             // Tìm hoặc tạo giỏ hàng cho người dùng hiện tại
             $cart = Cart::firstOrCreate([
-                'user_id' => Auth::id(),
+                'user_id' => Auth::id(), // Lấy ID người dùng đã xác thực qua token
             ]);
     
             // Lấy thông tin sản phẩm từ cơ sở dữ liệu
@@ -64,7 +59,7 @@ class CartController extends Controller
     
             // Kiểm tra xem số lượng thêm vào giỏ hàng có vượt quá số lượng trong bảng products không
             if ($request->quantity > $product->quantity) {
-                return response()->json(['message' => 'Số lượng yêu cầu vượt quá số lượng có sẵn trong kho.'], 400); // Trả về mã 400 Bad Request
+                return response()->json(['message' => 'Số lượng yêu cầu vượt quá số lượng có sẵn trong kho.'], 400);
             }
     
             // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
@@ -75,19 +70,19 @@ class CartController extends Controller
             if ($cartItem) {
                 // Cập nhật số lượng và tổng giá trị
                 if (($cartItem->quantity + $request->quantity) > $product->quantity) {
-                    return response()->json(['message' => 'Số lượng tổng cộng sau khi thêm vượt quá số lượng có sẵn trong kho.'], 400); // Trả về mã 400 Bad Request
+                    return response()->json(['message' => 'Số lượng tổng cộng sau khi thêm vượt quá số lượng có sẵn trong kho.'], 400);
                 }
                 $cartItem->quantity += $request->quantity; // Cộng thêm số lượng
                 $cartItem->total = $cartItem->quantity * $product->price; // Tính lại tổng
                 $cartItem->save();
             } else {
                 // Thêm sản phẩm mới vào giỏ hàng
-                CartItem::create([
+                $cartItem = CartItem::create([
                     'cart_id' => $cart->id,
                     'product_id' => $product->id,
                     'quantity' => $request->quantity,
                     'price' => $product->price,
-                    'total' => $request->quantity * $product->price, // Tính tổng ngay khi thêm
+                    'total' => $request->quantity * $product->price,
                 ]);
             }
     
@@ -102,13 +97,14 @@ class CartController extends Controller
                 'message' => 'Sản phẩm đã được thêm vào giỏ hàng.'
             ];
     
-            return response()->json($responseData, 201); // Trả về mã 201 Created
-            
+            return response()->json($responseData, 201);
+    
         } catch (\Exception $e) {
             // Xử lý lỗi và trả về thông điệp lỗi
-            return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Trả về mã 500 Internal Server Error
+            return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
         }
     }
+    
     
     
 

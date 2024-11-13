@@ -31,7 +31,9 @@ class AccountController extends Controller
 
             if (Auth::attempt([$loginType => $credentials['account'], 'password' => $credentials['password']], true)) {
                 $request->session()->regenerate();
-
+                /**
+                 * @var User $user
+                 */
                 $user = Auth::user();
                 if ($user->is_active == 0) {
                     Auth::logout();
@@ -40,10 +42,24 @@ class AccountController extends Controller
                     ], 403);
                 }
 
+                $token = $user->createToken('API Token')->plainTextToken;
+                $pureToken = explode('|', $token)[1];
+
                 return response()->json([
                     'status' => true,
-                    'message' => 'Đăng nhập thành công', 
-                    'data' => $user
+                    'message' => 'Đăng nhập thành công',
+                    'data' => [
+                        'id'        => $user->id,
+                        'email'     => $user->email,
+                        'name'      => $user->fullname,
+                        'birth_day' => $user->birth_day,
+                        'phone'     => $user->phone,
+                        'address'   => $user->address,
+                        'role'      => $user->role,
+                        'is_active' => $user->is_active,
+                        'avatar'    => $user->avatar ? asset('storage/' . $user->avatar) : null,
+                        'token'     => $pureToken
+                    ]
                 ], 200);
             }
 
@@ -58,87 +74,98 @@ class AccountController extends Controller
     public function show($userId)
     {
         try {
-            // Retrieve the user with related ship addresses
             $user = User::with('shipAddresses')->find($userId);
-            
+
             if (!$user) {
                 return response()->json(['message' => 'User not found'], 404);
             }
-    
-            // Generate token for the user and remove the first three characters
             $token = substr($user->createToken('API Token')->plainTextToken, 3);
-    
-            // Full path for the avatar
+
             $user->avatar = asset('storage/' . $user->avatar);
-    
+
             $filePath = storage_path('app/user_' . $userId . '.txt');
-    
-            // Check if the file exists
+
             if (file_exists($filePath)) {
                 $data = json_decode(file_get_contents($filePath), true);
                 $data['token'] = $token;
                 $data['user'] = $user;
-    
+
                 return response()->json($data);
             }
-    
-            // Return user data with token
             return response()->json([
                 'token' => $token,
                 'user' => $user
             ]);
-    
         } catch (Throwable $e) {
             return response()->json(['message' => 'Error occurred: ' . $e->getMessage()], 404);
         }
     }
-    
 
-public function checkAuth(Request $request)
-{
-    // Lấy token từ cookie
-    $tokenFromCookie = $request->cookie('token');
-    
-    // Xóa 4 ký tự đầu nếu token từ cookie tồn tại
-    if ($tokenFromCookie && strlen($tokenFromCookie) > 4) {
-        $tokenFromCookie = substr($tokenFromCookie, 4); // Xóa 4 ký tự đầu tiên
+    public function logout(Request $request)
+    {
+        try {
+            // Retrieve the authenticated user
+            $user = Auth::user();
+
+            // Revoke all of the user's tokens
+            $user->tokens->each(function ($token) {
+                $token->delete();
+            });
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Đăng xuất thành công'
+            ], 200);
+        } catch (Throwable $e) {
+            return response()->json(['error' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
+        }
     }
 
-    // Lấy token từ header
-    $tokenFromHeader = $request->header('Authorization');
 
-    // Nếu token từ header có dạng "Bearer token", tách ra để lấy token
-    if ($tokenFromHeader && preg_match('/Bearer\s(\S+)/', $tokenFromHeader, $matches)) {
-        $tokenFromHeader = $matches[1]; // Lấy phần token sau "Bearer "
+
+    public function checkAuth(Request $request)
+    {
+        // Lấy token từ cookie
+        $tokenFromCookie = $request->cookie('token');
+
+        // Xóa 4 ký tự đầu nếu token từ cookie tồn tại
+        if ($tokenFromCookie && strlen($tokenFromCookie) > 4) {
+            $tokenFromCookie = substr($tokenFromCookie, 4); // Xóa 4 ký tự đầu tiên
+        }
+
+        // Lấy token từ header
+        $tokenFromHeader = $request->header('Authorization');
+
+        // Nếu token từ header có dạng "Bearer token", tách ra để lấy token
+        if ($tokenFromHeader && preg_match('/Bearer\s(\S+)/', $tokenFromHeader, $matches)) {
+            $tokenFromHeader = $matches[1]; // Lấy phần token sau "Bearer "
+        }
+
+        // Chọn token từ cookie nếu có, nếu không thì lấy từ header
+        $token = $tokenFromCookie ?: $tokenFromHeader;
+
+        Log::info('Received token: ' . $token);
+
+        if (!$token) {
+            return response()->json(['authenticated' => false, 'message' => 'Token not provided.'], 401);
+        }
+
+        // Mã hóa token để so sánh
+        $hashedToken = hash('sha256', $token);
+        Log::info('Hashed token: ' . $hashedToken);
+
+        // Kiểm tra token trong bảng personal_access_tokens
+        $tokenRecord = PersonalAccessToken::where('token', $hashedToken)->first();
+
+        if ($tokenRecord) {
+            $user = $tokenRecord->tokenable;
+            return response()->json([
+                'authenticated' => true,
+                'user' => $user,
+                'role' => $user->role,
+            ]);
+        }
+
+        return response()->json(['authenticated' => false, 'message' => 'Invalid token.'], 401);
     }
-
-    // Chọn token từ cookie nếu có, nếu không thì lấy từ header
-    $token = $tokenFromCookie ?: $tokenFromHeader;
-
-    Log::info('Received token: ' . $token);
-
-    if (!$token) {
-        return response()->json(['authenticated' => false, 'message' => 'Token not provided.'], 401);
-    }
-
-    // Mã hóa token để so sánh
-    $hashedToken = hash('sha256', $token);
-    Log::info('Hashed token: ' . $hashedToken);
-    
-    // Kiểm tra token trong bảng personal_access_tokens
-    $tokenRecord = PersonalAccessToken::where('token', $hashedToken)->first();
-
-    if ($tokenRecord) {
-        $user = $tokenRecord->tokenable;
-        return response()->json([
-            'authenticated' => true,
-            'user' => $user,
-            'role' => $user->role,
-        ]);
-    }
-
-    return response()->json(['authenticated' => false, 'message' => 'Invalid token.'], 401);
-}
-
-
 }

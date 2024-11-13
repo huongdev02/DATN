@@ -11,7 +11,7 @@
     <!-- Navigation Tabs for Filtering by Order Status -->
     <ul class="nav nav-tabs">
         <li class="nav-item"><a class="nav-link {{ request()->get('status') === null ? 'active' : '' }}" href="{{ route('userorder.index') }}">Tất cả</a></li>
-        <li class="nav-item"><a class="nav-link {{ request()->get('status') == 0 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 0]) }}">Chờ thanh toán</a></li>
+        <li class="nav-item"><a class="nav-link {{ request()->get('status') == 0 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 0]) }}">Chờ Xử lí</a></li>
         <li class="nav-item"><a class="nav-link {{ request()->get('status') == 1 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 1]) }}">Đã xử lý</a></li>
         <li class="nav-item"><a class="nav-link {{ request()->get('status') == 2 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 2]) }}">Vận chuyển</a></li>
         <li class="nav-item"><a class="nav-link {{ request()->get('status') == 3 ? 'active' : '' }}" href="{{ route('userorder.index', ['status' => 3]) }}">Hoàn thành</a></li>
@@ -71,18 +71,81 @@
                 <div class="card-footer bg-light d-flex justify-content-between align-items-center py-3">
                     <h6 class=" m-0">Thành tiền: <span class="fw-bold text-danger">₫{{ number_format($orderTotal, 0, ',', '.') }}</span></h6>
                     <div>
-                        <button class="btn btn-outline-primary btn-sm me-2">Trả hàng trong 15 ngày</button>
-                        <button class="btn btn-outline-danger btn-sm me-2">Miễn phí trả hàng</button>
-                        <button class="btn btn-outline-secondary btn-sm">Đánh giá</button>
+                        @if($order->status == 0 || $order->status == 1) <!-- Only show cancel button if order is Pending or Processed -->
+                            <button class="btn btn-outline-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#cancelOrderModal-{{ $order->id }}">Hủy Đơn Hàng</button>
+                        @else
+                            <button class="btn btn-outline-secondary btn-sm me-2" disabled data-bs-toggle="tooltip" title="Không thể hủy khi đã vận chuyển, hoàn thành hoặc đã hủy">Hủy Đơn Hàng</button>
+                        @endif
+
+                        @if($order->status == 2) <!-- Show "Đã nhận hàng" button when order is "Vận chuyển" -->
+                            <button class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#confirmReceiptModal-{{ $order->id }}">Đã nhận hàng</button>
+                        @elseif($order->status == 3) <!-- Show "Đánh giá" button when order is "Hoàn thành" -->
+                            <button class="btn btn-outline-warning btn-sm me-2">Đánh giá</button>
+                        @endif
                     </div>
                 </div>
             </div>
-        @endforeach
 
-        <!-- Pagination Links -->
-        <div class="d-flex justify-content-center">
-            {{ $orders->links() }}
-        </div>
+            <!-- Cancel Order Modal -->
+            <div class="modal fade" id="cancelOrderModal-{{ $order->id }}" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="cancelOrderModalLabel">Lý do hủy đơn hàng</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('userorder.update', $order->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="cancelReason" class="form-label">Chọn lý do hủy đơn hàng:</label>
+                                    <select class="form-select" id="cancelReason" name="cancel_reason" required>
+                                        <option value="Tôi không muốn đặt hàng nữa">Tôi không muốn đặt hàng nữa</option>
+                                        <option value="Mặt hàng quá đắt">Mặt hàng quá đắt</option>
+                                        <option value="Thời gian giao hàng quá lâu">Thời gian giao hàng quá lâu</option>
+                                        <option value="Other">Khác</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3" id="otherReasonInput" style="display: none;">
+                                    <label for="otherReason" class="form-label">Nhập lý do khác:</label>
+                                    <input type="text" class="form-control" id="otherReason" name="other_reason">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-danger">Hủy Đơn Hàng</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirm Receipt Modal -->
+            <div class="modal fade" id="confirmReceiptModal-{{ $order->id }}" tabindex="-1" aria-labelledby="confirmReceiptModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmReceiptModalLabel">Xác nhận nhận hàng</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('done', $order->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <div class="modal-body">
+                                <p>Bạn có chắc chắn đã nhận hàng và muốn chuyển trạng thái đơn hàng này thành "Hoàn thành" không?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-success">Xác nhận nhận hàng</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        @endforeach
     @endif
 </div>
+
 @endsection
