@@ -146,6 +146,15 @@
 
         @endforeach
     @endif
+
+    
+    <script>
+        document.getElementById('cancelReason').addEventListener('change', function () {
+            const otherReasonInput = document.getElementById('otherReasonInput');
+            otherReasonInput.style.display = this.value === 'Other' ? 'block' : 'none';
+        });
+    </script>
+    
 </div>
 
 @endsection

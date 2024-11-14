@@ -32,6 +32,7 @@
                         <th>Số lượng</th>
                         <th>Tổng tiền</th>
                         <th>Trạng thái</th>
+                        <th>Ghi chú</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -63,7 +64,7 @@
                                     </select>
                                 </form>
                             </td>
-
+                            <td>{{ $order->message }}</td>
                             <td>
                                 <a href="{{ route('orders.show', $order->id) }}" class="btn btn-info btn-sm">Chi tiết</a>
                             </td>

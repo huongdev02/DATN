@@ -50,30 +50,31 @@ class UserOrderController extends Controller
             // Retrieve the order
             $order = Order::where('id', $orderId)
                 ->where('user_id', Auth::id())
-                ->where('status', 0) // Check if order is pending or not processed yet
+                ->whereIn('status', [0, 1]) // Allow canceling when pending or processed
                 ->first();
-    
+
+
             if (!$order) {
                 return response()->json(['message' => 'Order not found or cannot be canceled.'], 404);
             }
-    
+
             // Retrieve the cancellation reason and add custom message if provided
             $cancelReason = $request->input('cancel_reason');
             $otherReason = $request->input('other_reason');
             $message = $cancelReason;
-    
+
             if ($cancelReason === 'Other' && !empty($otherReason)) {
                 $message .= ": " . $otherReason;
             }
-    
+
             // Store the cancellation reason in the message field
             $order->message = $message;
             $order->save();
-    
+
             // Retrieve each order detail and adjust product quantities
             foreach ($order->orderDetails as $orderDetail) {
                 $product = Product::find($orderDetail->product_id);
-    
+
                 if ($product) {
                     // Increase the product's quantity and decrease the sold quantity
                     $product->quantity += $orderDetail->quantity;
@@ -81,34 +82,33 @@ class UserOrderController extends Controller
                     $product->save();
                 }
             }
-    
+
             // Update order status to indicate it was canceled (set status to 4)
             $order->status = 4; // Assuming 4 is for canceled orders
             $order->save();
-    
+
             return back()->with('success', 'Hủy đơn hàng thành công, bạn có thể mua sắm lại.');
         } catch (\Exception $e) {
-            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+            return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
-    
+
 
     public function done(Request $request, $orderId)
     {
         // Tìm đơn hàng theo ID
         $order = Order::findOrFail($orderId);
-    
+
         // Kiểm tra nếu trạng thái đơn hàng chưa phải là "Vận chuyển"
         if ($order->status !== 2) {
             return redirect()->back()->with('error', 'Không thể xác nhận nhận hàng khi đơn hàng chưa được vận chuyển.');
         }
-    
+
         // Cập nhật trạng thái đơn hàng thành "Hoàn thành" (status = 3)
         $order->status = 3;
         $order->save();
-    
+
         // Gửi thông báo thành công và chuyển hướng
         return back()->with('success', 'Đơn hàng đã được xác nhận hoàn thành.');
     }
-    
 }
