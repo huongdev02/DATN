@@ -11,7 +11,8 @@ class UserOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['orderDetails.product', 'user']); // Eager load orderDetails và product
+        // Add 'category' to eager load
+        $query = Order::with(['orderDetails.product.categories', 'user']);
 
         if ($request->has('status')) {
             $status = $request->get('status');
@@ -22,6 +23,7 @@ class UserOrderController extends Controller
 
         return view('user.order', compact('orders'));
     }
+
 
 
 

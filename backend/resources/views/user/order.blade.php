@@ -48,7 +48,7 @@
                             <div style="flex: 1;">
                                 <!-- Product Name and Category -->
                                 <h6 class="mb-1 fw-bold">{{ $orderDetail->product->name ?? 'Không rõ' }}</h6>
-                                <p class="mb-1 text-muted"><small>Danh mục: {{ $orderDetail->product->category->name ?? 'Không rõ' }}</small></p>
+                                <p class="mb-1 text-muted"><small>Danh mục: {{ $orderDetail->product->categories->name ?? 'Không rõ' }}</small></p>
                                 <p class="mb-0 text-muted"><small>Số lượng: <strong>x{{ $orderDetail->quantity }}</strong></small></p>
                             </div>
                             <!-- Unit Price and Total Price for Each Product -->
