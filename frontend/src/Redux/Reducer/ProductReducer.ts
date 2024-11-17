@@ -1,10 +1,39 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchProducts } from "../API/GET/GetProduct";
+// src/redux/productSlice.ts
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+interface Colors {
+    id: string;
+    name_color: string;
+    hex_color: string;
+}
+
+interface Gallery {
+    id: number;
+    product_id: number;
+    image_path: string;
+}
+
+interface Sizes {
+    id: string;
+    size: string;
+}
+
+export interface Product {
+    id: string;
+    name: string;
+    import_price: number;
+    price: number;
+    description: string;
+    avatar: string
+    colors: Colors[];
+    sizes: Sizes[];
+    galleries: Gallery[];
+}
 
 interface ProductState {
-    products: any[]; // Bạn có thể thay 'any[]' bằng kiểu thực tế của sản phẩm nếu biết
+    products: Product[];
     loading: boolean;
-    error: string | null; // Cho phép null cho trường hợp không có lỗi
+    error: string | null;
 }
 
 const initialState: ProductState = {
@@ -13,7 +42,16 @@ const initialState: ProductState = {
     error: null,
 };
 
-const productsSlice = createSlice({
+export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
+    const response = await fetch('http://127.0.0.1:8000/api/products');
+    if (!response.ok) {
+        throw new Error('Failed to fetch products');
+    }
+    const data = await response.json();
+    return data;
+});
+
+const ProductReducer = createSlice({
     name: 'products',
     initialState,
     reducers: {},
@@ -21,22 +59,16 @@ const productsSlice = createSlice({
         builder
             .addCase(fetchProducts.pending, (state) => {
                 state.loading = true;
-                state.error = null;
             })
-            .addCase(fetchProducts.fulfilled, (state, action: PayloadAction<any[]>) => {
+            .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.loading = false;
                 state.products = action.payload;
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message ?? null; // Xử lý nếu `message` là undefined
+                state.error = action.error.message || 'Something went wrong';
             });
     },
 });
 
-// Các selector với kiểu dữ liệu rõ ràng
-export const selectProducts = (state: { products: ProductState }) => state.products.products;
-export const selectLoading = (state: { products: ProductState }) => state.products.loading;
-export const selectError = (state: { products: ProductState }) => state.products.error;
-
-export default productsSlice.reducer;
+export default ProductReducer.reducer;

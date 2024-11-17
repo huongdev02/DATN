@@ -1,24 +1,91 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Logo from '../../assets/imgs/template/logo.svg'
 import Product from "../../assets/imgs/page/homepage1/product24.png";
-import ProductTwo from "../../assets/imgs/page/homepage1/product25.png";
-import ProductThree from "../../assets/imgs/page/homepage1/product26.png";
-import Star from "../../assets/imgs/template/icons/star.svg"
-import { Link } from 'react-router-dom';
-import { message } from 'antd';
-import { Button, Modal } from 'antd';
-import {SettingOutlined} from '@ant-design/icons';
-import api from '../../configAxios/axios';
-import { useSearchParams } from 'react-router-dom';
-import { log } from 'console';
+import { Link, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../Redux/store';
+import { login } from '../../Redux/Reducer/AuthReducer';
+import { Button, Dropdown, Flex, MenuProps, notification, Space } from 'antd';
+
+interface User {
+    id: number;
+    fullname: string;
+    avatar: string | null;
+    role: string[];
+    branch_id: number;
+}
+
 const Header: React.FC = () => {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [isCartActice, setIsCartActice] = useState(false);
     const [isAccountActive, setIsAccountActive] = useState(false);
     const [activeTab, setActiveTab] = useState('login');
-    const [open, setOpen] = useState(false);
-    const [searchParams] = useSearchParams();
-    const userId = searchParams.get('user_id');
+    const itemsCart = useSelector((state: RootState) => state.cart.items);
+    console.log(itemsCart);
+    const dispatch = useDispatch<AppDispatch>();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const loading = useSelector((state: RootState) => state.auth.loading);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState<User | null>(null)
+    useEffect(() => {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            setIsLoggedIn(true);
+            setUser(JSON.parse(userData) as User);
+        }
+    }, []);
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Email:', email);
+        console.log('Password:', password);
+        if (!password.trim() || !email.trim()) {
+            notification.error(
+                {
+                    message: 'Vui lòng nhập đầy đủ thông tin'
+                }
+            )
+            return false;
+        }
+        try {
+            const resultAction = await dispatch(login({ email, password }));
+
+            if (login.fulfilled.match(resultAction)) {
+                const userData = resultAction.payload;
+                localStorage.setItem('user', JSON.stringify(userData));
+                window.location.reload();
+
+                notification.success({
+                    message: 'Đăng nhập thành công',
+                    description: `Chào mừng, ${resultAction.payload.email}! đẹp traiii`,
+                });
+                setTimeout(() => {
+                }, 1000);
+            } else {
+                notification.error({
+                    message: 'Tài khoản không chính khác'
+                })
+                setPassword('')
+            }
+        } catch (err) {
+            console.error('Đăng nhập thất bại:', err);
+        }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        setIsLoggedIn(false);
+        notification.success({
+            message: 'Đăng xuất thành công'
+        })
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    };
+
+
+
     const showLoginForm = () => {
         setActiveTab('login');
     };
@@ -53,37 +120,6 @@ const Header: React.FC = () => {
     const closeCartPopup = () => {
         setIsCartActice(false);
     };
-
-
-   
-    const hanldeNavigate = async () =>{
-        try {
-            const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
-             if(data.user.role === 2){
-                window.location.href = 'http://127.0.0.1:8000/admin/dashboard';
-             }else{
-                window.location.href = 'http://127.0.0.1:8000/user/dashboard';
-             }
-          } catch (error) {
-            window.location.href = 'http://127.0.0.1:8000/login';
-          }
-        
-    }
-
-    const GetUser = async () => {
-        try {
-          const { data } = await api.get(`http://127.0.0.1:8000/api/users/${userId}`);
-          console.log(data.token);
-        } catch (error) {
-         
-        }
-      };
-    
-    useEffect(()=>{
-        GetUser();
-    },[])  
-    
-
     return (
         <>
             <header className="header sticky-bar header-style-1">
@@ -119,8 +155,53 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-                
-                            <SettingOutlined  onClick={hanldeNavigate} style={{fontSize: '18px'}}/>
+                            {!isLoggedIn ? (
+                                <a className="account-icon account" onClick={openAccountPopup} href="#">
+                                    <svg
+                                        className="d-inline-flex align-items-center justify-content-center"
+                                        width={28}
+                                        height={28}
+                                        viewBox="0 0 28 28"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <g clipPath="url(#clip0_116_451)">
+                                            <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_116_451">
+                                                <rect width={24} height={24} fill="white" transform="translate(2 2)" />
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                </a>
+                            ) : (
+                                <a className="account-icon account dropdown" href="#">
+                                    <svg
+                                        className="d-inline-flex align-items-center justify-content-center"
+                                        width={28}
+                                        height={28}
+                                        viewBox="0 0 28 28"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <g clipPath="url(#clip0_116_451)">
+                                            <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_116_451">
+                                                <rect width={24} height={24} fill="white" transform="translate(2 2)" />
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                    <div className="dropdown-content">
+                                        <p className='menu_dropdown'>
+                                            <button>{user?.fullname || 'Khôi'}</button>
+                                        </p>
+                                        <p className='menu_dropdown'>
+                                            <button onClick={() => handleLogout()}>Đăng Xuất</button>
+                                        </p>
+                                    </div>
+                                </a>
+                            )}
                             <a className="account-icon wishlist" href="compare.html"><span className="number-tag">3</span>
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_452)">
@@ -289,50 +370,45 @@ const Header: React.FC = () => {
                 </div>
             </div>
             <div className="box-popup-cart perfect-scrollbar" style={{ visibility: isCartActice ? 'visible' : 'hidden' }}>
-                <div className="box-cart-overlay" />
-                <div className={`box-cart-wrapper ${isCartActice ? 'active' : ''}`}><a onClick={closeCartPopup} href="#">
-                    <svg className="icon-16 d-inline-flex align-items-center justify-content-center" fill="#111111" stroke="#111111" width={24} height={24} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg></a>
-                    <h5 className="mb-15 mt-50">Your Cart</h5>
-                    <div className="list-product-4 mb-50">
-                        <div className="cardProduct cardProduct4">
-                            <div className="cardImage"><a href="product-single.html"><img src={Product} alt="kidify" /></a></div>
-                            <div className="cardInfo"><a href="product-single.html">
-                                <h6 className="font-md-bold cardTitle">Toddler Tutu Dress</h6></a>
-                                <div className="rating"><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /></div>
-                                <div className="product-price-bottom">
-                                    <p className="font-lg cardDesc">$185.00</p>
-                                    <p className="font-lg neutral-500 cardPriceSale">$196.00</p>
-                                </div>
-                            </div>
+                <div className="box-cart-overlay">
+                    <div className={`box-cart-wrapper ${isCartActice ? 'active' : ''}`}>
+                        <a onClick={closeCartPopup} href="#">
+                            <svg className="icon-16 d-inline-flex align-items-center justify-content-center" fill="#111111" stroke="#111111" width={24} height={24} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </a>
+                        <h5 className="mb-15 mt-50">Your Cart</h5>
+                        <div className="list-product-4 mb-50">
+                            {(Array.isArray(itemsCart) && itemsCart.length > 0) ? (
+                                itemsCart.map((item: any) => (
+                                    <div key={item.id} className="cardProduct cardProduct4">
+                                        <div className="cardImage">
+                                            <Link to={`/product/${item.id}`}>
+                                                <img src={item.avatar || Product} alt={item.name} />
+                                            </Link>
+                                        </div>
+                                        <div className="cardInfo">
+                                            <Link to={`/product/${item.id}`}>
+                                                <h6 className="font-md-bold cardTitle">{item.name}</h6>
+                                            </Link>
+                                            <div className="product-price-bottom">
+                                                <p className="font-lg cardDesc">${item.price}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>Your cart is empty.</p>
+                            )}
+
                         </div>
-                        <div className="cardProduct cardProduct4">
-                            <div className="cardImage"><a href="product-single.html"><img src={ProductTwo} alt="kidify" /></a></div>
-                            <div className="cardInfo"><a href="product-single.html">
-                                <h6 className="font-md-bold cardTitle">Baby Bear Hoodie</h6></a>
-                                <div className="rating"><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /></div>
-                                <div className="product-price-bottom">
-                                    <p className="font-lg cardDesc">$185.00</p>
-                                    <p className="font-lg neutral-500 cardPriceSale">$196.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="cardProduct cardProduct4">
-                            <div className="cardImage"><a href="product-single.html"><img src={ProductThree} alt="kidify" /></a></div>
-                            <div className="cardInfo"><a href="product-single.html">
-                                <h6 className="font-md-bold cardTitle">Petite Pinafore Dress</h6></a>
-                                <div className="rating"><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /></div>
-                                <div className="product-price-bottom">
-                                    <p className="font-lg cardDesc">$185.00</p>
-                                    <p className="font-lg neutral-500 cardPriceSale">$196.00</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div><Link to='/cart' onClick={closeCartPopup} className="btn btn-brand-1-xl-bold w-100 font-md-bold">View your cart
-                        <svg className="icon-16 ml-5" fill="none" stroke="#ffffff" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-                        </svg></Link>
+                        <Link to='/cart' onClick={closeCartPopup} className="btn btn-brand-1-xl-bold w-100 font-md-bold">
+                            View your cart
+                            <svg className="icon-16 ml-5" fill="none" stroke="#ffffff" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                            </svg>
+                        </Link>
+                    </div>
                 </div>
             </div>
             <div className="box-popup-account" style={{ visibility: isAccountActive ? 'visible' : 'hidden', display: isAccountActive ? 'block' : 'none' }}>
@@ -358,23 +434,39 @@ const Header: React.FC = () => {
                             Sign Up
                         </a>
                         {activeTab === 'login' && (
-                            <div className="form-login">
-                                <div className="form-group">
-                                    <input className="form-control" type="text" placeholder="Email" />
+                            <form action="" onSubmit={handleLogin}>
+                                <div className="form-login">
+                                    <div className="form-group">
+                                        <input
+                                            className="form-control"
+                                            type="email"
+                                            placeholder="Email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+
+                                    </div>
+                                    <div className="form-group">
+                                        <input
+                                            className="form-control"
+                                            type="password"
+                                            placeholder="Password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <a className="brand-1 font-sm buttun-forgotpass" href="#">Forgot your password?</a>
+                                    </div>
+                                    <div className="form-group">
+                                        <button className="btn btn-login d-block" disabled={loading}>{loading ? 'Login...' : 'Login'}</button>
+                                    </div>
+                                    <div className="form-group mt-100 text-center">
+                                        <a className="font-sm" href="#">Privacy &amp; Terms</a>
+                                    </div>
                                 </div>
-                                <div className="form-group">
-                                    <input className="form-control" type="password" placeholder="Password" />
-                                </div>
-                                <div className="form-group">
-                                    <a className="brand-1 font-sm buttun-forgotpass" href="#">Forgot your password?</a>
-                                </div>
-                                <div className="form-group">
-                                    <button className="btn btn-login d-block">Login</button>
-                                </div>
-                                <div className="form-group mt-100 text-center">
-                                    <a className="font-sm" href="#">Privacy &amp; Terms</a>
-                                </div>
-                            </div>
+                            </form>
+
                         )}
 
                         {activeTab === 'signup' && (
