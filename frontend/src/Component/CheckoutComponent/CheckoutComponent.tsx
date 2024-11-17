@@ -1,95 +1,83 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { notification } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../Redux/store';
-import { fetchPaymentMethods } from '../../Redux/Reducer/PaymentMethodReducer';
-import { postShipAddress, ShipAddress } from '../../Redux/Reducer/ShipAddressReducer';
-import { Order, postOrder } from '../../Redux/Reducer/OrderReducer';
-import { clearCart } from '../../Redux/Reducer/CartReducer'; // Import clearCart action
+import { fetchCart } from '../../Redux/Reducer/CartReducer';
+import { postShipAddress } from '../../Redux/Reducer/ShipAddressReducer';
+import { postOrder } from '../../Redux/Reducer/OrderReducer';
 
 const CheckoutComponent: React.FC = () => {
   const dispatch = useAppDispatch();
-  const location = useLocation();
-  const { items } = location.state || { items: [] };
-  const subtotal = items.reduce((acc: number, item: any) => acc + (Number(item.price) * Number(item.pivot.quantity)), 0).toLocaleString();
-  const total = subtotal;
-  const navigate = useNavigate();
+  const { userId } = useParams<{ userId: string }>();
+  const { cart } = useSelector((state: RootState) => state.cart);
   const paymentMethod = useSelector((state: RootState) => state.paymentMethod.methods);
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const [formData, setFormData] = useState<ShipAddress>({
-    recipient_name: '',
-    email: '',
-    phone_number: '',
-    ship_address: '',
-    user_id: user.id || null,
-  });
 
-  const [orderData, setOrderData] = useState<Order>({
-    user_id: user.id,
-    total_amount: parseFloat(total.replace(/,/g, '')),
-    ship_method: 1,
-    payment_method_id: 1,
-    ship_address_id: 1,
-    status: 1,
-    order_details: []
-  });
+  const [checkoutCart, setCheckoutCart] = useState(cart);
+  const [recipientName, setRecipientName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [shipAddress, setShipAddress] = useState('');
+  const [paymentMethodId, setPaymentMethodId] = useState<number>(1);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    if (name === 'payment_method') {
-      const paymentMethodId = Number(value);
-      setOrderData((prev) => ({ ...prev, payment_method_id: paymentMethodId }));
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchCart(Number(userId)));
     }
-  };
+  }, [dispatch, userId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    setCheckoutCart(cart);
+  }, [cart]);
+
+  const subtotal = checkoutCart?.items.reduce((total, item) => total + item.price * item.quantity, 0) || 0;
+  const total = subtotal;
+
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user.id ? user.id.toString() : '';
+    const addressData = {
+      user_id: userId,
+      recipient_name: recipientName,
+      is_default: true,
+      ship_address: shipAddress,
+      phone_number: phoneNumber,
+    };
+    console.log('Address Data:', addressData);
     try {
-      const shipAddressResponse = await dispatch(postShipAddress(formData)).unwrap();
-      const shipAddressId = shipAddressResponse.id;
-      const updatedOrderData = {
-        ...orderData,
-        ship_address_id: shipAddressId,
-        order_details: items.map((item: any) => ({
-          product_detail_id: item.id,
-          quantity: item.pivot.quantity,
-          price: item.price,
-          name_product: item.name,
-          size: item.size || '',
-          color: item.color || '',
-          total: item.pivot.quantity * Number(item.price)
-        }))
+      const shipAddressResponse = await dispatch(postShipAddress(addressData)).unwrap();
+      console.log('Ship Address Response:', shipAddressResponse);
+      const orderData = {
+        user_id: userId,
+        total_amount: total,
+        ship_address_id: shipAddressResponse.id,
+        phone_number: phoneNumber,
+        subtotal,
+        total,
+        status: 1,
+        ship_method: 1,
+        payment_method_id: paymentMethodId
       };
 
-      console.log('Dữ liệu gửi đi:', updatedOrderData);
-      await dispatch(postOrder(updatedOrderData)).unwrap();
+      console.log('Order Data:', orderData);
+      await dispatch(postOrder(orderData)).unwrap();
       notification.success({
+        message: 'Đặt hàng  thành công',
+        description: 'Cảm ơn bạn đã tin tưởng sản phảm bên chúng tôi',
+      });
 
-        message: 'Bạn đã đặt hàng thành công'
-      })
-      dispatch(clearCart());
-      navigate('/product');
-
-    } catch (error) {
-      console.error('Đã xảy ra lỗi:', error);
+    } catch (err) {
       notification.error({
-        message: 'Có lỗi xảy ra khi thêm đơn hàng.',
-        description: 'Vui lòng kiểm tra lại thông tin và thử lại.'
+        message: 'Error',
+        description: 'There was an issue placing your order. Please try again.',
       });
     }
   };
 
-  useEffect(() => {
-    dispatch(fetchPaymentMethods());
-  }, [dispatch]);
-
   return (
     <main className="main">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handlePlaceOrder}>
         <section className="section block-blog-single block-cart">
           <div className="container">
             <div className="top-head-blog">
@@ -119,7 +107,8 @@ const CheckoutComponent: React.FC = () => {
                           type="text"
                           name="recipient_name"
                           placeholder="Fullname *"
-                          onChange={handleChange}
+                          value={recipientName}
+                          onChange={(e) => setRecipientName(e.target.value)}
                           required
                         />
                       </div>
@@ -131,7 +120,8 @@ const CheckoutComponent: React.FC = () => {
                           type="email"
                           name="email"
                           placeholder="Email *"
-                          onChange={handleChange}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           required
                         />
                       </div>
@@ -143,7 +133,8 @@ const CheckoutComponent: React.FC = () => {
                           type="tel"
                           name="phone_number"
                           placeholder="Phone Number *"
-                          onChange={handleChange}
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
                           required
                         />
                       </div>
@@ -155,15 +146,22 @@ const CheckoutComponent: React.FC = () => {
                           type="text"
                           name="ship_address"
                           placeholder="Address *"
-                          onChange={handleChange}
+                          value={shipAddress}
+                          onChange={(e) => setShipAddress(e.target.value)}
                           required
                         />
                       </div>
                     </div>
-                    <div className="col-lg-12">
+                    {/* <div className="col-lg-12">
                       <div className="form-group">
-                        <select name="payment_method" className='form-control' onChange={handleChange} required>
-                          <option value="" disabled selected>Select Payment Method</option>
+                        <select
+                          name="payment_method"
+                          className="form-control"
+                          value={paymentMethodId}
+                          onChange={(e) => setPaymentMethodId(Number(e.target.value))}
+                          required
+                        >
+                          <option value="" disabled>Select Payment Method</option>
                           {paymentMethod.map((method) => (
                             <option key={method.id} value={method.id}>
                               {method.name}
@@ -171,7 +169,7 @@ const CheckoutComponent: React.FC = () => {
                           ))}
                         </select>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="row">
                     <div className="col-lg-12 mt-40">
@@ -190,27 +188,34 @@ const CheckoutComponent: React.FC = () => {
                       <span className="font-xl-bold">Quantity</span>
                       <span className="font-xl-bold">Price</span>
                     </div>
-                    {items.map((item: any) => (
-                      <div key={item.id} className="box-list-item-checkout">
-                        <div className="item-checkout">
-                          <span className="title-item">{item.name}</span>
-                          <span className="num-item">x{item.pivot.quantity}</span>
-                          <span className="price-item font-md-bold">${item.price}</span>
+                    {checkoutCart?.items && checkoutCart.items.length > 0 ? (
+                      checkoutCart.items.map((item) => (
+                        <div key={item.id} className="box-list-item-checkout">
+                          <div className="item-checkout">
+                            <span className="title-item">{item.product.name}</span>
+                            <span className="num-item">x{item.quantity}</span>
+                            <span className="price-item font-md-bold">
+                              {(item.price * item.quantity).toLocaleString('vi-VN')} VND
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <div>No items in your cart</div>
+                    )}
+
                     <div className="box-footer-checkout">
                       <div className="item-checkout justify-content-between">
                         <span className="font-xl-bold">Subtotal</span>
-                        <span className="font-md-bold">{subtotal} VND</span>
+                        <span className="font-md-bold">{subtotal.toLocaleString('vi-VN')} VND</span>
                       </div>
                       <div className="item-checkout justify-content-between">
                         <span className="font-sm">Shipping</span>
-                        <span className="font-md-bold">0</span>
+                        <span className="font-md-bold">0 VND</span>
                       </div>
                       <div className="item-checkout justify-content-between">
                         <span className="font-sm">Total</span>
-                        <span className="font-xl-bold">{total} VND</span>
+                        <span className="font-xl-bold">{total.toLocaleString('vi-VN')} VND</span>
                       </div>
                     </div>
                     <button type="submit" className="btn btn-brand-1-xl-bold w-100 font-md-bold">

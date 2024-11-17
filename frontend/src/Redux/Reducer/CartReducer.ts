@@ -1,131 +1,173 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export interface ProductDetail {
+export interface CartItem {
+  id: number;
+  product_id: number;
+  cart_id: number;
+  product_name: string;
+  quantity: number;
+  price: number;
+  total: number;
+  product: {
     id: number;
-    product_id: number;
-    size_id: number;
-    color_id: number;
-    quantity: number;
-    sell_quantity: number;
-    number_statictis: number;
-    avatar: string;
     name: string;
-    color: string;
-    size: string;
-    price: string;
-    pivot: {
-        cart_id: number;
-        product_detail_id: number;
-        quantity: number;
-    };
+    avatar: string;
+    price: number;
+  };
+}
+
+interface Cart {
+  id: number;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  items: CartItem[]; 
 }
 
 interface CartState {
-    items: ProductDetail[];
-    loading: boolean;
-    error: string | null;
+  cart: Cart | null;
+  items: CartItem[];
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
 }
 
 const initialState: CartState = {
-    items: [],
-    loading: false,
-    error: null,
+  cart: JSON.parse(localStorage.getItem('cartItems') || '[]'),
+  items: [],
+  status: 'idle',
+  error: null,
 };
 
-// Thunk để lấy giỏ hàng
-export const fetchCart = createAsyncThunk(
-    'cart/fetchCart',
-    async (userId: number, { rejectWithValue }) => {
-        try {
-            const response = await axios.get(`http://localhost:8000/api/carts/${userId}`);
-            return response.data.data.product_details; 
-        } catch (error) {
-            return rejectWithValue('Failed to fetch cart');
-        }
+export const fetchCart = createAsyncThunk<Cart, number, { rejectValue: string }>(
+  'cart/fetchCart',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/cart/${userId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart');
+      }
+      const data = await response.json();
+      return data.cart;
+    } catch (error) {
+      return rejectWithValue('Error fetching cart');
     }
+  }
 );
 
-// Thunk để thêm sản phẩm vào giỏ hàng
-export const addToCart = createAsyncThunk(
-    'cart/addToCart',
-    async (
-        { product_detail_id, user_id, quantity }: { product_detail_id: number; user_id: number; quantity: number },
-        { rejectWithValue }
-    ) => {
-        try {
-            const response = await axios.post('http://localhost:8000/api/carts', {
-                product_detail_id,
-                user_id,
-                quantity,
-            });
-            return response.data; // Thay đổi theo cấu trúc API của bạn
-        } catch (error) {
-            return rejectWithValue('Failed to add to cart');
-        }
-    }
-);
-
-export const removeFromCart = createAsyncThunk(
-    'cart/removeFromCart',
-    async ({ cartId, productDetailId }: { cartId: number; productDetailId: number }) => {
-        const response = await axios.delete(`http://127.0.0.1:8000/api/carts/destroyOne/${cartId}&${productDetailId}`);
-        return response.data; 
-    }
-);
-
-// Tạo slice cho giỏ hàng
-const CartReducer = createSlice({
-    name: 'cart',
-    initialState,
-    reducers: {
-        clearCart(state) {
-            state.items = [];
-        },
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(addToCart.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(addToCart.fulfilled, (state, action) => {
-                state.loading = false;
-                state.items.push(action.payload);
-            })
-            .addCase(addToCart.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string;
-            })
-            .addCase(fetchCart.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchCart.fulfilled, (state, action) => {
-                state.loading = false;
-                state.items = action.payload;
-            })
-            .addCase(fetchCart.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string;
-            })
-            .addCase(removeFromCart.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(removeFromCart.fulfilled, (state, action) => {
-                state.loading = false;
-                state.items = state.items.filter(
-                    (item) => item.id !== action.payload
-                );
-            })
-            .addCase(removeFromCart.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string;
-            });
-    },
+export const addToCart = createAsyncThunk<
+  CartItem,
+  { productId: number; quantity: number },
+  { rejectValue: { message: string } }
+>('cart/addToCart', async ({ productId, quantity }, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      'http://127.0.0.1:8000/api/carts',
+      { product_id: productId, quantity },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data as CartItem;
+  } catch (error: any) {
+    return rejectWithValue(error.response.data);
+  }
 });
 
-// Xuất ra action và reducer
-export const { clearCart } = CartReducer.actions;
+export const updateCartItem = createAsyncThunk<
+  CartItem,
+  { cartId: number; productId: number; quantity: number },
+  { rejectValue: string }
+>(
+  'cart/updateCartItem',
+  async ({ cartId, productId, quantity }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/cart/${cartId}/update/${productId}`,
+        { quantity },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return response.data.cart_item;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message || 'Error updating cart item');
+    }
+  }
+);
+
+// Slice
+const CartReducer = createSlice({
+  name: 'cart',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCart.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(fetchCart.fulfilled, (state, action: PayloadAction<Cart>) => {
+        state.status = 'succeeded';
+        state.cart = action.payload;
+      })
+      .addCase(fetchCart.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(addToCart.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(addToCart.fulfilled, (state, action: PayloadAction<CartItem>) => {
+        state.status = 'succeeded';
+
+        const existingItem = state.items.find(
+          (item) => item.product_id === action.payload.product_id
+        );
+
+        if (existingItem) {
+          existingItem.quantity = action.payload.quantity;
+          existingItem.total = action.payload.total;
+        } else {
+          state.items.push(action.payload);
+          localStorage.setItem('cartItems', JSON.stringify(state.items));
+        }
+      })
+      .addCase(addToCart.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload?.message || 'Đã xảy ra lỗi';
+      })
+      .addCase(updateCartItem.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateCartItem.fulfilled, (state, action: PayloadAction<CartItem>) => {
+        state.status = 'succeeded';
+        if (state.cart) {
+          const cartItemIndex = state.cart.items.findIndex(
+            (item) => item.product_id === action.payload.product_id
+          );
+          if (cartItemIndex !== -1) {
+            state.cart.items[cartItemIndex] = {
+              ...state.cart.items[cartItemIndex],
+              quantity: action.payload.quantity,
+              total: action.payload.total,
+            };
+          }
+          const itemIndex = state.items.findIndex(
+            (item) => item.product_id === action.payload.product_id
+          );
+          if (itemIndex !== -1) {
+            state.items[itemIndex] = {
+              ...state.items[itemIndex],
+              quantity: action.payload.quantity,
+              total: action.payload.total,
+            };
+          }
+        }
+      })
+      .addCase(updateCartItem.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      });
+  },
+});
+
 export default CartReducer.reducer;

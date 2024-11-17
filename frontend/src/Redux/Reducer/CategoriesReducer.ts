@@ -25,22 +25,22 @@ export interface Product {
     price: number;
     description: string;
     avatar: string
-    colors: Colors[]; 
-    sizes: Sizes[]; 
+    colors: Colors[];
+    sizes: Sizes[];
 }
 
 interface CategoryState {
     categories: Category[];
     products: Product[];
     loading: boolean;
-    activeTab: string; 
+    activeTab: string;
 }
 
 const initialState: CategoryState = {
     categories: [],
     products: [],
     loading: false,
-    activeTab: 'all', 
+    activeTab: 'all',
 };
 
 export const fetchCategories = createAsyncThunk('categories/fetch', async () => {
@@ -51,7 +51,7 @@ export const fetchCategories = createAsyncThunk('categories/fetch', async () => 
 export const fetchProductsByCategory = createAsyncThunk(
     'products/fetchByCategory',
     async (categoryId: number) => {
-        const response = await axios.get<Product[]>(`http://127.0.0.1:8000/api/categories/${categoryId}/products`);
+        const response = await axios.get<Product[]>(`http://127.0.0.1:8000/api/products/category/${categoryId}`);
         return response.data;
     }
 );

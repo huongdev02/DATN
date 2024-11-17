@@ -11,7 +11,9 @@ use App\Http\Controllers\Api\PayController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PromotionController;
+use App\Http\Controllers\Api\ShipAddressController;
 use App\Http\Controllers\UserController;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +31,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('/cart/{user_id}', [CartController::class, 'getCartByUserId']);
+Route::put('/cart/{cartId}/update/{productId}', [CartController::class, 'updateCartItem']);
 Route::apiResource('carts', CartController::class)->middleware('auth:sanctum');
 Route::apiResource('orders', OrderController::class)->middleware('auth:sanctum');
 Route::get('categories/{category}/products', [ProductController::class, 'getProductsByCategory']);
@@ -38,7 +42,7 @@ Route::apiResource('vouchers', VoucherController::class);
 Route::apiResource('payments', PayController::class);
 Route::resource('promotions', PromotionController::class);
 Route::apiResource('categories', CategoryController::class);
-
+Route::get('products/category/{categoryId}', [CategoryController::class, 'productsByCategory']); 
 Route::controller(AccountController::class)->group(function () {
     Route::post('login', 'login')->name('login');
     Route::post('/logout',  'logout')->middleware('auth:sanctum');
@@ -47,3 +51,5 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 Route::get('/auth/check', [AccountController::class, 'checkAuth']);
+
+Route::post('ship_addresses', [ShipAddressController::class, 'store']); 

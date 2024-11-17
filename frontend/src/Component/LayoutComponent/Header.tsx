@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import Logo from '../../assets/imgs/template/logo.svg'
-import Product from "../../assets/imgs/page/homepage1/product24.png";
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../Redux/store';
 import { login } from '../../Redux/Reducer/AuthReducer';
-import { Button, Dropdown, Flex, MenuProps, notification, Space } from 'antd';
+import {notification } from 'antd';
+import { CartItem } from '../../Redux/Reducer/CartReducer';
 
 interface User {
     id: number;
@@ -20,14 +20,18 @@ const Header: React.FC = () => {
     const [isCartActice, setIsCartActice] = useState(false);
     const [isAccountActive, setIsAccountActive] = useState(false);
     const [activeTab, setActiveTab] = useState('login');
-    const itemsCart = useSelector((state: RootState) => state.cart.items);
-    console.log(itemsCart);
     const dispatch = useDispatch<AppDispatch>();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const loading = useSelector((state: RootState) => state.auth.loading);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null)
+    const { cart } = useSelector((state: RootState) => state.cart);
+    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');  
+    const cartLength = cartItems.length;  
+    
+    console.log(cartLength);  
+    
     useEffect(() => {
         const userData = localStorage.getItem('user');
         if (userData) {
@@ -75,6 +79,8 @@ const Header: React.FC = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('cart');
         setIsLoggedIn(false);
         notification.success({
             message: 'Đăng xuất thành công'
@@ -214,7 +220,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-                            <Link to='/cart' className="account-icon cart" onClick={openCartPopup}><span className="number-tag">5</span>
+                            <Link to='/cart' className="account-icon cart" onClick={openCartPopup}><span className="number-tag">{cartLength}</span>
                                 <svg width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_450)">
                                         <path d="M9 10V8C9 6.67392 9.52678 5.40215 10.4645 4.46447C11.4021 3.52678 12.6739 3 14 3C15.3261 3 16.5979 3.52678 17.5355 4.46447C18.4732 5.40215 19 6.67392 19 8V10H22C22.2652 10 22.5196 10.1054 22.7071 10.2929C22.8946 10.4804 23 10.7348 23 11V23C23 23.2652 22.8946 23.5196 22.7071 23.7071C22.5196 23.8946 22.2652 24 22 24H6C5.73478 24 5.48043 23.8946 5.29289 23.7071C5.10536 23.5196 5 23.2652 5 23V11C5 10.7348 5.10536 10.4804 5.29289 10.2929C5.48043 10.1054 5.73478 10 6 10H9ZM9 12H7V22H21V12H19V14H17V12H11V14H9V12ZM11 10H17V8C17 7.20435 16.6839 6.44129 16.1213 5.87868C15.5587 5.31607 14.7956 5 14 5C13.2044 5 12.4413 5.31607 11.8787 5.87868C11.3161 6.44129 11 7.20435 11 8V10Z" />
@@ -379,20 +385,22 @@ const Header: React.FC = () => {
                         </a>
                         <h5 className="mb-15 mt-50">Your Cart</h5>
                         <div className="list-product-4 mb-50">
-                            {(Array.isArray(itemsCart) && itemsCart.length > 0) ? (
-                                itemsCart.map((item: any) => (
+                            {cart?.items && cart.items.length > 0 ? (
+                                cart?.items.map((item: CartItem) => (
                                     <div key={item.id} className="cardProduct cardProduct4">
                                         <div className="cardImage">
                                             <Link to={`/product/${item.id}`}>
-                                                <img src={item.avatar || Product} alt={item.name} />
+                                                <img src={`http://127.0.0.1:8000/storage/${item.product.avatar}` || 'default-image.jpg'} alt={item.product.name} />
                                             </Link>
                                         </div>
                                         <div className="cardInfo">
                                             <Link to={`/product/${item.id}`}>
-                                                <h6 className="font-md-bold cardTitle">{item.name}</h6>
+                                                <h6 className="font-md-bold cardTitle">{item.product.name}</h6>
                                             </Link>
                                             <div className="product-price-bottom">
-                                                <p className="font-lg cardDesc">${item.price}</p>
+                                                <p className="font-lg cardDesc">
+                                                    {item.price.toLocaleString('vi-VN')}VNĐ x {item.quantity}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -400,7 +408,6 @@ const Header: React.FC = () => {
                             ) : (
                                 <p>Your cart is empty.</p>
                             )}
-
                         </div>
                         <Link to='/cart' onClick={closeCartPopup} className="btn btn-brand-1-xl-bold w-100 font-md-bold">
                             View your cart

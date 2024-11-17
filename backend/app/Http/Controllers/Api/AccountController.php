@@ -19,57 +19,60 @@ class AccountController extends Controller
 {
 
 
-    public function login(Request $request)
-    {
-        try {
-            $credentials = $request->validate([
-                'account' => 'required',
-                'password' => 'required',
-            ]);
+   public function login(Request $request)
+{
+    try {
+        // Validate input
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-            $loginType = filter_var($credentials['account'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        // Kiểm tra xem có tồn tại tài khoản với email và mật khẩu không
+        if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], true)) {
+            $request->session()->regenerate();
 
-            if (Auth::attempt([$loginType => $credentials['account'], 'password' => $credentials['password']], true)) {
-                $request->session()->regenerate();
-                /**
-                 * @var User $user
-                 */
-                $user = Auth::user();
-                if ($user->is_active == 0) {
-                    Auth::logout();
-                    return response()->json([
-                        'error' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.'
-                    ], 403);
-                }
-
-                $token = $user->createToken('API Token')->plainTextToken;
-                $pureToken = explode('|', $token)[1];
-
+            // Lấy thông tin người dùng đã đăng nhập
+            $user = Auth::user();
+            
+            // Kiểm tra trạng thái tài khoản
+            if ($user->is_active == 0) {
+                Auth::logout();
                 return response()->json([
-                    'status' => true,
-                    'message' => 'Đăng nhập thành công',
-                    'data' => [
-                        'id'        => $user->id,
-                        'email'     => $user->email,
-                        'name'      => $user->fullname,
-                        'birth_day' => $user->birth_day,
-                        'phone'     => $user->phone,
-                        'address'   => $user->address,
-                        'role'      => $user->role,
-                        'is_active' => $user->is_active,
-                        'avatar'    => $user->avatar ? asset('storage/' . $user->avatar) : null,
-                        'token'     => $pureToken
-                    ]
-                ], 200);
+                    'error' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.'
+                ], 403);
             }
 
+            // Tạo token cho người dùng
+            $token = $user->createToken('API Token')->plainTextToken;
+
+            // Trả về dữ liệu người dùng và token
             return response()->json([
-                'error' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu'
-            ], 401);
-        } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+                'status' => true,
+                'message' => 'Đăng nhập thành công',
+                'data' => [
+                    'id'        => $user->id,
+                    'email'     => $user->email,
+                    'name'      => $user->fullname,
+                    'birth_day' => $user->birth_day,
+                    'phone'     => $user->phone,
+                    'address'   => $user->address,
+                    'role'      => $user->role,
+                    'is_active' => $user->is_active,
+                    'avatar'    => $user->avatar ? asset('storage/' . $user->avatar) : null,
+                    'token'     => $token, // Gửi token đầy đủ
+                ]
+            ], 200);
         }
+
+        return response()->json([
+            'error' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu'
+        ], 401);
+    } catch (Throwable $e) {
+        return response()->json(['error' => $e->getMessage()], 400);
     }
+}
+
 
     public function show($userId)
     {

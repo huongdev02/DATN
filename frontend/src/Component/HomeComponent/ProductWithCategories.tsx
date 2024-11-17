@@ -22,6 +22,8 @@ import { Link } from 'react-router-dom';
 const ProductWithCategories: React.FC = () => {
     const dispatch = useAppDispatch();
     const products = useSelector((state: RootState) => state.products.products);
+    console.log(products);
+    
     useEffect(() => {
         dispatch(fetchProducts());
     }, [dispatch]);

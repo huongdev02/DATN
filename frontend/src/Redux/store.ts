@@ -16,7 +16,7 @@ export const store = configureStore({
         shipAdress: ShipAddressReducer,
         order: OrderReducer,
         categories: CategoryReducer,
-        auth: AuthReducer
+        auth: AuthReducer,
     },
 });
 

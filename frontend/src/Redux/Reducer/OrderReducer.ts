@@ -36,9 +36,28 @@ const initialState: OrderState = {
 
 export const postOrder = createAsyncThunk<Order, Order>(
   'order/postOrder',
-  async (orderData: Order) => {
-    const response = await axios.post('http://127.0.0.1:8000/api/orders', orderData);
-    return response.data; 
+  async (orderData: Order, { rejectWithValue }) => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      return rejectWithValue('No token found');
+    }
+
+    try {
+      const response = await axios.post(
+        'http://127.0.0.1:8000/api/orders',
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
+      );
+      return response.data; 
+    } catch (error: any) {
+      console.error('Error posting order:', error);
+      return rejectWithValue(error.response?.data || 'Something went wrong');
+    }
   }
 );
 

@@ -2,14 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Star from "../../assets/imgs/template/icons/star.svg";
 import { useAppDispatch } from '../../Redux/store';
-import { addToCart } from '../../Redux/Reducer/CartReducer';
 import axios from 'axios';
-import ProductThumb from '../../assets/imgs/page/product/thumnb.png'
-import ProductThumbTwo from '../../assets/imgs/page/product/thumnb2.png'
-import ProductThumbThree from '../../assets/imgs/page/product/thumnb3.png'
-import ProductThumbFour from '../../assets/imgs/page/product/thumnb4.png'
-import ProductThumbFive from '../../assets/imgs/page/product/thumnb5.png'
 import { notification } from 'antd';
+import { addToCart } from '../../Redux/Reducer/CartReducer';
 
 const ProductDetailComponent: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -21,13 +16,12 @@ const ProductDetailComponent: React.FC = () => {
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [quantity, setQuantity] = useState<number>(1);
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const displayedColors = new Set();
-    const displayedSizes = new Set();
-    const handleThumbnailClick = (index: any) => {
-        setSelectedIndex(index);
-    };
-
     const navigate = useNavigate();
+
+
+    const convertToVND = (usdPrice: number) => {
+        return (usdPrice).toLocaleString('vi-VN');
+    };
 
     const handleIncrease = () => {
         setQuantity(prevQuantity => prevQuantity + 1);
@@ -35,6 +29,10 @@ const ProductDetailComponent: React.FC = () => {
 
     const handleDecrease = () => {
         setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1));
+    };
+
+    const handleThumbnailClick = (index: number) => {
+        setSelectedIndex(index);
     };
 
     useEffect(() => {
@@ -52,18 +50,66 @@ const ProductDetailComponent: React.FC = () => {
         fetchProductDetail();
     }, [id]);
 
-    const handleAddToCart = (product_detail_id: number) => {
+    const saveCartToLocalStorage = (cart: any) => {
+        localStorage.setItem('cart', JSON.stringify(cart));
+      };
+
+    const handleAddToCart = async () => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        dispatch(addToCart({ product_detail_id, user_id: user.id, quantity }));
-        notification.success({
-            message: 'Sản Phẩm đã được thêm vào giỏ hàng'
-        })
-        navigate('/product');
+        const token = localStorage.getItem('token');
+
+        if (!user?.id) {
+            notification.error({
+                message: 'Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!',
+            });
+            navigate('/login');
+            return;
+        }
+
+        if (!token) {
+            notification.error({
+                message: 'Token không hợp lệ. Vui lòng đăng nhập lại!',
+            });
+            return;
+        }
+
+        if (!selectedSize || !selectedColor) {
+            notification.warning({
+                message: 'Vui lòng chọn kích thước và màu sắc trước khi thêm vào giỏ hàng!',
+            });
+            return;
+        }
+
+        try {
+            const cartData = {
+                user_id: user.id,
+                productId: product.id,
+                quantity,
+                price: product.price,
+                size: selectedSize,
+                color: selectedColor,
+            };
+
+            await dispatch(addToCart(cartData));
+            saveCartToLocalStorage(cartData);
+            notification.success({
+                message: 'Sản phẩm đã được thêm vào giỏ hàng!',
+            });
+        } catch (error) {
+            console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
+            notification.error({
+                message: 'Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!',
+            });
+        }
     };
+
+
+
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
     if (!product) return <div>Product not found.</div>;
+
     return (
         <>
             <main className="main">
@@ -88,7 +134,7 @@ const ProductDetailComponent: React.FC = () => {
                                             product.galleries.map((gallery: any, index: any) => (
                                                 <div key={gallery.id} onClick={() => handleThumbnailClick(index)}>
                                                     <div className="item-thumb">
-                                                        <img src={`http://localhost:8000/storage/${gallery.image_path}`} alt="Thumbnail" />
+                                                        <img src={`${gallery.image_path}`} alt="Thumbnail" />
                                                     </div>
                                                 </div>
                                             ))
@@ -103,9 +149,10 @@ const ProductDetailComponent: React.FC = () => {
                                                 <a className="glightbox">
                                                     <img
                                                         width={'100%'}
-                                                        src={`http://localhost:8000/storage/${product.galleries[selectedIndex]?.image_path || product.product.avatar
-                                                            }`}
-                                                        alt="kidify"
+                                                        src={product.galleries && product.galleries[selectedIndex]
+                                                            ? `${product.galleries[selectedIndex].image_path}`
+                                                            : product.avatar}
+                                                        alt={product.name}
                                                     />
                                                 </a>
                                             </figure>
@@ -116,7 +163,7 @@ const ProductDetailComponent: React.FC = () => {
                             <div className="col-lg-5 box-images-product-middle">
                                 <div className="box-product-info">
                                     <label className="flash-sale-red">Extra 2% off</label>
-                                    <h2 className="font-2xl-bold">{product.product.name}</h2>
+                                    <h2 className="font-2xl-bold">{product.name}</h2>
 
                                     <div className="block-rating">
                                         {[...Array(5)].map((_, index) => (
@@ -125,70 +172,52 @@ const ProductDetailComponent: React.FC = () => {
                                         <span className="font-md neutral-500">(14 Reviews - 25 Orders)</span>
                                     </div>
                                     <div className="block-price">
-                                        <span className="price-main">{product.product.price}</span>
-                                        <span className="price-line">$25.00</span>
+                                        <span className="price-main">{(product.price).toLocaleString('vi-VN')} VND</span>
                                     </div>
                                     <div className="block-view">
-                                        <p className="font-md neutral-900">{product.product.description}</p>
+                                        <p className="font-md neutral-900">{product.description}</p>
                                     </div>
 
                                     <div className="block-color">
                                         <span>Color:</span>
-                                        <label>{selectedColor || ''}</label>
+                                        <label>{selectedColor || 'Chọn Màu'}</label>
                                         <ul className="list-color">
-                                            {product.product_details.map((detail: any) => {
-                                                if (displayedColors.has(detail.color)) {
-                                                    return null;
-                                                }
-                                                displayedColors.add(detail.color);
-
-                                                return (
-                                                    <button
-                                                        key={detail.id}
-                                                        style={{
-                                                            padding: '10px 15px',
-                                                            border: '1px solid #ebebeb',
-                                                            background: 'none',
-                                                            margin: '0 5px 0 0',
-                                                            cursor: 'pointer',
-                                                        }}
-                                                        onClick={() => setSelectedColor(detail.color)}
-                                                    >
-                                                        {detail.color}
-                                                    </button>
-                                                );
-                                            })}
-
-
+                                            {product.colors.map((color: any) => (
+                                                <button
+                                                    key={color.id}
+                                                    style={{
+                                                        padding: '10px 15px',
+                                                        border: '1px solid #ebebeb',
+                                                        background: selectedColor === color.name_color ? '#ddd' : 'none',
+                                                        margin: '0 5px 0 0',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    onClick={() => setSelectedColor(color.name_color)}
+                                                >
+                                                    {color.name_color}
+                                                </button>
+                                            ))}
                                         </ul>
                                     </div>
                                     <div className="block-size">
                                         <span>Size:</span>
-                                        <label>{selectedSize || ''}</label>
+                                        <label>{selectedSize || 'Chọn Size'}</label>
                                         <div className="list-sizes">
-                                            {product.product_details.map((detail: any) => {
-                                                if (displayedSizes.has(detail.size)) {
-                                                    return null;
-                                                }
-                                                displayedSizes.add(detail.size);
-
-                                                return (
-                                                    <button
-                                                        key={detail.id}
-                                                        style={{
-                                                            padding: '10px 15px',
-                                                            border: '1px solid #ebebeb',
-                                                            background: 'none',
-                                                            margin: '0 5px 0 0',
-                                                            cursor: 'pointer',
-                                                        }}
-                                                        onClick={() => setSelectedSize(detail.size)}
-                                                    >
-                                                        {detail.size}
-                                                    </button>
-                                                );
-                                            })}
-
+                                            {product.sizes.map((size: any) => (
+                                                <button
+                                                    key={size.id}
+                                                    style={{
+                                                        padding: '10px 15px',
+                                                        border: '1px solid #ebebeb',
+                                                        background: selectedSize === size.size ? '#ddd' : 'none',
+                                                        margin: '0 5px 0 0',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    onClick={() => setSelectedSize(size.size)}
+                                                >
+                                                    {size.size}
+                                                </button>
+                                            ))}
                                         </div>
                                     </div>
                                     <div className="block-quantity">
@@ -204,13 +233,10 @@ const ProductDetailComponent: React.FC = () => {
                                                 />
                                                 <button className="plus" onClick={handleIncrease}>+</button>
                                             </div>
-                                            {product.product_details.length > 0 && (
-                                                <div key={product.product_details[0].id}>
-                                                    <button className="btn btn-brand-1-border" onClick={() => handleAddToCart(product.product_details[0].id)}>Add to Cart</button>
-                                                </div>
-                                            )}
+                                            <button onClick={() => handleAddToCart()} disabled={!selectedColor || !selectedSize}>
+                                                Add to Cart
+                                            </button>
                                         </div>
-
                                     </div>
                                     <div className="box-product-tag d-flex justify-content-between align-items-end">
                                         <div className="box-tag-left">
@@ -231,6 +257,5 @@ const ProductDetailComponent: React.FC = () => {
         </>
     );
 };
-
 
 export default ProductDetailComponent;

@@ -4,10 +4,10 @@ import axios from 'axios';
 
 export interface ShipAddress {
     recipient_name: string;
-    email: string;
     phone_number: string;
     ship_address: string;
-    user_id?: string | null;
+    is_default: boolean;
+    user_id: string | null;
 }
 
 interface ShipAddressState {
@@ -24,11 +24,26 @@ const initialState: ShipAddressState = {
 
 export const postShipAddress = createAsyncThunk(
     'shipAddress/post',
-    async (data: { recipient_name: string; email: string; phone_number: string; ship_address: string }) => {
-        const response = await axios.post('http://127.0.0.1:8000/api/ship_addresses', data);
-        return response.data;
+    async (data: {
+      recipient_name: string;
+      phone_number: string;
+      ship_address: string;
+      is_default: boolean;
+    }) => {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(
+            'http://127.0.0.1:8000/api/ship_addresses',
+            data,
+            {
+              headers: {
+                Authorization: `Bearer ${token}` 
+              }
+            }
+          );
+      console.log('Response from server:', response); 
+      return response.data; 
     }
-);
+  );
 
 const ShipAddressReducer = createSlice({
     name: 'shipAddress',
@@ -51,5 +66,4 @@ const ShipAddressReducer = createSlice({
     },
 });
 
-// Xuất reducer và action (nếu cần)
 export default ShipAddressReducer.reducer;
