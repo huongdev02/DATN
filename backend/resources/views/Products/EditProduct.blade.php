@@ -44,13 +44,13 @@
 
     <div class="mb-3">
         <label for="import_price">Import Price:</label>
-        <input type="number" name="import_price" step="0.01" class="form-control"
+        <input type="number" name="import_price" class="form-control"
             value="{{ old('import_price', $product->import_price) }}" required>
     </div>
 
     <div class="mb-3">
         <label for="price">Price:</label>
-        <input type="number" name="price" step="0.01" class="form-control"
+        <input type="number" name="price" class="form-control"
             value="{{ old('price', $product->price) }}" required>
     </div>
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ManagerUserController;
@@ -100,6 +101,9 @@ Route::controller(UserController::class)->middleware(['auth', 'user'])->group(fu
     Route::post('/order/{id}/confirm-receive', [UservoucherController::class, 'confirmReceiveOrder'])->name('order.confirmReceive');
 
     Route::resource('userorder', UserOrderController::class);
+    Route::patch('/orders/{orderId}/done',  [UserOrderController::class, 'done'])->name('done');
+
+    Route::resource('reviews', ReviewController::class);
 
 });
 

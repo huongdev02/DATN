@@ -29,27 +29,21 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-Route::apiResource('reviews', ReviewController::class);
-Route::apiResource('orders', OrderController::class);
-Route::apiResource('payments', PayController::class);
-Route::apiResource('carts', CartController::class);
-Route::apiResource('products', ProductController::class);
+Route::apiResource('carts', CartController::class)->middleware('auth:sanctum');
+Route::apiResource('orders', OrderController::class)->middleware('auth:sanctum');
 Route::get('categories/{category}/products', [ProductController::class, 'getProductsByCategory']);
+Route::apiResource('products', ProductController::class);
+Route::apiResource('reviews', ReviewController::class);
+Route::apiResource('vouchers', VoucherController::class);
+Route::apiResource('payments', PayController::class);
 Route::resource('promotions', PromotionController::class);
-
 Route::apiResource('categories', CategoryController::class);
-
 
 Route::controller(AccountController::class)->group(function () {
     Route::post('login', 'login')->name('login');
+    Route::post('/logout',  'logout')->middleware('auth:sanctum');
     //lay user
     Route::get('/users/{id}',  'show')->name('show');
 });
 
 Route::get('/auth/check', [AccountController::class, 'checkAuth']);
-
-Route::apiResource('vouchers', VoucherController::class);
-
-
-

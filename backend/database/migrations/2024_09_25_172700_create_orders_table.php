@@ -25,6 +25,7 @@ return new class extends Migration
 
             $table->foreignIdFor(Ship_address::class)->constrained();
             $table->tinyInteger('status')->default(0);//0: Đang chờ xử lí, 1: Đã xử lí/ đang chuẩn bị sản phẩm, 2: Đang vận chuyển, 3: Giao hàng thành công, 4: Đơn hàng đã bị hủy, 5: Đơn hàng đã được trả lại bởi người dung
+            $table->string('message')->nullable();
             $table->timestamps();
         });
         DB::statement('ALTER TABLE `orders` ADD CONSTRAINT `check_payment_method` CHECK (`payment_method` >= 0 AND `payment_method` <= 2)');
