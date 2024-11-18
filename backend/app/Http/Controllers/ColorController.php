@@ -33,7 +33,9 @@ class ColorController extends Controller
     {
         $data = $request->validate([
             'name_color'      => 'required|max:25',
+            'hex_color'        => 'required|max:25'
         ]);
+
 
         try {
             Color::query()->create($data);
