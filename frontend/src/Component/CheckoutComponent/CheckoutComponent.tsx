@@ -62,6 +62,7 @@ const CheckoutComponent: React.FC = () => {
 
       console.log('Order Data:', orderData);
       await dispatch(postOrder(orderData)).unwrap();
+      localStorage.removeItem('cartItems')
       notification.success({
         message: 'Đặt hàng  thành công',
         description: 'Cảm ơn bạn đã tin tưởng sản phảm bên chúng tôi',

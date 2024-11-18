@@ -71,12 +71,12 @@ const ProductList: React.FC = () => {
                   <Link to={`/product-detail/${product.id}`}>
                     <img
                       className="imageMain"
-                      src={product.avatar}
+                      src={`http://127.0.0.1:8000/storage/${product.avatar}`}
                       alt={product.name}
                     />
                     <img
                       className="imageHover"
-                      src={product.avatar}
+                      src={`http://127.0.0.1:8000/storage/${product.avatar}`}
                       alt={product.name}
                     />
                   </Link>

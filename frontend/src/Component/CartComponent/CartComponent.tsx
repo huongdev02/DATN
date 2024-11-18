@@ -51,6 +51,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                                         <th />
                                         <th className="text-start">Product Name</th>
                                         <th className="text-start">Avatar</th>
+                                        <th className="text-start">Price</th>
                                         <th>Quantity</th>
                                         <th>Subtotal</th>
                                         <th>Remove</th>
@@ -101,7 +102,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                                                         {(Number(item.price) * Number(item.quantity || 1)).toLocaleString('vi-VN')} VND
                                                     </span>
                                                 </td>
-
+                                                <td>Xóa</td>
                                             </tr>
                                         </tbody>
                                     ))

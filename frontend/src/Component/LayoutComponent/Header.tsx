@@ -26,10 +26,18 @@ const Header: React.FC = () => {
     const loading = useSelector((state: RootState) => state.auth.loading);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null)
+    const [cartItems, setCartItems] = useState<any[]>([]);
     const { cart } = useSelector((state: RootState) => state.cart);
-    const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');  
-    const cartLength = cartItems.length;  
-    
+    const cartItemsLength = JSON.parse(localStorage.getItem('cartItems') || '[]');  
+    const cartLength = cartItemsLength.length;  
+    useEffect(() => {
+        const storedCart = localStorage.getItem('cartItems');
+        console.log(storedCart);
+        
+        if (storedCart) {
+            setCartItems(JSON.parse(storedCart));
+        }
+    }, []); 
     console.log(cartLength);  
     
     useEffect(() => {
@@ -58,6 +66,7 @@ const Header: React.FC = () => {
             if (login.fulfilled.match(resultAction)) {
                 const userData = resultAction.payload;
                 localStorage.setItem('user', JSON.stringify(userData));
+                localStorage.setItem('token', userData.token);
                 window.location.reload();
 
                 notification.success({
@@ -385,17 +394,17 @@ const Header: React.FC = () => {
                         </a>
                         <h5 className="mb-15 mt-50">Your Cart</h5>
                         <div className="list-product-4 mb-50">
-                            {cart?.items && cart.items.length > 0 ? (
-                                cart?.items.map((item: CartItem) => (
-                                    <div key={item.id} className="cardProduct cardProduct4">
+                            {cartItems.length > 0 ? (
+                                cartItems.map((item, index) => (
+                                    <div key={index} className="cardProduct cardProduct4">
                                         <div className="cardImage">
-                                            <Link to={`/product/${item.id}`}>
+                                            {/* <Link to={`/product/${item.id}`}>
                                                 <img src={`http://127.0.0.1:8000/storage/${item.product.avatar}` || 'default-image.jpg'} alt={item.product.name} />
-                                            </Link>
+                                            </Link> */}
                                         </div>
                                         <div className="cardInfo">
                                             <Link to={`/product/${item.id}`}>
-                                                <h6 className="font-md-bold cardTitle">{item.product.name}</h6>
+                                                <h6 className="font-md-bold cardTitle">{item.product_name}</h6>
                                             </Link>
                                             <div className="product-price-bottom">
                                                 <p className="font-lg cardDesc">
