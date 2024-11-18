@@ -109,8 +109,8 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                         <label className="cb-container">
                           <input
                             type="checkbox"
-                            checked={selectedCategories.includes(category.name)} // Kiểm tra xem category có được chọn hay không
-                            onChange={() => handleCategoryChange(category.name)} // Thay đổi khi người dùng click
+                            checked={selectedCategories.includes(category.name)} 
+                            onChange={() => handleCategoryChange(category.name)} 
                           />
                           <span className="text-small">{category.name}</span>
                           <span className="checkmark" />
