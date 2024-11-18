@@ -45,6 +45,7 @@ Route::apiResource('categories', CategoryController::class);
 Route::get('products/category/{categoryId}', [CategoryController::class, 'productsByCategory']); 
 Route::controller(AccountController::class)->group(function () {
     Route::post('login', 'login')->name('login');
+    Route::post('register', 'register')->name('register');
     Route::post('/logout',  'logout')->middleware('auth:sanctum');
     //lay user
     Route::get('/users/{id}',  'show')->name('show');
