@@ -60,14 +60,13 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
         : [...prevState, categoryName]; // Nếu chưa chọn, thêm vào
       setFilters((prevFilters) => ({
         ...prevFilters,
-        category: updatedCategories.length > 0 ? updatedCategories.join(', ') : null, // Dùng join để lưu lại mảng dưới dạng chuỗi
+        category:
+          updatedCategories.length > 0 ? updatedCategories.join(", ") : null, // Dùng join để lưu lại mảng dưới dạng chuỗi
       }));
-  
+
       return updatedCategories;
     });
   };
-  
-
 
   const handleColorClick = (color: string) => {
     setFilters((prev) => ({ ...prev, color }));
@@ -103,14 +102,12 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                 <div className="box-collapse">
                   <ul className="list-filter-checkbox">
                     {categories.map((category) => (
-                      <li
-                        key={category.id}
-                      >
+                      <li key={category.id}>
                         <label className="cb-container">
                           <input
                             type="checkbox"
-                            checked={selectedCategories.includes(category.name)} 
-                            onChange={() => handleCategoryChange(category.name)} 
+                            checked={selectedCategories.includes(category.name)}
+                            onChange={() => handleCategoryChange(category.name)}
                           />
                           <span className="text-small">{category.name}</span>
                           <span className="checkmark" />
@@ -121,13 +118,13 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                 </div>
               </div>
             </div>
-            Price Range
+            {/* Price Range
             <div className="col-lg-12 col-md-6">
               <div className="block-filter">
                 <h6 className="title-filter">Giá tiền</h6>
                 <div className="box-collapse">
                   <div className="box-slider-range mt-20 mb-25">
-                    {/* Slider implementation */}
+                    Slider implementation
                     <input
                       type="range"
                       min="0"
@@ -136,11 +133,16 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                         handlePriceRangeChange(0, parseInt(e.target.value))
                       }
                     />
-                    <span>Price range: {priceRange ? `${priceRange[0]} - ${priceRange[1]}` : "All"}</span>
+                    <span>
+                      Price range:{" "}
+                      {priceRange
+                        ? `${priceRange[0]} - ${priceRange[1]}`
+                        : "All"}
+                    </span>
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             {/* Size */}
             <div className="col-lg-12 col-md-6">
               <div className="block-filter">
@@ -168,12 +170,12 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                 <div className="box-collapse">
                   <ul className="list-color">
                     {colors.map((color) => (
-                      <li key={color.id} onClick={() => handleColorClick(color.name_color)}>
+                      <li
+                        key={color.id}
+                        onClick={() => handleColorClick(color.name_color)}
+                      >
                         <span className="box-circle-color">
-                          <a
-                            href="#"
-                            className={`color-${color.name_color}`}
-                          />
+                          <a href="#" className={`color-${color.name_color}`} />
                         </span>
                       </li>
                     ))}

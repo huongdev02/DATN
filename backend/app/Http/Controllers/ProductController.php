@@ -7,7 +7,6 @@ use App\Models\Product;
 use App\Models\Gallery;
 use App\Models\Size;
 use App\Models\Color;
-use App\Models\Product_Detail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -16,48 +15,54 @@ use Throwable;
 class ProductController extends Controller
 {
     public function index(Request $request)
-    {
-        $sort = $request->get('sort', 'name');
-        $order = $request->get('order', 'asc');
-        $status = $request->get('status'); 
-        $display = $request->get('display'); 
+{
+    // Initialize query with relations
+    $query = Product::with(['galleries', 'categories', 'colors']);
     
-        $products = Product::with(['galleries', 'categories', 'product_detail']);
-
-    
-    
-        // Lọc theo trạng thái
-        if ($status !== null) {
-            $products = $products->where('status', $status);
-        }
-
-        if ($display !== null) {
-            $products = $products->where('display', $display);
-        }
-    
-        // Sắp xếp theo giá
-        if ($sort == 'price') {
-            $products = $products->orderBy('price', 'asc');
-        } elseif ($sort == 'price_desc') {
-            $products = $products->orderBy('price', 'desc');
-        }
-    
-        $products = $products->get();
-    
-        $colorMap = [
-            'Đỏ' => '#FF0000',
-            'Đen' => '#000000',
-            'Xanh dương' => '#0000FF',
-            'Xanh lá' => '#00FF00',
-            'Vàng' => '#FFFF00',
-            'Cam' => '#FFA500',
-            'Tím' => '#800080',
-        ];
-     
-        return view('products.index', compact('products', 'colorMap', 'sort', 'order'));
+    // Filter by status
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
     }
-    
 
+    // Filter by display
+    if ($request->filled('display')) {
+        $query->where('display', $request->display);
+    }
+
+    // Filter by price range
+    if ($request->filled('price_range')) {
+        if ($request->price_range == 'under_200k') {
+            $query->where('price', '<', 200000);
+        } elseif ($request->price_range == '200k_500k') {
+            $query->whereBetween('price', [200000, 500000]);
+        } elseif ($request->price_range == 'over_500k') {
+            $query->where('price', '>', 500000);
+        }
+    }
+
+    // Sort by price order
+    if ($request->filled('price_order')) {
+        $query->orderBy('price', $request->price_order);
+    }
+
+    // Get paginated results
+    $products = $query->latest()->paginate(5);
+
+    // Define color mapping
+    $colorMap = [
+        'Đỏ' => '#FF0000',
+        'Đen' => '#000000',
+        'Xanh dương' => '#0000FF',
+        'Xanh lá' => '#00FF00',
+        'Vàng' => '#FFFF00',
+        'Cam' => '#FFA500',
+        'Tím' => '#800080',
+    ];
+
+    return view('products.index', compact('products', 'colorMap'));
+}
+
+    
     public function create()
     {
         $categories = Category::all();
@@ -92,22 +97,19 @@ class ProductController extends Controller
                 $avatarPath = $request->file('avatar')->store('ProductAvatars', 'public');
             }
 
+
             $productData = $request->all();
             $productData['avatar'] = $avatarPath;
+
+
             $product = Product::create($productData);
 
-            if ($request->has('sizes') && $request->has('colors')) {
-                foreach ($request->sizes as $sizeId) {
-                    foreach ($request->colors as $colorId) {
-                        Product_Detail::create([
-                            'product_id' => $product->id,
-                            'size_id' => $sizeId,
-                            'color_id' => $colorId,
-                            'quantity' => $request->quantity,
-                            // 'number_statictis' => $request->number_statictis
-                        ]);
-                    }
-                }
+            if ($request->has('sizes')) {
+                $product->sizes()->attach($request->sizes);
+            }
+
+            if ($request->has('colors')) {
+                $product->colors()->attach($request->colors);
             }
 
             if ($request->hasFile('image_path')) {
@@ -120,6 +122,7 @@ class ProductController extends Controller
                 }
             }
 
+
             return redirect()->route('products.index')->with('success', 'Thêm mới sản phẩm thành công');
         } catch (Throwable $e) {
             return back()->with('error', 'Thất bại lôi: ' . $e->getMessage());
@@ -127,13 +130,12 @@ class ProductController extends Controller
     }
 
 
-
     public function edit(Product $product)
     {
         $categories = Category::all();
         $sizes = Size::all();
         $colors = Color::all();
-        $product->load('galleries', 'product_detail');
+        $product->load('galleries', 'sizes', 'colors');
 
         return view('products.editproduct', compact('product', 'categories', 'sizes', 'colors'));
     }
@@ -160,6 +162,7 @@ class ProductController extends Controller
 
             // Xử lý ảnh đại diện
             if ($request->hasFile('avatar')) {
+                // Xóa ảnh cũ nếu có
                 if ($product->avatar) {
                     Storage::disk('public')->delete($product->avatar);
                 }
@@ -168,23 +171,14 @@ class ProductController extends Controller
                 $product->update(['avatar' => $avatarPath]);
             }
 
+            // Cập nhật các thông tin sản phẩm khác
             $product->update($request->except(['avatar', 'images', 'delete_gallery']));
 
-            if ($request->has('sizes') && $request->has('colors')) {
-                $product->product_detail()->delete();
+            // Đồng bộ kích thước và màu sắc
+            $product->sizes()->sync($request->sizes);
+            $product->colors()->sync($request->colors);
 
-                foreach ($request->sizes as $sizeId) {
-                    foreach ($request->colors as $colorId) {
-                        Product_Detail::create([
-                            'product_id' => $product->id,
-                            'size_id' => $sizeId,
-                            'color_id' => $colorId,
-                            'quantity' => $request->quantity,
-                        ]);
-                    }
-                }
-            }
-
+            // Xử lý hình ảnh trong thư viện
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     $imagePath = $image->store('ProductGalleries', 'public');
@@ -192,6 +186,7 @@ class ProductController extends Controller
                 }
             }
 
+            // Xóa các hình ảnh cũ được chọn
             if ($request->delete_gallery) {
                 foreach ($request->delete_gallery as $id) {
                     $gallery = $product->galleries()->find($id);
@@ -202,27 +197,24 @@ class ProductController extends Controller
                 }
             }
 
-            return redirect()->route('products.index')->with('success', 'Cập nhật sản phẩm thành công');
+            return back()->with('success', 'cập nhật sản phẩm thành công');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Thất bại lỗi: ' . $e->getMessage()]);
         }
     }
 
+
+
+
     public function destroy(Product $product)
     {
         Storage::disk('public')->delete($product->avatar);
-
         foreach ($product->galleries as $gallery) {
             Storage::disk('public')->delete($gallery->image_path);
             $gallery->delete();
         }
 
-        foreach ($product->product_detail as $detail) {
-            $detail->delete();
-        }
-
         $product->delete();
-
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
 }
