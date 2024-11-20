@@ -11,6 +11,7 @@
             @csrf
             <div class="mb-3 row">
                 <label for="name_color" class="col-4 col-form-label">Tên màu sắc</label>
+                <input type="text" class="form-control" name="hex_color" id="name_color" value="1" hidden />
 
                 <input type="text" class="form-control" name="name_color" id="name_color" value="{{ old('name_color') }}" />
 

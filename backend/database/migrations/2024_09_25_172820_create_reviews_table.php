@@ -24,6 +24,7 @@ return new class extends Migration
             $table->text('comment')->nullable();
             $table->tinyInteger('status')->default(0);//0: Đang chờ xử lí, 1: Đã được duyệt, 2: Bị từ chối
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
+            $table->boolean('is_reviewed')->default(false);
             $table->timestamps();
         });
         DB::statement('ALTER TABLE `reviews` ADD CONSTRAINT `check_rating` CHECK (`rating` >= 0 AND `rating` <= 5)');
