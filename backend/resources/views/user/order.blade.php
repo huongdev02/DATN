@@ -153,7 +153,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('reviews.store', $order->id) }}" method="POST"
+                            <form action="{{ route('review.store', $order->id) }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div class="modal-body">

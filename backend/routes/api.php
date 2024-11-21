@@ -33,7 +33,7 @@ Route::apiResource('carts', CartController::class)->middleware('auth:sanctum');
 Route::apiResource('orders', OrderController::class)->middleware('auth:sanctum');
 Route::get('categories/{category}/products', [ProductController::class, 'getProductsByCategory']);
 Route::apiResource('products', ProductController::class);
-Route::apiResource('reviews', ReviewController::class);
+Route::apiResource('getreview', ReviewController::class);
 Route::apiResource('vouchers', VoucherController::class);
 Route::apiResource('payments', PayController::class);
 Route::resource('promotions', PromotionController::class);

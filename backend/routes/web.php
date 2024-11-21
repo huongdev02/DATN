@@ -3,8 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Api\ReviewController;
-use App\Http\Controllers\CardController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ManagerUserController;
 use App\Http\Controllers\SizeController;
@@ -13,7 +12,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionController;
-use App\Http\Controllers\ThongkeController;
+use App\Http\Controllers\QuanliReviewController;
 use App\Http\Controllers\UserOrderController;
 use App\Http\Controllers\UservoucherController;
 use App\Http\Controllers\VoucherController;
@@ -77,6 +76,7 @@ Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager']
     Route::resource('orders', OrderController::class);
     Route::resource('promotion', PromotionController::class);
     Route::resource('products', ProductController::class);
+    Route::resource('review', QuanliReviewController::class);
     //quan li account, route nay chi co quyen admin
     Route::resource('managers', ManagerUserController::class)
     ->middleware(['auth', 'admin']);
@@ -103,7 +103,7 @@ Route::controller(UserController::class)->middleware(['auth', 'user'])->group(fu
     Route::resource('userorder', UserOrderController::class);
     Route::patch('/orders/{orderId}/done',  [UserOrderController::class, 'done'])->name('done');
 
-    Route::resource('reviews', ReviewController::class);
+    Route::post('user/review/{order}', [ReviewController::class, 'store'])->name('review.store');
 
 });
 

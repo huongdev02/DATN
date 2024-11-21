@@ -74,7 +74,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#tables">
+            <a class="nav-link" href="{{route('review.index')}}">
                 <span class="menu-title">Comment</span>
                 <i class="mdi mdi-comment menu-icon"></i>
             </a>
