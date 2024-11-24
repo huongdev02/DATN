@@ -1,8 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../../Redux/store';
-import { useEffect } from 'react';
-import { fetchCart, updateCartItem } from '../../Redux/Reducer/CartReducer'
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../../Redux/store";
+import { useEffect } from "react";
+import { fetchCart, updateCartItem } from "../../Redux/Reducer/CartReducer";
+import { Link } from "react-router-dom";
 
 interface CartProps {
     userId: number;

@@ -70,7 +70,9 @@ export const addToCart = createAsyncThunk<
     const response = await axios.post(
       'http://127.0.0.1:8000/api/carts',
       { product_id: productId, quantity },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: 
+        { Authorization: `Bearer ${token}` }
+       }
     );
     return response.data as CartItem;
   } catch (error: any) {
