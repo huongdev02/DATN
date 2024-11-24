@@ -17,12 +17,12 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
 
-  // Hàm gọi API lấy tất cả sản phẩm
+ 
   const GetAllProducts = async () => {
     try {
       const { data } = await api.get("/products");
       setProducts(data.products);
-      setFilteredProducts(data.products); // Set filtered products to all initially
+      setFilteredProducts(data.products);
     } catch (error) {
       message.error("Lỗi api !");
     }
@@ -36,11 +36,8 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
     // Lọc sản phẩm khi bộ lọc thay đổi
     const filterData = products.filter((product) => {
       return (
-        // Lọc theo size
         (filters.size ? product.sizes.some((size: Size) => size.size === filters.size) : true) &&
-        // Lọc theo color
         (filters.color ? product.colors.some((color: Color) => color.name_color === filters.color) : true) &&
-        // Lọc theo category
         (filters.category ? product.categories.name === filters.category : true)
       );
     });

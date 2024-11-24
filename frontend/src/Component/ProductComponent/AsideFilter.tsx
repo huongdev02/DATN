@@ -54,14 +54,13 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
 
   const handleCategoryChange = (categoryName: string) => {
     setSelectedCategories((prevState) => {
-      // Tạo danh sách danh mục đã chọn hoặc bỏ chọn
       const updatedCategories = prevState.includes(categoryName)
-        ? prevState.filter((name) => name !== categoryName) // Nếu đã chọn, bỏ chọn
-        : [...prevState, categoryName]; // Nếu chưa chọn, thêm vào
+        ? prevState.filter((name) => name !== categoryName) 
+        : [...prevState, categoryName]; 
       setFilters((prevFilters) => ({
         ...prevFilters,
         category:
-          updatedCategories.length > 0 ? updatedCategories.join(", ") : null, // Dùng join để lưu lại mảng dưới dạng chuỗi
+          updatedCategories.length > 0 ? updatedCategories.join(", ") : null,
       }));
 
       return updatedCategories;
