@@ -19,22 +19,48 @@ class AccountController extends Controller
 {
 
 
+    public function register(Request $request)
+    {
+        $user = $request->validate([
+            'email' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
+            'password' => 'required|string|min:6|confirmed', // Use 'confirmed' for password confirmation
+        ]);
+
+        try {
+            $user['password'] = Hash::make($request->input('password'));
+            $user['role'] = $request->filled('role') ? $request->input('role') : 0;
+
+            $user = User::query()->create($user);
+            return response()->json([
+                'status' => true,
+                'message' => 'Đăng kí thành công',
+                'data' => [
+                    'email'     => $user->email,
+                    'password'  => $user->password,
+                ]
+            ], 200);
+        }catch(Throwable $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
     public function login(Request $request)
     {
         try {
+            // Validate input
             $credentials = $request->validate([
-                'account' => 'required',
+                'email' => 'required|email',
                 'password' => 'required',
             ]);
 
-            $loginType = filter_var($credentials['account'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-
-            if (Auth::attempt([$loginType => $credentials['account'], 'password' => $credentials['password']], true)) {
+            // Kiểm tra xem có tồn tại tài khoản với email và mật khẩu không
+            if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], true)) {
                 $request->session()->regenerate();
-                /**
-                 * @var User $user
-                 */
+
+                // Lấy thông tin người dùng đã đăng nhập
                 $user = Auth::user();
+
+                // Kiểm tra trạng thái tài khoản
                 if ($user->is_active == 0) {
                     Auth::logout();
                     return response()->json([
@@ -42,9 +68,10 @@ class AccountController extends Controller
                     ], 403);
                 }
 
+                // Tạo token cho người dùng
                 $token = $user->createToken('API Token')->plainTextToken;
-                $pureToken = explode('|', $token)[1];
 
+                // Trả về dữ liệu người dùng và token
                 return response()->json([
                     'status' => true,
                     'message' => 'Đăng nhập thành công',
@@ -58,7 +85,7 @@ class AccountController extends Controller
                         'role'      => $user->role,
                         'is_active' => $user->is_active,
                         'avatar'    => $user->avatar ? asset('storage/' . $user->avatar) : null,
-                        'token'     => $pureToken
+                        'token'     => $token, // Gửi token đầy đủ
                     ]
                 ], 200);
             }
@@ -70,6 +97,7 @@ class AccountController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
 
     public function show($userId)
     {

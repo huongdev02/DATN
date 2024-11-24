@@ -191,4 +191,4 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
   );
 };
 
-export default AsideFilter
+export default AsideFilter;

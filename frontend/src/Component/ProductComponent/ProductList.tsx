@@ -48,46 +48,87 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
     setFilteredProducts(filterData); 
   }, [filters, products]); 
   return (
-    <div className="col-lg-9 order-lg-last">
-      <div className="box-filter-top">
-        <div className="number-product">
-          <p className="body-p2 neutral-medium-dark">
-            Showing {products.length} products
-          </p>
-        </div>
-        <div className="box-sort">
-          <div className="box-sortby d-flex align-items-center">
-            <div className="dropdown dropdown-sort">
-              <button
-                className="btn dropdown-toggle"
-                id="dropdownSort2"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Latest products
-              </button>
-              <ul
-                className="dropdown-menu dropdown-menu-light"
-                aria-labelledby="dropdownSort2"
-                style={{ margin: 0 }}
-              >
-                <li>
-                  <a className="dropdown-item active" href="#">
-                    Default Sorting
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Oldest products
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Latest products
-                  </a>
-                </li>
-              </ul>
+    <>
+      <div className="col-lg-9 order-lg-last">
+        <div className="box-filter-top">
+          <div className="number-product">
+            <p className="body-p2 neutral-medium-dark">
+              Hiển thị 9 trong số 18 sản phẩm
+            </p>
+          </div>
+          <div className="box-sort">
+            <div className="box-sortby d-flex align-items-center">
+              <div className="dropdown dropdown-sort">
+                <button
+                  className="btn dropdown-toggle"
+                  id="dropdownSort2"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Sản phẩm mới nhất
+                </button>
+                <ul
+                  className="dropdown-menu dropdown-menu-light"
+                  aria-labelledby="dropdownSort2"
+                  style={{ margin: 0 }}
+                >
+                  <li>
+                    <a className="dropdown-item active" href="#">
+                      Sắp xếp mặc định
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Sản phẩm cũ
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      Sản phẩm mới nhất{" "}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="box-sortby d-flex align-items-center">
+              <div className="dropdown dropdown-sort">
+                <button
+                  className="btn dropdown-toggle"
+                  id="dropdownSort"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  30 mục
+                </button>
+                <ul
+                  className="dropdown-menu dropdown-menu-light"
+                  aria-labelledby="dropdownSort"
+                  style={{ margin: 0 }}
+                >
+                  <li>
+                    <a className="dropdown-item active" href="#">
+                      30 mục
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      50 mục
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      100 mục{" "}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="box-view-style">
+              {" "}
+              <a className="view-type view-grid active" href="#" />
+              <a className="view-type view-list" href="#" />
             </div>
           </div>
         </div>
