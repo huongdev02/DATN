@@ -97,5 +97,17 @@
                 <i class="mdi mdi-format-color-fill menu-icon"></i>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('logo_banners.index')}}">
+                <span class="menu-title">Logo - Banner</span>
+                <i class="mdi mdi-format-color-fill menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{route('blog.index')}}">
+                <span class="menu-title">Blog</span>
+                <i class="mdi mdi-format-color-fill menu-icon"></i>
+            </a>
+        </li>
     </ul>
 </nav>

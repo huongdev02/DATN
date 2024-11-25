@@ -3,11 +3,13 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ManagerUserController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LogoBannerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
@@ -67,6 +69,10 @@ Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager']
     // Cập nhật tài khoản
     Route::get('/admin/edit', 'edit')->name('admin.edit');
     Route::post('/admin/update', 'update')->name('admin.update');
+
+    //banner va blog
+    Route::resource('logo_banners', LogoBannerController::class);
+    Route::resource('blog', BlogController::class);
 
     //cac route con lai
     Route::resource('sizes', SizeController::class);
