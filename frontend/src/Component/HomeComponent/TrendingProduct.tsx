@@ -1,104 +1,99 @@
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import Arrow from '../../assets/imgs/template/icons/arrow-grey.svg';
-import Trending from '../../assets/imgs/page/homepage1/product12.png';
-import TrendingTwo from '../../assets/imgs/page/homepage1/product13.png';
-import TrendingThree from '../../assets/imgs/page/homepage1/product14.png';
-import Star from '../../assets/imgs/page/homepage1/star.png';
-import StarTwo from '../../assets/imgs/page/homepage1/star2.png';
-
+import React from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import Arrow from "../../assets/imgs/template/icons/arrow-grey.svg";
+import Trending from "../../assets/imgs/page/homepage1/product12.png";
+import TrendingTwo from "../../assets/imgs/page/homepage1/product13.png";
+import TrendingThree from "../../assets/imgs/page/homepage1/product14.png";
+import Star from "../../assets/imgs/page/homepage1/star.png";
+import StarTwo from "../../assets/imgs/page/homepage1/star2.png";
+import api from "../../configAxios/axios";
+import { message } from "antd";
+import { useState, useEffect } from "react";
+import { IProduct } from "../../types/cart";
 const TrendingProduct: React.FC = () => {
-    return (
-        <>
-            <section className="section block-section-3">
-                <div className="container">
-                    <div className="top-head">
-                        <h4 className="text-uppercase brand-1 wow animate__animated animate__fadeIn">
-                            Sản phẩm thịnh hành
-                            <a className="btn btn-arrow-right neutral-500 text-capitalize ml-10 wow animate__animated animate__fadeIn" href="#">
-                                Xem tất cả
-                                <img src={Arrow} alt="Kidify" />
-                            </a>
-                        </h4>
-                        <div className="box-button-swiper">
-                            <div className="swiper-button-prev swiper-button-prev-collection btn-prev-style-1" />
-                            <div className="swiper-button-next swiper-button-next-collection btn-next-style-1" />
-                        </div>
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const GetProductCategory = async () => {
+    try {
+      const { data } = await api.get(`/products`);
+      setProducts(data.products);
+    } catch (error) {
+      message.error("Lỗi api !");
+    }
+  };
+
+  const trendingProducts = products.filter(
+    (product) => product.categories.name === "Sản phẩm thịnh hành"
+  );
+
+  console.log(trendingProducts, "Sản phẩm thịnh hành");
+  
+
+  useEffect(() => {
+    GetProductCategory();
+  }, []);
+
+  return (
+    <>
+      <section className="section block-section-3">
+        <div className="container">
+          <div className="top-head">
+            <h4 className="text-uppercase brand-1 wow animate__animated animate__fadeIn">
+              Sản phẩm thịnh hành
+            </h4>
+          </div>
+          <div className="box-products wow animate__animated animate__fadeIn">
+            <Swiper
+              navigation
+              modules={[Navigation]}
+              className="swiper-container"
+              slidesPerView={3}
+              spaceBetween={30}
+            >
+                <SwiperSlide>
+                {trendingProducts.map((product) => (
+                  <div className="cardProduct wow fadeInUp">
+                    <div className="cardImage">
+                      <label className="lbl-hot">hot</label>
+                      <a href="product-single.html">
+                        <img
+                          className="imageMain"
+                          src={product.avatar_url}
+                          alt="kidify"
+                        />
+                        <img
+                          className="imageHover"
+                          src={product.avatar_url}
+                          alt="kidify"
+                        />
+                      </a>
+                      <div className="button-select">
+                        <a href="product-single.html">Add to Cart</a>
+                      </div>
+                      <div className="box-quick-button"></div>
                     </div>
-                    <div className="box-products wow animate__animated animate__fadeIn">
-                        <Swiper
-                            navigation
-                            modules={[Navigation]}
-                            className="swiper-container"
-                            slidesPerView={3}
-                            spaceBetween={30}
-                        >
-                            <SwiperSlide>
-                                <div className="cardProduct wow fadeInUp">
-                                    <div className="cardImage">
-                                        <label className="lbl-hot">hot</label>
-                                        <a href="product-single.html">
-                                            <img className="imageMain" src={TrendingThree} alt="kidify" />
-                                            <img className="imageHover" src={TrendingTwo} alt="kidify" />
-                                        </a>
-                                        <div className="button-select"><a href="product-single.html">Add to Cart</a></div>
-                                        <div className="box-quick-button">
-                                        </div>
-                                    </div>
-                                    <div className="cardInfo">
-                                        <a href="product-single.html">
-                                            <h6 className="font-md-bold cardTitle">Junior Jogger Pants</h6>
-                                        </a>
-                                        <p className="font-lg cardDesc">$16.00</p>
-                                    </div>
-                                </div>
-                            </SwiperSlide>
-                            <SwiperSlide>
-                                <div className="cardProduct wow fadeInUp">
-                                    <div className="cardImage">
-                                        <label className="lbl-hot">hot</label>
-                                        <a href="product-single.html">
-                                            <img className="imageMain" src={Trending} alt="kidify" />
-                                            <img className="imageHover" src={TrendingTwo} alt="kidify" />
-                                        </a>
-                                        <div className="button-select"><a href="product-single.html">Add to Cart</a></div>
-                                        <div className="box-quick-button">
-                                        </div>
-                                    </div>
-                                    <div className="cardInfo">
-                                        <a href="product-single.html">
-                                            <h6 className="font-md-bold cardTitle">Junior Jogger Pants</h6>
-                                        </a>
-                                        <p className="font-lg cardDesc">$16.00</p>
-                                    </div>
-                                </div>
-                            </SwiperSlide>
-                            <SwiperSlide>
-                                <div className="cardProduct wow fadeInUp">
-                                    <div className="cardImage">
-                                        <label className="lbl-hot">hot</label>
-                                        <a href="product-single.html">
-                                            <img className="imageMain" src={TrendingTwo} alt="kidify" />
-                                            <img className="imageHover" src={Trending} alt="kidify" />
-                                        </a>
-                                        <div className="button-select"><a href="product-single.html">Add to Cart</a></div>
-                                        <div className="box-quick-button">
-                                        </div>
-                                    </div>
-                                    <div className="cardInfo">
-                                        <a href="product-single.html">
-                                            <h6 className="font-md-bold cardTitle">Junior Jogger Pants</h6>
-                                        </a>
-                                        <p className="font-lg cardDesc">$16.00</p>
-                                    </div>
-                                </div>
-                            </SwiperSlide>
-                        </Swiper>
+                    <div className="cardInfo">
+                      <a href="product-single.html">
+                        <h6 className="font-md-bold cardTitle">
+                          {product.name}
+                        </h6>
+                      </a>
+                      <p className="font-lg cardDesc">
+                        {" "}
+                        {Math.round(product.price ?? 0).toLocaleString(
+                          "vi-VN",
+                          { style: "currency", currency: "VND" }
+                        )}
+                      </p>
                     </div>
-                </div>
-            </section>
-            <section className="section block-section-4">
+                  </div>
+                     ))}
+                </SwiperSlide>
+            </Swiper>
+          </div>
+        </div>
+      </section>
+      {/* <section className="section block-section-4">
                 <div className="container">
                     <div className="box-section-4">
                         <div className="row">
@@ -123,11 +118,9 @@ const TrendingProduct: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </section>
-
-        </>
-
-    );
+            </section> */}
+    </>
+  );
 };
 
 export default TrendingProduct;

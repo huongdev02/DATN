@@ -10,10 +10,10 @@ const Home:React.FC = () => {
         <>
         <main className="main">
         <BannerComponent />
+        <TrendingProduct />
         {/* <CategoriesSlider /> */}
         <ProductWithCategories />
         {/* <ShopByCategory /> */}
-        <TrendingProduct />
         <New />
         </main>
         </>
