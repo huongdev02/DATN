@@ -4,6 +4,7 @@ import New from "../../Component/HomeComponent/New"
 import ProductWithCategories from "../../Component/HomeComponent/ProductWithCategories"
 import ShopByCategory from "../../Component/HomeComponent/ShopByCategory"
 import TrendingProduct from "../../Component/HomeComponent/TrendingProduct"
+import NewProduct from "../../Component/HomeComponent/NewProducts"
 
 const Home:React.FC = () => {
     return (
@@ -11,6 +12,7 @@ const Home:React.FC = () => {
         <main className="main">
         <BannerComponent />
         <TrendingProduct />
+        <NewProduct/>
         {/* <CategoriesSlider /> */}
         <ProductWithCategories />
         {/* <ShopByCategory /> */}
