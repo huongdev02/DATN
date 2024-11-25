@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url('css/style.css') }}">
     <link rel="stylesheet" href="{{ url('css/materialdesignicons.min.css') }}">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
