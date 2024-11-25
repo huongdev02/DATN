@@ -57,16 +57,38 @@ class ProductController extends Controller
                 return response()->json(['message' => 'Sản phẩm không tồn tại.'], 404);
             }
     
-            $product->load(['categories:id,name', 'colors:id,name_color', 'sizes:id,size', 'galleries']);
+            // Load các mối quan hệ
+            $product->load([
+                'categories:id,name', 
+                'colors:id,name_color', 
+                'sizes:id,size', 
+                'galleries', 
+                'reviews' // Load reviews
+            ]);
     
+            // Định dạng dữ liệu galleries
             $product->galleries = $product->galleries->map(function ($gallery) {
                 return [
                     'id' => $gallery->id,
                     'product_id' => $gallery->product_id,
                     'image_path' => $gallery->image_path,
-                    'image_url' => asset('storage/ProductAvatars/' . basename($gallery->image_path)), // Cập nhật đường dẫn hình ảnh ở đây
+                    'image_url' => asset('storage/ProductAvatars/' . basename($gallery->image_path)), 
                     'created_at' => $gallery->created_at,
                     'updated_at' => $gallery->updated_at,
+                ];
+            });
+    
+            // Định dạng dữ liệu reviews
+            $product->reviews = $product->reviews->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'user_id' => $review->user_id,
+                    'user_name' => $review->user->email ?? $review->user->fullname, // Hiển thị fullname hoặc email
+                    'rating' => $review->rating,
+                    'comment' => $review->comment,
+                    'image_url' => $review->image_path ? asset('storage/reviews/' . basename($review->image_path)) : null,
+                    'created_at' => $review->created_at,
+                    'updated_at' => $review->updated_at,
                 ];
             });
     
@@ -74,7 +96,7 @@ class ProductController extends Controller
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
-                'avatar_url' => $product->avatar ? asset('storage/ProductAvatars/' . basename($product->avatar)) : null, // Cập nhật đường dẫn avatar ở đây
+                'avatar_url' => $product->avatar ? asset('storage/ProductAvatars/' . basename($product->avatar)) : null,
                 'categories' => $product->categories,
                 'price' => $product->price,
                 'quantity' => $product->quantity,
@@ -83,6 +105,7 @@ class ProductController extends Controller
                 'colors' => $product->colors,
                 'sizes' => $product->sizes,
                 'galleries' => $product->galleries,
+                'reviews' => $product->reviews, // Bao gồm reviews
                 'created_at' => $product->created_at,
                 'updated_at' => $product->updated_at,
             ];
@@ -92,6 +115,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
         }
     }
+    
     
     public function getProductsByCategory($categoryId)
     {
