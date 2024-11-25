@@ -23,7 +23,7 @@ class LogoBannerController extends Controller
         $data = $request->validate([
             'type' => 'required',
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1024',
+            'description' => 'nullable|string|max:8192',
             'image' => 'required|image',
         ]);
 
