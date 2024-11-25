@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { IProduct, Size, Color } from "../../types/cart";
 // import api from "../../configAxios/axios";
 import { message } from "antd";
+import { ArrowRightOutlined } from "@ant-design/icons";
 
 interface AsideFilterProps {
   setFilters: React.Dispatch<
@@ -20,8 +21,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
   // const [categories, setCategories] = useState<Categories[]>([]);
   const [sizes, setSizes] = useState<Size[]>([]);
   const [colors, setColors] = useState<Color[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [priceRange, setPriceRange] = useState<[number, number] | null>(null);
 
   // const GetAllCategory = async () => {
@@ -53,41 +53,27 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
   };
 
   const handleCategoryChange = (categoryName: string) => {
-    setSelectedCategories((prevState) => {
-      // Tạo danh sách danh mục đã chọn hoặc bỏ chọn
-      const updatedCategories = prevState.includes(categoryName)
-        ? prevState.filter((name) => name !== categoryName) // Nếu đã chọn, bỏ chọn
-        : [...prevState, categoryName]; // Nếu chưa chọn, thêm vào
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        category:
-          updatedCategories.length > 0 ? updatedCategories.join(", ") : null, // Dùng join để lưu lại mảng dưới dạng chuỗi
-      }));
-
-      return updatedCategories;
-    });
+    if (selectedCategory === categoryName) {
+      setSelectedCategory(null);
+      setFilters((prevFilters) => ({ ...prevFilters, category: null }));
+    } else {
+      setSelectedCategory(categoryName);
+      setFilters((prevFilters) => ({ ...prevFilters, category: categoryName }));
+    }
   };
 
   const handleColorClick = (color: string) => {
     setFilters((prev) => ({ ...prev, color }));
   };
 
-  const handleBrandClick = (brand: string) => {
-    setSelectedBrands((prev) => {
-      const newSelectedBrands = prev.includes(brand)
-        ? prev.filter((item) => item !== brand)
-        : [...prev, brand];
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        brands: newSelectedBrands,
-      }));
-      return newSelectedBrands;
-    });
-  };
-
-  const handlePriceRangeChange = (min: number, max: number) => {
-    setPriceRange([min, max]);
-    setFilters((prev) => ({ ...prev, priceRange: [min, max] }));
+  const handlePriceChange = (range: [number, number]) => {
+    if (priceRange && priceRange[0] === range[0] && priceRange[1] === range[1]) {
+      setPriceRange(null);
+      setFilters((prev) => ({ ...prev, priceRange: null }));
+    } else {
+      setPriceRange(range);
+      setFilters((prev) => ({ ...prev, priceRange: range }));
+    }
   };
 
   return (
@@ -98,7 +84,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
             <div className="col-lg-12 col-md-6">
               <h5 className="font-3xl-bold mt-5">Lọc sản phẩm</h5>
               <div className="block-filter">
-                <h6 className="item-collapse">Danh mục</h6>
+                <h6 style={{ marginBottom: "15px" }}>Danh mục</h6>
                 <div className="box-collapse">
                   {/* <ul className="list-filter-checkbox">
                     {categories.map((category) => (
@@ -106,7 +92,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                         <label className="cb-container">
                           <input
                             type="checkbox"
-                            checked={selectedCategories.includes(category.name)}
+                            checked={selectedCategory === category.name}
                             onChange={() => handleCategoryChange(category.name)}
                           />
                           <span className="text-small">{category.name}</span>
@@ -118,35 +104,75 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                 </div>
               </div>
             </div>
-            {/* Price Range
+            {/* Giá tiền */}
             <div className="col-lg-12 col-md-6">
               <div className="block-filter">
-                <h6 className="title-filter">Giá tiền</h6>
+                <h6 style={{ marginBottom: "15px" }}>Giá tiền</h6>
                 <div className="box-collapse">
-                  <div className="box-slider-range mt-20 mb-25">
-                    Slider implementation
-                    <input
-                      type="range"
-                      min="0"
-                      max="10000000"
-                      onChange={(e) =>
-                        handlePriceRangeChange(0, parseInt(e.target.value))
-                      }
-                    />
-                    <span>
-                      Price range:{" "}
-                      {priceRange
-                        ? `${priceRange[0]} - ${priceRange[1]}`
-                        : "All"}
-                    </span>
-                  </div>
+                  <ul className="list-filter-checkbox">
+                    <li>
+                      <label className="cb-container">
+                        <input 
+                          type="checkbox" 
+                          onChange={() => handlePriceChange([0, 499999])}
+                          checked={priceRange?.[0] === 0 && priceRange?.[1] === 499999}
+                        />
+                        <span className="text-small">Dưới 500.000đ</span>
+                        <span className="checkmark" />
+                      </label>
+                    </li>
+                    <li>
+                      <label className="cb-container">
+                        <input 
+                          type="checkbox" 
+                          onChange={() => handlePriceChange([500000, 1000000])}
+                          checked={priceRange?.[0] === 500000 && priceRange?.[1] === 1000000}
+                        />
+                        <span className="text-small">Từ 500.000đ <ArrowRightOutlined /> 1.000.000đ</span>
+                        <span className="checkmark" />
+                      </label>
+                    </li>
+                    <li>
+                      <label className="cb-container">
+                        <input 
+                          type="checkbox" 
+                          onChange={() => handlePriceChange([1000000, 1500000])}
+                          checked={priceRange?.[0] === 1000000 && priceRange?.[1] === 1500000}
+                        />
+                        <span className="text-small">Từ 1.000.000đ <ArrowRightOutlined /> 1.500.000đ</span>
+                        <span className="checkmark" />
+                      </label>
+                    </li>
+                    <li>
+                      <label className="cb-container">
+                        <input 
+                          type="checkbox" 
+                          onChange={() => handlePriceChange([1500000, 2000000])}
+                          checked={priceRange?.[0] === 1500000 && priceRange?.[1] === 2000000}
+                        />
+                        <span className="text-small">Từ 1.500.000đ <ArrowRightOutlined /> 2.000.000đ</span>
+                        <span className="checkmark" />
+                      </label>
+                    </li>
+                    <li>
+                      <label className="cb-container">
+                        <input 
+                          type="checkbox" 
+                          onChange={() => handlePriceChange([2000000, Infinity])}
+                          checked={priceRange?.[0] === 2000000 && priceRange?.[1] === Infinity}
+                        />
+                        <span className="text-small">Trên 2.000.000đ</span>
+                        <span className="checkmark" />
+                      </label>
+                    </li>
+                  </ul>
                 </div>
               </div>
-            </div> */}
+            </div>
             {/* Size */}
             <div className="col-lg-12 col-md-6">
-              <div className="block-filter">
-                <h6 className="item-collapse">Size</h6>
+              <div className="block-filter" style={{ cursor: 'pointer' }}>
+                <h6 style={{ marginBottom: "15px" }}>Size</h6>
                 <div className="box-collapse">
                   <div className="block-size">
                     <div className="list-sizes">
@@ -166,7 +192,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
             {/* Color */}
             <div className="col-lg-12 col-md-6">
               <div className="block-filter">
-                <h6 className="item-collapse">Màu sắc</h6>
+                <h6 style={{ marginBottom: "15px" }}>Màu sắc</h6>
                 <div className="box-collapse">
                   <ul className="list-color">
                     {colors.map((color) => (
@@ -183,7 +209,6 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                 </div>
               </div>
             </div>
-            {/* Tags and other filters */}
           </div>
         </div>
       </div>

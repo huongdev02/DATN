@@ -6,7 +6,7 @@ import api from "../../configAxios/axios";
 import { message } from "antd";
 import { useState, useEffect } from "react";
 import { IProduct } from "../../types/cart";
-const TrendingProduct: React.FC = () => {
+const NewProduct: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const GetProductCategory = async () => {
     try {
@@ -18,10 +18,10 @@ const TrendingProduct: React.FC = () => {
   };
 
   const trendingProducts = products.filter(
-    (product) => product.categories.name === "Sản phẩm thịnh hành"
+    (product) => product.categories.name === "Hàng mới về"
   );
 
-  console.log(trendingProducts, "Sản phẩm thịnh hành");
+ 
 
   useEffect(() => {
     GetProductCategory();
@@ -33,7 +33,7 @@ const TrendingProduct: React.FC = () => {
         <div className="container">
           <div className="top-head">
             <h4 className="text-uppercase brand-1 wow animate__animated animate__fadeIn">
-              Sản phẩm thịnh hành
+              Hàng mới về
             </h4>
           </div>
           <div className="box-products wow animate__animated animate__fadeIn">
@@ -85,34 +85,8 @@ const TrendingProduct: React.FC = () => {
           </div>
         </div>
       </section>
-      {/* <section className="section block-section-4">
-                <div className="container">
-                    <div className="box-section-4">
-                        <div className="row">
-                            <div className="col-lg-6">
-                                <div className="box-collection wow animate__animated animate__fadeIn">
-                                    <div className="box-collection-info">
-                                        <h4 className="heading-4 mb-15">Girls Apparels</h4>
-                                        <p className="font-md neutral-900 mb-35">Get an extra 50% discount on premium<br className="d-none d-lg-block" />quality baby clothes. Shop now!</p><a className="btn btn-brand-1 text-uppercase" href="#">Shop Now</a>
-                                    </div>
-                                    <div className="star-bg-2"><img src={StarTwo} alt="Kidify" /></div>
-                                </div>
-                            </div>
-                            <div className="col-lg-6">
-                                <div className="box-collection box-collection-2 wow animate__animated animate__fadeIn">
-                                    <div className="box-collection-info">
-                                        <h4 className="heading-4 mb-15">Hot Branch</h4>
-                                        <p className="font-md neutral-900 mb-35">New Brand Fasion on this Summer.<br className="d-none d-lg-block" />Sale off up to 35%</p><a className="btn btn-brand-1 text-uppercase" href="#">Shop Now</a>
-                                    </div>
-                                    <div className="star-bg-1"><img src={Star} alt="Kidify" /></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section> */}
     </>
   );
 };
 
-export default TrendingProduct;
+export default NewProduct;
