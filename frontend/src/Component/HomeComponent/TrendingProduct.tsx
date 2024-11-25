@@ -15,9 +15,9 @@ const TrendingProduct: React.FC = () => {
                 <div className="container">
                     <div className="top-head">
                         <h4 className="text-uppercase brand-1 wow animate__animated animate__fadeIn">
-                            Trending Products
+                            Sản phẩm thịnh hành
                             <a className="btn btn-arrow-right neutral-500 text-capitalize ml-10 wow animate__animated animate__fadeIn" href="#">
-                                View All
+                                Xem tất cả
                                 <img src={Arrow} alt="Kidify" />
                             </a>
                         </h4>
