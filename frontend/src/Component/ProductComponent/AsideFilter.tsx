@@ -114,8 +114,8 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                       <label className="cb-container">
                         <input 
                           type="checkbox" 
-                          onChange={() => handlePriceChange([0, 500000])}
-                          checked={priceRange?.[0] === 0 && priceRange?.[1] === 500000}
+                          onChange={() => handlePriceChange([0, 499999])}
+                          checked={priceRange?.[0] === 0 && priceRange?.[1] === 499999}
                         />
                         <span className="text-small">Dưới 500.000đ</span>
                         <span className="checkmark" />
