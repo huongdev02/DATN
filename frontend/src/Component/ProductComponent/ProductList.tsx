@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { message, Pagination } from "antd";
 import { IProduct, Size, Color } from "../../types/cart";
 import { Link } from "react-router-dom";
-import api from "../../configAxios/axios";
 import type { PaginationProps } from 'antd';
+import axios from "axios";
 
 interface ProductListProps {
   filters: {
