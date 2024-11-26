@@ -11,10 +11,10 @@ const Home:React.FC = () => {
         <>
         <main className="main">
         <BannerComponent />
+        <ProductWithCategories />
         <TrendingProduct />
         <NewProduct/>
         {/* <CategoriesSlider /> */}
-        <ProductWithCategories />
         {/* <ShopByCategory /> */}
         <New />
         </main>

@@ -21,7 +21,7 @@ const TrendingProduct: React.FC = () => {
     (product) => product.categories.name === "Sản phẩm thịnh hành"
   );
 
-  console.log(trendingProducts, "Sản phẩm thịnh hành");
+  
 
   useEffect(() => {
     GetProductCategory();
