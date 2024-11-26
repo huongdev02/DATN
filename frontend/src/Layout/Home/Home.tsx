@@ -12,8 +12,8 @@ const Home:React.FC = () => {
         <main className="main">
         <BannerComponent />
         <ProductWithCategories />
-        <TrendingProduct />
-        <NewProduct/>
+        {/* <TrendingProduct />
+        <NewProduct/> */}
         {/* <CategoriesSlider /> */}
         {/* <ShopByCategory /> */}
         <New />

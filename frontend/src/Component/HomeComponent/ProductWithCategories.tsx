@@ -59,7 +59,7 @@ const ProductWithCategories: React.FC = () => {
                     aria-controls="girls"
                     aria-selected="true"
                   >
-                    Thời trang Nam
+                    Sản phẩm bán chạy nhất
                   </button>
                 </li>
                 <li className="nav-item" role="presentation">
@@ -73,7 +73,7 @@ const ProductWithCategories: React.FC = () => {
                     aria-controls="boys"
                     aria-selected="false"
                   >
-                    Thời trang Nữ
+                    Sản phẩm mới về
                   </button>
                 </li>
                 <li className="nav-item" role="presentation">
@@ -87,7 +87,7 @@ const ProductWithCategories: React.FC = () => {
                     aria-controls="accessories"
                     aria-selected="false"
                   >
-                    Dành cho bé yêu
+                    Sản phẩm khuyến mãi
                   </button>
                 </li>
               </ul>
