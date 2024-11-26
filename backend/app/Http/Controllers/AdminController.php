@@ -14,29 +14,8 @@ class AdminController extends Controller
 {
     public function admin(Request $request)
     {
-        try {
-            $thongkeController = app(ThongkeController::class);
-
-            $accountData = $thongkeController->account($request);
-            $orderData = $thongkeController->order($request);
-
-            $topProductsResponse = $thongkeController->topproduct($request);
-            $topProducts = is_a($topProductsResponse, 'Illuminate\Http\JsonResponse')
-                ? json_decode($topProductsResponse->getContent(), true)
-                : $topProductsResponse;
-
-            return view('admin.dashboard', [
-                'account' => $accountData,
-                'order' => $orderData,
-                'topProducts' => $topProducts,
-            ]);
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => $e->getMessage()]);
-        }
+        return view('admin.dashboard');
     }
-
-
-
 
     public function edit()
     {

@@ -8,60 +8,77 @@
     <div class="container text-center mt-5 mb-3">
         <h2>DashBoard Admin</h2>
     </div>
-
-    <!-- Form lọc thời gian -->
-    <div class="container">
-        <form id="filter-stats-form" action="{{ route('admin.dashboard') }}" method="GET" class="row g-3">
-            <div class="col-md-3">
-                <label for="start-date" class="form-label">Từ ngày:</label>
-                <input type="date" id="start-date" name="start_date" class="form-control"
-                       value="{{ request('start_date') }}">
-            </div>
-            <div class="col-md-3">
-                <label for="end-date" class="form-label">Đến ngày:</label>
-                <input type="date" id="end-date" name="end_date" class="form-control"
-                       value="{{ request('end_date') }}">
-            </div>
-            <div class="col-md-3 align-self-end">
-                <button type="submit" class="btn btn-primary">Lọc</button>
-            </div>
-        </form>
-    </div>
-
     <!-- Menu -->
     <div class="container mt-4">
         <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab">
+                <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button"
+                    role="tab">
                     Thống kê Tài khoản
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">
+                <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button"
+                    role="tab">
                     Thống kê Đơn hàng
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="top-products-tab" data-bs-toggle="tab" data-bs-target="#top-products" type="button" role="tab">
+                <button class="nav-link" id="top-products-tab" data-bs-toggle="tab" data-bs-target="#top-products"
+                    type="button" role="tab">
                     Sản phẩm bán chạy
                 </button>
             </li>
         </ul>
 
         <!-- Nội dung của từng tab -->
-        <div class="tab-content container mt-4">
+        <div class="mt-4">
             <div class="tab-pane fade show active" id="account" role="tabpanel">
-                @include('thongke.account')
+                <div id="account-content" data-url="{{ route('thongke.account') }}"></div>
             </div>
             <div class="tab-pane fade" id="orders" role="tabpanel">
-                @include('thongke.orders')
+                <div id="orders-content" data-url="{{ route('thongke.orders') }}"></div>
             </div>
             <div class="tab-pane fade" id="top-products" role="tabpanel">
-                @include('thongke.topproduct')
+                <div id="top-products-content" data-url="{{ route('thongke.topproduct') }}"></div>
             </div>
         </div>
     </div>
-@endsection
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Hàm tải dữ liệu qua AJAX
+        function loadTabContent(tabId, url) {
+            const contentDiv = document.getElementById(`${tabId}-content`);
+            if (!contentDiv || !url) return;
+
+            contentDiv.innerHTML = '<div class="text-center">Đang tải dữ liệu...</div>';
+
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    contentDiv.innerHTML = data;
+                })
+                .catch(error => {
+                    contentDiv.innerHTML = '<div class="text-danger">Không thể tải dữ liệu. Vui lòng thử lại.</div>';
+                    console.error('Error loading tab content:', error);
+                });
+        }
+
+        // Lắng nghe sự kiện tab thay đổi
+        document.querySelectorAll('.nav-link').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function (event) {
+                const tabId = event.target.dataset.bsTarget.replace('#', '');
+                const url = document.getElementById(`${tabId}-content`).dataset.url;
+                loadTabContent(tabId, url);
+            });
+        });
+
+        // Tải dữ liệu của tab đầu tiên
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeTab = document.querySelector('.nav-link.active');
+            const tabId = activeTab.dataset.bsTarget.replace('#', '');
+            const url = document.getElementById(`${tabId}-content`).dataset.url;
+            loadTabContent(tabId, url);
+        });
+    </script>
+@endsection
