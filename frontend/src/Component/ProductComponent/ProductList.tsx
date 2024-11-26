@@ -4,6 +4,7 @@ import { IProduct, Size, Color, Category } from "../../types/cart";
 // import { Categories } from "../../types/product";
 import { Link } from "react-router-dom";
 // import api from "../../configAxios/axios";
+import axios from "axios";
 
 interface ProductListProps {
   filters: {
@@ -18,19 +19,21 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
 
   // Hàm gọi API lấy tất cả sản phẩm
-  // const GetAllProducts = async () => {
-  //   try {
-  //     const { data } = await api.get("/products");
-  //     setProducts(data.products);
-  //     setFilteredProducts(data.products); // Set filtered products to all initially
-  //   } catch (error) {
-  //     message.error("Lỗi api !");
-  //   }
-  // };
+  const GetAllProducts = async () => {
+    try {
+      const { data } = await axios.get("http://127.0.0.1:8000/api/products"); // Thêm 'await' để đợi kết quả
+      setProducts(data.products);
+      setFilteredProducts(data.products); // Set filtered products to all initially
+    } catch (error) {
+      console.error("Error fetching products:", error); // In ra lỗi chi tiết nếu cần
+      message.error("Lỗi API!"); // Hiển thị thông báo lỗi cho người dùng
+    }
+  };
 
-  // useEffect(() => {
-  //   GetAllProducts(); 
-  // }, []); 
+
+  useEffect(() => {
+    GetAllProducts();
+  }, []);
 
   useEffect(() => {
     // Lọc sản phẩm khi bộ lọc thay đổi
@@ -45,8 +48,8 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
       );
     });
 
-    setFilteredProducts(filterData); 
-  }, [filters, products]); 
+    setFilteredProducts(filterData);
+  }, [filters, products]);
   return (
     <>
       <div className="col-lg-9 order-lg-last">
