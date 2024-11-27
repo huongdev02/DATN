@@ -16,24 +16,34 @@ use Illuminate\Support\Facades\DB;
 class ThongkeController extends Controller
 {
     public function account(Request $request)
-{
-    $startDate = $request->input('start_date', now()->startOfDay());
-    $endDate = $request->input('end_date', now()->endOfDay());
-
-    $query = User::where('role', 0);
-    $count = $query->whereBetween('created_at', [$startDate, $endDate])->count();
-
-    $previousStartDate = Carbon::parse($startDate)->subDays(Carbon::parse($endDate)->diffInDays($startDate) + 1);
-    $previousEndDate = Carbon::parse($startDate)->subDay();
-
-    $lastCount = $query->whereBetween('created_at', [$previousStartDate, $previousEndDate])->count();
-    $change = $count - $lastCount;
-
-    return view('thongke.account', compact('count', 'change'));
-}
-
-
-
+    {
+        $startDate = $request->input('start_date', now()->startOfDay());
+        $endDate = $request->input('end_date', now()->endOfDay());
+    
+        $query = User::where('role', 0);
+        $count = $query->whereBetween('created_at', [$startDate, $endDate])->count();
+    
+        $previousStartDate = Carbon::parse($startDate)->subDays(Carbon::parse($endDate)->diffInDays($startDate) + 1);
+        $previousEndDate = Carbon::parse($startDate)->subDay();
+        $lastCount = $query->whereBetween('created_at', [$previousStartDate, $previousEndDate])->count();
+    
+        $change = $lastCount > 0
+            ? (($count - $lastCount) / $lastCount) * 100
+            : 0;
+    
+        $data = [
+            'count' => $count,
+            'change' => $change,
+        ];
+    
+        // Kiểm tra nếu request là AJAX
+        if ($request->ajax()) {
+            return view('thongke.account', compact('count', 'change'))->render();
+        }
+    
+        return view('thongke.account', compact('count', 'change'));
+    }
+    
 
 public function orders(Request $request)
 {
@@ -63,13 +73,14 @@ public function orders(Request $request)
         'order_count_change' => $orderCountChange,
     ];
 
-    return view('admin.orders', compact('data'));
+    if ($request->ajax()) {
+        return view('thongke.orders', compact('data'))->render();
+    }
+
+    return view('thongke.orders', compact('data'));
 }
 
-
-
-
-    public function topproduct(Request $request)
+public function topproduct(Request $request)
 {
     $startDate = $request->input('start_date', now()->startOfDay());
     $endDate = $request->input('end_date', now()->endOfDay());
@@ -99,7 +110,11 @@ public function orders(Request $request)
             ];
         })->toArray();
 
-    return view('admin.topproducts', compact('topProducts'));
+    if ($request->ajax()) {
+        return view('thongke.topproduct', compact('topProducts'))->render();
+    }
+
+    return view('thongke.topproduct', compact('topProducts'));
 }
 
 }

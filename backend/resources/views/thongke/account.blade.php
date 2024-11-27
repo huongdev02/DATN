@@ -1,19 +1,4 @@
-<div class="mt-5 mb-5">
-    <form id="filter-stats-form" action="{{ route('thongke.account') }}" method="GET" class="row g-3">
-        <div class="col-md-3">
-            <label for="start-date" class="form-label">Từ ngày:</label>
-            <input type="date" id="start-date" name="start_date" class="form-control"
-                value="{{ request('start_date') }}">
-        </div>
-        <div class="col-md-3">
-            <label for="end-date" class="form-label">Đến ngày:</label>
-            <input type="date" id="end-date" name="end_date" class="form-control" value="{{ request('end_date') }}">
-        </div>
-        <div class="col-md-3 align-self-end">
-            <button type="submit" class="btn btn-primary">Lọc</button>
-        </div>
-    </form>
-</div>
+
 
 <div class="card text-white bg-primary h-100">
     <div class="card-body">
