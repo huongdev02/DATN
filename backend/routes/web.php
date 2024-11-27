@@ -90,6 +90,8 @@ Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager']
         ->middleware(['auth', 'admin']);
 
     //route thong ke
+    Route::get('/search', [AdminController::class, 'search'])->name('search');
+
     Route::get('/thongke/account', [ThongkeController::class, 'account'])->name('thongke.account');
     Route::get('/thongke/orders', [ThongkeController::class, 'orders'])->name('thongke.orders');
     Route::get('/thongke/topproduct', [ThongkeController::class, 'topproduct'])->name('thongke.topproduct');

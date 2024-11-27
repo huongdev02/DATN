@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -12,6 +13,19 @@ use App\Services\StatisticsService;
 
 class AdminController extends Controller
 {
+
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        
+        // Tìm kiếm trong các bảng cần thiết (Ví dụ tìm kiếm trong bảng products)
+        $results = Product::where('name', 'like', '%' . $query . '%')->get();
+
+        return response()->json([
+            'results' => $results
+        ]);
+    }
     public function admin(Request $request)
     {
         return view('admin.dashboard');
