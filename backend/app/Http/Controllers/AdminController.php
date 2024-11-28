@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
@@ -18,7 +19,7 @@ class AdminController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        
+
         // Tìm kiếm trong các bảng cần thiết (Ví dụ tìm kiếm trong bảng products)
         $results = Product::where('name', 'like', '%' . $query . '%')->get();
 
@@ -26,10 +27,23 @@ class AdminController extends Controller
             'results' => $results
         ]);
     }
+
     public function admin(Request $request)
-    {
-        return view('admin.dashboard');
-    }
+{
+    // Tính tổng số user
+    $totalUsers = User::count();
+
+    // Tính tổng đơn hàng đã hoàn thành (status = 3 là hoàn thành)
+    $completedOrders = Order::where('status', 3)->count();
+
+    // Tính tổng đơn hàng chưa xử lý (status = 1 là chưa xử lý)
+    $pendingOrders = Order::where('status', 1)->count();
+
+    // Tính tổng doanh thu
+    $totalRevenue = Order::sum('total_amount');
+
+    return view('admin.dashboard', compact('totalUsers', 'completedOrders', 'totalRevenue', 'pendingOrders'));
+}
 
     public function edit()
     {

@@ -8,13 +8,33 @@
     <div class="container text-center mt-5 mb-3">
         <h2>DashBoard Admin</h2>
     </div>
+    <div class="dashboard-stats">
+        <div class="stat-item">
+            <h2>Tổng Doanh Thu</h2>
+            <p>{{ number_format($totalRevenue, 0, ',', '.') }} VND</p>
+        </div>
+        <div class="stat-item">
+            <h2>Tổng Thành Viên</h2>
+            <p>{{ $totalUsers }} Thành viên</p>
+        </div>
+        <div class="stat-item">
+            <h2>Đã Hoàn Thành</h2>
+            <p>{{ $completedOrders }} Đơn hàng</p>
+        </div>
+        <div class="stat-item">
+            <h2>Đơn Hàng Chưa Xử Lý</h2>
+            <p>{{ $pendingOrders }} Đơn hàng</p>
+            <a class="btn btn-success" href="{{route('orders.index')}}">Xử lí ngay</a>
+        </div>
+    </div>
+
 
     <!-- Menu -->
     <div class="container mt-4">
         <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button"
-                    role="tab">
+                <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account"
+                    type="button" role="tab">
                     Thống kê Tài khoản
                 </button>
             </li>
@@ -52,6 +72,8 @@
             </form>
         </div>
 
+        
+
         <!-- Nội dung của từng tab -->
         <div class="tab-content mt-4">
             <div class="tab-pane fade show active" id="account" role="tabpanel">
@@ -67,15 +89,60 @@
     </div>
 
 
+    <style>
+        .dashboard-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-item h2 {
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .stat-item p {
+            font-size: 18px;
+            color: #555;
+            font-weight: bold;
+        }
+    </style>
     <script>
         // Hàm tải dữ liệu qua AJAX
         function loadTabContent(tabId, url) {
             const contentDiv = document.getElementById(`${tabId}-content`);
             if (!contentDiv || !url) return;
 
+            // Lấy giá trị từ đầu tháng đến hôm nay
+            const today = new Date();
+            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            const formattedStartDate = startOfMonth.toISOString().split('T')[0];
+            const formattedEndDate = today.toISOString().split('T')[0];
+
+            // Gửi request với start_date và end_date
+            const params = new URLSearchParams({
+                start_date: formattedStartDate,
+                end_date: formattedEndDate,
+            });
+
             contentDiv.innerHTML = '<div class="text-center">Đang tải dữ liệu...</div>';
 
-            fetch(url)
+            fetch(`${url}?${params.toString()}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                })
                 .then(response => response.text())
                 .then(data => {
                     contentDiv.innerHTML = data;
@@ -86,6 +153,7 @@
                 });
         }
 
+
         // Lắng nghe sự kiện tab thay đổi
         document.querySelectorAll('.nav-link').forEach(tab => {
             tab.addEventListener('shown.bs.tab', function(event) {
@@ -95,6 +163,15 @@
             });
         });
 
+        // Tải dữ liệu của tab đầu tiên khi load trang
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeTab = document.querySelector('.nav-link.active');
+            const tabId = activeTab.dataset.bsTarget.replace('#', '');
+            const url = document.getElementById(`${tabId}-content`).dataset.url;
+            loadTabContent(tabId, url);
+        });
+
+
         // Tải dữ liệu của tab đầu tiên
         document.addEventListener('DOMContentLoaded', () => {
             const activeTab = document.querySelector('.nav-link.active');
@@ -102,6 +179,8 @@
             const url = document.getElementById(`${tabId}-content`).dataset.url;
             loadTabContent(tabId, url);
         });
+
+        
 
         document.addEventListener('DOMContentLoaded', () => {
             // Cập nhật giá trị `current_url` khi tải trang ban đầu

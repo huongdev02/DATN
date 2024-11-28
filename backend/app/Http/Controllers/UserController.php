@@ -23,7 +23,7 @@ class UserController extends Controller
             $token = end($tokenParts); // Lấy phần sau dấu '|'
         }
     
-        return view('admin.dashboard', ['token' => $token]);
+        return view('user.dashboard', ['token' => $token]);
     }
 
     public function changepass()
