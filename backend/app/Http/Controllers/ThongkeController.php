@@ -167,5 +167,23 @@ class ThongkeController extends Controller
         // Truyền dữ liệu sang view
         return view('thongke.tonkho', compact('products'));
     }
-    
+
+    public function khachhang()
+    {
+
+        //thong ke cac user da tung mua hang, user mua nhieu, user chua tung mua
+        return view('thongke.khachhang', compact(''));
+    }
+
+    public function voucher()
+    {
+        //so voucher da su dung, tong so tien da giam gia, voucher duoc dung nhieu nhat
+        return view('thongke.voucher', compact(''));
+    }
+
+    public function doanhthu()
+    {
+        //doanh thu tu thanh toan onl, off, loi nhuan, chi phi
+        return view('thongke.doanhthu', compact(''));
+    }
 }
