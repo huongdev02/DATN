@@ -95,6 +95,7 @@ Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager']
     Route::get('/thongke/account', [ThongkeController::class, 'account'])->name('thongke.account');
     Route::get('/thongke/orders', [ThongkeController::class, 'orders'])->name('thongke.orders');
     Route::get('/thongke/topproduct', [ThongkeController::class, 'topproduct'])->name('thongke.topproduct');
+    Route::get('/thongke/tonkho', [ThongkeController::class, 'tonkho'])->name('thongke.tonkho');
 });
 
 // Route cho User

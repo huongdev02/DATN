@@ -50,6 +50,12 @@
                     Sản phẩm bán chạy
                 </button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="top-products-tab" data-bs-toggle="tab" data-bs-target="#tonkho"
+                    type="button" role="tab">
+                    Sản phẩm tôn kho
+                </button>
+            </li>
         </ul>
 
         <div class="mt-5 mb-5">
@@ -84,6 +90,9 @@
             </div>
             <div class="tab-pane fade" id="top-products" role="tabpanel">
                 <div id="top-products-content" data-url="{{ route('thongke.topproduct') }}"></div>
+            </div>
+            <div class="tab-pane fade" id="tonkho" role="tabpanel">
+                <div id="top-products-content" data-url="{{ route('thongke.tonkho') }}"></div>
             </div>
         </div>
     </div>

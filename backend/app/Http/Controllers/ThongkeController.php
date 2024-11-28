@@ -153,5 +153,19 @@ class ThongkeController extends Controller
         // Return the full view
         return view('thongke.topproduct', compact('topProducts'));
     }
+
+    public function tonkho()
+    {
+        // Lấy ngày hiện tại trừ đi 3 tháng
+        $threeMonthsAgo = Carbon::now()->subMonths(3);
+
+        // Lấy danh sách sản phẩm thỏa mãn điều kiện
+        $products = Product::where('quantity', '>', 50)
+                        ->where('created_at', '<', $threeMonthsAgo)
+                        ->get();
+
+        // Truyền dữ liệu sang view
+        return view('thongke.tonkho', compact('products'));
+    }
     
 }
