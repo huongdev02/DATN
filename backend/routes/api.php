@@ -2,16 +2,17 @@
 
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\Api\AccountController;
-use App\Http\Controllers\API\ColorController;
-use App\Http\Controllers\API\SizeController;
+use App\Http\Controllers\Api\BlogController;
+
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\LogoBannerController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PayController;
-use App\Http\Controllers\Api\ReviewController;
+
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PromotionController;
-use App\Http\Controllers\UserController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,7 +34,7 @@ Route::apiResource('carts', CartController::class)->middleware('auth:sanctum');
 Route::apiResource('orders', OrderController::class)->middleware('auth:sanctum');
 Route::get('categories/{category}/products', [ProductController::class, 'getProductsByCategory']);
 Route::apiResource('products', ProductController::class);
-Route::apiResource('reviews', ReviewController::class);
+
 Route::apiResource('vouchers', VoucherController::class);
 Route::apiResource('payments', PayController::class);
 Route::resource('promotions', PromotionController::class);
@@ -47,3 +48,6 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 Route::get('/auth/check', [AccountController::class, 'checkAuth']);
+
+Route::apiResource('blog', BlogController::class);
+Route::apiResource('logobanner', LogoBannerController::class);

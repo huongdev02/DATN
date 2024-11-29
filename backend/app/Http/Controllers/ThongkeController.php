@@ -15,142 +15,175 @@ use Illuminate\Support\Facades\DB;
 
 class ThongkeController extends Controller
 {
-    public function account(Request $request) {
-        // Retrieve the timeframe from the request
-        $timeframe = $request->input('timeframe', 'today'); // Default to 'today' if not set
+
+    public function account(Request $request)
+    {
+        // Lấy ngày bắt đầu và kết thúc từ form lọc (nếu có)
+        $startDate = $request->start_date ? Carbon::parse($request->start_date)->startOfDay() : Carbon::now()->startOfMonth();
+        $endDate = $request->end_date ? Carbon::parse($request->end_date)->endOfDay() : Carbon::now()->endOfMonth();
+
+        // Query người dùng mới trong khoảng thời gian đã chọn
         $query = User::where('role', 0);
-        $count = 0;
-        $lastCount = 0;
-    
-        switch ($timeframe) {
-            case 'today':
-                $count = $query->whereDate('created_at', now())->count();
-                $lastCount = $query->whereDate('created_at', now()->subDay())->count();
-                break;
-            case 'this_week':
-                $count = $query->whereBetween('created_at', [now()->startOfWeek(), now()])->count();
-                $lastCount = $query->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count();
-                break;
-            case 'this_month':
-                $count = $query->whereBetween('created_at', [now()->startOfMonth(), now()])->count();
-                $lastCount = $query->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->count();
-                break;
-            case 'this_quarter':
-                $count = $query->whereBetween('created_at', [now()->firstOfQuarter(), now()])->count();
-                $lastCount = $query->whereBetween('created_at', [now()->subQuarter()->firstOfQuarter(), now()->subQuarter()->lastOfQuarter()])->count();
-                break;
-        }
-    
-        $change = $count - $lastCount;
-    
-        return [
-            'count' => $count,
-            'change' => $change
+
+        $currentCount = $query->whereBetween('created_at', [$startDate, $endDate])->count();
+
+        // Lấy ngày bắt đầu và kết thúc của tháng trước
+        $previousStartDate = Carbon::now()->subMonth()->startOfMonth();
+        $previousEndDate = Carbon::now()->subMonth()->endOfMonth();
+
+        // Query người dùng mới trong tháng trước
+        $lastCount = $query->whereBetween('created_at', [$previousStartDate, $previousEndDate])->count();
+
+        // Tính sự thay đổi giữa tháng hiện tại và tháng trước
+        $change = $lastCount > 0
+            ? (($currentCount - $lastCount) / $lastCount) * 100
+            : 0;
+
+        // Chuẩn bị dữ liệu để đổ vào view
+        $data = [
+            'count' => $currentCount,
+            'change' => $change,
+            'last_count' => $lastCount,
         ];
-    }
-    
-    public function order(Request $request) {
-        $query = Order::where('status', 3); // Only completed orders
-        $revenue = 0;
-        $orderCount = 0;
-        $lastRevenue = 0;
-        $lastOrderCount = 0; // To store the previous order count
-    
-        // Get the timeframe from the request, default to 'today' if not provided
-        $timeframe = $request->input('timeframe', 'today');
-    
-        switch ($timeframe) {
-            case 'today':
-                $revenue = $query->whereDate('created_at', now())->sum('total_amount');
-                $orderCount = $query->whereDate('created_at', now())->count();
-                $lastRevenue = $query->whereDate('created_at', now()->subDay())->sum('total_amount');
-                $lastOrderCount = $query->whereDate('created_at', now()->subDay())->count(); // Previous day count
-                break;
-            case 'this_week':
-                $revenue = $query->whereBetween('created_at', [now()->startOfWeek(), now()])->sum('total_amount');
-                $orderCount = $query->whereBetween('created_at', [now()->startOfWeek(), now()])->count();
-                $lastRevenue = $query->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->sum('total_amount');
-                $lastOrderCount = $query->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])->count(); // Previous week count
-                break;
-            case 'this_month':
-                $revenue = $query->whereBetween('created_at', [now()->startOfMonth(), now()])->sum('total_amount');
-                $orderCount = $query->whereBetween('created_at', [now()->startOfMonth(), now()])->count();
-                $lastRevenue = $query->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->sum('total_amount');
-                $lastOrderCount = $query->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->count(); // Previous month count
-                break;
-            case 'this_quarter':
-                $revenue = $query->whereBetween('created_at', [now()->firstOfQuarter(), now()])->sum('total_amount');
-                $orderCount = $query->whereBetween('created_at', [now()->firstOfQuarter(), now()])->count();
-                $lastRevenue = $query->whereBetween('created_at', [now()->subQuarter()->firstOfQuarter(), now()->subQuarter()->lastOfQuarter()])->sum('total_amount');
-                $lastOrderCount = $query->whereBetween('created_at', [now()->subQuarter()->firstOfQuarter(), now()->subQuarter()->lastOfQuarter()])->count(); // Previous quarter count
-                break;
+
+     
+        if (empty($data)) {
+            $data = null; // Or any message indicating no data available
         }
-    
-        $changeRevenue = $revenue - $lastRevenue; // Calculate revenue change
-        $changeOrderCount = $orderCount - $lastOrderCount; // Calculate order count change
-    
-        return [
-            'total_amount' => $revenue,
-            'order_count' => $orderCount,
+        
+        if ($request->ajax()) {
+            return view('thongke.account', compact('data'))->render();
+        }
+
+        return view('thongke.account', compact('data'));
+    }
+
+    public function orders(Request $request)
+    {
+        // Lấy ngày bắt đầu và kết thúc từ form lọc (nếu có)
+        $startDate = $request->start_date ? Carbon::parse($request->start_date)->startOfDay() : Carbon::now()->startOfMonth();
+        $endDate = $request->end_date ? Carbon::parse($request->end_date)->endOfDay() : Carbon::now()->endOfMonth();
+
+        // Query thống kê cho đơn hàng trong khoảng thời gian đã chọn
+        $query = Order::where('status', 3);
+
+        $currentRevenue = $query->whereBetween('created_at', [$startDate, $endDate])->sum('total_amount');
+        $currentOrderCount = $query->whereBetween('created_at', [$startDate, $endDate])->count();
+
+
+
+        // Lấy ngày bắt đầu và kết thúc của tháng trước
+        $previousStartDate = Carbon::now()->subMonth()->startOfMonth();
+        $previousEndDate = Carbon::now()->subMonth()->endOfMonth();
+
+        // Query thống kê cho tháng trước
+        $lastRevenue = $query->whereBetween('created_at', [$previousStartDate, $previousEndDate])->sum('total_amount');
+        $lastOrderCount = $query->whereBetween('created_at', [$previousStartDate, $previousEndDate])->count();
+
+        // Tính sự thay đổi giữa tháng hiện tại và tháng trước
+        $changeRevenue = $currentRevenue - $lastRevenue;
+        $orderCountChange = ($lastOrderCount > 0)
+            ? (($currentOrderCount - $lastOrderCount) / $lastOrderCount) * 100
+            : 0;
+
+        $data = [
+            'total_amount' => $currentRevenue,
+            'order_count' => $currentOrderCount,
             'change' => $changeRevenue,
-            'lastOrderCount' => $lastOrderCount, // Return the previous order count
-            'order_count_change' => $changeOrderCount // Optional, if you want to track changes
+            'order_count_change' => $orderCountChange,
+            'last_total_amount' => $lastRevenue,
+            'last_order_count' => $lastOrderCount,
         ];
+        
+        if (empty($data)) {
+            $data = null; // Or any message indicating no data available
+        }
+
+        if ($request->ajax()) {
+            return view('thongke.orders', compact('data'))->render();
+        }
+
+        return view('thongke.orders', compact('data'));
     }
-    
+
+
     public function topproduct(Request $request)
     {
-        $productTimeframe = $request->input('product_timeframe', 'this_week');
+        // Get the start and end dates from the filter, or use default values
+        $startDate = $request->input('start_date', now()->startOfDay());
+        $endDate = $request->input('end_date', now()->endOfDay());
     
-        // Determine the start date based on the selected timeframe
-        switch ($productTimeframe) {
-            case 'this_week':
-                $startDate = now()->startOfWeek();
-                break;
-            case 'this_month':
-                $startDate = now()->startOfMonth();
-                break;
-            case 'this_quarter':
-                $startDate = now()->firstOfQuarter();
-                break;
-            default: // 'today'
-                $startDate = now()->startOfDay();
-                break;
-        }
-    
-        // Fetch top products based on the selected timeframe from order_detail
-        $topProducts = Order_detail::select('product_id', 
-            DB::raw('SUM(quantity) as total_quantity'), 
+        // Retrieve the top products based on the date range
+        $topProducts = Order_detail::select(
+            'product_id',
+            DB::raw('SUM(quantity) as total_quantity'),
             DB::raw('COUNT(order_id) as sales_count'),
             DB::raw('SUM(total) as total_revenue')
         )
-        ->whereHas('order', function ($query) use ($startDate) {
-            $query->where('created_at', '>=', $startDate); // Filter orders based on the timeframe
+        ->whereHas('order', function ($query) use ($startDate, $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
         })
         ->groupBy('product_id')
         ->orderBy('total_quantity', 'desc')
-        ->take(3)
-        ->get();
-    
-        // Prepare product details
-        $topProducts = $topProducts->map(function ($item) {
+        ->take(10)
+        ->get()
+        ->map(function ($item) {
             $product = Product::find($item->product_id);
             return [
                 'product_id' => $item->product_id,
                 'product_name' => $product ? $product->name : 'Unknown Product',
-                'image' => $product ? $product->avatar : null, // Assuming there's an 'avatar' field
+                'image' => $product ? $product->avatar : null,
                 'total_quantity' => $item->total_quantity,
                 'sales_count' => $item->sales_count,
-                'total_revenue' => $item->total_revenue, // Sum of revenue from order_details
+                'total_revenue' => $item->total_revenue,
             ];
-        })->toArray(); // Chuyển đổi thành mảng
+        })
+        ->toArray();
     
-        return response()->json($topProducts); // Return the top products
+        // Check if there are no products data
+        if (empty($topProducts)) {
+            $topProducts = null; // Or any message indicating no data available
+        }
+    
+        // If this is an AJAX request, return the rendered view for the top products
+        if ($request->ajax()) {
+            return view('thongke.topproduct', compact('topProducts'))->render();
+        }
+    
+        // Return the full view
+        return view('thongke.topproduct', compact('topProducts'));
     }
-    
-    
-    
-    
-    
 
+    public function tonkho()
+    {
+        // Lấy ngày hiện tại trừ đi 3 tháng
+        $threeMonthsAgo = Carbon::now()->subMonths(3);
+
+        // Lấy danh sách sản phẩm thỏa mãn điều kiện
+        $products = Product::where('quantity', '>', 50)
+                        ->where('created_at', '<', $threeMonthsAgo)
+                        ->get();
+
+        // Truyền dữ liệu sang view
+        return view('thongke.tonkho', compact('products'));
+    }
+
+    public function khachhang()
+    {
+
+        //thong ke cac user da tung mua hang, user mua nhieu, user chua tung mua
+        return view('thongke.khachhang', compact(''));
+    }
+
+    public function voucher()
+    {
+        //so voucher da su dung, tong so tien da giam gia, voucher duoc dung nhieu nhat
+        return view('thongke.voucher', compact(''));
+    }
+
+    public function doanhthu()
+    {
+        //doanh thu tu thanh toan onl, off, loi nhuan, chi phi
+        return view('thongke.doanhthu', compact(''));
+    }
 }

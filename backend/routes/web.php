@@ -3,16 +3,18 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Api\ReviewController;
-use App\Http\Controllers\CardController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ManagerUserController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LogoBannerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\QuanliReviewController;
 use App\Http\Controllers\ThongkeController;
 use App\Http\Controllers\UserOrderController;
 use App\Http\Controllers\UservoucherController;
@@ -29,6 +31,7 @@ use Illuminate\Support\Facades\Route;
 | sẽ được gán vào nhóm "web" middleware. Hãy tạo nên điều gì đó tuyệt vời!
 |
 */
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -62,12 +65,16 @@ Route::controller(AccountController::class)->group(function () {
 // Route cho Admin
 Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager'])->group(function () {
     Route::get('/admin/dashboard',  'admin')->name('admin.dashboard');
-      // Đổi mật khẩu
+    // Đổi mật khẩu
     Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form');
     Route::post('/admin/change-password', 'changepass_')->name('admin.password.change');
     // Cập nhật tài khoản
     Route::get('/admin/edit', 'edit')->name('admin.edit');
     Route::post('/admin/update', 'update')->name('admin.update');
+
+    //banner va blog
+    Route::resource('logo_banners', LogoBannerController::class);
+    Route::resource('blog', BlogController::class);
 
     //cac route con lai
     Route::resource('sizes', SizeController::class);
@@ -77,16 +84,24 @@ Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager']
     Route::resource('orders', OrderController::class);
     Route::resource('promotion', PromotionController::class);
     Route::resource('products', ProductController::class);
+    Route::resource('review', QuanliReviewController::class);
     //quan li account, route nay chi co quyen admin
     Route::resource('managers', ManagerUserController::class)
-    ->middleware(['auth', 'admin']);
+        ->middleware(['auth', 'admin']);
 
+    //route thong ke
+    Route::get('/search', [AdminController::class, 'search'])->name('search');
+
+    Route::get('/thongke/account', [ThongkeController::class, 'account'])->name('thongke.account');
+    Route::get('/thongke/orders', [ThongkeController::class, 'orders'])->name('thongke.orders');
+    Route::get('/thongke/topproduct', [ThongkeController::class, 'topproduct'])->name('thongke.topproduct');
+    Route::get('/thongke/tonkho', [ThongkeController::class, 'tonkho'])->name('thongke.tonkho');
 });
 
 // Route cho User
 Route::controller(UserController::class)->middleware(['auth', 'user'])->group(function () {
     Route::get('/user/dashboard', 'user')->name('user.dashboard');
-       // Đổi mật khẩu
+    // Đổi mật khẩu
     Route::get('/user/change-password', 'changepass')->name('user.changepass.form');
     Route::post('/user/change-password', 'changepass_')->name('user.password.change');
     // Cập nhật tài khoản
@@ -103,8 +118,5 @@ Route::controller(UserController::class)->middleware(['auth', 'user'])->group(fu
     Route::resource('userorder', UserOrderController::class);
     Route::patch('/orders/{orderId}/done',  [UserOrderController::class, 'done'])->name('done');
 
-    Route::resource('reviews', ReviewController::class);
-
+    Route::post('user/review/{order}', [ReviewController::class, 'store'])->name('review.store');
 });
-
-
