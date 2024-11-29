@@ -21,12 +21,23 @@ const ProductDetailComponent: React.FC = () => {
       const { data } = await api.get(`/products/${id}`);
       setProduct(data);
     } catch (error) {
-      message.error("Lỗi api !");
+      console.log(error);
+      
     }
   };
 
-  console.log("Product", products);
-  
+  const GetProductsById = async () => {
+    try {
+      const { data } = await api.get(`/categories/${id}/products`);
+      setProductById(data.products);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+  };
+
+  console.log("kkkkkk", productById);
 
   useEffect(() => {
     GetAllProducts();
