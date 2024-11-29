@@ -8,6 +8,8 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../../configAxios/axios";
+import { Rate } from 'antd';
+import "./ProductDetail.css";
 import { message } from "antd";
 const ProductDetailComponent: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState("S");
@@ -242,7 +244,7 @@ const ProductDetailComponent: React.FC = () => {
                     aria-controls="vendor"
                     aria-selected="false"
                   >
-                    Nguồn gốc
+                    Đánh giá
                   </button>
                 </li>
               </ul>
@@ -279,30 +281,27 @@ const ProductDetailComponent: React.FC = () => {
                     </table>
                   </div>
                 </div>
+                {/* Review sản phẩm */}
                 <div
                   className="tab-pane fade"
                   id="vendor"
                   role="tabpanel"
                   aria-labelledby="vendor-tab"
                 >
-                  <div className="table-responsive">
-                    <table className="table table-striped">
-                      <tbody>
-                        <tr>
-                          <th>Color</th>
-                          <td> Red</td>
-                        </tr>
-                        <tr>
-                          <th>Size</th>
-                          <td> XL</td>
-                        </tr>
-                        <tr>
-                          <th>Weight</th>
-                          <td> 300gr</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <form className="review-product">
+                    <div className="rating">
+                     <span>Đánh giá của bạn:</span>
+                   
+                     <Rate className="start" allowHalf defaultValue={2.5} />
+                    
+                    </div>
+                    <textarea className="comment" name="" id="" placeholder="Nhận xét của bạn">
+
+                    </textarea>
+                    <div>
+                    <button className="button-review">Đánh giá sản phẩm</button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>

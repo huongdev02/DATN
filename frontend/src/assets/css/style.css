@@ -9125,7 +9125,7 @@ h5.item-collapse.collapsed-item {
   color: #1C1D1D;
 }
 .block-product-content .tab-pane ul {
-  margin-bottom: 35px;
+
   list-style-type: disc;
   padding-left: 15px;
 }
@@ -9133,14 +9133,11 @@ h5.item-collapse.collapsed-item {
   font-size: 12px;
   margin-bottom: 6px;
   line-height: 18px;
-  color: #1C1D1D;
+  color: gold;
 }
-.block-product-content .tab-pane ul li span {
-  min-width: 120px;
-  display: inline-block;
-}
+
 .block-product-content .tab-pane ul li span:first-child {
-  margin-right: 25px;
+  font-size: 25px;
 }
 
 .recent-viewed {
