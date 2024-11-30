@@ -9,7 +9,7 @@ class CartItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['cart_id', 'product_id', 'quantity', 'price', 'total'];
+    protected $fillable = ['cart_id', 'product_id', 'quantity', 'price', 'total', 'size_id', 'color_id'];
 
     public function cart()
     {
@@ -26,5 +26,14 @@ class CartItem extends Model
     public function calculateTotal()
     {
         $this->total = $this->quantity * $this->price;
+    }
+    public function color()
+    {
+        return $this->belongsTo(Color::class, 'color_id');
+    }
+    
+    public function size()
+    {
+        return $this->belongsTo(Size::class, 'size_id');
     }
 }

@@ -72,7 +72,7 @@
                         <td>{{ $item->categories->name }}</td>
                         <td>
                             <img src="{{ asset('storage/' . $item->avatar) }}" alt="{{ $item->name }}"
-                                style="width: 50px; height: auto; border-radius: 8px;">
+                                style="width: 40px; height: 30px; border-radius: 8px;">
                         </td>
                         <td>{{ number_format($item->quantity) }}</td>
                         <td>{{ number_format($item->sell_quantity) }}</td>
@@ -83,7 +83,7 @@
                                 <div class="d-flex flex-wrap gap-2">
                                     @foreach ($item->galleries as $gallery)
                                         <img src="{{ $gallery->image_path }}" alt="Gallery Image" class="gallery-image"
-                                            style="width: 40px; height: auto; border-radius: 5px;">
+                                            style="width: 40px; height: 30px; border-radius: 5px;">
                                     @endforeach
                                 </div>
                             @else

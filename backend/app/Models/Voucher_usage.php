@@ -12,6 +12,7 @@ class Voucher_usage extends Model
         'user_id',
         'voucher_id',
         'order_id',
+        'discount_value'
     ];
 
     public function user()

@@ -38,18 +38,17 @@ Route::get('/sanctum/csrf-cookie', function () {
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/cart/{user_id}', [CartController::class, 'getCartByUserId']);
-Route::put('/cart/{cartId}/update/{productId}', [CartController::class, 'updateCartItem']);
+
 Route::apiResource('carts', CartController::class)->middleware('auth:sanctum');
 Route::apiResource('orders', OrderController::class)->middleware('auth:sanctum');
+Route::apiResource('vouchers', VoucherController::class)->middleware('auth:sanctum');
+
 Route::get('categories/{category}/products', [ProductController::class, 'getProductsByCategory']);
 Route::apiResource('products', ProductController::class);
-
-Route::apiResource('vouchers', VoucherController::class);
-Route::apiResource('payments', PayController::class);
 Route::resource('promotions', PromotionController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::get('products/category/{categoryId}', [CategoryController::class, 'productsByCategory']); 
+
 Route::controller(AccountController::class)->group(function () {
     Route::post('login', 'login')->name('login');
     Route::post('register', 'register')->name('register');

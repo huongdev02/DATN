@@ -17,6 +17,8 @@ class Order extends Model
         'ship_method',
         'ship_address_id',
         'status',
+        'voucher_id',
+        'discount_value'
     ];
 
     public function user()
@@ -42,5 +44,9 @@ class Order extends Model
     public function review()
     {
         return $this->hasOne(Review::class, 'order_id');
+    }
+    public function voucher()
+    {
+        return $this->belongsTo(Voucher::class);
     }
 }
