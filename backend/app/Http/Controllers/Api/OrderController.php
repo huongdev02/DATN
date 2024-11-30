@@ -62,31 +62,49 @@ class OrderController extends Controller
             if ($voucherId) {
                 $voucher = Voucher::find($voucherId);
 
+                // Kiểm tra voucher tồn tại và đang hoạt động
                 if ($voucher && $voucher->status == 1 && $voucher->quantity > $voucher->used_times) {
-                    // Kiểm tra điều kiện voucher hợp lệ
-
-                    // Tính toán giảm giá dựa trên voucher
-                    if ($voucher->type == 0) {
-                        // Giảm giá theo giá trị cố định
-                        $discountValue = min($voucher->discount_value, $totalAmount);
-                    } elseif ($voucher->type == 1) {
-                        // Giảm giá theo phần trăm
-                        $discountValue = min(($voucher->discount_value / 100) * $totalAmount, $voucher->max_discount);
+                    // Kiểm tra các điều kiện của voucher
+                    if ($totalAmount < $voucher->discount_min) {
+                        return response()->json(['message' => 'Total order amount is below minimum required for voucher.'], 400);
                     }
 
-                    // Giảm giá không thể lớn hơn tổng đơn hàng
+                    // Kiểm tra số lượng đơn hàng (min_order_count, max_order_count)
+                    if ($totalQuantity < $voucher->min_order_count) {
+                        return response()->json(['message' => 'Minimum order quantity not met for voucher.'], 400);
+                    }
+                    if ($totalQuantity > $voucher->max_order_count) {
+                        return response()->json(['message' => 'Maximum order quantity exceeded for voucher.'], 400);
+                    }
+
+                    // Kiểm tra type của voucher (giảm giá cố định hay theo %)
+                    if ($voucher->type == 0) {
+                        // Giảm giá theo giá trị cố định
+                        $discountValue = min($voucher->discount_value, $totalAmount); // Giảm giá cố định không vượt quá tổng đơn hàng
+                    } elseif ($voucher->type == 1) {
+                        // Giảm giá theo phần trăm
+                        $discountValue = min(($voucher->discount_value / 100) * $totalAmount, $voucher->max_discount); // Áp dụng phần trăm giảm giá với giới hạn tối đa
+                    }
+
+                    // Giảm giá không thể nhỏ hơn mức tối thiểu
                     $discountValue = max($discountValue, $voucher->discount_min);
 
-                    // Cập nhật voucher đã được sử dụng
-                    $voucher->increment('used_times');
+                    // Cập nhật số lần sử dụng voucher và giảm quantity của voucher
+                    $voucher->increment('used_times'); // Tăng số lần sử dụng
+                    $voucher->decrement('quantity'); // Giảm số lượng còn lại của voucher
+                } else {
+                    return response()->json(['message' => 'Voucher is not valid or has been used up.'], 400);
                 }
             }
+
+            // Cập nhật giá trị tổng tiền sau khi giảm giá
+            $totalAmount -= $discountValue;
 
             // Tạo đơn hàng
             $order = Order::create([
                 'user_id' => $userId,
                 'quantity' => $totalQuantity,
-                'total_amount' => $totalAmount,
+                'total_amount' => $totalAmount, // Lưu tổng tiền sau khi giảm giá
                 'payment_method' => $request->input('payment_method', 1), // Mặc định là chuyển khoản ngân hàng
                 'ship_method' => $request->input('ship_method', 1), // Mặc định là giao hàng hỏa tốc
                 'voucher_id' => $voucherId, // Ghi ID voucher nếu có
