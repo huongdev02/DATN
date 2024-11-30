@@ -27,6 +27,7 @@ class ProductController extends Controller
                     'avatar_url' => $product->avatar ? asset('storage/ProductAvatars/' . basename($product->avatar)) : null,
                     'categories' => $product->categories,
                     'price' => $product->price,
+                    'avatar' => $product->avatar,
                     'quantity' => $product->quantity,
                     'sell_quantity' => $product->sell_quantity,
                     'view' => $product->view,
@@ -96,7 +97,7 @@ class ProductController extends Controller
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
-                'avatar_url' => $product->avatar ? asset('storage/ProductAvatars/' . basename($product->avatar)) : null,
+                'avatar' => $product->avatar ? asset('storage/ProductAvatars/' . basename($product->avatar)) : null, // Cập nhật đường dẫn avatar ở đây
                 'categories' => $product->categories,
                 'price' => $product->price,
                 'quantity' => $product->quantity,

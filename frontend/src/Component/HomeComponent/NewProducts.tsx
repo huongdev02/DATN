@@ -2,10 +2,10 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { Link } from "react-router-dom";
-import api from "../../configAxios/axios";
 import { message } from "antd";
 import { useState, useEffect } from "react";
 import { IProduct } from "../../types/cart";
+import api from "../../Axios/Axios";
 const NewProduct: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const GetProductCategory = async () => {
@@ -20,6 +20,8 @@ const NewProduct: React.FC = () => {
   const trendingProducts = products.filter(
     (product) => product.categories.name === "Hàng mới về"
   );
+
+  
 
  
 

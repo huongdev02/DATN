@@ -16,8 +16,15 @@ class CartItem extends Model
         return $this->belongsTo(Cart::class);
     }
 
+    // Quan hệ với Product (một CartItem thuộc một Product)
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    // Tính toán total tự động
+    public function calculateTotal()
+    {
+        $this->total = $this->quantity * $this->price;
     }
 }

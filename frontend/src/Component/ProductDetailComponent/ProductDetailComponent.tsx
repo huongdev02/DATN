@@ -1,242 +1,262 @@
-import ProductThumb from '../../assets/imgs/page/product/thumnb.png'
-import Product from "../../assets/imgs/page/product/img.png"
-import ProductTwo from "../../assets/imgs/page/product/img-2.png"
-import ProductThree from "../../assets/imgs/page/product/img-3.png"
-import Star from "../../assets/imgs/template/icons/star.svg"
-import { IProduct, Size, Color, Gallery } from "../../types/cart";
-import { useParams, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import api from '../../configAxios/axios'
-import { message } from 'antd'
+import React, { useEffect, useState } from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import Star from "../../assets/imgs/template/icons/star.svg";
+import { useAppDispatch } from '../../Redux/store';
+import axios from 'axios';
+import { notification } from 'antd';
+import { addToCart } from '../../Redux/Reducer/CartReducer';
+
 const ProductDetailComponent: React.FC = () => {
-  const [selectedSize, setSelectedSize] = useState('S');
-  const {id} = useParams()
-  const [products, setProduct] = useState<IProduct | null>(null);
-  const [productById, setProductById] = useState<IProduct[]>([]);
-  const handleSizeClick = (size: any) => {
-    setSelectedSize(size);
-  };
+    const { id } = useParams<{ id: string }>();
+    const dispatch = useAppDispatch();
+    const [product, setProduct] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [selectedSize, setSelectedSize] = useState('');
+    const [selectedColor, setSelectedColor] = useState<string | null>(null);
+    const [quantity, setQuantity] = useState<number>(1);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const navigate = useNavigate();
 
-  const GetAllProducts = async () => {
-    try {
-      const { data } = await api.get(`/products/${id}`);
-      setProduct(data);
-    } catch (error) {
-      message.error("Lỗi api !");
-    }
-  };
 
-  const GetProductsById = async () => {
-    try {
-      const { data } = await api.get(`/categories/${id}/products`);
-      setProductById(data.products);
-      
-    } catch (error) {
-      console.log(error);
-      
-    }
-  };
-  
+    const convertToVND = (usdPrice: number) => {
+        return (usdPrice).toLocaleString('vi-VN');
+    };
 
-  useEffect(() => {
-    GetAllProducts();
-    GetProductsById();
-  }, [id]);
- 
-  return (
-    <>
-      <main className="main">
-        <div className="section block-shop-head-2 block-breadcrumb-type-1">
-          <div className="container">
-            <div className="breadcrumbs">
-              <ul>
-                <li><a href="#">Trang chủ</a></li>
-                <li><a href="#">Cửa hàng</a></li>
-                <li> <a href="#">Chi tiết sản phẩm</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <section className="section block-product-content">
-          <div className="container">
-          {products && (
-            <div className="row">
-              <div className="col-lg-5 box-images-product-left">
-                <div className="detail-gallery">
-                  <div className="slider-nav-thumbnails">
-                  {products.galleries.map((gallery, index) => (
-                <div key={index} className="item-thumb">
-                    <img src={gallery.image_path} alt={`Gallery Image ${index + 1}`} />
-                </div>
-                ))}
-                  </div>
-                  <div className="box-main-gallery"><a className="zoom-image glightbox" href={products.avatar_url} />
-                    <div className="product-image-slider">
-                      <figure className="border-radius-10"><a className="glightbox" href={products.avatar_url}><img className= "image_detail" src={products.avatar_url}alt="kidify" /></a></figure>
-                      <figure className="border-radius-10"><a className="glightbox" href={products.avatar_url}><img src={products.avatar_url} alt="kidify" /></a></figure>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-5 box-images-product-middle">
-                <div className="box-product-info">
-                  <h2 className="font-3xl-bold">{products.name}</h2>
-                  <div className="block-rating"><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><img src={Star} alt="kidify" /><span className="font-md neutral-500">(14 Reviews - 25 Orders)</span></div>
-                  <div className="block-price"><span className="price-main"> {Math.round(products.price).toLocaleString("vi", {style: "currency", currency: "VND",})}</span><span className="price-line">{Math.round(products.price).toLocaleString("vi", {style: "currency", currency: "VND",})}</span></div>
-                  <div className="block-view">
-                    <p className="font-md neutral-900">{products.description}</p>
-                  </div>
-                  <div className="block-color"><span>Color:</span>
-                  <label>S</label>
-                    <ul className="list-color">
-                    {products.colors.map((color) => (
-                      <li key={color.id}>
-                        <span className="box-circle-color">
-                          <a href="#" className={`color-${color.name_color}`}/>
-                        </span>
-                      </li>
-                        ))}
-                    </ul>
-                  </div>
-                  <div className="block-size"><span>Size:</span>
-                    <label>S</label>
-                    <div className="box-list-sizes">
-                      <div className="list-sizes">
-                        {products.sizes.map((size) => (
-                          <span
-                            key={size.id}
-                            className='item-size'
-                            onClick={() => handleSizeClick(size)}
-                          >
-                            {size.size}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="block-quantity">
-                    <div className="font-sm neutral-500 mb-15">Quantity</div>
-                  </div>
-                  <div className="box-form-cart">
-                    <div className="form-cart"><span className="minus" /><input className="form-control" type="text" defaultValue={1} /><span className="plus" />
-                    </div><a className="btn btn-brand-1-border" href="#">Add to Cart</a><a className="btn btn-brand-1-xl" href="#">Buy Now</a><a className="btn link-add-cart" href="#">Add to Wish list</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-             )}
-             {/* Tab thành phần */}
-            <div className="box-detail-product">
-              <ul className="nav-tabs nav-tab-product" role="tablist">
-                <li className="nav-item" role="presentation">
-                  <button className="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Mô tả</button>
-                </li>
-                <li className="nav-item" role="presentation">
-                  <button className="nav-link" id="ingredients-tab" data-bs-toggle="tab" data-bs-target="#ingredients" type="button" role="tab" aria-controls="ingredients" aria-selected="false">Thành phần</button>
-                </li>
-                <li className="nav-item" role="presentation">
-                  <button className="nav-link" id="vendor-tab" data-bs-toggle="tab" data-bs-target="#vendor" type="button" role="tab" aria-controls="vendor" aria-selected="false">Nguồn gốc</button>
-                </li>
-              </ul>
-              {/* Tab */}
-              <div className="tab-content">
-                <div className="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
-                </div>
-                <div className="tab-pane fade" id="ingredients" role="tabpanel" aria-labelledby="ingredients-tab">
-                  <div className="table-responsive">
-                    <table className="table table-striped">
-                      <tbody>
-                        <tr>
-                          <th>Color</th>
-                          <td> Red</td>
-                        </tr>
-                        <tr>
-                          <th>Size</th>
-                          <td> XL</td>
-                        </tr>
-                        <tr>
-                          <th>Weight</th>
-                          <td> 300gr</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div className="tab-pane fade" id="vendor" role="tabpanel" aria-labelledby="vendor-tab">
-                  <div className="table-responsive">
-                    <table className="table table-striped">
-                      <tbody>
-                        <tr>
-                          <th>Color</th>
-                          <td> Red</td>
-                        </tr>
-                        <tr>
-                          <th>Size</th>
-                          <td> XL</td>
-                        </tr>
-                        <tr>
-                          <th>Weight</th>
-                          <td> 300gr</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        {/* Sản phẩm cùng danh mục */}
-        <section className="section block-may-also-like recent-viewed">
-          <div className="container">
-            <div className="top-head justify-content-center">
-              <h4 className="text-uppercase brand-1 brush-bg">
-                Sản phẩm liên quan
-              </h4>
-            </div>
-            <div className="row">
-              {productById.map((product, index) => (
-                <div className="col-lg-3 col-sm-6">
-                  <div className="cardProduct wow fadeInUp" key={index}>
-                    <div className="cardImage">
-                      <label className="lbl-hot">hot</label>
-                      <a href="product-single.html">
-                        <img
-                          className="imageMain"
-                          src={product.avatar_url}
-                          alt="kidify"
-                        />
-                        <img
-                          className="imageHover"
-                          src={product.avatar_url}
-                          alt="kidify"
-                        />
-                      </a>
-                      <div className="button-select">
-                        <a href="product-single.html">Add to Cart</a>
-                      </div>
-                    </div>
-                    <div className="cardInfo">
-                    <Link to={`/product-detail/${product.id}`}>
-                      <h6 className="font-md-bold cardTitle">{product.name}</h6>
-                    </Link>
-                      <p className="font-lg cardDesc">
-                        {" "}
-                        {Math.round(product.price).toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </main>
+    const handleIncrease = () => {
+        setQuantity(prevQuantity => prevQuantity + 1);
+    };
 
-    </>
-  )
-}
-export default ProductDetailComponent
+    const handleDecrease = () => {
+        setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1));
+    };
+
+    const handleThumbnailClick = (index: number) => {
+        setSelectedIndex(index);
+    };
+
+    useEffect(() => {
+        const fetchProductDetail = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/products/${id}`);
+                setProduct(response.data);
+            } catch (error) {
+                setError('Failed to fetch product details');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProductDetail();
+    }, [id]);
+
+    // const saveCartToLocalStorage = (cart: any) => {
+    //     localStorage.setItem('cart', JSON.stringify(cart));
+    //   };
+
+    const handleAddToCart = async () => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const token = localStorage.getItem('token');
+
+        if (!user?.id) {
+            notification.error({
+                message: 'Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!',
+            });
+            navigate('/login');
+            return;
+        }
+
+        if (!token) {
+            notification.error({
+                message: 'Token không hợp lệ. Vui lòng đăng nhập lại!',
+            });
+            return;
+        }
+
+        if (!selectedSize || !selectedColor) {
+            notification.warning({
+                message: 'Vui lòng chọn kích thước và màu sắc trước khi thêm vào giỏ hàng!',
+            });
+            return;
+        }
+
+        try {
+            const cartData = {
+                user_id: user.id,
+                productId: product.id,
+                quantity,
+                price: product.price,
+                size: selectedSize,
+                color: selectedColor,
+            };
+
+            await dispatch(addToCart(cartData));
+            // saveCartToLocalStorage(cartData);
+            notification.success({
+                message: 'Sản phẩm đã được thêm vào giỏ hàng!',
+            });
+            navigate('/cart')
+        } catch (error) {
+            console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
+            notification.error({
+                message: 'Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!',
+            });
+        }
+    };
+
+
+
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
+    if (!product) return <div>Product not found.</div>;
+
+    return (
+        <>
+            <main className="main">
+                <div className="section block-shop-head-2 block-breadcrumb-type-1">
+                    <div className="container">
+                        <div className="breadcrumbs">
+                            <ul>
+                                <li><a href="#">Home</a></li>
+                                <li><a href="#">Shop</a></li>
+                                <li><a href="#">Boys Clothing</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <section className="section block-product-content">
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-lg-5 box-images-product-left">
+                                <div className="detail-gallery">
+                                    <div className="slider-nav-thumbnails">
+                                        {product.galleries && product.galleries.length > 0 ? (
+                                            product.galleries.map((gallery: any, index: any) => (
+                                                <div key={gallery.id} onClick={() => handleThumbnailClick(index)}>
+                                                    <div className="item-thumb">
+                                                        <img src={`${gallery.image_path}`} alt="Thumbnail" />
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p>Không có ảnh trong thư viện.</p>
+                                        )}
+                                    </div>
+                                    <div className="box-main-gallery">
+                                        <a className="zoom-image glightbox" />
+                                        <div className="product-image-slider">
+                                            <figure className="border-radius-10">
+                                                <a className="glightbox">
+                                                    <img
+                                                        width={'100%'}
+                                                        src={product.galleries && product.galleries[selectedIndex]
+                                                            ? `${product.galleries[selectedIndex].image_path}`
+                                                            : product.avatar}
+                                                        alt={product.name}
+                                                    />
+                                                </a>
+                                            </figure>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-5 box-images-product-middle">
+                                <div className="box-product-info">
+                                    <label className="flash-sale-red">Extra 2% off</label>
+                                    <h2 className="font-2xl-bold">{product.name}</h2>
+
+                                    <div className="block-rating">
+                                        {[...Array(5)].map((_, index) => (
+                                            <img key={index} src={Star} alt="rating star" />
+                                        ))}
+                                        <span className="font-md neutral-500">(14 Reviews - 25 Orders)</span>
+                                    </div>
+                                    <div className="block-price">
+                                        <span className="price-main">{(product.price).toLocaleString('vi-VN')} VND</span>
+                                    </div>
+                                    <div className="block-view">
+                                        <p className="font-md neutral-900">{product.description}</p>
+                                    </div>
+
+                                    <div className="block-color">
+                                        <span>Color:</span>
+                                        <label>{selectedColor || 'Chọn Màu'}</label>
+                                        <ul className="list-color">
+                                            {product.colors.map((color: any) => (
+                                                <button
+                                                    key={color.id}
+                                                    style={{
+                                                        padding: '10px 15px',
+                                                        border: '1px solid #ebebeb',
+                                                        background: selectedColor === color.name_color ? '#ddd' : 'none',
+                                                        margin: '0 5px 0 0',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    onClick={() => setSelectedColor(color.name_color)}
+                                                >
+                                                    {color.name_color}
+                                                </button>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    <div className="block-size">
+                                        <span>Size:</span>
+                                        <label>{selectedSize || 'Chọn Size'}</label>
+                                        <div className="list-sizes">
+                                            {product.sizes.map((size: any) => (
+                                                <button
+                                                    key={size.id}
+                                                    style={{
+                                                        padding: '10px 15px',
+                                                        border: '1px solid #ebebeb',
+                                                        background: selectedSize === size.size ? '#ddd' : 'none',
+                                                        margin: '0 5px 0 0',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    onClick={() => setSelectedSize(size.size)}
+                                                >
+                                                    {size.size}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="block-quantity">
+                                        <div className="font-sm neutral-500 mb-15">Quantity</div>
+                                        <div className="box-form-cart">
+                                            <div className="form-cart">
+                                                <button className="minus" onClick={handleDecrease}>-</button>
+                                                <input
+                                                    className="form-control"
+                                                    type="text"
+                                                    value={quantity}
+                                                    readOnly
+                                                />
+                                                <button className="plus" onClick={handleIncrease}>+</button>
+                                            </div>
+                                            <button onClick={() => handleAddToCart()} disabled={!selectedColor || !selectedSize}>
+                                                Add to Cart
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="box-product-tag d-flex justify-content-between align-items-end">
+                                        <div className="box-tag-left">
+                                            <p className="font-xs mb-5"><span className="neutral-500">SKU:</span><span className="neutral-900">kid1232568-UYV</span></p>
+                                            <p className="font-xs mb-5"><span className="neutral-500">Categories:</span><span className="neutral-900">Girls, Dress</span></p>
+                                            <p className="font-xs mb-5"><span className="neutral-500">Tags:</span><span className="neutral-900">fashion, dress, girls, blue</span></p>
+                                        </div>
+                                        <div className="box-tag-right">
+                                            <span className="font-sm">Share:</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </>
+    );
+};
+
+export default ProductDetailComponent;

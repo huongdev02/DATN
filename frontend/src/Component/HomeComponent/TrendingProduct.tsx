@@ -2,15 +2,17 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { Link } from "react-router-dom";
-import api from "../../configAxios/axios";
 import { message } from "antd";
 import { useState, useEffect } from "react";
 import { IProduct } from "../../types/cart";
+import api from "../../Axios/Axios";
 const TrendingProduct: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const GetProductCategory = async () => {
     try {
       const { data } = await api.get(`/products`);
+      console.log(data);
+      
       setProducts(data.products);
     } catch (error) {
       message.error("Lỗi api !");
@@ -85,7 +87,7 @@ const TrendingProduct: React.FC = () => {
           </div>
         </div>
       </section>
-      {/* <section className="section block-section-4">
+      <section className="section block-section-4">
                 <div className="container">
                     <div className="box-section-4">
                         <div className="row">
@@ -93,24 +95,24 @@ const TrendingProduct: React.FC = () => {
                                 <div className="box-collection wow animate__animated animate__fadeIn">
                                     <div className="box-collection-info">
                                         <h4 className="heading-4 mb-15">Girls Apparels</h4>
-                                        <p className="font-md neutral-900 mb-35">Get an extra 50% discount on premium<br className="d-none d-lg-block" />quality baby clothes. Shop now!</p><a className="btn btn-brand-1 text-uppercase" href="#">Shop Now</a>
+                                        <p className="font-md neutral-900 mb-35">Get an extra 50% discount on premium<br className="d-none d-lg-block" />quality baby clothes. Shop now!</p><Link className="btn btn-brand-1 text-uppercase" to={'/product'}>Shop Now</Link>
                                     </div>
-                                    <div className="star-bg-2"><img src={StarTwo} alt="Kidify" /></div>
+                                    {/* <div className="star-bg-2"><img src={StarTwo} alt="Kidify" /></div> */}
                                 </div>
                             </div>
                             <div className="col-lg-6">
                                 <div className="box-collection box-collection-2 wow animate__animated animate__fadeIn">
                                     <div className="box-collection-info">
                                         <h4 className="heading-4 mb-15">Hot Branch</h4>
-                                        <p className="font-md neutral-900 mb-35">New Brand Fasion on this Summer.<br className="d-none d-lg-block" />Sale off up to 35%</p><a className="btn btn-brand-1 text-uppercase" href="#">Shop Now</a>
+                                        <p className="font-md neutral-900 mb-35">New Brand Fasion on this Summer.<br className="d-none d-lg-block" />Sale off up to 35%</p><Link className="btn btn-brand-1 text-uppercase" to={'/product'}>Shop Now</Link>
                                     </div>
-                                    <div className="star-bg-1"><img src={Star} alt="Kidify" /></div>
+                                    {/* <div className="star-bg-1"><img src={Star} alt="Kidify" /></div> */}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section> */}
+            </section>
     </>
   );
 };
