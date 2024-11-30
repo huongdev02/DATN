@@ -3,6 +3,7 @@
 use App\Models\Product;
 use App\Models\Ship_address;
 use App\Models\User;
+use App\Models\Voucher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -22,8 +23,9 @@ return new class extends Migration
             $table->decimal('total_amount', 10, 2);
             $table->tinyInteger('payment_method')->default(1);// 0: tiền mặt, 1: chuyển khoản ngân hàng, 2: thanh toán qua thẻ atm
             $table->tinyInteger('ship_method')->default(1);// 0: giao hàng tiêu chuẩn, 1: giao hàng hỏa tốc
-
+            $table->foreignIdFor(Voucher::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(Ship_address::class)->constrained();
+            $table->decimal('discount_value', 6, 2);
             $table->tinyInteger('status')->default(0);//0: Đang chờ xử lí, 1: Đã xử lí/ đang chuẩn bị sản phẩm, 2: Đang vận chuyển, 3: Giao hàng thành công, 4: Đơn hàng đã bị hủy, 5: Đơn hàng đã được trả lại bởi người dung
             $table->string('message')->nullable();
             $table->timestamps();

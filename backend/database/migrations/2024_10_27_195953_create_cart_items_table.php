@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(Product::class)->constrained();
             $table->integer('quantity'); 
             $table->decimal('price', 10, 2);
+            $table->string('note'); //bien the se duoc luu vao day
             $table->decimal('total', 10, 2)->default(0);
             $table->timestamps();
         });
