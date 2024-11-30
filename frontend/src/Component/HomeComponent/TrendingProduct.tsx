@@ -2,15 +2,17 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { Link } from "react-router-dom";
-import api from "../../configAxios/axios";
 import { message } from "antd";
 import { useState, useEffect } from "react";
 import { IProduct } from "../../types/cart";
+import api from "../../Axios/Axios";
 const TrendingProduct: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const GetProductCategory = async () => {
     try {
       const { data } = await api.get(`/products`);
+      console.log(data);
+      
       setProducts(data.products);
     } catch (error) {
       message.error("Lỗi api !");
@@ -18,8 +20,10 @@ const TrendingProduct: React.FC = () => {
   };
 
   const trendingProducts = products.filter(
-    (product) => product.categories.name === "Sản phẩm thịnh hành"
+    (product) => product.categories && product.categories.name === "Sản phẩm thịnh hành"
   );
+  console.log(trendingProducts, "Sản phẩm thịnh hành");
+  
 
   console.log(trendingProducts, "Sản phẩm thịnh hành");
 

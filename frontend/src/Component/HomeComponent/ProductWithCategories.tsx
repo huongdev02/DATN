@@ -18,11 +18,14 @@ import { message } from 'antd';
 import { useState , useEffect} from 'react';
 import { IProduct } from '../../types/cart';
 import axios from 'axios';
+import api from '../../Axios/Axios';
 const ProductWithCategories: React.FC = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
     const GetProductCategory = async () => {
         try {
-          const { data } = await axios.get(`/products`);
+          const { data } = await api.get(`/products`);
+          console.log(data);
+          
           setProducts(data.products);
         } catch (error) {
           message.error("Lỗi api !");

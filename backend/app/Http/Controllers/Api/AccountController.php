@@ -78,13 +78,14 @@ class AccountController extends Controller
                     'data' => [
                         'id'        => $user->id,
                         'email'     => $user->email,
-                        'name'      => $user->fullname,
+                        'username'      => $user->username,
+                        'fullname'      => $user->fullname,
                         'birth_day' => $user->birth_day,
                         'phone'     => $user->phone,
                         'address'   => $user->address,
                         'role'      => $user->role,
                         'is_active' => $user->is_active,
-                        'avatar'    => $user->avatar ? asset('storage/' . $user->avatar) : null,
+                        'avatar'    => $user->avatar ? asset($user->avatar) : null,
                         'token'     => $token, // Gửi token đầy đủ
                     ]
                 ], 200);
