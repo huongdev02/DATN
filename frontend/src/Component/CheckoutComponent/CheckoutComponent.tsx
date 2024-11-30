@@ -6,35 +6,69 @@ import { RootState, useAppDispatch } from '../../Redux/store';
 import { fetchCart } from '../../Redux/Reducer/CartReducer';
 import { postShipAddress } from '../../Redux/Reducer/ShipAddressReducer';
 import { postOrder } from '../../Redux/Reducer/OrderReducer';
+import { fetchVouchers } from '../../Redux/Reducer/VoucherReducer';
 
 const CheckoutComponent: React.FC = () => {
   const dispatch = useAppDispatch();
   const { userId } = useParams<{ userId: string }>();
   const { cart } = useSelector((state: RootState) => state.cart);
   const paymentMethod = useSelector((state: RootState) => state.paymentMethod.methods);
-
+  const vouchers = useSelector((state: RootState) => state.voucherReducer.vouchers); 
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [discount, setDiscount] = useState<number>(0);
   const [checkoutCart, setCheckoutCart] = useState(cart);
   const [recipientName, setRecipientName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [shipAddress, setShipAddress] = useState('');
   const [paymentMethodId, setPaymentMethodId] = useState<number>(1);
+  const [voucherId, setVoucherId] = useState<number | null>(null);  
+console.log(cart);
 
   useEffect(() => {
     if (userId) {
       dispatch(fetchCart(Number(userId)));
     }
+    dispatch(fetchVouchers());  
   }, [dispatch, userId]);
 
   useEffect(() => {
     setCheckoutCart(cart);
   }, [cart]);
 
-  const subtotal = checkoutCart?.items.reduce((total, item) => total + item.price * item.quantity, 0) || 0;
-  const total = subtotal;
+  const subtotal = checkoutCart?.items?.reduce((total: number, item: any) => total + item.price * item.quantity, 0) || 0;
+  console.log(subtotal);
+  
+  useEffect(() => {
+    const appliedDiscount = voucherId ? 
+      Number(vouchers.find(voucher => voucher.id === voucherId)?.discount_value) || 0 : 0;
+    console.log("Applied discount:", appliedDiscount);
+    
+    setDiscount(appliedDiscount);
+    setTotalPrice(subtotal - appliedDiscount); 
+  }, [checkoutCart, voucherId, vouchers]);
+  
+  useEffect(() => {
+    console.log("Updated totalPrice:", totalPrice);
+  }, [totalPrice]); 
+  
+
+  const formatCurrency = (amount: string | number): string => {
+    const numberAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return numberAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+  };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+  
+    if (!recipientName || !email || !phoneNumber || !shipAddress || !paymentMethodId) {
+      notification.error({
+        message: 'Thông tin không đầy đủ',
+        description: 'Vui lòng điền đầy đủ thông tin vào các trường bắt buộc.',
+      });
+      return;
+    }
+  
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const userId = user.id ? user.id.toString() : '';
     const addressData = {
@@ -44,34 +78,34 @@ const CheckoutComponent: React.FC = () => {
       ship_address: shipAddress,
       phone_number: phoneNumber,
     };
-    console.log('Address Data:', addressData);
+    
     try {
       const shipAddressResponse = await dispatch(postShipAddress(addressData)).unwrap();
-      console.log('Ship Address Response:', shipAddressResponse);
+      
       const orderData = {
         user_id: userId,
-        total_amount: total,
+        total_amount: totalPrice, 
         ship_address_id: shipAddressResponse.id,
         phone_number: phoneNumber,
-        subtotal,
-        total,
+        subtotal: subtotal, 
+        totalPrice, 
         status: 1,
         ship_method: 1,
         payment_method_id: paymentMethodId
       };
-
-      console.log('Order Data:', orderData);
+      console.log(orderData);
+      
       await dispatch(postOrder(orderData)).unwrap();
-      localStorage.removeItem('cartItems')
+      localStorage.removeItem('cartItems');
       notification.success({
-        message: 'Đặt hàng  thành công',
-        description: 'Cảm ơn bạn đã tin tưởng sản phảm bên chúng tôi',
+        message: 'Đặt hàng thành công',
+        description: 'Cảm ơn bạn đã tin tưởng sản phẩm bên chúng tôi',
       });
-
+  
     } catch (err) {
       notification.error({
-        message: 'Error',
-        description: 'There was an issue placing your order. Please try again.',
+        message: 'Lỗi khi đặt hàng',
+        description: 'Có sự cố khi đặt hàng. Vui lòng thử lại.',
       });
     }
   };
@@ -110,7 +144,6 @@ const CheckoutComponent: React.FC = () => {
                           placeholder="Fullname *"
                           value={recipientName}
                           onChange={(e) => setRecipientName(e.target.value)}
-                          required
                         />
                       </div>
                     </div>
@@ -123,7 +156,6 @@ const CheckoutComponent: React.FC = () => {
                           placeholder="Email *"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          required
                         />
                       </div>
                     </div>
@@ -136,7 +168,6 @@ const CheckoutComponent: React.FC = () => {
                           placeholder="Phone Number *"
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
-                          required
                         />
                       </div>
                     </div>
@@ -149,36 +180,8 @@ const CheckoutComponent: React.FC = () => {
                           placeholder="Address *"
                           value={shipAddress}
                           onChange={(e) => setShipAddress(e.target.value)}
-                          required
                         />
                       </div>
-                    </div>
-                    {/* <div className="col-lg-12">
-                      <div className="form-group">
-                        <select
-                          name="payment_method"
-                          className="form-control"
-                          value={paymentMethodId}
-                          onChange={(e) => setPaymentMethodId(Number(e.target.value))}
-                          required
-                        >
-                          <option value="" disabled>Select Payment Method</option>
-                          {paymentMethod.map((method) => (
-                            <option key={method.id} value={method.id}>
-                              {method.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div> */}
-                  </div>
-                  <div className="row">
-                    <div className="col-lg-12 mt-40">
-                      <Link to='/cart' className="btn btn-brand-1-border-2">
-                        <svg className="icon-16 mr-10" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75" />
-                        </svg>Return to Cart
-                      </Link>
                     </div>
                   </div>
                 </div>
@@ -204,27 +207,42 @@ const CheckoutComponent: React.FC = () => {
                     ) : (
                       <div>No items in your cart</div>
                     )}
-
                     <div className="box-footer-checkout">
-                      <div className="item-checkout justify-content-between">
-                        <span className="font-xl-bold">Subtotal</span>
-                        <span className="font-md-bold">{subtotal.toLocaleString('vi-VN')} VND</span>
+                      <div className="form-group">
+                        <div className="mb-3">
+                          <span>Chọn Voucher</span>
+                          <select
+                            style={{marginTop: "5px"}}
+                            name="voucher"
+                            className="form-control"
+                            value={voucherId || ''}
+                            onChange={(e) => setVoucherId(Number(e.target.value))}
+                          >
+                            <option value="">Select Voucher</option>
+                            {vouchers.map((voucher) => (
+                              <option key={voucher.id} value={voucher.id}>
+                                {voucher.code} - {formatCurrency(voucher.discount_value)}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="item-checkout justify-content-between">
+                          <span className="font-xl-bold">Subtotal</span>
+                          <span className="font-md-bold">{formatCurrency(subtotal)}</span>
+                        </div>
+                        <div className="item-checkout justify-content-between">
+                          <span className="font-sm">Voucher Discount</span>
+                          <span className="font-md-bold">{formatCurrency(discount)}</span>
+                        </div>
+                        <div className="item-checkout justify-content-between">
+                          <span className="font-sm">Total</span>
+                          <span className="font-xl-bold">{formatCurrency(totalPrice)}</span>
+                        </div>
                       </div>
-                      <div className="item-checkout justify-content-between">
-                        <span className="font-sm">Shipping</span>
-                        <span className="font-md-bold">0 VND</span>
-                      </div>
-                      <div className="item-checkout justify-content-between">
-                        <span className="font-sm">Total</span>
-                        <span className="font-xl-bold">{total.toLocaleString('vi-VN')} VND</span>
-                      </div>
+                      <button type="submit" className="btn btn-brand-1-xl-bold w-100 font-md-bold">
+                        Place an Order
+                      </button>
                     </div>
-                    <button type="submit" className="btn btn-brand-1-xl-bold w-100 font-md-bold">
-                      Place an Order
-                      <svg className="icon-16 ml-10" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12h18M3 12l6 6m0-6l-6 6" />
-                      </svg>
-                    </button>
                   </div>
                 </div>
               </div>

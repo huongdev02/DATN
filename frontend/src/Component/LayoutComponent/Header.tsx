@@ -44,7 +44,6 @@ const Header: React.FC = () => {
             setCartItems(JSON.parse(storedCart));
         }
     }, []);
-    console.log(cartLength);
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
@@ -200,7 +199,37 @@ const Header: React.FC = () => {
                                 <div className="burger-icon burger-icon-white"><span className="burger-icon-top" /><span className="burger-icon-mid" /><span className="burger-icon-bottom" /></div>
                             </div>
                         </div>
-                        <div className="header-account" style={{ display: 'flex', alignItems: 'center', justifyContent: "end", gap: "10px" }}>
+                        <div className="header-account" style={{ display: 'flex', alignItems: 'center', justifyContent: "end"}}>
+                        <div style={{width: "70px"}} className='account-icon account'>
+                                {isLoggedIn && user ? (
+                                    <div className="dropdown" style={{width: "65px"}}>
+                                        <img style={{borderRadius: "50%"}} className="dropbtn" src={user.avatar} alt="" />
+                                        <div className="dropdown-content">
+                                            <a href="#">{user.fullname}</a>
+                                            <a href="#">Thông Tin Tài Khoản</a>
+                                            <a href="#">Lịch Sử Đặt Hàng</a>
+                                            <a href="#">Đăng Xuất</a>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <a
+                                        className="account-icon account"
+                                        href="#"
+                                        onClick={openAccountPopup}
+                                    >
+                                        <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+                                            <g clipPath="url(#clip0_116_451)">
+                                                <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
+                                            </g>
+                                            <defs>
+                                                <clipPath id="clip0_116_451">
+                                                    <rect width={24} height={24} fill="white" transform="translate(2 2)" />
+                                                </clipPath>
+                                            </defs>
+                                        </svg>
+                                    </a>
+                                )}
+                            </div>
                             <a className="account-icon search" onClick={openSearchPopup} href="#">
                                 <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_91_73)">
@@ -225,6 +254,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
+                           
                             <Link to='/cart' className="account-icon cart" onClick={openCartPopup}><span className="number-tag">{cartLength}</span>
                                 <svg width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_450)">
@@ -237,32 +267,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </Link>
-                            <a className='account-icon account' style={{ position: 'relative' }} href="">
-                                {isLoggedIn && user ? (
-                                    <div>
-                                        <Dropdown menu={{ items }} placement="bottom" arrow>
-                                            <img src={user.avatar} width={"40px"} style={{borderRadius: "50%"}} alt="" />
-                                        </Dropdown>
-                                    </div>
-                                ) : (
-                                    <a
-                                        className="account-icon account"
-                                        href="#"
-                                        onClick={openAccountPopup}
-                                    >
-                                        <svg className="d-inline-flex align-items-center justify-content-center" width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-                                            <g clipPath="url(#clip0_116_451)">
-                                                <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
-                                            </g>
-                                            <defs>
-                                                <clipPath id="clip0_116_451">
-                                                    <rect width={24} height={24} fill="white" transform="translate(2 2)" />
-                                                </clipPath>
-                                            </defs>
-                                        </svg>
-                                    </a>
-                                )}
-                            </a>
+                           
                         </div>
                     </div>
                 </div>
@@ -420,9 +425,9 @@ const Header: React.FC = () => {
                                 cartItems.map((item, index) => (
                                     <div key={index} className="cardProduct cardProduct4">
                                         <div className="cardImage">
-                                            <Link to={`/product/${item.id}`}>
+                                            {/* <Link to={`/product/${item.id}`}>
                                                 <img src={`http://127.0.0.1:8000/storage/${item.product.avatar}` || 'default-image.jpg'} alt={item.product.name} />
-                                            </Link>
+                                            </Link> */}
                                         </div>
                                         <div className="cardInfo">
                                             <Link to={`/product/${item.id}`}>

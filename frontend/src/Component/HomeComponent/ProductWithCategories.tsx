@@ -54,7 +54,7 @@ const ProductWithCategories: React.FC = () => {
                             <span className="rounded-text">NEW IN STORE</span>
                         </p>
                         <div className="box-tabs wow animate__animated animate__fadeIn">
-                            <ul className="nav nav-tabs" role="tablist">
+                            <ul style={{display: "flex", justifyContent: "center"}} className="nav nav-tabs" role="tablist">
                                 <li className="nav-item" role="presentation">
                                     <button
                                         className="nav-link active"

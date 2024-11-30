@@ -50,9 +50,9 @@ const ProductDetailComponent: React.FC = () => {
         fetchProductDetail();
     }, [id]);
 
-    const saveCartToLocalStorage = (cart: any) => {
-        localStorage.setItem('cart', JSON.stringify(cart));
-      };
+    // const saveCartToLocalStorage = (cart: any) => {
+    //     localStorage.setItem('cart', JSON.stringify(cart));
+    //   };
 
     const handleAddToCart = async () => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -91,10 +91,11 @@ const ProductDetailComponent: React.FC = () => {
             };
 
             await dispatch(addToCart(cartData));
-            saveCartToLocalStorage(cartData);
+            // saveCartToLocalStorage(cartData);
             notification.success({
                 message: 'Sản phẩm đã được thêm vào giỏ hàng!',
             });
+            navigate('/cart')
         } catch (error) {
             console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
             notification.error({

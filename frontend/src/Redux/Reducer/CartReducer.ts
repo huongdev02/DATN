@@ -29,7 +29,6 @@ interface Cart {
 
 interface CartState {
   cart: Cart | null;
-  local: CartItem[];
   items: CartItem[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
@@ -37,7 +36,7 @@ interface CartState {
 
 const initialState: CartState = {
   cart: null,
-  local: JSON.parse(localStorage.getItem('cartItems') || '[]'),
+  // local: JSON.parse(localStorage.getItem('cartItems') || '[]'),
   items: [],
   status: 'idle',
   error: null,
@@ -139,16 +138,6 @@ const CartReducer = createSlice({
           // Thêm sản phẩm mới
           state.items.push(action.payload);
         }
-
-        // Lưu giỏ hàng vào localStorage
-        const localCartData = state.items.map((item) => ({
-          product_name: item.product_name,
-          price: item.price,
-          avatar: item.avatar,
-          quantity: item.quantity,
-        }));
-
-        localStorage.setItem('cartItems', JSON.stringify(localCartData));
       })
       .addCase(addToCart.rejected, (state, action) => {
         state.status = 'failed';

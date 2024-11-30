@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Define the type for the order
 export interface Order {
   user_id: string | null;
   total_amount: number;
@@ -9,7 +8,7 @@ export interface Order {
   payment_method_id: number;
   ship_address_id: number; 
   status: number; 
-  order_details?: OrderDetail[]; // Thêm trường cho chi tiết đơn hàng
+  order_details?: OrderDetail[]; 
 }
 
 export interface OrderDetail {

@@ -3307,7 +3307,6 @@ a.follow-vendor {
   animation: shift-right var(--uib-speed) ease infinite;
 }
 
-/*select 2 style*/
 .select2-container--default .select2-selection--single .select2-selection__rendered {
   color: #069;
 }
@@ -3316,47 +3315,45 @@ a.follow-vendor {
   display: inline-block;
 }
 
-/* Nút dropdown */
-.dropdown-button {
-  background-color: #4CAF50;
+.dropbtn {
   color: white;
-  padding: 10px 20px;
   font-size: 16px;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  width: 35px;
 }
 
-.dropdown-button:hover {
-  background-color: #45a049;
+.dropdown {
+  position: relative;
+  display: inline-block;
 }
 
-/* Menu dropdown */
-.dropdown-menu {
+.dropdown-content {
+  display: none;
   position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  background-color: #ddd !important;
+  min-width: 180px;
   z-index: 1;
-  border-radius: 5px;
-  padding: 10px 0;
-  top: 100%;
-  left: 0;
+  right: -121px;
+  text-align: left;
+  top: 42px;
 }
 
-/* Các item trong menu */
-.dropdown-menu a {
+.dropdown-content a {
   color: black;
   padding: 12px 16px;
   text-decoration: none;
   display: block;
-  transition: background-color 0.3s ease;
 }
 
-.dropdown-menu a:hover {
-  background-color: #ddd;
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
 }
+
 .select2-container--default .select2-selection--single .select2-selection__arrow b {
   border-color: #069 transparent transparent transparent;
   border-width: 5px 5px 0 5px;

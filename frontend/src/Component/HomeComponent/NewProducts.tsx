@@ -21,6 +21,8 @@ const NewProduct: React.FC = () => {
     (product) => product.categories.name === "Hàng mới về"
   );
 
+  
+
  
 
   useEffect(() => {
