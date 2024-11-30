@@ -12,7 +12,7 @@ class UserOrderController extends Controller
     public function index(Request $request)
     {
         // Add 'category' to eager load
-        $query = Order::with(['orderDetails.product.categories', 'user']);
+        $query = Order::with(['orderDetails.product.categories', 'user', 'review']); 
 
         if ($request->has('status')) {
             $status = $request->get('status');

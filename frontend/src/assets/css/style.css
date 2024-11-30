@@ -7372,6 +7372,8 @@ h4.brush-bg::after {
 }
 
 .box-tabs {
+  display: flex;
+  justify-content: center;
   margin-top: 18px;
   text-align: center;
   margin-bottom: 50px;

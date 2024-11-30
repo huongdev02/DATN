@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -12,49 +14,49 @@ use App\Services\StatisticsService;
 
 class AdminController extends Controller
 {
-    public function admin(Request $request) {
-        try {
-            // Create an instance of ThongkeController
-            $thongkeController = app(ThongkeController::class);
-            
-            // Call the methods from ThongkeController
-            $accountData = $thongkeController->account($request);
-            $orderData = $thongkeController->order($request);
-            
-            // Call the topproduct method to get top products
-            $topProducts = $thongkeController->topproduct($request);
-    
-            // Kiểm tra kiểu dữ liệu trả về để đảm bảo rằng nó là mảng
-            if (is_a($topProducts, 'Illuminate\Http\JsonResponse')) {
-                $topProducts = json_decode($topProducts->getContent(), true); // Chuyển đổi thành mảng
-            }
-    
-            // Return the view with the retrieved data
-            return view('admin.dashboard', [
-                'account' => $accountData,
-                'order' => $orderData,
-                'topProducts' => $topProducts, // Pass top products data to the view
-            ]);
-        } catch (\Exception $e) {
-            // Xử lý lỗi, có thể trả về một thông điệp lỗi hoặc redirect
-            return redirect()->back()->withErrors(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
-        }
+
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        // Tìm kiếm trong các bảng cần thiết (Ví dụ tìm kiếm trong bảng products)
+        $results = Product::where('name', 'like', '%' . $query . '%')->get();
+
+        return response()->json([
+            'results' => $results
+        ]);
     }
-    
-    
-    
+
+    public function admin(Request $request)
+{
+    // Tính tổng số user
+    $totalUsers = User::count();
+
+    // Tính tổng đơn hàng đã hoàn thành (status = 3 là hoàn thành)
+    $completedOrders = Order::where('status', 3)->count();
+
+    // Tính tổng đơn hàng chưa xử lý (status = 1 là chưa xử lý)
+    $pendingOrders = Order::where('status', 1)->count();
+
+    // Tính tổng doanh thu
+    $totalRevenue = Order::sum('total_amount');
+
+    return view('admin.dashboard', compact('totalUsers', 'completedOrders', 'totalRevenue', 'pendingOrders'));
+}
+
     public function edit()
     {
         $user = Auth::user();
-       
+
         return view('admin.update', compact('user'));
     }
 
     public function update(Request $request)
     {
-           /**
-             * @var User $user
-             */
+        /**
+         * @var User $user
+         */
         $user = Auth::user();
 
         $request->validate([
@@ -80,7 +82,7 @@ class AdminController extends Controller
             // Lưu ảnh mới và cập nhật đường dẫn vào cột avatar
             $user['avatar'] = Storage::put('AdminAvatar', $request->file('avatar'));
         }
-        
+
         $user->save();
 
         return redirect()->back()->with('success', 'Thông tin tài khoản đã được cập nhật thành công.');
@@ -93,17 +95,17 @@ class AdminController extends Controller
 
     public function changepass_(Request $request)
     {
-    
+
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:6|confirmed', 
+            'new_password' => 'required|min:6|confirmed',
         ]);
 
-           /**
-             * @var User $user
-             */
+        /**
+         * @var User $user
+         */
         $user = Auth::user();
-        
+
         if (!Hash::check($request->current_password, $user->password)) {
             return redirect()->back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng.']);
         }

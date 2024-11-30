@@ -15,48 +15,57 @@ class ReviewController extends Controller
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'nullable|image',
         ]);
-
-        dd($request->all());
-
+    
         try {
-            // Find the order to ensure it exists and is valid for review
-            $order = Order::findOrFail($orderId);
-
-            // Check if the order is completed
-            if ($order->status != 3) {
-                return redirect()->back()->withErrors('Bạn chỉ có thể đánh giá đơn hàng đã hoàn thành.');
-            }
-
-            // Check if the order has already been reviewed
-            if ($order->reviews()->exists()) {
+            // Kiểm tra nếu `order_id` đã tồn tại trong bảng reviews
+            $existingReview = Review::where('order_id', $orderId)->first();
+            if ($existingReview) {
                 return redirect()->back()->withErrors('Đơn hàng này đã được đánh giá.');
             }
-
-            // Handle file upload if image is provided
+    
+            // Lọc các từ không hợp lệ trong bình luận
+            $badWords = ['dkm', 'đéo', 'cứt']; // Thêm các từ không hợp lệ vào đây
+            $comment = $request->input('comment', '');
+    
+            foreach ($badWords as $badWord) {
+                if (stripos($comment, $badWord) !== false) { // Kiểm tra từ khóa không hợp lệ
+                    return redirect()->back()->withErrors('Bình luận của bạn chứa từ ngữ không hợp lệ. Vui lòng sửa đổi.');
+                }
+            }
+    
+            // Xác nhận đơn hàng tồn tại và hợp lệ
+            $order = Order::findOrFail($orderId);
+    
+            // Kiểm tra trạng thái đơn hàng (chỉ cho phép đánh giá nếu trạng thái = 3)
+            if ($order->status != 3) {
+                return redirect()->back()->with('error', 'Bạn chỉ có thể đánh giá đơn hàng đã hoàn thành.');
+            }
+    
+            // Xử lý file upload nếu có
             $imagePath = null;
             if ($request->hasFile('image')) {
                 $imagePath = $request->file('image')->store('reviews', 'public');
             }
-
-            // Save the review
+    
+            // Lưu đánh giá vào bảng reviews
             Review::create([
+                'order_id' => $order->id,
                 'user_id' => auth()->id(),
-                'product_id' => $order->orderDetails->first()->product_id, // Assuming 1 product per order for simplicity
+                'product_id' => $order->orderDetails->first()->product_id, // Giả sử mỗi đơn hàng chỉ có 1 sản phẩm
                 'image_path' => $imagePath,
                 'rating' => $request->input('rating'),
-                'comment' => $request->input('comment'),
-                'status' => 0, // Default status: Pending approval
-                'order_id' => $order->id,
+                'comment' => $comment,
             ]);
-
-            // Mark the order as reviewed
+    
+            // Đánh dấu đơn hàng đã được đánh giá
             $order->update(['is_reviewed' => true]);
-
-            return back()->with('success', 'Đánh giá của bạn đã được gửi và đang chờ phê duyệt.');
+    
+            return back()->with('success', 'Đánh giá của bạn đã được gửi thành công.');
         } catch (Throwable $e) {
-            return back()->with('error', 'Lỗi' . $e->getMessage());
+            return back()->with('error', 'Lỗi: ' . $e->getMessage());
         }
     }
+    
 }
