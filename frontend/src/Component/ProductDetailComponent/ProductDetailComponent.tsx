@@ -15,7 +15,7 @@ const ProductDetailComponent: React.FC = () => {
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [quantity, setQuantity] = useState<number>(1);
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [selectedIndex, setSelectedIndex] = useState(0); 
     const navigate = useNavigate();
 
 
@@ -49,6 +49,9 @@ const ProductDetailComponent: React.FC = () => {
 
         fetchProductDetail();
     }, [id]);
+
+    console.log("dlllllllllllll", product);
+    
 
     // const saveCartToLocalStorage = (cart: any) => {
     //     localStorage.setItem('cart', JSON.stringify(cart));
@@ -91,7 +94,7 @@ const ProductDetailComponent: React.FC = () => {
             };
 
             await dispatch(addToCart(cartData));
-            // saveCartToLocalStorage(cartData);
+            // saveCartToLocalStorage(cartData);b
             notification.success({
                 message: 'Sản phẩm đã được thêm vào giỏ hàng!',
             });
