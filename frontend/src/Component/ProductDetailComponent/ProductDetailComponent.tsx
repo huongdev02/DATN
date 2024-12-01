@@ -15,7 +15,7 @@ const ProductDetailComponent: React.FC = () => {
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [quantity, setQuantity] = useState<number>(1);
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [selectedIndex, setSelectedIndex] = useState(0); 
     const navigate = useNavigate();
 
 

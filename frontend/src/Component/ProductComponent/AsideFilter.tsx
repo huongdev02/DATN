@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 // import { Categories } from "../../types/product";
 import { IProduct, Size, Color } from "../../types/cart";
-// import api from "../../configAxios/axios";
+import api from "../../Axios/Axios";
 import { message } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 
@@ -18,35 +18,35 @@ interface AsideFilterProps {
 }
 
 const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
-  // const [categories, setCategories] = useState<Categories[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [sizes, setSizes] = useState<Size[]>([]);
   const [colors, setColors] = useState<Color[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [priceRange, setPriceRange] = useState<[number, number] | null>(null);
 
-  // const GetAllCategory = async () => {
-  //   try {
-  //     const { data } = await api.get("/categories");
-  //     setCategories(data);
-  //   } catch (error) {
-  //     message.error("Lỗi api !");
-  //   }
-  // };
+  const GetAllCategory = async () => {
+    try {
+      const { data } = await api.get("/categories");
+      setCategories(data);
+    } catch (error) {
+      message.error("Lỗi api !");
+    }
+  };
 
-  // const GetAllProducts = async () => {
-  //   try {
-  //     const { data } = await api.get("/products");
-  //     setSizes(data.all_sizes);
-  //     setColors(data.all_colors);
-  //   } catch (error) {
-  //     message.error("Lỗi api !");
-  //   }
-  // };
+  const GetAllProducts = async () => {
+    try {
+      const { data } = await api.get("/products");
+      setSizes(data.all_sizes);
+      setColors(data.all_colors);
+    } catch (error) {
+      message.error("Lỗi api !");
+    }
+  };
 
-  // useEffect(() => {
-  //   GetAllCategory();
-  //   GetAllProducts();
-  // }, []);
+  useEffect(() => {
+    GetAllCategory();
+    GetAllProducts();
+  }, []);
 
   const handleSizeClick = (size: string) => {
     setFilters((prev) => ({ ...prev, size }));
@@ -86,7 +86,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
               <div className="block-filter">
                 <h6 style={{ marginBottom: "15px" }}>Danh mục</h6>
                 <div className="box-collapse">
-                  {/* <ul className="list-filter-checkbox">
+                  <ul className="list-filter-checkbox">
                     {categories.map((category) => (
                       <li key={category.id}>
                         <label className="cb-container">
@@ -100,7 +100,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                         </label>
                       </li>
                     ))}
-                  </ul> */}
+                  </ul>
                 </div>
               </div>
             </div>
