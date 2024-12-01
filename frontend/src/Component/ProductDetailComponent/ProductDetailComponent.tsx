@@ -38,7 +38,7 @@ const ProductDetailComponent: React.FC = () => {
     useEffect(() => {
         const fetchProductDetail = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/categories/${id}/products`);
+                const response = await axios.get(`http://localhost:8000/api/products/${id}`);
                 setProduct(response.data);
             } catch (error) {
                 setError('Failed to fetch product details');
@@ -49,6 +49,9 @@ const ProductDetailComponent: React.FC = () => {
 
         fetchProductDetail();
     }, [id]);
+
+    console.log("dlllllllllllll", product);
+    
 
     // const saveCartToLocalStorage = (cart: any) => {
     //     localStorage.setItem('cart', JSON.stringify(cart));
@@ -91,7 +94,7 @@ const ProductDetailComponent: React.FC = () => {
             };
 
             await dispatch(addToCart(cartData));
-            // saveCartToLocalStorage(cartData);
+            // saveCartToLocalStorage(cartData);b
             notification.success({
                 message: 'Sản phẩm đã được thêm vào giỏ hàng!',
             });
