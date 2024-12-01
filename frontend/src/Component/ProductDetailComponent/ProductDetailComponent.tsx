@@ -49,7 +49,7 @@ const ProductDetailComponent: React.FC = () => {
 
         fetchProductDetail();
     }, [id]);
-
+ 
     console.log("dlllllllllllll", product);
     
 
