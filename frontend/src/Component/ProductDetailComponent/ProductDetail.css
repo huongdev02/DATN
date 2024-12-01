@@ -1,0 +1,26 @@
+.rating{
+    border: 1px solid black;
+    width: 50%;
+}
+.comment{
+    width: 50%;
+    height: 10vw;
+}
+.button-review{
+    margin-top: 15px;
+   padding: 10px;
+}
+.rating{
+   
+    margin-bottom: 20px;
+    font-family: "Raleway";
+    font-weight: 300;
+    font-size: 18px;
+ 
+}
+:where(.css-dev-only-do-not-override-1x0dypw).ant-rate {
+    font-size: 30px;
+    color: yellow;
+}
+
+
