@@ -64,7 +64,6 @@ class ProductController extends Controller
                 'colors:id,name_color', 
                 'sizes:id,size', 
                 'galleries', 
-                'reviews' // Load reviews
             ]);
     
             // Định dạng dữ liệu galleries
@@ -80,18 +79,18 @@ class ProductController extends Controller
             });
     
             // Định dạng dữ liệu reviews
-            $product->reviews = $product->reviews->map(function ($review) {
-                return [
-                    'id' => $review->id,
-                    'user_id' => $review->user_id,
-                    'user_name' => $review->user->email ?? $review->user->fullname, // Hiển thị fullname hoặc email
-                    'rating' => $review->rating,
-                    'comment' => $review->comment,
-                    'image_url' => $review->image_path ? asset('storage/reviews/' . basename($review->image_path)) : null,
-                    'created_at' => $review->created_at,
-                    'updated_at' => $review->updated_at,
-                ];
-            });
+            // $product->reviews = $product->reviews->map(function ($review) {
+            //     return [
+            //         'id' => $review->id,
+            //         'user_id' => $review->user_id,
+            //         'user_name' => $review->user->email ?? $review->user->fullname, // Hiển thị fullname hoặc email
+            //         'rating' => $review->rating,
+            //         'comment' => $review->comment,
+            //         'image_url' => $review->image_path ? asset('storage/reviews/' . basename($review->image_path)) : null,
+            //         'created_at' => $review->created_at,
+            //         'updated_at' => $review->updated_at,
+            //     ];
+            // });
     
             $response = [
                 'id' => $product->id,
@@ -106,7 +105,6 @@ class ProductController extends Controller
                 'colors' => $product->colors,
                 'sizes' => $product->sizes,
                 'galleries' => $product->galleries,
-                'reviews' => $product->reviews, // Bao gồm reviews
                 'created_at' => $product->created_at,
                 'updated_at' => $product->updated_at,
             ];

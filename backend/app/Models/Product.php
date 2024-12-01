@@ -45,7 +45,7 @@ class Product extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class)->where('is_reviews', 1);
+        return $this->hasMany(Review::class, 'product_id')->where('is_reviews', 1);
     }
 
     public function sizes()

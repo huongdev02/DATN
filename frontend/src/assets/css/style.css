@@ -3339,6 +3339,10 @@ a.follow-vendor {
   top: 42px;
 }
 
+.order_history > table, th, td, tr {
+  border: 1px solid #ebebeb;
+}
+
 .dropdown-content a {
   color: black;
   padding: 12px 16px;
