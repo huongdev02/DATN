@@ -5,6 +5,12 @@
 @endsection
 
 @section('content_admin')
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <h1 class="text-center mt-5">Thêm mới voucher</h1>
 
     <form method="POST" action="{{ route('vouchers.store') }}" enctype="multipart/form-data" class="container">
@@ -30,16 +36,16 @@
         <div class="mb-3">
             <label for="total_min" class="col-2 col-form-label">Giá trị đơn hàng tối thiểu</label>
 
-            <input type="text" placeholder="exam: 100.000 VND" class="form-control" name="total_min"
-                id="discount_value" value="{{ old('total_min') }}" required />
+            <input type="text" placeholder="exam: 100.000 VND" class="form-control" name="total_min" id="discount_value"
+                value="{{ old('total_min') }}" required />
 
         </div>
 
         <div class="mb-3">
             <label for="total_max" class="col-2 col-form-label">Giá trị đơn hàng đạt tối đa</label>
 
-            <input type="text" placeholder="exam: 100.000 VND" class="form-control" name="total_max"
-                id="discount_value" value="{{ old('total_max') }}" required />
+            <input type="text" placeholder="exam: 100.000 VND" class="form-control" name="total_max" id="discount_value"
+                value="{{ old('total_max') }}" required />
 
         </div>
 
