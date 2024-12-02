@@ -73,7 +73,7 @@ export const addToCart = createAsyncThunk<
         { Authorization: `Bearer ${token}` }
        }
     );
-    return response.data as CartItem;
+    return response.data as CartItem; 
   } catch (error: any) {
     return rejectWithValue(error.response.data);
   }
