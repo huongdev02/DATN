@@ -63,7 +63,7 @@ class OrderController extends Controller
             $voucher = Voucher::find($voucherId);
         
             // Kiểm tra voucher tồn tại và đang hoạt động
-            if ($voucher && $voucher->status == 1 && $voucher->quantity > $voucher->used_times) {
+            if ($voucher && $voucher->is_active == 1 && $voucher->quantity > 0) {
                 // Kiểm tra voucher còn hạn (end_day > start_day)
                 $currentDate = now(); // Lấy ngày hiện tại
             
@@ -72,11 +72,11 @@ class OrderController extends Controller
                 }
             
                 // Kiểm tra tổng giá trị đơn hàng có lớn hơn hoặc bằng total_min và nhỏ hơn hoặc bằng total_max của voucher
-                if ($totalAmount < $voucher->total_min) {
+                if ($totalAmount <= $voucher->total_min) {
                     return response()->json(['message' => 'Total order amount is below minimum required for voucher.'], 400);
                 }
             
-                if ($totalAmount > $voucher->total_max) {
+                if ($totalAmount >= $voucher->total_max) {
                     return response()->json(['message' => 'Total order amount exceeds maximum allowed for voucher.'], 400);
                 }
             
@@ -87,7 +87,7 @@ class OrderController extends Controller
                 $voucher->increment('used_times'); // Tăng số lần sử dụng
                 $voucher->decrement('quantity'); // Giảm số lượng còn lại của voucher
             } else {
-                return response()->json(['message' => 'Voucher is not valid or has been used up.'], 400);
+                return response()->json(['message' => 'Voucher is not valid'], 400);
             }
             
         }

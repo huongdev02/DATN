@@ -38,8 +38,8 @@ class VoucherController extends Controller
         $totalAmount = $cartItems->sum(fn($item) => $item->quantity * $item->price);
 
         // Lấy tất cả các voucher hợp lệ
-        $vouchers = Voucher::where('status', 1) // Voucher đang hoạt động
-            ->where('quantity', '>', 'used_times') // Voucher còn số lượng
+        $vouchers = Voucher::where('is_active', 1) // Voucher đang hoạt động
+            ->where('quantity', '>', 0) // Voucher còn số lượng
             ->where(function ($query) {
                 $query->whereNull('start_day')
                     ->orWhere('start_day', '<=', now());
@@ -48,8 +48,6 @@ class VoucherController extends Controller
                 $query->whereNull('end_day')
                     ->orWhere('end_day', '>=', now());
             })
-            ->where('min_order_count', '<=', $cartItems->count()) // Kiểm tra số lượng sản phẩm trong giỏ
-            ->where('max_order_count', '>=', $cartItems->count()) // Kiểm tra số lượng sản phẩm trong giỏ
             ->get();
 
         $applicableVouchers = [];
@@ -72,6 +70,7 @@ class VoucherController extends Controller
 
         return response()->json([
             'status' => true,
+            'total_amount'=> $totalAmount,
             'vouchers' => $applicableVouchers,
         ]);
     }
