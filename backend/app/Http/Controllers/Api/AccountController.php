@@ -39,7 +39,7 @@ class AccountController extends Controller
                     'password'  => $user->password,
                 ]
             ], 200);
-        }catch(Throwable $e) {
+        } catch (Throwable $e) {
             return back()->with('error', $e->getMessage());
         }
     }
@@ -67,6 +67,10 @@ class AccountController extends Controller
                         'error' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.'
                     ], 403);
                 }
+
+                /**
+                 * @var User $user
+                 */
 
                 // Tạo token cho người dùng
                 $token = $user->createToken('API Token')->plainTextToken;

@@ -1,14 +1,14 @@
 @extends('Layout.Layout')
 
 @section('title')
-    DashBoard Admin
+    Trang chủ
 @endsection
 
 @section('content_admin')
     <div class="container text-center mt-5 mb-3">
-        <h2>DashBoard Admin</h2>
+        <h2>Trang chủ quản trị viên</h2>
     </div>
-    <div class="dashboard-stats">
+    <div class="dashboard-stats mt-3">
         <div class="stat-item">
             <h2>Tổng Doanh Thu</h2>
             <p>{{ number_format($totalRevenue, 0, ',', '.') }} VND</p>

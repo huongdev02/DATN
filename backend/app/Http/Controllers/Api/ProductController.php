@@ -12,7 +12,10 @@ class ProductController extends Controller
     {
         try {
             // Lấy tất cả sản phẩm với thông tin liên quan
-            $products = Product::with(['categories:id,name', 'colors:id,name_color', 'sizes:id,size'])->get();
+            $products = Product::with(['categories:id,name', 'colors:id,name_color', 'sizes:id,size'])
+            ->where('is_active', 1)
+            ->get();
+        
             
             // Lấy tất cả màu sắc và kích thước từ bảng colors và sizes
             $allColors = Color::all(); // Tất cả các màu sắc

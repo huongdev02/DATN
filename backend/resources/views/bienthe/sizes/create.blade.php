@@ -1,16 +1,16 @@
 @extends('Layout.Layout')
 
 @section('title')
-    Thêm mới Size
+    Thêm mới kích cỡ
 @endsection
 
 @section('content_admin')
-    <h1 class="text-center"> Thêm mới Size</h1>
+    <h1 class="text-center mt-5"> Thêm mới kích cỡ</h1>
     <div class="container">
         <form method="POST" action="{{ route('sizes.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="mb-3 row">
-                <label for="size" class="col-4 col-form-label">Size</label>
+                <label for="size" class="col-4 col-form-label">kích cỡ</label>
                
                     <input type="text" class="form-control" name="size" id="size" value="{{ old('size') }}" />
            

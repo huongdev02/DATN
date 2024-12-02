@@ -5,7 +5,7 @@
 @endsection
 
 @section('content_admin')
-    <h1 class="text-center">Thêm mới màu sác </h1>
+    <h1 class="text-center mt-5">Thêm mới màu sác </h1>
     <div class="container">
         <form method="POST" action="{{ route('colors.store') }}" enctype="multipart/form-data">
             @csrf
@@ -13,7 +13,8 @@
                 <label for="name_color" class="col-4 col-form-label">Tên màu sắc</label>
                 <input type="text" class="form-control" name="hex_color" id="name_color" value="1" hidden />
 
-                <input type="text" class="form-control" name="name_color" id="name_color" value="{{ old('name_color') }}" />
+                <input type="text" class="form-control" name="name_color" id="name_color"
+                    value="{{ old('name_color') }}" />
 
             </div>
 
@@ -22,7 +23,7 @@
                     <button type="submit" class="btn btn-primary">
                         Thêm mới
                     </button>
-                    <a href="{{route('colors.index')}}" class="btn btn-secondary">Quay lại</a>
+                    <a href="{{ route('colors.index') }}" class="btn btn-secondary">Quay lại</a>
                 </div>
             </div>
         </form>

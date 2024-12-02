@@ -9,7 +9,8 @@ class UservoucherController extends Controller
 {
     public function index()
     {
-        $vouchers = Voucher::all();
+        $vouchers = Voucher::where('is_active', 1)->get();
+
         return view('user.voucher', compact('vouchers'));
     }
 

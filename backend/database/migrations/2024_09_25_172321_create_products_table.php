@@ -25,14 +25,12 @@ return new class extends Migration
             $table->unsignedInteger('sell_quantity')->default(0);
             $table->unsignedInteger('view')->default(0);
             $table->text('description')->nullable();
-            $table->tinyInteger('display')->default(1); // 1(true), 0(false), cho phép kiểm soát việc hiển thị sản phẩm trên website
-            $table->tinyInteger('status')->default(1); // 0: Không hoạt động, 1: Đang mở bán, 2: Ngừng bán, 3: Chờ duyệt
+            $table->boolean('is_active')->default(1); //0 la kdh, 1 là hd
 
             $table->timestamps();
         });
 
         DB::statement('ALTER TABLE `products` ADD CONSTRAINT `check_price` CHECK (`price` >= `import_price`)'); //dkien: giá bán phải lớn hơn giá nhập
-        DB::statement('ALTER TABLE `products` ADD CONSTRAINT `check_status_products` CHECK (`status` >= 0 AND `status` <= 3)'); //dkien: chỉ nhận 0 1 2 3
         DB::statement('ALTER TABLE `products` ADD CONSTRAINT `check_quantity` CHECK (`quantity` >= 1)'); //dkien: sl>1
     }
 

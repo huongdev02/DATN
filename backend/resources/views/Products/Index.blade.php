@@ -1,8 +1,27 @@
 @extends('Layout.Layout')
+
+@section('title')
+    Danh sách sản phẩm
+@endsection
+
 @section('content_admin')
-    <h2 class="text-center my-4">Danh sách sản phẩm</h2>
+
+    @if (session('success'))
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <h1 class="text-center mt-5 mb-3">Danh sách sản phẩm</h1>
+
     <a href="{{ route('products.create') }}" class="btn btn-outline-success mb-4"
-        style="font-size: 1.1em; padding: 10px 20px;">Add New Product</a>
+        style="font-size: 1.1em; padding: 10px 20px;">Thêm mới</a>
 
     <div class="d-flex gap-3 mb-4">
         <!-- Price Order Filter -->
@@ -12,33 +31,24 @@
                 <option value="desc" {{ request('price_order') == 'desc' ? 'selected' : '' }}>Giá giảm dần</option>
             </select>
         </form>
-    
+
         <!-- Status Filter -->
         <form style="width: 200px;" method="GET" action="{{ route('products.index') }}">
-            <select style="padding: 10px;" name="status" class="form-control" onchange="this.form.submit()">
+            <select style="padding: 10px;" name="is_active" class="form-control" onchange="this.form.submit()">
                 <option value="">Tất cả</option>
-                <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Không hoạt động</option>
-                <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Đang mở bán</option>
-                <option value="2" {{ request('status') == '2' ? 'selected' : '' }}>Ngừng bán</option>
-                <option value="3" {{ request('status') == '3' ? 'selected' : '' }}>Chờ duyệt</option>
+                <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Hiển thị</option>
+                <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Ẩn</option>
             </select>
         </form>
-    
-        <!-- Display Filter -->
-        <form style="width: 200px;" method="GET" action="{{ route('products.index') }}">
-            <select style="padding: 10px;" name="display" class="form-control" onchange="this.form.submit()">
-                <option value="">Tất cả</option>
-                <option value="1" {{ request('display') == '1' ? 'selected' : '' }}>Hiển thị</option>
-                <option value="0" {{ request('display') == '0' ? 'selected' : '' }}>Không hiển thị</option>
-            </select>
-        </form>
-    
+
         <!-- Price Range Filter -->
         <form style="width: 200px;" method="GET" action="{{ route('products.index') }}">
             <select style="padding: 10px;" name="price_range" class="form-control" onchange="this.form.submit()">
                 <option value="">Chọn mức giá</option>
-                <option value="under_200k" {{ request('price_range') == 'under_200k' ? 'selected' : '' }}>Dưới 200k</option>
-                <option value="200k_500k" {{ request('price_range') == '200k_500k' ? 'selected' : '' }}>200k - 500k</option>
+                <option value="under_200k" {{ request('price_range') == 'under_200k' ? 'selected' : '' }}>Dưới 200k
+                </option>
+                <option value="200k_500k" {{ request('price_range') == '200k_500k' ? 'selected' : '' }}>200k - 500k
+                </option>
                 <option value="over_500k" {{ request('price_range') == 'over_500k' ? 'selected' : '' }}>Trên 500k</option>
             </select>
         </form>
@@ -51,17 +61,17 @@
             <thead class="table-light text-center">
                 <tr>
                     <th>STT</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Avatar</th>
-                    <th>Quantity</th>
-                    <th>Sell</th>
-                    <th>Price</th>
-                    <th>Description</th>
-                    <th>Galleries</th>
-                    <th>Size</th>
-                    <th>Color</th>
-                    <th>Actions</th>
+                    <th>Tên</th>
+                    <th>Danh mục</th>
+                    <th>Đại diện</th>
+                    <th>Số lượng</th>
+                    <th>Bán</th>
+                    <th>Giá</th>
+                    <th>Mô tả</th>
+                    <th>Thư viện</th>
+                    <th>Kích cỡ</th>
+                    <th>Màu sắc</th>
+                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -111,11 +121,18 @@
                             @endif
                         </td>
                         <td class="d-flex gap-2 justify-content-center">
-                            <a href="{{ route('products.edit', $item->id) }}" class="btn btn-outline-warning btn-sm">Edit</a>
-                            <form action="{{ route('products.destroy', $item->id) }}" method="POST" style="display: inline;">
+                            <a href="{{ route('products.edit', $item->id) }}" class="btn btn-outline-warning btn-sm">Cập
+                                nhật</a>
+
+                            <!-- Toggle is_active (Hide/Show) -->
+                            <form action="{{ route('products.index') }}" method="GET" style="display: inline;">
                                 @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                <input type="hidden" name="toggle_is_active" value="1">
+                                <input type="hidden" name="product_id" value="{{ $item->id }}">
+                                <button type="submit" class="btn btn-outline-secondary btn-sm"
+                                    onclick="return confirm('Bạn có chắc muốn thay đổi trạng thái ẩn/hiển thị sản phẩm này?')">
+                                    {{ $item->is_active == 1 ? 'Ẩn' : 'Hiện' }}
+                                </button>
                             </form>
                         </td>
                     </tr>
@@ -131,6 +148,7 @@
             margin: 2px;
             border-radius: 5px;
         }
+
         .color-circle {
             display: inline-block;
             width: 20px;

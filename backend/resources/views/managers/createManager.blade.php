@@ -1,12 +1,24 @@
 @extends('Layout.Layout')
 
 @section('title')
-    Thêm Quản lý 
+    Thêm Quản lý
 @endsection
 
 @section('content_admin')
-<div class="container mt-2">
-    <h1 class="mb-3 text-center">Thêm Quản lý mới</h1>
+    @if (session('success'))
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <h1 class="mb-3 text-center mt-5 mb-3">Thêm Quản lý mới</h1>
+
     <form action="{{ route('managers.store') }}" method="POST">
         @csrf
 
@@ -24,12 +36,11 @@
             <label>Xác Nhận Mật Khẩu</label>
             <input type="password" class="form-control" name="password_confirmation" required>
         </div>
-        
+
         <div class="text-center">
             <button type="submit" class="btn btn-primary">Thêm Quản lý</button>
-            <a href="{{route('managers.index')}}" class="btn btn-secondary">Quay lại</a>
+            <a href="{{ route('managers.index') }}" class="btn btn-secondary">Quay lại</a>
         </div>
-       
+
     </form>
-</div>
 @endsection

@@ -19,14 +19,9 @@ class ProductController extends Controller
     // Initialize query with relations
     $query = Product::with(['galleries', 'categories', 'colors']);
     
-    // Filter by status
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
-
-    // Filter by display
-    if ($request->filled('display')) {
-        $query->where('display', $request->display);
+    // Filter by is_active
+    if ($request->filled('is_active')) {
+        $query->where('is_active', $request->is_active);
     }
 
     // Filter by price range
@@ -43,6 +38,16 @@ class ProductController extends Controller
     // Sort by price order
     if ($request->filled('price_order')) {
         $query->orderBy('price', $request->price_order);
+    }
+
+    // Check if there's an 'is_active' action
+    if ($request->has('toggle_is_active')) {
+        $product = Product::findOrFail($request->input('product_id'));
+        $product->is_active = !$product->is_active; // Toggle the status
+        $product->save();
+
+        // Redirect back with success message
+        return redirect()->route('products.index')->with('success', 'Trạng thái sản phẩm đã được cập nhật.');
     }
 
     // Get paginated results
@@ -63,6 +68,8 @@ class ProductController extends Controller
 }
 
     
+
+    
     public function create()
     {
         $categories = Category::all();
@@ -81,8 +88,7 @@ class ProductController extends Controller
             'quantity' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
-            'display' => 'required|boolean',
-            'status' => 'required|in:0,1,2,3',
+            'is_active' => 'required|boolean', // Đảm bảo is_active là boolean
             'sizes' => 'array',
             'sizes.*' => 'exists:sizes,id',
             'colors' => 'array',
@@ -97,10 +103,9 @@ class ProductController extends Controller
                 $avatarPath = $request->file('avatar')->store('ProductAvatars', 'public');
             }
 
-
             $productData = $request->all();
             $productData['avatar'] = $avatarPath;
-
+            $productData['status'] = $request->has('is_active') && $request->is_active == 1 ? 1 : 0; // Chuyển thành status 1 hoặc 0
 
             $product = Product::create($productData);
 
@@ -115,17 +120,13 @@ class ProductController extends Controller
             if ($request->hasFile('image_path')) {
                 foreach ($request->file('image_path') as $image) {
                     $imagePath = $image->store('ProductGalleries', 'public');
-                    Gallery::create([
-                        'product_id' => $product->id,
-                        'image_path' => $imagePath,
-                    ]);
+                    Gallery::create(['product_id' => $product->id, 'image_path' => $imagePath]);
                 }
             }
 
-
-            return redirect()->route('products.index')->with('success', 'Thêm mới sản phẩm thành công');
-        } catch (Throwable $e) {
-            return back()->with('error', 'Thất bại lôi: ' . $e->getMessage());
+            return redirect()->route('products.index')->with('success', 'Product created successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to create product: ' . $e->getMessage());
         }
     }
 
@@ -142,66 +143,60 @@ class ProductController extends Controller
 
 
     public function update(Request $request, Product $product)
-    {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'import_price' => 'required|numeric|min:0',
-                'price' => 'required|numeric|min:0',
-                'quantity' => 'required|numeric|min:0',
-                'description' => 'nullable|string',
-                'category_id' => 'required|exists:categories,id',
-                'sizes' => 'array|nullable',
-                'colors' => 'array|nullable',
-                'display' => 'boolean',
-                'status' => 'required|in:0,1,2,3',
-                'avatar' => 'nullable|image',
-                'images.*' => 'nullable|image',
-                'delete_gallery' => 'array|nullable',
-            ]);
+{
+    try {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'import_price' => 'required|numeric|min:0',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'category_id' => 'required|exists:categories,id',
+            'sizes' => 'array|nullable',
+            'colors' => 'array|nullable',
+            'is_active' => 'boolean',
+            'avatar' => 'nullable|image',
+            'images.*' => 'nullable|image',
+            'delete_gallery' => 'array|nullable',
+        ]);
 
-            // Xử lý ảnh đại diện
-            if ($request->hasFile('avatar')) {
-                // Xóa ảnh cũ nếu có
-                if ($product->avatar) {
-                    Storage::disk('public')->delete($product->avatar);
-                }
-                // Lưu ảnh mới
-                $avatarPath = $request->file('avatar')->store('ProductAvatars', 'public');
-                $product->update(['avatar' => $avatarPath]);
+        // Xử lý ảnh đại diện
+        if ($request->hasFile('avatar')) {
+            // Xóa ảnh cũ nếu có
+            if ($product->avatar) {
+                Storage::disk('public')->delete($product->avatar);
             }
-
-            // Cập nhật các thông tin sản phẩm khác
-            $product->update($request->except(['avatar', 'images', 'delete_gallery']));
-
-            // Đồng bộ kích thước và màu sắc
-            $product->sizes()->sync($request->sizes);
-            $product->colors()->sync($request->colors);
-
-            // Xử lý hình ảnh trong thư viện
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $imagePath = $image->store('ProductGalleries', 'public');
-                    $product->galleries()->create(['image_path' => $imagePath]);
-                }
-            }
-
-            // Xóa các hình ảnh cũ được chọn
-            if ($request->delete_gallery) {
-                foreach ($request->delete_gallery as $id) {
-                    $gallery = $product->galleries()->find($id);
-                    if ($gallery) {
-                        Storage::disk('public')->delete($gallery->image_path);
-                        $gallery->delete();
-                    }
-                }
-            }
-
-            return back()->with('success', 'cập nhật sản phẩm thành công');
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Thất bại lỗi: ' . $e->getMessage()]);
+            // Lưu ảnh mới
+            $avatarPath = $request->file('avatar')->store('ProductAvatars', 'public');
+            $product->update(['avatar' => $avatarPath]);
         }
+
+        // Cập nhật các thông tin sản phẩm khác, bao gồm `is_active`
+        $product->update($request->except(['avatar', 'images', 'delete_gallery']));
+
+        // Đồng bộ kích thước và màu sắc
+        $product->sizes()->sync($request->sizes);
+        $product->colors()->sync($request->colors);
+
+        // Xử lý hình ảnh trong thư viện
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('ProductImages', 'public');
+                $product->galleries()->create(['image_path' => $imagePath]);
+            }
+        }
+
+        // Xóa hình ảnh được chọn
+        if ($request->has('delete_gallery')) {
+            $product->galleries()->whereIn('id', $request->delete_gallery)->delete();
+        }
+
+        return redirect()->route('products.index')->with('success', 'Sản phẩm được cập nhật thành công');
+    } catch (\Exception $e) {
+        return back()->with('error', 'Đã có lỗi xảy ra, vui lòng thử lại.');
     }
+}
+
 
 
 

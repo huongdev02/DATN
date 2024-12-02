@@ -14,51 +14,59 @@ class VoucherController extends Controller
      */
     public function index(Request $request)
     {
+
+        if ($request->has('toggle_active')) {
+            $voucher = Voucher::findOrFail($request->toggle_active);
+            $voucher->is_active = !$voucher->is_active; // Đổi trạng thái
+            $voucher->save();
+            return back()->with('success', 'Trạng thái danh mục đã được cập nhật.');
+        }
+
         $query = Voucher::query();
 
-        // Apply filter by status if provided
-        if ($request->has('status') && $request->status != '') {
+        // Apply filter by status (active or inactive)
+        if ($request->has('status') && $request->status !== '') {
             switch ($request->status) {
                 case '0': // Không hoạt động
-                    $query->where('status', 0);
+                    $query->where('is_active', 0);
                     break;
                 case '1': // Đang hoạt động
-                    $query->where('status', 1)
+                    $query->where('is_active', 1)
                         ->whereDate('start_day', '<=', now())
                         ->whereDate('end_day', '>=', now());
-                    break;
-                case '2': // Đã hết hạn
-                    $query->where('status', 1)
-                        ->whereDate('end_day', '<', now());
-                    break;
-                case '3': // Chờ phát hành
-                    $query->where('status', 3)
-                        ->whereDate('start_day', '>', now());
                     break;
             }
         }
 
-        // Apply filter by type if provided
-        if ($request->has('type') && $request->type != '') {
-            $query->where('type', $request->type);
+        // Apply filter by expiration status
+        if ($request->has('expiry_status') && $request->expiry_status !== '') {
+            switch ($request->expiry_status) {
+                case 'valid': // Còn hạn
+                    $query->whereDate('end_day', '>=', now());
+                    break;
+                case 'expired': // Đã hết hạn
+                    $query->whereDate('end_day', '<', now());
+                    break;
+            }
+        }
+
+        // Apply sorting by discount value (ascending or descending)
+        if ($request->has('sort_by') && $request->sort_by !== '') {
+            $sortOrder = $request->sort_by == 'desc' ? 'desc' : 'asc';
+            $query->orderBy('discount_value', $sortOrder);
         }
 
         // Select specific columns and paginate results
-        $vouchers = $query->select('id', 'code', 'type', 'discount_value', 'description', 'status', 'start_day', 'end_day')
+        $vouchers = $query->select('id', 'code', 'discount_value', 'description', 'start_day', 'end_day', 'is_active', 'total_min', 'total_max')
             ->paginate(10);
 
         return view('vouchers.index', [
             'vouchers' => $vouchers,
             'status' => $request->status,
-            'type' => $request->type,
+            'expiry_status' => $request->expiry_status,
+            'sort_by' => $request->sort_by,
         ]);
     }
-
-
-
-
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -75,24 +83,34 @@ class VoucherController extends Controller
     {
         $request->validate([
             'code' => 'required|string|max:10|unique:vouchers',
-            'type' => 'required|integer',
             'discount_value' => 'required|numeric',
             'description' => 'nullable|string',
-            'discount_min' => 'required|numeric',
-            'max_discount' => 'required|numeric',
-            'min_order_count' => 'required|integer',
-            'max_order_count' => 'required|integer',
             'quantity' => 'required|integer',
             'used_times' => 'nullable|integer|min:0',
             'start_day' => 'nullable|date',
             'end_day' => 'nullable|date',
-            'status' => 'required|integer',
+            'is_active' => 'required|boolean', // Trường 'is_active' thay vì 'status'
+            'total_min' => 'required|numeric',
+            'total_max' => 'required|numeric'
         ]);
 
-        Voucher::create($request->all());
+        // Tạo voucher mới
+        Voucher::create([
+            'code' => $request->code,
+            'discount_value' => $request->discount_value,
+            'description' => $request->description,
+            'quantity' => $request->quantity,
+            'used_times' => $request->used_times ?? 0, // Đảm bảo giá trị mặc định
+            'start_day' => $request->start_day,
+            'end_day' => $request->end_day,
+            'is_active' => $request->is_active,
+            'total_min' => $request->total_min,
+            'total_max' => $request->total_max,
+        ]);
 
         return redirect()->route('vouchers.index')->with('success', 'Voucher created successfully.');
     }
+
 
 
     /**
@@ -121,40 +139,33 @@ class VoucherController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'code' => 'required|string|max:10|unique:vouchers,code,' . $id,
-            'type' => 'required|integer',
-            'discount_value' => 'required|numeric|min:0',
+            'code' => 'required|max:10|unique:vouchers,code,' . $id,
+            'discount_value' => 'required|numeric',
             'description' => 'nullable|string',
-            'discount_min' => 'required|numeric|min:0',
-            'max_discount' => 'required|numeric|min:0',
-            'min_order_count' => 'required|integer|min:1',
-            'max_order_count' => 'required|integer|min:1',
-            'quantity' => 'required|integer|min:1',
-            'used_times' => 'nullable|integer|min:0',
+            'quantity' => 'required|integer',
             'start_day' => 'nullable|date',
-            'end_day' => 'nullable|date',
-            'status' => 'required|integer',
+            'end_day' => 'nullable|date|after_or_equal:start_day',
+            'is_active' => 'required|boolean',
+            'total_min' => 'required|numeric',
+            'total_max' => 'required|numeric'
         ]);
 
         $voucher = Voucher::findOrFail($id);
-        $voucher->update($request->only([
-            'code',
-            'type',
-            'discount_value',
-            'description',
-            'discount_min',
-            'max_discount',
-            'min_order_count',
-            'max_order_count',
-            'quantity',
-            'used_times',
-            'start_day',
-            'end_day',
-            'status',
-        ]));
+        $voucher->update([
+            'code' => $request->code,
+            'discount_value' => $request->discount_value,
+            'description' => $request->description,
+            'quantity' => $request->quantity,
+            'start_day' => $request->start_day,
+            'end_day' => $request->end_day,
+            'total_min' => $request->total_min,
+            'total_max' => $request->total_max,
+            'is_active' => $request->is_active,
+        ]);
 
-        return redirect()->route('vouchers.index')->with('success', 'Voucher updated successfully.');
+        return back()->with('success', 'Voucher đã được cập nhật.');
     }
+
 
 
     /**

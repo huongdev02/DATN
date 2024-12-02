@@ -5,7 +5,19 @@
 @endsection
 
 @section('content_admin')
-    <h1 class="text-center">Cập nhật màu sắc</h1>
+    @if (session('success'))
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <h1 class="text-center mt-5">Cập nhật màu sắc</h1>
 
     <div class="container">
         <form method="POST" action="{{ route('colors.update', $color->id) }}" enctype="multipart/form-data">
@@ -23,7 +35,7 @@
             <div class="mb-3 row">
                 <div class="offset-sm-4 col-sm-8">
                     <button type="submit" class="btn btn-primary">Cập nhật</button>
-                    <a href="{{route('colors.index')}}" class="btn btn-secondary">Quay lại</a>
+                    <a href="{{ route('colors.index') }}" class="btn btn-secondary">Quay lại</a>
                 </div>
             </div>
         </form>

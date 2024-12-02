@@ -1,21 +1,23 @@
 @extends('Layout.Layout')
 
 @section('title')
-    <!-- Corrected 'tiltle' to 'title' -->
     Thêm mới sản phẩm
 @endsection
 
 @section('content_admin')
+
+    <h1 class="text-center mt-5">Thêm mới sản phẩm </h1>
+
     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="mb-3">
-            <label for="name">Name:</label>
+            <label for="name">Tên</label>
             <input type="text" name="name" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label for="avatar">Avatar:</label>
+            <label for="avatar">Ảnh đại diện</label>
             <input type="file" name="avatar" class="form-control" accept="image/*" id="avatar" required
                 onchange="previewImage()">
         </div>
@@ -26,7 +28,7 @@
         </div>
 
         <div class="mb-3 mt-3">
-            <label for="images">Gallery:</label>
+            <label for="images">Ảnh chi tiết</label>
             <input type="file" id="image-input" class="form-control" name="image_path[]" multiple accept="image/*"
                 placeholder="Có thể chọn nhiều ảnh">
             <div id="image-preview-container" class="mt-2"></div>
@@ -34,27 +36,27 @@
         </div>
 
         <div class="mb-3">
-            <label for="import_price">Import Price:</label>
+            <label for="import_price">Giá nhập</label>
             <input type="number" name="import_price" step="0.01" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label for="price">Price:</label>
+            <label for="price">Giá bán</label>
             <input type="number" name="price" step="0.01" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label for="price">Quantity</label>
+            <label for="price">Số lượng </label>
             <input type="number" name="quantity" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label for="description">Description:</label>
+            <label for="description">Mô tả</label>
             <textarea name="description" class="form-control" rows="10"></textarea>
         </div>
 
         <div class="mb-3">
-            <label for="category_id">Category:</label>
+            <label for="category_id">Danh mục</label>
             <select name="category_id" id="category_id" class="form-control" required>
                 @foreach ($categories as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -78,27 +80,17 @@
             @endforeach
         </div>
 
+        <!-- Thêm phần kiểm tra trạng thái hoạt động -->
         <div class="mb-3">
-            <label for="display">Hiển thị</label>
-            <input type="checkbox" name="display" value="1" checked>
-        </div>
-
-        <div class="mb-3">
-            <label for="status">Status:</label>
-            <select name="status" class="form-control mb-3 mt-2" required>
-                <option value="0">Không hoạt động</option>
-                <option value="1" selected>Đang mở bán</option>
-                <option value="2">Ngừng bán</option>
-                <option value="3">Chờ duyệt</option>
-            </select>
+            <label for="is_active">Hoạt động:</label>
+            <input type="checkbox" name="is_active" value="1" checked>
         </div>
 
         <div class="text-center mb-5 mt-3">
-            <button type="submit" class="btn btn-primary">Create Product</button>
+            <button type="submit" class="btn btn-primary">Thêm mối</button>
             <a href="{{ route('products.index') }}" class="btn btn-secondary">Quay lại</a>
         </div>
     </form>
-
 
     <!-- avatar Preview Script -->
     <script>

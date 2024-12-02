@@ -10,18 +10,15 @@ class Voucher extends Model
     use HasFactory;
     protected $fillable = [
         'code',
-        'type',
-        'description',
         'discount_value',
-        'discount_min',
-        'max_discount',
-        'min_order_count',
-        'max_order_count',
+        'description',
         'quantity',
         'used_times',
-        'status',
         'start_day',
-        'end_day'
+        'end_day',
+        'is_active',
+        'total_min',
+        'total_max',
     ];
 
     public function voucherUsages()

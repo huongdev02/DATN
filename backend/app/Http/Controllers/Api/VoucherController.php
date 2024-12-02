@@ -55,24 +55,15 @@ class VoucherController extends Controller
         $applicableVouchers = [];
 
         foreach ($vouchers as $voucher) {
-            // Tính toán giá trị giảm giá cho voucher
-            $discountValue = 0;
-            if ($voucher->type == 0) {
-                // Nếu voucher là giảm giá theo giá trị cố định
-                $discountValue = min($voucher->discount_value, $totalAmount);
-            } elseif ($voucher->type == 1) {
-                // Nếu voucher là giảm giá theo phần trăm
-                $discountValue = min(($voucher->discount_value / 100) * $totalAmount, $voucher->max_discount);
-            }
-
-            // Kiểm tra xem số tiền giảm giá có đủ điều kiện không (phải lớn hơn hoặc bằng giá trị giảm tối thiểu)
-            if ($discountValue >= $voucher->discount_min) {
+            // Kiểm tra xem tổng giá trị giỏ hàng có đủ điều kiện với total_min và total_max
+            if ($totalAmount >= $voucher->total_min && ($voucher->total_max === null || $totalAmount <= $voucher->total_max)) {
+                // Nếu voucher thỏa mãn điều kiện, thêm vào danh sách voucher hợp lệ
                 $applicableVouchers[] = [
                     'voucher' => $voucher,
-                    'discount_value' => $discountValue,
                 ];
             }
         }
+        
 
         // Sắp xếp các voucher theo giá trị giảm giá từ cao đến thấp
         usort($applicableVouchers, function ($a, $b) {
