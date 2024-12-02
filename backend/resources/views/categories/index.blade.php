@@ -5,6 +5,7 @@
 @endsection
 
 @section('content_admin')
+
     @if (session('success'))
         <div class="alert alert-success text-center">
             {{ session('success') }}

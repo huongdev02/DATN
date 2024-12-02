@@ -5,6 +5,13 @@
 @endsection
 
 @section('content_admin')
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    
     <h1 class="text-center mt-5">Thêm mới màu sác </h1>
     <div class="container">
         <form method="POST" action="{{ route('colors.store') }}" enctype="multipart/form-data">

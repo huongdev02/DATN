@@ -1,6 +1,7 @@
 @extends('Layout.Layout')
 @section('content_admin')
-    <a href="{{ route('promotion.create') }}" class="btn btn-outline-success mb-3">Add New Promotion</a>
+<h1 class="text-center mt-5">Danh sách sản phẩm giá </h1>
+    <a href="{{ route('promotion.create') }}" class="btn btn-outline-success mb-3">Thêm mới</a>
     <table class="table">
         <thead>
             <tr>

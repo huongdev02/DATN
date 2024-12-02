@@ -5,6 +5,11 @@
 @endsection
 
 @section('content_admin')
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <h1 class="text-center mt-5">Thêm mới sản phẩm </h1>
 
