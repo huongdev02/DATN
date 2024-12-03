@@ -1049,8 +1049,9 @@ textarea.form-control {
   height: 100%;
 }
 .box-popup-search .box-search-wrapper {
+  border-radius: 6px;
   position: absolute;
-  top: 0px;
+  top: 60px;
   right: -350px;
   max-width: 350px;
   z-index: 2;
@@ -1091,16 +1092,13 @@ textarea.form-control {
 }
 .box-popup-search .btn-close-popup {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 0;
+  right: 10px;
   z-index: 5;
   background: #fff;
-  border: 1px solid #111;
-  border-radius: 50%;
   line-height: 25px;
   text-align: center;
-  width: 31px;
-  height: 31px;
+  font-size: 20px
 }
 
 .box-quick-search a {
@@ -2659,6 +2657,9 @@ a.follow-vendor {
 }
 .cardProductStyle3 .cardImage, .cardProductStyle2 .cardImage, .cardProduct .cardImage, .cardProductSmall .cardImage {
   position: relative;
+  height: 250px;
+  padding-top: 10px;
+  padding-left: 10px;
   margin-bottom: 20px;
   background-color: #F7FAFA;
   overflow: hidden;
@@ -3323,11 +3324,6 @@ a.follow-vendor {
   width: 35px;
 }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
 .dropdown-content {
   display: none;
   position: absolute;
@@ -3336,7 +3332,7 @@ a.follow-vendor {
   z-index: 1;
   right: -121px;
   text-align: left;
-  top: 42px;
+  top: 35px;
 }
 
 .dropdown-content a {
@@ -8298,13 +8294,13 @@ h4.brush-bg::after {
 
 .list-color {
   display: flex;
-  flex-wrap: wrap;
+  gap: 10px;
   margin: 0px -5px;
 }
 .list-color li {
   flex: 0 0 auto;
-  width: 12%;
-  padding: 0px 5px;
+  padding: 8px 12px;
+  cursor: pointer;
   text-align: center;
   margin-bottom: 5px;
 }
@@ -9434,7 +9430,7 @@ h5.item-collapse.collapsed-item {
 }
 
 .icon-16 {
-  height: 16px;
+  height: 18px;
 }
 
 .table-cart {

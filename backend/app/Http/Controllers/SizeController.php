@@ -36,7 +36,7 @@ class SizeController extends Controller
         try {
             Size::query()->create($data);
             return redirect()->route('sizes.index')
-                ->with('success', true);
+                ->with('success', 'Thêm mới thành công');
         } catch (\Throwable $th) {
             return back()
                 ->with('success', false)

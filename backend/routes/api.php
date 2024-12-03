@@ -7,17 +7,19 @@ use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\LogoBannerController;
+use App\Http\Controllers\Api\NewProductController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\OrderHistoryController;
 use App\Http\Controllers\Api\PayController;
 
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\Api\ShipAddressController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\UserController;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Sanctum;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -42,12 +44,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('carts', CartController::class)->middleware('auth:sanctum');
 Route::apiResource('orders', OrderController::class)->middleware('auth:sanctum');
 Route::apiResource('vouchers', VoucherController::class)->middleware('auth:sanctum');
+Route::get('/cart/{user_id}', [CartController::class, 'getCartByUserId']);
+Route::put('/cart/{cartId}/update/{productId}', [CartController::class, 'updateCartItem']);
 
 Route::get('categories/{category}/products', [ProductController::class, 'getProductsByCategory']);
 Route::apiResource('products', ProductController::class);
 Route::resource('promotions', PromotionController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::get('products/category/{categoryId}', [CategoryController::class, 'productsByCategory']); 
+
+// Route::get('topsell', [TopSellController::class, 'index'])->name('topsell');
+Route::get('newproduct', [NewProductController::class, 'index'])->name('newproduct');
+Route::get('promotion', [PromotionController::class, 'index'])->name('[promotion]');
 
 Route::controller(AccountController::class)->group(function () {
     Route::post('login', 'login')->name('login');
@@ -61,3 +69,6 @@ Route::get('/auth/check', [AccountController::class, 'checkAuth']);
 Route::post('ship_addresses', [ShipAddressController::class, 'store']); 
 Route::apiResource('blog', BlogController::class);
 Route::apiResource('logobanner', LogoBannerController::class);
+Route::get('/order-history/{userId}', [OrderHistoryController::class, 'getOrderHistory']);
+Route::put('/user/{id}', [UserController::class, 'update']);
+Route::get('/user/{userId}', [UserController::class, 'show']);

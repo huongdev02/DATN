@@ -31,7 +31,7 @@ class AdminController extends Controller
     public function admin(Request $request)
 {
     // Tính tổng số user
-    $totalUsers = User::count();
+    $totalUsers = User::where('role', 0)->count();
 
     // Tính tổng đơn hàng đã hoàn thành (status = 3 là hoàn thành)
     $completedOrders = Order::where('status', 3)->count();

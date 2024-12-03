@@ -68,17 +68,50 @@
                                             Chờ xử lý
                                         </option>
                                         <option value="1" style="color: blue;"
-                                            {{ $order->status == 1 ? 'selected' : '' }}>Đã xử lý</option>
+                                            {{ $order->status == 1 ? 'selected' : '' }}
+                                            {{ $order->status >= 1 ? 'disabled' : '' }}>
+                                            Đã xử lý
+                                        </option>
                                         <option value="2" style="color: orange;"
-                                            {{ $order->status == 2 ? 'selected' : '' }}>Đang vận chuyển</option>
+                                            {{ $order->status == 2 ? 'selected' : '' }}
+                                            {{ $order->status >= 2 ? 'disabled' : '' }}>
+                                            Đang vận chuyển
+                                        </option>
                                         <option value="3" style="color: green;"
-                                            {{ $order->status == 3 ? 'selected' : '' }}>Giao hàng thành công</option>
+                                            {{ $order->status == 3 ? 'selected' : '' }}
+                                            {{ $order->status >= 3 ? 'disabled' : '' }}>
+                                            Giao hàng thành công
+                                        </option>
                                         <option value="4" style="color: red;"
-                                            {{ $order->status == 4 ? 'selected' : '' }}>Đã hủy</option>
+                                            {{ $order->status == 4 ? 'selected' : '' }}
+                                            {{ $order->status == 4 ? 'disabled' : '' }}>
+                                            Đã hủy
+                                        </option>
                                         <option value="5" style="color: purple;"
-                                            {{ $order->status == 5 ? 'selected' : '' }}>Đã trả lại</option>
+                                            {{ $order->status == 5 ? 'selected' : '' }}
+                                            {{ $order->status == 5 ? 'disabled' : '' }}>
+                                            Đã trả lại
+                                        </option>
                                     </select>
                                 </form>
+
+                                <script>
+                                    function confirmAndSubmit(selectElement) {
+                                        const currentStatus = {{ $order->status }}; // Lấy trạng thái hiện tại từ backend
+                                        const selectedStatus = selectElement.value;
+
+                                        // Nếu chọn trạng thái mới và muốn quay lại trạng thái cũ, hiển thị cảnh báo
+                                        if ((currentStatus >= 1 && selectedStatus <= currentStatus) || (currentStatus >= 3 && selectedStatus <=
+                                                currentStatus)) {
+                                            alert('Bạn không thể quay lại trạng thái cũ.');
+                                            selectElement.value = currentStatus; // Đặt lại giá trị trạng thái hiện tại
+                                            return;
+                                        }
+
+                                        selectElement.form.submit(); // Nếu không có vấn đề, submit form
+                                    }
+                                </script>
+
                             </td>
 
                             <td>{{ $order->message }}</td>

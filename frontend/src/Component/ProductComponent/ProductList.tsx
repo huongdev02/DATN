@@ -69,7 +69,7 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
               <div className="col-xl-4 col-sm-6" key={product.id}>
                 <div className="cardProduct wow fadeInUp">
                   <div className="cardImage">
-                    <label className="lbl-hot">hot</label>
+                    {/* <label className="lbl-hot">hot</label> */}
                     <Link to={`/product-detail/${product.id}`}>
                       <img
                         className="imageMain"

@@ -12,35 +12,43 @@ class PromotionController extends Controller
     public function index()
     {
         try {
-            $promotions = Promotion::all();
-            return response()->json($promotions, 200);
+            // Lấy toàn bộ bản ghi từ bảng promotions cùng thông tin sản phẩm liên quan
+            $promotions = Promotion::with(['product:id,name,avatar,price'])
+                ->get();
+
+            // Chuyển đổi dữ liệu
+            $promotions = $promotions->map(function ($promotion) {
+                return [
+                    'id' => $promotion->id,
+                    'product' => [
+                        'id' => $promotion->product->id,
+                        'name' => $promotion->product->name,
+                        'avatar_url' => $promotion->product->avatar
+                            ? asset('storage/ProductAvatars/' . basename($promotion->product->avatar))
+                            : null,
+                        'price' => $promotion->product->price,
+                    ],
+                    'start_day' => $promotion->start_day,
+                    'end_day' => $promotion->end_day,
+                    'price_discount' => $promotion->price_discount,
+                    'created_at' => $promotion->created_at,
+                    'updated_at' => $promotion->updated_at,
+                ];
+            });
+
+            return response()->json(['promotions' => $promotions]);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Lỗi khi lấy danh sách khuyến mãi: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Không thể lấy danh sách khuyến mãi. ' . $e->getMessage()], 500);
         }
     }
 
-    public function show($id)
-    {
-        try {
-            $promotion = Promotion::findOrFail($id);
-            return response()->json(['message' => 'Lấy thành công', 'data' => $promotion], 201);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Khuyến mãi không tồn tại'], 404);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Lỗi khi lấy thông tin khuyến mãi: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function store(Request $request)
-    {
-    }
-
-    public function update(Request $request, $id)
-    {
-    }
 
 
-    public function destroy($id)
-    {
-    }
+
+    public function store(Request $request) {}
+
+    public function update(Request $request, $id) {}
+
+
+    public function destroy($id) {}
 }

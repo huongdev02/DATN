@@ -8,6 +8,7 @@ import Contact from '../Layout/Contact/Contact';
 import Blog from '../Layout/Blog/Blog';
 import Found from '../Layout/Found/Found';
 import About from '../Layout/About/About';
+import OrderHistory from '../Layout/OrderHistory/OrderHistory';
 
 const AppRoutes = () => {
   return (
@@ -17,6 +18,7 @@ const AppRoutes = () => {
       <Route path="/product-detail/:id" element={<ProductDetail />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout/:userId" element={<Checkout />} />
+      <Route path="/order-history" element={<OrderHistory />} />
       <Route path="/contact" element={<Contact />} />
       <Route path='/blog' element={<Blog />} />
       <Route path='/about' element={<About />} />
