@@ -369,7 +369,7 @@ const Header: React.FC = () => {
       {/* Tìm kiếm sản phẩm */}
       <div
         className="box-popup-search perfect-scrollbar"
-        style={{ visibility: isSearchActive ? "visible" : "hidden" }}
+        style={{ visibility: isSearchActive ? "visible" : "hidden" , height:'100px'}}
       >
         <div className="box-search-overlay" />
         <div className={`box-search-wrapper ${isSearchActive ? "active" : ""}`}>

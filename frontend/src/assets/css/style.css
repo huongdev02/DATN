@@ -1049,8 +1049,9 @@ textarea.form-control {
   height: 100%;
 }
 .box-popup-search .box-search-wrapper {
+  border-radius: 6px;
   position: absolute;
-  top: 0px;
+  top: 60px;
   right: -350px;
   max-width: 350px;
   z-index: 2;
