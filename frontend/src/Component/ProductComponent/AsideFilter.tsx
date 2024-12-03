@@ -189,7 +189,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                 </div>
               </div>
             </div>
-            {/* Color */}
+            {/* Màu sắc */}
             <div className="col-lg-12 col-md-6">
               <div className="block-filter">
                 <h6 style={{ marginBottom: "15px" }}>Màu sắc</h6>
