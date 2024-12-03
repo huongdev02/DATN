@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\LogoBannerController;
+use App\Http\Controllers\Api\NewProductController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OrderHistoryController;
 use App\Http\Controllers\Api\PayController;
@@ -18,7 +19,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Sanctum;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,10 @@ Route::apiResource('products', ProductController::class);
 Route::resource('promotions', PromotionController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::get('products/category/{categoryId}', [CategoryController::class, 'productsByCategory']); 
+
+Route::get('topsell', [TopSellController::class, 'index'])->name('topsell');
+Route::get('newproduct', [NewProductController::class, 'index'])->name('newproduct');
+Route::get('promotion', [PromotionController::class, 'index'])->name('[promotion]');
 
 Route::controller(AccountController::class)->group(function () {
     Route::post('login', 'login')->name('login');
