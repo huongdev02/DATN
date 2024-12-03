@@ -20,23 +20,23 @@ class VoucherController extends Controller
         if (!Auth::check()) {
             return response()->json(['message' => 'User not logged in.'], 401);
         }
-
+    
         $userId = Auth::id();
-
+    
         // Lấy giỏ hàng của người dùng
         $cart = Cart::where('user_id', $userId)->first();
         if (!$cart) {
             return response()->json(['message' => 'No cart found.'], 400);
         }
-
+    
         $cartItems = CartItem::where('cart_id', $cart->id)->get();
         if ($cartItems->isEmpty()) {
             return response()->json(['message' => 'No items in the cart.'], 400);
         }
-
+    
         // Tính tổng giá trị đơn hàng
         $totalAmount = $cartItems->sum(fn($item) => $item->quantity * $item->price);
-
+    
         // Lấy tất cả các voucher hợp lệ
         $vouchers = Voucher::where('is_active', 1) // Voucher đang hoạt động
             ->where('quantity', '>', 0) // Voucher còn số lượng
@@ -49,31 +49,30 @@ class VoucherController extends Controller
                     ->orWhere('end_day', '>=', now());
             })
             ->get();
-
+    
         $applicableVouchers = [];
-
+    
         foreach ($vouchers as $voucher) {
             // Kiểm tra xem tổng giá trị giỏ hàng có đủ điều kiện với total_min và total_max
             if ($totalAmount >= $voucher->total_min && ($voucher->total_max === null || $totalAmount <= $voucher->total_max)) {
                 // Nếu voucher thỏa mãn điều kiện, thêm vào danh sách voucher hợp lệ
-                $applicableVouchers[] = [
-                    'voucher' => $voucher,
-                ];
+                $applicableVouchers[] = $voucher;  // Trả về trực tiếp voucher
             }
         }
-        
-
+    
         // Sắp xếp các voucher theo giá trị giảm giá từ cao đến thấp
         usort($applicableVouchers, function ($a, $b) {
-            return $b['discount_value'] <=> $a['discount_value'];
+            return $b->discount_value <=> $a->discount_value;
         });
-
+    
+        // Trả về mảng các voucher hợp lệ
         return response()->json([
             'status' => true,
             'total_amount'=> $totalAmount,
-            'vouchers' => $applicableVouchers,
+            'vouchers' => $applicableVouchers, // Trả về mảng các voucher mà không có trường 'voucher'
         ]);
     }
+    
 
 
     /**

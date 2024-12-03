@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Logo from '../../assets/imgs/template/logo.svg'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../Redux/store';
 import { login } from '../../Redux/Reducer/AuthReducer';
-import { Button, Dropdown, Flex, MenuProps, notification, Space } from 'antd';
-import { CartItem } from '../../Redux/Reducer/CartReducer';
-
+import { Button, DatePicker, Form, Input, Modal, notification, Space } from 'antd';
+import dayjs from 'dayjs';
+import { updateUser } from '../../Redux/Reducer/UserReducer';
 interface User {
     id: number;
     email: string;
     username: string | null;
     fullname: string | null;
-    birth_day: string;
+    birth_day: any;
     phone: string;
     address: string;
     role: number;
@@ -34,7 +34,9 @@ const Header: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User | null>(null)
     const [cartItems, setCartItems] = useState<any[]>([]);
-    const { cart } = useSelector((state: RootState) => state.cart);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const cart = useSelector((state: RootState) => state.cart);
+    
     const cartItemsLength = JSON.parse(localStorage.getItem('cartItems') || '[]');
     const cartLength = cartItemsLength.length;
     useEffect(() => {
@@ -44,6 +46,8 @@ const Header: React.FC = () => {
             setCartItems(JSON.parse(storedCart));
         }
     }, []);
+
+    const [form] = Form.useForm();
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
@@ -55,6 +59,13 @@ const Header: React.FC = () => {
         }
     }, []);
 
+    const handleAccountInfoClick = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -107,33 +118,6 @@ const Header: React.FC = () => {
         }, 1000);
     };
 
-    const items: MenuProps['items'] = [
-        {
-            key: '1',
-            label: (
-                <span>
-                    {user?.fullname}
-                </span>
-            ),
-        },
-        {
-            key: '2',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                    Thông tin tài khoản
-                </a>
-            ),
-        },
-        {
-            key: '3',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" onClick={handleLogout}>
-                    Đăng Xuất
-                </a>
-            ),
-        },
-    ];
-
 
     const showLoginForm = () => {
         setActiveTab('login');
@@ -177,6 +161,62 @@ const Header: React.FC = () => {
         }
     }, []);
 
+    const navigate = useNavigate();
+
+    const handleOrderHistoryClick = () => {
+        navigate('/order-history');
+    };
+
+    const onFinish = (values: any) => {
+        const userData = localStorage.getItem('user');
+        if (!userData) {
+            console.error('Không tìm thấy thông tin user trong localStorage');
+            return;
+        }
+    
+        const user = JSON.parse(userData);
+        if (!user || !user.id) {
+            console.error('Thông tin user không hợp lệ hoặc thiếu id');
+            return;
+        }
+    
+        const formattedValues = {
+            ...values,
+            birth_day: values.birth_day ? values.birth_day.format('YYYY-MM-DD') : null,
+        };
+    
+        console.log('Dữ liệu gửi lên API:', { userId: user.id, ...formattedValues });
+    
+        dispatch(updateUser({ userId: user.id, userData: formattedValues }))
+            .unwrap()
+            .then((updatedUser) => {
+                const updatedUserData = { ...user, ...formattedValues };
+                localStorage.setItem('user', JSON.stringify(updatedUserData));
+                setUser(updatedUserData);
+                notification.success({
+                    message: 'Cập nhật tài khoản thành công'
+                })
+                closeModal()
+            })
+            .catch((error) => {
+                console.error('Lỗi cập nhật:', error);
+            });
+    }
+    
+    React.useEffect(() => {
+        if (user) {
+            form.setFieldsValue({
+                fullname: user.fullname,
+                email: user.email,
+                phone: user.phone,
+                address: user.address,
+                birth_day: user.birth_day ? dayjs(user.birth_day, 'YYYY-MM-DD') : null,
+            });
+        }
+    }, [user, form]);
+
+
+
     return (
         <>
             <header className="header sticky-bar header-style-1">
@@ -199,16 +239,16 @@ const Header: React.FC = () => {
                                 <div className="burger-icon burger-icon-white"><span className="burger-icon-top" /><span className="burger-icon-mid" /><span className="burger-icon-bottom" /></div>
                             </div>
                         </div>
-                        <div className="header-account" style={{ display: 'flex', alignItems: 'center', justifyContent: "end"}}>
-                        <div style={{width: "70px"}} className='account-icon account'>
+                        <div className="header-account" style={{ display: 'flex', alignItems: 'center', justifyContent: "end" }}>
+                            <div style={{ width: "70px" }} className='account-icon account'>
                                 {isLoggedIn && user ? (
-                                    <div className="dropdown" style={{width: "65px"}}>
-                                        <img style={{borderRadius: "50%"}} className="dropbtn" src={user.avatar} alt="" />
+                                    <div className="dropdown" style={{ width: "65px" }}>
+                                        <img style={{ borderRadius: "50%" }} className="dropbtn" src={user.avatar} alt="" />
                                         <div className="dropdown-content">
                                             <a href="#">{user.fullname}</a>
-                                            <a href="#">Thông Tin Tài Khoản</a>
-                                            <a href="#">Lịch Sử Đặt Hàng</a>
-                                            <a href="#">Đăng Xuất</a>
+                                            <a href="#" onClick={handleAccountInfoClick}>Thông Tin Tài Khoản</a>
+                                            <a onClick={handleOrderHistoryClick}>Lịch Sử Đặt Hàng</a>
+                                            <a onClick={handleLogout}>Đăng Xuất</a>
                                         </div>
                                     </div>
                                 ) : (
@@ -254,7 +294,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </a>
-                           
+
                             <Link to='/cart' className="account-icon cart" onClick={openCartPopup}><span className="number-tag">{cartLength}</span>
                                 <svg width={28} height={28} viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
                                     <g clipPath="url(#clip0_116_450)">
@@ -267,7 +307,7 @@ const Header: React.FC = () => {
                                     </defs>
                                 </svg>
                             </Link>
-                           
+
                         </div>
                     </div>
                 </div>
@@ -565,7 +605,65 @@ const Header: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <Modal
+                title="Thông Tin Tài Khoản"
+                visible={isModalOpen}
+                onCancel={closeModal}
+                
+                footer={[
+                    <Button key="back" onClick={closeModal}>
+                        Hủy
+                    </Button>,
+                    <Button key="submit" type="primary" htmlType="submit" form="userForm">
+                        Cập nhật
+                    </Button>,
+                ]}
+                width={600}
+            >
+                <Form
+                    id="userForm"
+                    initialValues={{
+                        fullname: user?.fullname,
+                        username: user?.username,
+                        email: user?.email,
+                        phone: user?.phone,
+                        address: user?.address,
 
+                    }}
+                    form={form}
+                    layout="vertical"
+                    onFinish={onFinish}
+                >
+                    <Form.Item label="Họ và tên" name="fullname">
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Username" name="username">
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Email" name="email">
+                        <Input />
+                    </Form.Item>
+                    {/* 
+                    <Form.Item
+                        label="Ngày sinh"
+                        name="birth_day"
+                    >
+                        <DatePicker
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item> */}
+
+                    <Form.Item label="Số điện thoại" name="phone">
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Địa chỉ" name="address">
+                        <Input />
+                    </Form.Item>
+                </Form>
+            </Modal>
         </>
     )
 }

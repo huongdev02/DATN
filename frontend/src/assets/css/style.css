@@ -3323,11 +3323,6 @@ a.follow-vendor {
   width: 35px;
 }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
 .dropdown-content {
   display: none;
   position: absolute;
@@ -3336,7 +3331,7 @@ a.follow-vendor {
   z-index: 1;
   right: -121px;
   text-align: left;
-  top: 42px;
+  top: 35px;
 }
 
 .dropdown-content a {
