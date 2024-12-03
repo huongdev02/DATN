@@ -15,7 +15,7 @@ const ProductDetailComponent: React.FC = () => {
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [quantity, setQuantity] = useState<number>(1);
-    const [selectedIndex, setSelectedIndex] = useState(0); 
+    const [selectedIndex, setSelectedIndex] = useState(0);
     const navigate = useNavigate();
 
 
@@ -49,18 +49,11 @@ const ProductDetailComponent: React.FC = () => {
 
         fetchProductDetail();
     }, [id]);
- 
-    console.log("dlllllllllllll", product);
-    
-
-    // const saveCartToLocalStorage = (cart: any) => {
-    //     localStorage.setItem('cart', JSON.stringify(cart));
-    //   };
 
     const handleAddToCart = async () => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const token = localStorage.getItem('token');
-
+    
         if (!user?.id) {
             notification.error({
                 message: 'Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!',
@@ -68,37 +61,41 @@ const ProductDetailComponent: React.FC = () => {
             navigate('/login');
             return;
         }
-
+    
         if (!token) {
             notification.error({
                 message: 'Token không hợp lệ. Vui lòng đăng nhập lại!',
             });
             return;
         }
-
+    
         if (!selectedSize || !selectedColor) {
             notification.warning({
                 message: 'Vui lòng chọn kích thước và màu sắc trước khi thêm vào giỏ hàng!',
             });
             return;
         }
-
+    
+        const sizeId = product.sizes.find((size: any) => size.size === selectedSize)?.id;
+        const colorId = product.colors.find((color: any) => color.name_color === selectedColor)?.id;
+    
+        console.log('Selected Size ID:', sizeId);
+        console.log('Selected Color ID:', colorId);
+    
         try {
             const cartData = {
-                user_id: user.id,
-                productId: product.id,
+                productId: product.id,       
                 quantity,
-                price: product.price,
-                size: selectedSize,
-                color: selectedColor,
+                sizeId,                      
+                colorId,            
             };
-
+            console.log(cartData);
+    
             await dispatch(addToCart(cartData));
-            // saveCartToLocalStorage(cartData);b
             notification.success({
                 message: 'Sản phẩm đã được thêm vào giỏ hàng!',
             });
-            navigate('/cart')
+            // navigate('/cart')
         } catch (error) {
             console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error);
             notification.error({
@@ -106,6 +103,7 @@ const ProductDetailComponent: React.FC = () => {
             });
         }
     };
+    
 
 
 

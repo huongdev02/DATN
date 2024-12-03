@@ -126,6 +126,7 @@ class CartController extends Controller
                     'id' => $cartItem->id,
                     'product_id' => $cartItem->product_id,
                     'product_name' => $cartItem->product->name,
+                    'avatar' => $cartItem->product->avatar,
                     'color' => $colorName,
                     'size' => $sizeName,
                     'quantity' => $cartItem->quantity,
@@ -145,7 +146,58 @@ class CartController extends Controller
         }
     }
     
+    
+    public function updateCartItem(Request $request, $cartId, $productId)
+{
+    try {
+        // Tìm giỏ hàng theo cartId
+        $cart = Cart::findOrFail($cartId);
 
+        // Kiểm tra xem sản phẩm có trong giỏ hàng không
+        $cartItem = CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $productId)
+            ->firstOrFail();
+
+        // Xác thực số lượng
+        $validated = $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        // Cập nhật số lượng và tính lại tổng
+        $cartItem->quantity = $validated['quantity'];
+        $cartItem->total = $cartItem->quantity * $cartItem->price;
+        $cartItem->save();
+
+        // Trả về thông tin giỏ hàng đã cập nhật
+        return response()->json([
+            'id' => $cartItem->id,
+            'product_id' => $cartItem->product_id,
+            'quantity' => $cartItem->quantity,
+            'total' => $cartItem->total,
+            'message' => 'Giỏ hàng đã được cập nhật.'
+        ], 200); // Mã phản hồi 200 OK
+    } catch (\Exception $e) {
+        // Xử lý lỗi nếu có
+        return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
+    }
+}
+
+
+public function getCartItem($itemId)
+{
+    try {
+        $cartItem = CartItem::findOrFail($itemId);
+        
+        return response()->json([
+            'cart_id' => $cartItem->cart_id,
+            'message' => 'Cart item fetched successfully.',
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+        ], 500);
+    }
+}
 
 
     public function update(Request $request, $itemId)

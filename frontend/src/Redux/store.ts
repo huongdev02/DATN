@@ -9,6 +9,8 @@ import OrderReducer from './Reducer/OrderReducer'
 import CategoryReducer from './Reducer/CategoriesReducer'
 import AuthReducer from './Reducer/AuthReducer'
 import VoucherReducer from './Reducer/VoucherReducer'
+import OrderHistoryReducer from './Reducer/OrderHistoryReducer'
+import UserReducer from './Reducer/UserReducer'
 export const store = configureStore({
     reducer: {
         products: ProductReducer,
@@ -18,7 +20,9 @@ export const store = configureStore({
         order: OrderReducer,
         categories: CategoryReducer,
         auth: AuthReducer,
-        voucherReducer: VoucherReducer
+        voucherReducer: VoucherReducer,
+        OrderHistoryReducer: OrderHistoryReducer,
+        UserReducer: UserReducer
     },
 });
 
