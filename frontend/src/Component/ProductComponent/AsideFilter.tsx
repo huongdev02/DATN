@@ -4,7 +4,7 @@ import { IProduct, Size, Color } from "../../types/cart";
 import api from "../../Axios/Axios";
 import { message } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
-
+import './ProductComponent.css'
 interface AsideFilterProps {
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -197,11 +197,12 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                   <ul className="list-color">
                     {colors.map((color) => (
                       <li
+                       className="filter-color"
                         key={color.id}
                         onClick={() => handleColorClick(color.name_color)}
                       >
-                        <span className="box-circle-color">
-                          <a href="#" className={`color-${color.name_color}`} />
+                        <span className="box-color">
+                         {color.name_color}
                         </span>
                       </li>
                     ))}

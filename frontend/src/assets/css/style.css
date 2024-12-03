@@ -1091,16 +1091,13 @@ textarea.form-control {
 }
 .box-popup-search .btn-close-popup {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 0;
+  right: 10px;
   z-index: 5;
   background: #fff;
-  border: 1px solid #111;
-  border-radius: 50%;
   line-height: 25px;
   text-align: center;
-  width: 31px;
-  height: 31px;
+  font-size: 20px
 }
 
 .box-quick-search a {
@@ -8298,13 +8295,13 @@ h4.brush-bg::after {
 
 .list-color {
   display: flex;
-  flex-wrap: wrap;
+  gap: 10px;
   margin: 0px -5px;
 }
 .list-color li {
   flex: 0 0 auto;
-  width: 12%;
-  padding: 0px 5px;
+  padding: 8px 12px;
+  cursor: pointer;
   text-align: center;
   margin-bottom: 5px;
 }
@@ -9434,7 +9431,7 @@ h5.item-collapse.collapsed-item {
 }
 
 .icon-16 {
-  height: 16px;
+  height: 18px;
 }
 
 .table-cart {
