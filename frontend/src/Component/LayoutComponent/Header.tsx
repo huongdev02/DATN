@@ -6,7 +6,9 @@ import { AppDispatch, RootState } from "../../Redux/store";
 import { login } from "../../Redux/Reducer/AuthReducer";
 import { Button, Dropdown, Flex, MenuProps, notification, Space } from "antd";
 import { CartItem } from "../../Redux/Reducer/CartReducer";
-import './Header.css'
+import "./Header.css";
+import { message } from "antd";
+import axios from "axios";
 interface User {
   id: number;
   email: string;
@@ -22,10 +24,12 @@ interface User {
 }
 
 const Header: React.FC = () => {
+  const [searchText, setSearchText] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isCartActice, setIsCartActice] = useState(false);
   const [isAccountActive, setIsAccountActive] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
+  const [products, setProducts] = useState<any[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,6 +40,20 @@ const Header: React.FC = () => {
   const { cart } = useSelector((state: RootState) => state.cart);
   const cartItemsLength = JSON.parse(localStorage.getItem("cartItems") || "[]");
   const cartLength = cartItemsLength.length;
+
+  const GetAllProducts = async () => {
+    try {
+      const { data } = await axios.get("http://127.0.0.1:8000/api/products");
+      setProducts(data.products);
+    } catch (error) {
+      message.error("Lỗi api!");
+    }
+  };
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
 
@@ -47,7 +65,7 @@ const Header: React.FC = () => {
   useEffect(() => {
     const userData = localStorage.getItem("user");
     const token = localStorage.getItem("token");
-
+    GetAllProducts();
     if (userData && token) {
       setIsLoggedIn(true);
       setUser(JSON.parse(userData));
@@ -373,16 +391,42 @@ const Header: React.FC = () => {
               />
             </svg>
           </a>
-          <h5 className="mb-15">Tìm kiếm sản phẩm</h5>
-          <form action="#">
+          <div className="search-popup">
+            <h5 className="mb-15">Tìm kiếm sản phẩm</h5>
             <div className="form-group">
               <input
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
                 className="input-search"
                 type="text"
                 placeholder="Nhập tên sản phẩm cần tìm kiếm..."
               />
             </div>
-          </form>
+            {searchText && (
+              <div className="search-results">
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <Link to={`/product-detail/${product.id}`}>
+                    <div key={product.id} className="product-item">
+                      <img
+                        src={product.avatar_url}
+                        alt={product.name}
+                        width='80px'
+                        className="product-result"
+                      />
+                      <div className="text-result">
+                        <p className="name-result">{product.name}</p>
+                        <p className="price-result"> {Math.round(product.price).toLocaleString("vi", {style: "currency",currency: "VND", })}</p>
+                      </div>
+                    </div>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="no-results">*Không tìm thấy sản phẩm nào</div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div

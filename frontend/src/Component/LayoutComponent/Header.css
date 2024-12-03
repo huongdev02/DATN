@@ -6,6 +6,9 @@
     padding-left: 10px;
    
 }
+.input-search::placeholder{
+   color: grey;
+}
 
 .box-popup-search .btn-close-popup {
     position: absolute;
@@ -14,4 +17,33 @@
     z-index: 5;
     line-height: 25px;
    
+}
+.product-result{
+    border: 1px solid rgb(245,245,245);
+    padding: 5px 10px;
+    border-radius: 6px;
+}
+.name-result{
+    margin-top: 10px;
+    margin-left: 10px;
+    font-weight: 700;
+    font-size: 20px;
+}
+.price-result{
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 16px;
+    color: gray;
+}
+.product-item{
+    margin-left: 10px;
+    display: flex;
+    justify-content: start; 
+}
+.product-item:hover{
+   background-color: rgb(245,245,245);
+   transition: 0.2s;
+}
+.no-results{
+    color: red;
 }
