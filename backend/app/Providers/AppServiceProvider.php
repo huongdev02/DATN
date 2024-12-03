@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\ZaloPayService;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,6 +14,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Paginator::useBootstrapFive();
+
+        $this->app->singleton(ZaloPayService::class, function ($app) {
+            return new ZaloPayService();
+        });
     }
 
     /**
