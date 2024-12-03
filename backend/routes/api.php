@@ -53,7 +53,7 @@ Route::resource('promotions', PromotionController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::get('products/category/{categoryId}', [CategoryController::class, 'productsByCategory']); 
 
-Route::get('topsell', [TopSellController::class, 'index'])->name('topsell');
+// Route::get('topsell', [TopSellController::class, 'index'])->name('topsell');
 Route::get('newproduct', [NewProductController::class, 'index'])->name('newproduct');
 Route::get('promotion', [PromotionController::class, 'index'])->name('[promotion]');
 

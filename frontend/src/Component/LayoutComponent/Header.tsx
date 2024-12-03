@@ -21,6 +21,7 @@ interface User {
     token: string;
 }
 
+
 const Header: React.FC = () => {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [isCartActice, setIsCartActice] = useState(false);
@@ -35,6 +36,7 @@ const Header: React.FC = () => {
     const [cartItems, setCartItems] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const cart = useSelector((state: RootState) => state.cart);
+    console.log(cart);
     
     const cartItemsLength = JSON.parse(localStorage.getItem('cartItems') || '[]');
     const cartLength = cartItemsLength.length;
@@ -66,89 +68,92 @@ const Header: React.FC = () => {
         setIsModalOpen(false);
     };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
-    if (!password.trim() || !email.trim()) {
-      notification.error({
-        message: "Vui lòng nhập đầy đủ thông tin",
-      });
-      return false;
-    }
-    try {
-      const resultAction = await dispatch(login({ email, password }));
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Email:', email);
+        console.log('Password:', password);
+        if (!password.trim() || !email.trim()) {
+            notification.error(
+                {
+                    message: 'Vui lòng nhập đầy đủ thông tin'
+                }
+            )
+            return false;
+        }
+        try {
+            const resultAction = await dispatch(login({ email, password }));
 
-      if (login.fulfilled.match(resultAction)) {
-        const userData = resultAction.payload;
-        localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", userData.token);
-        window.location.reload();
+            if (login.fulfilled.match(resultAction)) {
+                const userData = resultAction.payload;
+                localStorage.setItem('user', JSON.stringify(userData));
+                localStorage.setItem('token', userData.token);
+                window.location.reload();
 
+                notification.success({
+                    message: 'Đăng nhập thành công',
+                    description: `Chào mừng, ${resultAction.payload.email}! đẹp traiii`,
+                });
+                setTimeout(() => {
+                }, 1000);
+            } else {
+                notification.error({
+                    message: 'Tài khoản không chính khác'
+                })
+                setPassword('')
+            }
+        } catch (err) {
+            console.error('Đăng nhập thất bại:', err);
+        }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('cart');
+        setIsLoggedIn(false);
         notification.success({
-          message: "Đăng nhập thành công",
-          description: `Chào mừng, ${resultAction.payload.email}! đẹp traiii`,
-        });
-        setTimeout(() => {}, 1000);
-      } else {
-        notification.error({
-          message: "Tài khoản không chính khác",
-        });
-        setPassword("");
-      }
-    } catch (err) {
-      console.error("Đăng nhập thất bại:", err);
+            message: 'Đăng xuất thành công'
+        })
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    };
+
+
+    const showLoginForm = () => {
+        setActiveTab('login');
+    };
+
+    const showSignUpForm = () => {
+        setActiveTab('signup');
+    };
+
+    const openSearchPopup = (e: any) => {
+        e.preventDefault();
+        setIsSearchActive(true);
+    };
+
+    const openAccountPopup = (e: any) => {
+        e.preventDefault();
+        setIsAccountActive(true);
     }
-  };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("cart");
-    setIsLoggedIn(false);
-    notification.success({
-      message: "Đăng xuất thành công",
-    });
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
-  };
+    const closeAccountPopup = () => {
+        setIsAccountActive(false);
+    };
 
+    const openCartPopup = (e: any) => {
+        e.preventDefault();
+        setIsCartActice(true);
+    };
 
-  const showLoginForm = () => {
-    setActiveTab("login");
-  };
+    const closeSearchPopup = () => {
+        setIsSearchActive(false);
+    };
 
-  const showSignUpForm = () => {
-    setActiveTab("signup");
-  };
-
-  const openSearchPopup = (e: any) => {
-    e.preventDefault();
-    setIsSearchActive(true);
-  };
-
-  const openAccountPopup = (e: any) => {
-    e.preventDefault();
-    setIsAccountActive(true);
-  };
-
-  const closeAccountPopup = () => {
-    setIsAccountActive(false);
-  };
-
-  const openCartPopup = (e: any) => {
-    e.preventDefault();
-    setIsCartActice(true);
-  };
-
-  const closeSearchPopup = () => {
-    setIsSearchActive(false);
-  };
-
-  const closeCartPopup = () => {
-    setIsCartActice(false);
-  };
+    const closeCartPopup = () => {
+        setIsCartActice(false);
+    };
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -244,7 +249,7 @@ const Header: React.FC = () => {
                                             <a href="#">{user.fullname}</a>
                                             <a href="#" onClick={handleAccountInfoClick}>Thông Tin Tài Khoản</a>
                                             <a onClick={handleOrderHistoryClick}>Lịch Sử Đặt Hàng</a>
-                                            <a onClick={handleLogout}>Đăng Xuất</a>
+                                            <a href="#">Đăng Xuất</a>
                                         </div>
                                     </div>
                                 ) : (
@@ -388,190 +393,165 @@ const Header: React.FC = () => {
                             </ul>
                         </div>
                     </div>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="no-results">*Không tìm thấy sản phẩm nào</div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      {/* end tìm kiếm */}
-      <div
-        className="box-popup-cart perfect-scrollbar"
-        style={{ visibility: isCartActice ? "visible" : "hidden" }}
-      >
-        <div className="box-cart-overlay">
-          <div className={`box-cart-wrapper ${isCartActice ? "active" : ""}`}>
-            <a onClick={closeCartPopup} href="#">
-              <svg
-                className="icon-16 d-inline-flex align-items-center justify-content-center"
-                fill="#111111"
-                stroke="#111111"
-                width={24}
-                height={24}
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </a>
-            <h5 className="mb-15 mt-50">Your Cart</h5>
-            <div className="list-product-4 mb-50">
-              {cartItems.length > 0 ? (
-                cartItems.map((item, index) => (
-                  <div key={index} className="cardProduct cardProduct4">
-                    <div className="cardImage">
-                      {/* <Link to={`/product/${item.id}`}>
+                    <div className="block-filter mt-30">
+                        <h5 className="item-collapse">Size</h5>
+                        <div className="box-collapse">
+                            <div className="block-size">
+                                <div className="list-sizes"><span className="item-size">XS</span><span className="item-size active">S</span><span className="item-size">M</span><span className="item-size">XL</span><span className="item-size">XXL</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="block-filter mt-30">
+                        <h5 className="item-collapse mb-5">Colors</h5>
+                        <div className="box-collapse">
+                            <ul className="list-color">
+                                <li className="active"><span className="box-circle-color"><a className="color-red active" href="#" /></span><span className="font-xs">Red</span></li>
+                                <li><span className="box-circle-color"><a className="color-green" href="#" /></span><span className="font-xs">Green</span></li>
+                                <li><span className="box-circle-color"><a className="color-orange" href="#" /></span><span className="font-xs">Orange</span></li>
+                                <li><span className="box-circle-color"><a className="color-yellow" href="#" /></span><span className="font-xs">Yellow</span></li>
+                                <li><span className="box-circle-color"><a className="color-blue" href="#" /></span><span className="font-xs">Blue</span></li>
+                                <li><span className="box-circle-color"><a className="color-gray" href="#" /></span><span className="font-xs">Gray</span></li>
+                                <li><span className="box-circle-color"><a className="color-brown" href="#" /></span><span className="font-xs">Brown</span></li>
+                                <li><span className="box-circle-color"><a className="color-cyan" href="#" /></span><span className="font-xs">Cyan</span></li>
+                                <li><span className="box-circle-color"><a className="color-cyan-2" href="#" /></span><span className="font-xs">Cyan 2</span></li>
+                                <li><span className="box-circle-color"><a className="color-purple" href="#" /></span><span className="font-xs">Purple</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="block-filter mt-30">
+                        <h5 className="item-collapse mb-15">Brand</h5>
+                        <div className="box-collapse">
+                            <ul className="list-filter-checkbox">
+                                <li>
+                                    <label className="cb-container">
+                                        <input type="checkbox" /><span className="text-small">Seraphine</span><span className="checkmark" />
+                                    </label><span className="number-item">136</span>
+                                </li>
+                                <li>
+                                    <label className="cb-container">
+                                        <input type="checkbox" /><span className="text-small">Monica + Andy</span><span className="checkmark" />
+                                    </label><span className="number-item">136</span>
+                                </li>
+                                <li>
+                                    <label className="cb-container">
+                                        <input type="checkbox" /><span className="text-small">Maisonette</span><span className="checkmark" />
+                                    </label><span className="number-item">136</span>
+                                </li>
+                                <li>
+                                    <label className="cb-container">
+                                        <input type="checkbox" /><span className="text-small">Pink Chicken</span><span className="checkmark" />
+                                    </label><span className="number-item">136</span>
+                                </li>
+                                <li>
+                                    <label className="cb-container">
+                                        <input type="checkbox" /><span className="text-small">Hanna Andersson</span><span className="checkmark" />
+                                    </label><span className="number-item">136</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="box-popup-cart perfect-scrollbar" style={{ visibility: isCartActice ? 'visible' : 'hidden' }}>
+                <div className="box-cart-overlay">
+                    <div className={`box-cart-wrapper ${isCartActice ? 'active' : ''}`}>
+                        <a onClick={closeCartPopup} href="#">
+                            <svg className="icon-16 d-inline-flex align-items-center justify-content-center" fill="#111111" stroke="#111111" width={24} height={24} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </a>
+                        <h5 className="mb-15 mt-50">Your Cart</h5>
+                        <div className="list-product-4 mb-50">
+                            {cartItems.length > 0 ? (
+                                cartItems.map((item, index) => (
+                                    <div key={index} className="cardProduct cardProduct4">
+                                        <div className="cardImage">
+                                            {/* <Link to={`/product/${item.id}`}>
                                                 <img src={`http://127.0.0.1:8000/storage/${item.product.avatar}` || 'default-image.jpg'} alt={item.product.name} />
                                             </Link> */}
+                                        </div>
+                                        <div className="cardInfo">
+                                            <Link to={`/product/${item.id}`}>
+                                                <h6 className="font-md-bold cardTitle">{item.product_name}</h6>
+                                            </Link>
+                                            <div className="product-price-bottom">
+                                                <p className="font-lg cardDesc">
+                                                    {item.price.toLocaleString('vi-VN')}VNĐ x {item.quantity}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>Your cart is empty.</p>
+                            )}
+                        </div>
+                        <Link to='/cart' onClick={closeCartPopup} className="btn btn-brand-1-xl-bold w-100 font-md-bold">
+                            View your cart
+                            <svg className="icon-16 ml-5" fill="none" stroke="#ffffff" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                            </svg>
+                        </Link>
                     </div>
-                    <div className="cardInfo">
-                      <Link to={`/product/${item.id}`}>
-                        <h6 className="font-md-bold cardTitle">
-                          {item.product_name}
-                        </h6>
-                      </Link>
-                      <div className="product-price-bottom">
-                        <p className="font-lg cardDesc">
-                          {item.price.toLocaleString("vi-VN")}VNĐ x{" "}
-                          {item.quantity}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>Your cart is empty.</p>
-              )}
-            </div>
-            <Link
-              to="/cart"
-              onClick={closeCartPopup}
-              className="btn btn-brand-1-xl-bold w-100 font-md-bold"
-            >
-              View your cart
-              <svg
-                className="icon-16 ml-5"
-                fill="none"
-                stroke="#ffffff"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div
-        className="box-popup-account"
-        style={{
-          visibility: isAccountActive ? "visible" : "hidden",
-          display: isAccountActive ? "block" : "none",
-        }}
-      >
-        <div className="box-account-overlay" />
-        <div
-          className={`box-account-wrapper ${isAccountActive ? "active" : ""}`}
-        >
-          <a
-            className="btn-close-popup btn-close-popup-account"
-            onClick={closeAccountPopup}
-            href="#"
-          >
-            <svg
-              className="icon-16 d-inline-flex align-items-center justify-content-center"
-              fill="#111111"
-              stroke="#111111"
-              width={24}
-              height={24}
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </a>
-          <div className="box-banner-popup" />
-          <div className="form-account-info">
-            <a
-              className={`button-tab btn-for-login ${
-                activeTab === "login" ? "active" : ""
-              }`}
-              href="#"
-              onClick={showLoginForm}
-            >
-              Login
-            </a>
-            <a
-              className={`button-tab btn-for-signup ${
-                activeTab === "signup" ? "active" : ""
-              }`}
-              href="#"
-              onClick={showSignUpForm}
-            >
-              Sign Up
-            </a>
-            {activeTab === "login" && (
-              <form action="" onSubmit={handleLogin}>
-                <div className="form-login">
-                  <div className="form-group">
-                    <input
-                      className="form-control"
-                      type="email"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      className="form-control"
-                      type="password"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <a className="brand-1 font-sm buttun-forgotpass" href="#">
-                      Forgot your password?
-                    </a>
-                  </div>
-                  <div className="form-group">
-                    <button
-                      className="btn btn-login d-block"
-                      disabled={loading}
-                    >
-                      {loading ? "Login..." : "Login"}
-                    </button>
-                  </div>
-                  <div className="form-group mt-100 text-center">
-                    <a className="font-sm" href="#">
-                      Privacy &amp; Terms
-                    </a>
-                  </div>
                 </div>
-              </form>
-            )}
+            </div>
+            <div className="box-popup-account" style={{ visibility: isAccountActive ? 'visible' : 'hidden', display: isAccountActive ? 'block' : 'none' }}>
+                <div className="box-account-overlay" />
+                <div className={`box-account-wrapper ${isAccountActive ? 'active' : ''}`}><a className='btn-close-popup btn-close-popup-account' onClick={closeAccountPopup} href="#">
+                    <svg className="icon-16 d-inline-flex align-items-center justify-content-center" fill="#111111" stroke="#111111" width={24} height={24} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg></a>
+                    <div className="box-banner-popup" />
+                    <div className="form-account-info">
+                        <a
+                            className={`button-tab btn-for-login ${activeTab === 'login' ? 'active' : ''}`}
+                            href="#"
+                            onClick={showLoginForm}
+                        >
+                            Login
+                        </a>
+                        <a
+                            className={`button-tab btn-for-signup ${activeTab === 'signup' ? 'active' : ''}`}
+                            href="#"
+                            onClick={showSignUpForm}
+                        >
+                            Sign Up
+                        </a>
+                        {activeTab === 'login' && (
+                            <form action="" onSubmit={handleLogin}>
+                                <div className="form-login">
+                                    <div className="form-group">
+                                        <input
+                                            className="form-control"
+                                            type="email"
+                                            placeholder="Email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+
+                                    </div>
+                                    <div className="form-group">
+                                        <input
+                                            className="form-control"
+                                            type="password"
+                                            placeholder="Password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <a className="brand-1 font-sm buttun-forgotpass" href="#">Forgot your password?</a>
+                                    </div>
+                                    <div className="form-group">
+                                        <button className="btn btn-login d-block" disabled={loading}>{loading ? 'Login...' : 'Login'}</button>
+                                    </div>
+                                    <div className="form-group mt-100 text-center">
+                                        <a className="font-sm" href="#">Privacy &amp; Terms</a>
+                                    </div>
+                                </div>
+                            </form>
+
+                        )}
 
                         {activeTab === 'signup' && (
                             <div className="form-register" style={{ display: activeTab === "signup" ? 'block' : 'none' }}>
@@ -689,4 +669,4 @@ const Header: React.FC = () => {
     )
 }
 
-export default Header;
+export default Header
