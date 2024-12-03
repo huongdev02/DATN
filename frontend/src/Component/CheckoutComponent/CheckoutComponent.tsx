@@ -7,7 +7,6 @@ import { fetchCart } from '../../Redux/Reducer/CartReducer';
 import { postShipAddress } from '../../Redux/Reducer/ShipAddressReducer';
 import { postOrder } from '../../Redux/Reducer/OrderReducer';
 import { fetchVouchers } from '../../Redux/Reducer/VoucherReducer';
-import QRCode, { QRCodeSVG } from 'qrcode.react'; // Thư viện tạo mã QR
 import QR from '../../assets/imgs/qr.jpg'
 
 const CheckoutComponent: React.FC = () => {
