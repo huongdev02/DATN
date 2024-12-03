@@ -2656,6 +2656,9 @@ a.follow-vendor {
 }
 .cardProductStyle3 .cardImage, .cardProductStyle2 .cardImage, .cardProduct .cardImage, .cardProductSmall .cardImage {
   position: relative;
+  height: 250px;
+  padding-top: 10px;
+  padding-left: 10px;
   margin-bottom: 20px;
   background-color: #F7FAFA;
   overflow: hidden;
