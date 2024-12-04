@@ -22,7 +22,7 @@
     <div class="container">
         <h2 class="my-4">Chi tiết đơn hàng #{{ $order->id }}</h2>
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered text-center">
                 <thead class="thead-dark">
                     <tr>
                         <th>ID</th>
@@ -30,6 +30,8 @@
                         <th>Hình ảnh</th>
                         <th>Số lượng</th>
                         <th>Giá</th>
+                        <th>Màu sắc</th>
+                        <th>Kích cỡ</th>
                         <th>Tổng</th>
                     </tr>
                 </thead>
@@ -44,6 +46,8 @@
                             </td>
                             <td>{{ $detail->quantity }}</td>
                             <td>{{ number_format($detail->price) }} VNĐ</td>
+                            <td>{{ $detail->color->name_color }}</td>
+                            <td>{{ $detail->size->size }}</td>
                             <td>{{ number_format($detail->total) }} VNĐ</td>
                         </tr>
                     @endforeach
@@ -53,6 +57,12 @@
 
         <div class="my-4">
             <h4>Tổng tiền: <span class="text-success">{{ number_format($order->total_amount) }} VNĐ</span></h4>
+            <h4>Đã giảm giá: 
+                <span class="text-warning">
+                    {{ number_format($order->discount_value ?? 0) }} VNĐ
+                </span>
+            </h4>
+            
             <h4>Người dùng: {{ $order->user->email }}</h4>
             <h4>Địa chỉ giao hàng:</h4>
             <p>

@@ -11,18 +11,22 @@ class UserOrderController extends Controller
 {
     public function index(Request $request)
     {
-        // Add 'category' to eager load
-        $query = Order::with(['orderDetails.product.categories', 'user', 'review']); 
+        // Khởi tạo truy vấn với eager loading
+        $query = Order::with(['orderDetails.product.categories', 'user', 'review', 'orderDetails.color', 'orderDetails.size']);
 
-        if ($request->has('status')) {
+        // Nếu có giá trị status, áp dụng điều kiện where
+        if ($request->has('status') && $request->get('status') !== null) {
             $status = $request->get('status');
             $query->where('status', $status);
         }
 
+        // Lấy danh sách đơn hàng, phân trang
         $orders = $query->latest()->paginate(2);
 
+        // Trả về view với danh sách đơn hàng
         return view('user.order', compact('orders'));
     }
+
 
 
 
