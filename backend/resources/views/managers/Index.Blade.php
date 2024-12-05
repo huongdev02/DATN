@@ -19,19 +19,6 @@
 
     <h1 class="text-center mt-5 mb-3">Danh sách Người dùng</h1>
 
-    <div class=" mt-3 mb-3 d-flex justify-content-between">
-        <div>
-            <a href="{{ route('managers.index') }}" class="btn btn-outline-secondary">Tất cả người dùng</a>
-            <a href="{{ route('managers.index') }}?role=1" class="btn btn-outline-success">Quản lý Manager</a>
-            <a href="{{ route('managers.index') }}?role=0" class="btn btn-outline-primary">Quản lý User</a>
-        </div>
-        <div>
-            <a href="{{ route('managers.create') }}" class="btn btn-outline-success">Thêm Manager</a>
-        </div>
-    </div>
-
-
-
     <div class="table-responsive mt-3">
         <table class="table table-bordered table-hover text-center">
             <thead class="thead-dark">
