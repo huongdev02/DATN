@@ -9330,6 +9330,7 @@ h5.item-collapse.collapsed-item {
 }
 
 .input-quantity {
+  padding-left: 20px;
   width: 100%;
   text-align: center;
 }

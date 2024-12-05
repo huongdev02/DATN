@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { get } from 'http';
 
 // Định nghĩa kiểu dữ liệu cho CartItem
 export interface CartItem {
@@ -49,9 +50,23 @@ const initialState: CartState = {
 // Lấy giỏ hàng
 export const fetchCart = createAsyncThunk<CartItem[], number, { rejectValue: string }>(
   'cart/fetchCart',
-  async (userId, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+      
+      if (!user) {
+        return rejectWithValue('Không tìm thấy thông tin người dùng');
+      }
+
+      let parsedUser;
+      try {
+        parsedUser = JSON.parse(user);
+      } catch (error) {
+        return rejectWithValue('Dữ liệu người dùng không hợp lệ');
+      }
+
+      const userId = parsedUser?.id;
 
       if (!token) {
         return rejectWithValue('Token không hợp lệ hoặc không có');
@@ -66,7 +81,7 @@ export const fetchCart = createAsyncThunk<CartItem[], number, { rejectValue: str
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch cart');
+        throw new Error('Lỗi khi lấy giỏ hàng');
       }
 
       const data = await response.json();
@@ -74,10 +89,11 @@ export const fetchCart = createAsyncThunk<CartItem[], number, { rejectValue: str
       // Giả sử API trả về mảng các CartItem
       return data.cart_items;  // Trả về mảng CartItem
     } catch (error) {
-      return rejectWithValue('Error fetching cart');
+      return rejectWithValue('Lỗi khi lấy giỏ hàng');
     }
   }
 );
+
 
 export const applyVoucher = createAsyncThunk(
   'cart/applyVoucher',

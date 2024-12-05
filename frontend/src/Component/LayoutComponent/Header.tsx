@@ -605,24 +605,10 @@ const Header: React.FC = () => {
             )}
 
             {activeTab === "signup" && (
-              <div
+              <form action="">
+               <div
                 className="form-register"
-                style={{ display: activeTab === "signup" ? "block" : "none" }}
-              >
-                <div className="form-group">
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="First Name"
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Last Name"
-                  />
-                </div>
+                style={{ display: activeTab === "signup" ? "block" : "none" }}>
                 <div className="form-group">
                   <input
                     className="form-control"
@@ -638,13 +624,11 @@ const Header: React.FC = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label className="d-flex align-items-start">
-                    <input className="cb-agree" type="checkbox" />
-                    <span className="text-agree body-p2">
-                      Join for Free and start earning points today. Benefits
-                      include 15% off your first purchase.
-                    </span>
-                  </label>
+                  <input
+                    className="form-control"
+                    type="password"
+                    placeholder="Confirm Password"
+                  />
                 </div>
                 <div className="form-group">
                   <button className="btn btn-login d-block">
@@ -669,6 +653,7 @@ const Header: React.FC = () => {
                   </a>
                 </div>
               </div>
+              </form>
             )}
           </div>
           <div className="form-password-info">
@@ -684,19 +669,8 @@ const Header: React.FC = () => {
               <div className="form-group">
                 <button className="btn btn-login d-block">Recover</button>
               </div>
-              <div className="text-center">
-                <p className="body-p2 neutral-medium-dark">
-                  Already have an account?
-                  <a className="neutral-dark login-now" href="#">
-                    Login Now
-                  </a>
-                </p>
-              </div>
-              <div className="form-group mt-100 text-center">
-                <a className="font-sm" href="#">
-                  Privacy &amp; Terms
-                </a>
-              </div>
+             
+              
             </div>
           </div>
         </div>
