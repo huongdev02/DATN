@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -56,5 +57,20 @@ class Product extends Model
     public function colors()
     {
         return $this->belongsToMany(Color::class, 'product_color', 'product_id', 'color_id');
+    }
+
+    public function deleteProduct()
+    {
+        // Xóa avatar
+        Storage::disk('public')->delete($this->avatar);
+
+        // Xóa gallery
+        foreach ($this->galleries as $gallery) {
+            Storage::disk('public')->delete($gallery->image_path);
+            $gallery->delete();
+        }
+
+        // Xóa bản ghi
+        $this->delete();
     }
 }

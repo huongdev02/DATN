@@ -62,6 +62,13 @@
                                     <p class="mb-0 text-muted"><small>Số lượng:
                                             <strong>x{{ $orderDetail->quantity }}</strong></small></p>
                                 </div>
+                                <div style="flex: 1;" class="mt-4">
+                                    <!-- Product Name and Category -->
+                                    <p class="mb-1 text-muted"><small>Màu săc:
+                                            {{ $orderDetail->color->name_color ?? 'Không rõ' }}</small></p>
+                                    <p class="mb-0 text-muted"><small>Kích cỡ:
+                                            {{ $orderDetail->size->size }}</small></p>
+                                </div>
                                 <!-- Unit Price and Total Price for Each Product -->
                                 <div class="d-flex flex-column align-items-center" style="width: 100px;">
                                     <p class="mb-0">Đơn giá:</p>
@@ -83,6 +90,12 @@
                     <div class="card-footer bg-light d-flex justify-content-between align-items-center py-3">
                         <h6 class=" m-0">Thành tiền: <span
                                 class="fw-bold text-danger">₫{{ number_format($orderTotal, 0, ',', '.') }}</span></h6>
+
+                        <h6 class="mt-1">Đã giảm giá:
+                            <span class="text-warning">
+                                {{ number_format($order->discount_value ?? 0) }} VNĐ
+                            </span>
+                        </h6>
                         <div>
                             @if ($order->status == 0 || $order->status == 1)
                                 <!-- Only show cancel button if order is Pending or Processed -->
@@ -191,6 +204,10 @@
         @endif
     </div>
 
+    <div class="d-flex justify-content-center mt-4">
+        {{ $orders->links() }}
+    </div>
+
 
     <script>
         // JavaScript to handle the "Other" cancel reason
@@ -211,10 +228,10 @@
             cancelOrderModal.forEach(function(modal) {
                 modal.addEventListener('hidden.bs.modal', function() {
                     otherReasonInput.style.display =
-                    'none'; // Reset the display of the other reason field when modal is closed
+                        'none'; // Reset the display of the other reason field when modal is closed
                     cancelReasonSelect.value = ''; // Reset the select value
                     document.getElementById('otherReason').value =
-                    ''; // Clear the "Other" reason text field
+                        ''; // Clear the "Other" reason text field
                 });
             });
         });
