@@ -13,155 +13,220 @@ use App\Models\Voucher;
 use App\Models\Voucher_usage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Faker\Factory as Faker;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
 
     public function store(Request $request)
-{
-    try {
-        // Kiểm tra xem người dùng đã đăng nhập hay chưa
-        if (!Auth::check()) {
-            return response()->json(['message' => 'User not logged in.'], 401);
-        }
-
-        $userId = Auth::id();
-
-        // Lấy địa chỉ giao hàng mặc định hoặc mới nhất
-        $shippingAddress = Ship_address::where('user_id', $userId)
-            ->orderByDesc('is_default') // Ưu tiên địa chỉ mặc định nếu có
-            ->orderByDesc('created_at') // Nếu không có thì lấy địa chỉ mới nhất
-            ->first();
-
-        if (!$shippingAddress) {
-            return response()->json([
-                'message' => 'No shipping address found. Please add a new address.',
-                'redirect_url' => route('address.create') // Thay bằng route của bạn
-            ], 400);
-        }
-
-        // Lấy giỏ hàng của người dùng
-        $cart = Cart::where('user_id', $userId)->first();
-        if (!$cart) {
-            return response()->json(['message' => 'No items in the cart.'], 400);
-        }
-
-        $cartItems = CartItem::where('cart_id', $cart->id)->get();
-        if ($cartItems->isEmpty()) {
-            return response()->json(['message' => 'No items in the cart.'], 400);
-        }
-
-        // Tính tổng số lượng và tổng giá trị đơn hàng
-        $totalQuantity = $cartItems->sum('quantity');
-        $totalAmount = $cartItems->sum(fn($item) => $item->quantity * $item->price);
-
-        // Kiểm tra voucher và tính toán giảm giá (nếu có)
-        $voucherId = $request->input('voucher_id'); // Lấy voucher ID từ yêu cầu (nếu có)
-        $discountValue = 0;
-
-        if ($voucherId) {
-            $voucher = Voucher::find($voucherId);
-        
-            // Kiểm tra voucher tồn tại và đang hoạt động
-            if ($voucher && $voucher->is_active == 1 && $voucher->quantity > 0) {
-                // Kiểm tra voucher còn hạn (end_day > start_day)
-                $currentDate = now(); // Lấy ngày hiện tại
-            
-                if ($currentDate < $voucher->start_day || $currentDate > $voucher->end_day) {
-                    return response()->json(['message' => 'Voucher has expired or is not yet valid.'], 400);
-                }
-            
-                // Kiểm tra tổng giá trị đơn hàng có lớn hơn hoặc bằng total_min và nhỏ hơn hoặc bằng total_max của voucher
-                if ($totalAmount <= $voucher->total_min) {
-                    return response()->json(['message' => 'Total order amount is below minimum required for voucher.'], 400);
-                }
-            
-                if ($totalAmount >= $voucher->total_max) {
-                    return response()->json(['message' => 'Total order amount exceeds maximum allowed for voucher.'], 400);
-                }
-            
-                // Giảm giá cố định
-                $discountValue = min($voucher->discount_value, $totalAmount); // Giảm giá không vượt quá tổng đơn hàng
-            
-                // Cập nhật số lần sử dụng voucher và giảm quantity của voucher
-                $voucher->increment('used_times'); // Tăng số lần sử dụng
-                $voucher->decrement('quantity'); // Giảm số lượng còn lại của voucher
-            } else {
-                return response()->json(['message' => 'Voucher is not valid'], 400);
-            }
-            
-        }
-        
-
-        // Cập nhật giá trị tổng tiền sau khi giảm giá
-        $totalAmount -= $discountValue;
-
-        // Tạo đơn hàng
-        $order = Order::create([
-            'user_id' => $userId,
-            'quantity' => $totalQuantity,
-            'total_amount' => $totalAmount, // Lưu tổng tiền sau khi giảm giá
-            'payment_method' => $request->input('payment_method', 1), // Mặc định là chuyển khoản ngân hàng
-            'ship_method' => $request->input('ship_method', 1), // Mặc định là giao hàng hỏa tốc
-            'voucher_id' => $voucherId, // Ghi ID voucher nếu có
-            'ship_address_id' => $shippingAddress->id,
-            'discount_value' => $discountValue, // Lưu số tiền giảm giá
-            'status' => 0, // Mặc định là đang chờ xử lý
-        ]);
-
-        $orderDetails = [];
-
-        // Tạo chi tiết đơn hàng cho từng item trong giỏ hàng
-        foreach ($cartItems as $cartItem) {
-            $orderDetail = Order_detail::create([
-                'order_id' => $order->id,
-                'product_id' => $cartItem->product_id,
-                'quantity' => $cartItem->quantity,
-                'price' => $cartItem->price,
-                'total' => $cartItem->quantity * $cartItem->price,
-                'size_id' => $cartItem->size_id,
-                'color_id' => $cartItem->color_id,
-            ]);
-
-            // Cập nhật số lượng sản phẩm trong bảng products
-            $product = Product::find($cartItem->product_id);
-            if ($product) {
-                $product->quantity -= $cartItem->quantity; // Trừ số lượng sản phẩm
-                $product->sell_quantity += $cartItem->quantity; // Tăng số lượng đã bán
-                $product->save();
+    {
+        try {
+            // Kiểm tra xem người dùng đã đăng nhập hay chưa
+            if (!Auth::check()) {
+                return response()->json(['message' => 'User not logged in.'], 401);
             }
 
-            $orderDetails[] = $orderDetail;
-        }
+            $userId = Auth::id();
 
-        // Ghi thông tin vào bảng voucher_usages nếu có voucher
-        if ($voucherId && $voucher) {
-            Voucher_usage::create([
+            // Lấy địa chỉ giao hàng mặc định hoặc mới nhất
+            $shippingAddress = Ship_address::where('user_id', $userId)
+                ->orderByDesc('is_default')
+                ->orderByDesc('created_at')
+                ->first();
+
+            if (!$shippingAddress) {
+                return response()->json([
+                    'message' => 'No shipping address found. Please add a new address.',
+                    'redirect_url' => route('address.create')
+                ], 400);
+            }
+
+            // Lấy giỏ hàng của người dùng
+            $cart = Cart::where('user_id', $userId)->first();
+            if (!$cart) {
+                return response()->json(['message' => 'No items in the cart.'], 400);
+            }
+
+            $cartItems = CartItem::where('cart_id', $cart->id)->get();
+            if ($cartItems->isEmpty()) {
+                return response()->json(['message' => 'No items in the cart.'], 400);
+            }
+
+            // Tính tổng số lượng và tổng giá trị đơn hàng
+            $totalQuantity = $cartItems->sum('quantity');
+            $totalAmount = $cartItems->sum(fn($item) => $item->quantity * $item->price);
+
+            // Kiểm tra voucher và tính toán giảm giá (nếu có)
+            $voucherId = $request->input('voucher_id');
+            $discountValue = 0;
+
+            if ($voucherId) {
+                $voucher = Voucher::find($voucherId);
+            
+                if ($voucher && $voucher->is_active == 1 && $voucher->quantity > 0) {
+                    $currentDate = now();
+            
+                    // Kiểm tra nếu người dùng đã sử dụng voucher này
+                    $voucherUsageExists = DB::table('voucher_usages')
+                        ->where('user_id', auth()->id())
+                        ->where('voucher_id', $voucherId)
+                        ->exists();
+            
+                    if ($voucherUsageExists) {
+                        return response()->json(['message' => 'Bạn đã sử dụng voucher này rồi.'], 400);
+                    }
+            
+                    // Kiểm tra ngày bắt đầu và ngày kết thúc của voucher
+                    if ($currentDate < $voucher->start_day || $currentDate > $voucher->end_day) {
+                        return response()->json(['message' => 'Phiếu giảm giá đã hết hạn hoặc chưa có hiệu lực.'], 400);
+                    }
+            
+                    // Kiểm tra tổng tiền đơn hàng
+                    if ($totalAmount <= $voucher->total_min) {
+                        return response()->json(['message' => 'Tổng số tiền đặt hàng thấp hơn mức tối thiểu bắt buộc để được hưởng ưu đãi.'], 400);
+                    }
+            
+                    if ($totalAmount >= $voucher->total_max) {
+                        return response()->json(['message' => 'Tổng số tiền đặt hàng vượt quá mức tối đa được phép hưởng ưu đãi.'], 400);
+                    }
+            
+                    // Tính giá trị giảm giá và cập nhật số lượng voucher
+                    $discountValue = min($voucher->discount_value, $totalAmount);
+                    $voucher->increment('used_times');
+                    $voucher->decrement('quantity');
+                } else {
+                    return response()->json(['message' => 'Phiếu mua hàng không hợp lệ'], 400);
+                }
+            }
+            
+
+            $totalAmount -= $discountValue;
+
+            
+            $order = Order::create([
                 'user_id' => $userId,
-                'order_id' => $order->id,
+                'quantity' => $totalQuantity,
+                'total_amount' => $totalAmount,
+                'payment_method' => $request->input('payment_method', 1),
+                'ship_method' => $request->input('ship_method', 1),
                 'voucher_id' => $voucherId,
+                'ship_address_id' => $shippingAddress->id,
                 'discount_value' => $discountValue,
+                'status' => 0, // Đang chờ xử lý
             ]);
+
+            $orderDetails = [];
+            foreach ($cartItems as $cartItem) {
+                $orderDetail = Order_detail::create([
+                    'order_id' => $order->id,
+                    'product_id' => $cartItem->product_id,
+                    'quantity' => $cartItem->quantity,
+                    'price' => $cartItem->price,
+                    'total' => $cartItem->quantity * $cartItem->price,
+                    'size_id' => $cartItem->size_id,
+                    'color_id' => $cartItem->color_id,
+                ]);
+
+                $product = Product::find($cartItem->product_id);
+                if ($product) {
+                    $product->quantity -= $cartItem->quantity;
+                    $product->sell_quantity += $cartItem->quantity;
+                    $product->save();
+                }
+
+                $orderDetails[] = $orderDetail;
+            }
+
+            // Ghi thông tin vào bảng voucher_usages nếu có voucher
+            if ($voucherId && $voucher) {
+                Voucher_usage::create([
+                    'user_id' => $userId,
+                    'order_id' => $order->id,
+                    'voucher_id' => $voucherId,
+                    'discount_value' => $discountValue,
+                ]);
+            }
+
+            // Xóa các item trong giỏ hàng
+            CartItem::where('cart_id', $cart->id)->delete();
+
+            // Kiểm tra phương thức thanh toán: nếu là Online Payment (payment_method = 2)
+            if ($request->input('payment_method') == 2) {
+                $vnpayUrl = $this->createVnpayPaymentUrl($order); // Hàm để tạo URL thanh toán VNPay
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Order created successfully, please complete your payment.',
+                    'payment_url' => $vnpayUrl,
+                ], 201);
+            }
+
+            // Nếu là COD, trả về kết quả đơn hàng đã được tạo
+            return response()->json([
+                'status' => true,
+                'message' => 'Order created successfully, please await delivery.',
+                'order_id' => $order->id,
+                'total_amount' => $totalAmount,
+                'order_details' => $orderDetails,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
-
-        // Xóa các item trong giỏ hàng của người dùng
-        CartItem::where('cart_id', $cart->id)->delete();
-
-        // Chuẩn bị dữ liệu trả về
-        $responseData = [
-            'status' => true,
-            'message' => 'Thêm mới đơn hàng thành công, giỏ hàng đã được clear',
-            'order_id' => $order->id,
-            'total_quantity' => $totalQuantity,
-            'total_amount' => $totalAmount,
-            'discount_value' => $discountValue, // Số tiền đã giảm giá
-            'order_details' => $orderDetails,
-        ];
-
-        return response()->json($responseData, 201);
-    } catch (\Exception $e) {
-        return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
     }
-}
 
+    // Hàm để tạo URL thanh toán VNPay
+    private function createVnpayPaymentUrl($order)
+    {
+        $vnpUrl = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
+        $vnpTmnCode = 'YC61PH62'; // Mã Merchant ID
+        $vnpHashSecret = 'IIFJR43KSJ1C5KVRPSO3PJTU8DN4EKJ5'; // Secret Key
+        $vnpOrderInfo = 'Thanh toán đơn hàng ' . $order->id;
+        $vnpAmount = (int) round($order->total_amount * 100); // Số tiền (đơn vị: đồng)
+        $vnpReturnUrl = route('payment.result'); // URL nhận kết quả thanh toán
+    
+        Log::info('Order Details:', [
+            'order_id' => $order->id,
+            'total_amount' => $order->total_amount,
+            'vnpAmount' => $vnpAmount,
+        ]);
+    
+        // Tạo danh sách tham số
+        $vnpParams = [
+            'vnp_TmnCode' => $vnpTmnCode,
+            'vnp_Amount' => $vnpAmount,
+            'vnp_OrderInfo' => $vnpOrderInfo,
+            'vnp_OrderType' => 'billpayment',
+            'vnp_ReturnUrl' => $vnpReturnUrl,
+            'vnp_TxnRef' => $order->id,
+            'vnp_CreateDate' => now()->format('YmdHis'),
+            'vnp_CurrCode' => 'VND',
+            'vnp_Locale' => 'vn',
+        ];
+    
+        // Log tham số trước khi sắp xếp
+        Log::info('VNPay Parameters before sorting:', $vnpParams);
+    
+        // Sắp xếp tham số theo thứ tự bảng chữ cái
+        ksort($vnpParams);
+    
+        // Tạo chuỗi query
+        $query = urldecode(http_build_query($vnpParams));
+        Log::info('Query String:', ['query' => $query]);
+    
+        // Tạo hash dữ liệu (không thêm HashSecret vào query)
+        $vnpSecureHash = hash_hmac('sha512', $query, $vnpHashSecret);
+        Log::info('Secure Hash:', ['secure_hash' => $vnpSecureHash]);
+    
+        // Thêm hash vào tham số
+        $vnpParams['vnp_SecureHash'] = $vnpSecureHash;
+    
+        // Tạo URL hoàn chỉnh
+        $vnpFullUrl = $vnpUrl . '?' . http_build_query($vnpParams);
+        Log::info('Full VNPay URL:', ['vnp_full_url' => $vnpFullUrl]);
+    
+        return $vnpFullUrl;
+    }
+    
+    
 }
