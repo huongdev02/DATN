@@ -310,7 +310,7 @@ const Header: React.FC = () => {
                   </defs>
                 </svg>
               </a>
-              <a className="account-icon wishlist" href="compare.html">
+              {/* <a className="account-icon wishlist" href="compare.html">
                 <span className="number-tag">3</span>
                 <svg
                   className="d-inline-flex align-items-center justify-content-center"
@@ -333,7 +333,7 @@ const Header: React.FC = () => {
                     </clipPath>
                   </defs>
                 </svg>
-              </a>
+              </a> */}
 
               <Link
                 to="/cart"

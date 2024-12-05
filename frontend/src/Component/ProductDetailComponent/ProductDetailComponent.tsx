@@ -50,6 +50,8 @@ const ProductDetailComponent: React.FC = () => {
         fetchProductDetail();
     }, [id]);
 
+    console.log(product, "kkkkkkkkkkkkk");
+    
     const handleAddToCart = async () => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const token = localStorage.getItem('token');
@@ -174,7 +176,7 @@ const ProductDetailComponent: React.FC = () => {
                                         <span className="font-md neutral-500">(14 Reviews - 25 Orders)</span>
                                     </div>
                                     <div className="block-price">
-                                        <span className="price-main">{(product.price).toLocaleString('vi-VN')} VND</span>
+                                        <span className="price-main">{(Math.round(product.price)).toLocaleString('vi', {style: 'currency', currency: 'VND'})}</span>
                                     </div>
                                     <div className="block-view">
                                         <p className="font-md neutral-900">{product.description}</p>
