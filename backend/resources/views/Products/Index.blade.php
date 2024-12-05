@@ -121,8 +121,14 @@
                             @endif
                         </td>
                         <td class="d-flex gap-2 justify-content-center">
-                            <a href="{{ route('products.edit', $item->id) }}" class="btn btn-outline-warning btn-sm">Cập
-                                nhật</a>
+                            @if ($item->is_active == 1)
+                                <a href="{{ route('products.edit', $item->id) }}"
+                                    class="btn btn-outline-warning btn-sm">Cập nhật</a>
+                            @else
+                                <a href=""
+                                    onclick="return confirm('vui lòng cập nhật trạng thái sang hiển thị để thao tác')"
+                                    class="btn btn-outline-warning btn-sm">Cập nhật</a>
+                            @endif
 
                             <!-- Toggle is_active (Hide/Show) -->
                             <form action="{{ route('products.index') }}" method="GET" style="display: inline;">

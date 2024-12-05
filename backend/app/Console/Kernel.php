@@ -12,9 +12,9 @@ class Kernel extends ConsoleKernel
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void
-    {
-        // $schedule->command('inspire')->hourly();
-    }
+{
+    $schedule->command('products:auto-delete')->daily();
+}
 
     /**
      * Register the commands for the application.
@@ -25,5 +25,6 @@ class Kernel extends ConsoleKernel
     
         require base_path('routes/console.php');
        
+        
     }
 }
