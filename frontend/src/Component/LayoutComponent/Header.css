@@ -9,6 +9,54 @@
 .input-search::placeholder{
    color: grey;
 }
+.css-logout{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.css-logout:hover{
+    color: rgb(159,134,217) ;
+}
+
+.css-contact:hover{
+    color:rgb(159,134,217) ;
+}
+
+.hi-user{
+   position: absolute;
+   left: -150px;
+   font-family: "Raleway";
+   cursor: pointer;
+   font-weight: 600;
+   top: 5px;
+   font-size: 14px;
+}
+
+.hover-text:hover{
+    color: rgb(159,134,217);
+}
+
+.custom-user{
+    cursor: pointer;
+    display: block;
+    justify-content: start;
+    border: 1px solid rgb(159,134,217);
+    border-radius: 8px;
+    background-color: white;
+    width: 180px;
+    height: 80px;
+    top: 60px;
+    color: rgb(47,37,44);
+    right: 68px;
+    position: absolute;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Raleway";
+    text-align: start;
+}
 
 .box-popup-search .btn-close-popup {
     position: absolute;

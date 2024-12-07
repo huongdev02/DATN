@@ -10,6 +10,17 @@
     margin-top: 15px;
    padding: 10px;
 }
+
+.minus{
+    font-size: 16px;
+    border: 1px solid gray;
+    border-right: none;
+}
+.plus{
+    font-size: 16px;
+    border: 1px solid gray;
+    border-left: none;
+}
 .rating{
    
     margin-bottom: 20px;
@@ -21,6 +32,15 @@
 :where(.css-dev-only-do-not-override-1x0dypw).ant-rate {
     font-size: 30px;
     color: yellow;
+}
+
+.css-button-add{
+    font-size: 18px;
+    color: white;
+    border: 1px solid rgb(159,134,217);
+    background-color: rgb(159,134,217);
+    padding: 0px 20px;
+    font-family: "Raleway";
 }
 
 

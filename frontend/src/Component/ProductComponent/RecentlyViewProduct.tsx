@@ -9,7 +9,7 @@ import IgFive from '../../assets/imgs/page/homepage1/instagram5.png'
 const RecentlyViewProduct: React.FC = () => {
     return (
         <>
-            <section className="section block-may-also-like">
+            {/* <section className="section block-may-also-like">
                 <div className="container">
                     <div className="text-center mb-35">
                         <h4 className="text-uppercase brand-1 brush-bg mb-15">Recently Viewed Products</h4>
@@ -122,7 +122,7 @@ const RecentlyViewProduct: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
             <section className="section block-section-10">
                 <div className="container">
                     <div className="top-head justify-content-center">

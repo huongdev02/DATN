@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Logo from "../../assets/imgs/template/logo.svg";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,12 @@ import { login } from "../../Redux/Reducer/AuthReducer";
 import { Button, Dropdown, Flex, MenuProps, notification, Space } from "antd";
 import { CartItem } from "../../Redux/Reducer/CartReducer";
 import "./Header.css";
+import {
+  InfoCircleFilled,
+  InfoCircleOutlined,
+  LogoutOutlined,
+  CloseOutlined
+} from "@ant-design/icons";
 import { message } from "antd";
 import axios from "axios";
 interface User {
@@ -36,11 +42,12 @@ const Header: React.FC = () => {
   const loading = useSelector((state: RootState) => state.auth.loading);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isShow, setIsShow] = useState(false);
   const [cartItems, setCartItems] = useState<any[]>([]);
   const { cart } = useSelector((state: RootState) => state.cart);
   const cartItemsLength = JSON.parse(localStorage.getItem("cartItems") || "[]");
   const cartLength = cartItemsLength.length;
-
+  const ref = useRef<HTMLDivElement>(null);
   const GetAllProducts = async () => {
     try {
       const { data } = await axios.get("http://127.0.0.1:8000/api/products");
@@ -50,9 +57,26 @@ const Header: React.FC = () => {
     }
   };
 
+  const handleClick = () =>{
+       setIsShow(true)
+  }
+
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchText.toLowerCase())
   );
+
+  const handleClickOutside = (event: any) => {
+    if (ref.current && !ref.current.contains(event.target)) {
+      setIsShow(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
@@ -70,7 +94,10 @@ const Header: React.FC = () => {
       setIsLoggedIn(true);
       setUser(JSON.parse(userData));
     }
+    console.log("user", userData);
   }, []);
+
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +137,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    localStorage.removeItem("cart");
+    // localStorage.removeItem("cart");
     setIsLoggedIn(false);
     notification.success({
       message: "Đăng xuất thành công",
@@ -229,6 +256,37 @@ const Header: React.FC = () => {
                 </div>
               </div>
             </div>
+            {/* Thông tin tài khoản */}
+            {isShow && (
+            <div className="custom-user">
+              <div
+                ref={ref}
+                className="css-contact"
+                style={{
+                  marginTop: "15px",
+                  marginLeft: "10px",
+                  display: "flex",
+                  justifyContent: "start",
+                  alignItems: "center",
+                }}
+              >
+                <InfoCircleOutlined className="icon-css" />
+                <Link to={'http://127.0.0.1:8000/user/dashboard'}>
+                <span className="hover-text" style={{ marginLeft: "5px" }}>Thông tin tài khoản</span>
+                </Link>
+              </div>
+              <div className="css-logout">
+                <LogoutOutlined className="icon-css" />
+                <span
+                  style={{ marginLeft: "5px" }}
+                  onClick={() => handleLogout()}
+                >
+                  Đăng xuất
+                </span>
+              </div>
+            </div>
+            )}
+            {/* end */}
             <div
               className="header-account"
               style={{
@@ -239,24 +297,44 @@ const Header: React.FC = () => {
             >
               <div style={{ width: "70px" }} className="account-icon account">
                 {isLoggedIn && user ? (
-                  <div className="dropdown" style={{ width: "65px" }}>
-                    <img
+                  <div className="dropdown">
+                    <span className="hi-user">{user.email}</span>
+                    {/* <img
                       style={{ borderRadius: "50%" }}
                       className="dropbtn"
                       src={user.avatar}
                       alt=""
-                    />
-                    <div className="dropdown-content">
-                      <a href="#">{user.fullname}</a>
-                      <a href="#">Thông Tin Tài Khoản</a>
-                      <a href="#">Lịch Sử Đặt Hàng</a>
-                      <a href="#">Đăng Xuất</a>
-                    </div>
+                    /> */}
+                    <a
+                      className="account-icon account hover-user"
+                      onClick={()=> handleClick()}
+                    >
+                      <svg
+                        className="d-inline-flex align-items-center justify-content-center"
+                        width={28}
+                        height={28}
+                        viewBox="0 0 28 28"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g clipPath="url(#clip0_116_451)">
+                          <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_116_451">
+                            <rect
+                              width={24}
+                              height={24}
+                              fill="white"
+                              transform="translate(2 2)"
+                            />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </a>
                   </div>
                 ) : (
                   <a
                     className="account-icon account"
-                    href="#"
                     onClick={openAccountPopup}
                   >
                     <svg
@@ -286,7 +364,6 @@ const Header: React.FC = () => {
               <a
                 className="account-icon search"
                 onClick={openSearchPopup}
-                href="#"
               >
                 <svg
                   className="d-inline-flex align-items-center justify-content-center"
@@ -369,7 +446,10 @@ const Header: React.FC = () => {
       {/* Tìm kiếm sản phẩm */}
       <div
         className="box-popup-search perfect-scrollbar"
-        style={{ visibility: isSearchActive ? "visible" : "hidden" , height:'100px'}}
+        style={{
+          visibility: isSearchActive ? "visible" : "hidden",
+          height: "100px",
+        }}
       >
         <div className="box-search-overlay" />
         <div className={`box-search-wrapper ${isSearchActive ? "active" : ""}`}>
@@ -407,18 +487,24 @@ const Header: React.FC = () => {
                 {filteredProducts.length > 0 ? (
                   filteredProducts.map((product) => (
                     <Link to={`/product-detail/${product.id}`}>
-                    <div key={product.id} className="product-item">
-                      <img
-                        src={product.avatar_url}
-                        alt={product.name}
-                        width='80px'
-                        className="product-result"
-                      />
-                      <div className="text-result">
-                        <p className="name-result">{product.name}</p>
-                        <p className="price-result"> {Math.round(product.price).toLocaleString("vi", {style: "currency",currency: "VND", })}</p>
+                      <div key={product.id} className="product-item">
+                        <img
+                          src={product.avatar_url}
+                          alt={product.name}
+                          width="80px"
+                          className="product-result"
+                        />
+                        <div className="text-result">
+                          <p className="name-result">{product.name}</p>
+                          <p className="price-result">
+                            {" "}
+                            {Math.round(product.price).toLocaleString("vi", {
+                              style: "currency",
+                              currency: "VND",
+                            })}
+                          </p>
+                        </div>
                       </div>
-                    </div>
                     </Link>
                   ))
                 ) : (
@@ -606,53 +692,54 @@ const Header: React.FC = () => {
 
             {activeTab === "signup" && (
               <form action="">
-               <div
-                className="form-register"
-                style={{ display: activeTab === "signup" ? "block" : "none" }}>
-                <div className="form-group">
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Email"
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    className="form-control"
-                    type="password"
-                    placeholder="Password"
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    className="form-control"
-                    type="password"
-                    placeholder="Confirm Password"
-                  />
-                </div>
-                <div className="form-group">
-                  <button className="btn btn-login d-block">
-                    Create my account
-                  </button>
-                </div>
-                <div className="text-center">
-                  <p className="body-p2 neutral-medium-dark">
-                    Already have an account?{" "}
-                    <a
-                      className="neutral-dark login-now"
-                      href="#"
-                      onClick={showLoginForm}
-                    >
-                      Login Now
+                <div
+                  className="form-register"
+                  style={{ display: activeTab === "signup" ? "block" : "none" }}
+                >
+                  <div className="form-group">
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Email"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      className="form-control"
+                      type="password"
+                      placeholder="Password"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      className="form-control"
+                      type="password"
+                      placeholder="Confirm Password"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <button className="btn btn-login d-block">
+                      Create my account
+                    </button>
+                  </div>
+                  <div className="text-center">
+                    <p className="body-p2 neutral-medium-dark">
+                      Already have an account?{" "}
+                      <a
+                        className="neutral-dark login-now"
+                        href="#"
+                        onClick={showLoginForm}
+                      >
+                        Login Now
+                      </a>
+                    </p>
+                  </div>
+                  <div className="form-group mt-100 text-center">
+                    <a className="font-sm" href="#">
+                      Privacy &amp; Terms
                     </a>
-                  </p>
+                  </div>
                 </div>
-                <div className="form-group mt-100 text-center">
-                  <a className="font-sm" href="#">
-                    Privacy &amp; Terms
-                  </a>
-                </div>
-              </div>
               </form>
             )}
           </div>
@@ -669,8 +756,6 @@ const Header: React.FC = () => {
               <div className="form-group">
                 <button className="btn btn-login d-block">Recover</button>
               </div>
-             
-              
             </div>
           </div>
         </div>

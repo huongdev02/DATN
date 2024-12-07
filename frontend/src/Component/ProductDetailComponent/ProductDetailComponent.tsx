@@ -5,7 +5,8 @@ import { useAppDispatch } from '../../Redux/store';
 import axios from 'axios';
 import { notification } from 'antd';
 import { addToCart } from '../../Redux/Reducer/CartReducer';
-
+import { MinusOutlined, PlusOutlined, ShoppingOutlined} from "@ant-design/icons";
+import './ProductDetail.css'
 const ProductDetailComponent: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
@@ -166,34 +167,38 @@ const ProductDetailComponent: React.FC = () => {
                             </div>
                             <div className="col-lg-5 box-images-product-middle">
                                 <div className="box-product-info">
-                                    <label className="flash-sale-red">Extra 2% off</label>
-                                    <h2 className="font-2xl-bold">{product.name}</h2>
+                                    {/* <label className="flash-sale-red">Extra 2% off</label> */}
+                                    <h2 style={{fontFamily:'Raleway'}} className="font-2xl">{product.name}</h2>
 
                                     <div className="block-rating">
                                         {[...Array(5)].map((_, index) => (
                                             <img key={index} src={Star} alt="rating star" />
                                         ))}
-                                        <span className="font-md neutral-500">(14 Reviews - 25 Orders)</span>
+                                        <span style={{fontFamily:'Raleway'}}  className="font-md neutral-500">(14 Reviews - 25 Orders)</span>
                                     </div>
                                     <div className="block-price">
-                                        <span className="price-main">{(Math.round(product.price)).toLocaleString('vi', {style: 'currency', currency: 'VND'})}</span>
+                                        <span style={{fontFamily:'Raleway', fontSize:'25px'}}   className="price-main">{(Math.round(product.price)).toLocaleString('vi', {style: 'currency', currency: 'VND'})}</span>
                                     </div>
                                     <div className="block-view">
-                                        <p className="font-md neutral-900">{product.description}</p>
+                                        <p style={{fontFamily:'Raleway'}} className="font-md neutral-900">{product.description}</p>
                                     </div>
 
                                     <div className="block-color">
-                                        <span>Color:</span>
-                                        <label>{selectedColor || 'Chọn Màu'}</label>
+                                        <span style={{fontFamily:'Raleway'}}>Color:</span>
+                                        <label style={{fontFamily:'Raleway'}}>{selectedColor || 'Chọn Màu'}</label>
                                         <ul className="list-color">
                                             {product.colors.map((color: any) => (
                                                 <button
+                                                    className='button-color'
                                                     key={color.id}
                                                     style={{
                                                         padding: '10px 15px',
-                                                        border: '1px solid #ebebeb',
-                                                        background: selectedColor === color.name_color ? '#ddd' : 'none',
+                                                        border: selectedColor === color.name_color ? '1px solid rgb(159,137,219)' : '1px solid gray',
+                                                        borderRadius:'8px',
+                                                        backgroundColor:'white',
+                                                        // background: selectedColor === color.name_color ? 'rgb(159,137,219)' : 'none',
                                                         margin: '0 5px 0 0',
+                                                        color: selectedColor === color.name_color ? 'rgb(159,137,219)' : 'black',
                                                         cursor: 'pointer',
                                                     }}
                                                     onClick={() => setSelectedColor(color.name_color)}
@@ -204,16 +209,19 @@ const ProductDetailComponent: React.FC = () => {
                                         </ul>
                                     </div>
                                     <div className="block-size">
-                                        <span>Size:</span>
-                                        <label>{selectedSize || 'Chọn Size'}</label>
+                                        <span style={{fontFamily:'Raleway'}}>Size:</span>
+                                        <label style={{fontFamily:'Raleway'}}>{selectedSize || 'Chọn Size'}</label>
                                         <div className="list-sizes">
                                             {product.sizes.map((size: any) => (
                                                 <button
+                                                    className='button-size'
                                                     key={size.id}
                                                     style={{
                                                         padding: '10px 15px',
-                                                        border: '1px solid #ebebeb',
-                                                        background: selectedSize === size.size ? '#ddd' : 'none',
+                                                        border: selectedSize === size.size ? '1px solid rgb(159,137,219)' : '1px solid gray',
+                                                        borderRadius:'8px',
+                                                        backgroundColor:'white',
+                                                        color: selectedSize === size.size ? 'rgb(159,137,219)' : 'black',
                                                         margin: '0 5px 0 0',
                                                         cursor: 'pointer',
                                                     }}
@@ -225,24 +233,29 @@ const ProductDetailComponent: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="block-quantity">
-                                        <div className="font-sm neutral-500 mb-15">Quantity</div>
+                                        {/* <div className="font-sm neutral-500 mb-15">Quantity</div> */}
                                         <div className="box-form-cart">
                                             <div className="form-cart">
-                                                <button className="minus" onClick={handleDecrease}>-</button>
+                                                <button className="minus" onClick={handleDecrease}>
+                                                <MinusOutlined/>
+                                                </button>
                                                 <input
                                                     className="form-control"
                                                     type="text"
+                                                    style={{border: '1px solid gray', fontSize:'18px'}}
                                                     value={quantity}
                                                     readOnly
                                                 />
-                                                <button className="plus" onClick={handleIncrease}>+</button>
+                                                <button className="plus" onClick={handleIncrease}>
+                                                <PlusOutlined/>
+                                                </button>
                                             </div>
-                                            <button onClick={() => handleAddToCart()} disabled={!selectedColor || !selectedSize}>
-                                                Add to Cart
+                                            <button className='css-button-add' onClick={() => handleAddToCart()} disabled={!selectedColor || !selectedSize}>
+                                              <ShoppingOutlined/>  Thêm vào giỏ hàng
                                             </button>
                                         </div>
                                     </div>
-                                    <div className="box-product-tag d-flex justify-content-between align-items-end">
+                                    {/* <div className="box-product-tag d-flex justify-content-between align-items-end">
                                         <div className="box-tag-left">
                                             <p className="font-xs mb-5"><span className="neutral-500">SKU:</span><span className="neutral-900">kid1232568-UYV</span></p>
                                             <p className="font-xs mb-5"><span className="neutral-500">Categories:</span><span className="neutral-900">Girls, Dress</span></p>
@@ -251,7 +264,7 @@ const ProductDetailComponent: React.FC = () => {
                                         <div className="box-tag-right">
                                             <span className="font-sm">Share:</span>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
