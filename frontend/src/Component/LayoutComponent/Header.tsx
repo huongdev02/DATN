@@ -11,7 +11,7 @@ import {
   InfoCircleFilled,
   InfoCircleOutlined,
   LogoutOutlined,
-  CloseOutlined
+  CloseOutlined,
 } from "@ant-design/icons";
 import { message } from "antd";
 import axios from "axios";
@@ -57,9 +57,9 @@ const Header: React.FC = () => {
     }
   };
 
-  const handleClick = () =>{
-       setIsShow(true)
-  }
+  const handleClick = () => {
+    setIsShow(true);
+  };
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchText.toLowerCase())
@@ -89,15 +89,20 @@ const Header: React.FC = () => {
   useEffect(() => {
     const userData = localStorage.getItem("user");
     const token = localStorage.getItem("token");
-    GetAllProducts();
+
     if (userData && token) {
-      setIsLoggedIn(true);
-      setUser(JSON.parse(userData));
+      try {
+        const parsedUser = JSON.parse(userData);
+        setIsLoggedIn(true);
+        setUser(parsedUser.user);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
     }
-    console.log("user", userData);
+
+    console.log("userData", userData);
+    console.log("token", token);
   }, []);
-
-
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,10 +123,10 @@ const Header: React.FC = () => {
         localStorage.setItem("token", userData.token);
         window.location.reload();
 
-        notification.success({
-          message: "Đăng nhập thành công",
-          description: `Chào mừng, ${resultAction.payload.email}! đẹp traiii`,
-        });
+        // notification.success({
+        //   message: "Đăng nhập thành công",
+        //   description: `Chào mừng, ${resultAction.payload.email}`,
+        // });
         setTimeout(() => {}, 1000);
       } else {
         notification.error({
@@ -209,13 +214,6 @@ const Header: React.FC = () => {
     setIsCartActice(false);
   };
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
   return (
     <>
       <header className="header sticky-bar header-style-1">
@@ -258,33 +256,29 @@ const Header: React.FC = () => {
             </div>
             {/* Thông tin tài khoản */}
             {isShow && (
-            <div className="custom-user">
-              <div
-                ref={ref}
-                className="css-contact"
-                style={{
-                  marginTop: "15px",
-                  marginLeft: "10px",
-                  display: "flex",
-                  justifyContent: "start",
-                  alignItems: "center",
-                }}
-              >
-                <InfoCircleOutlined className="icon-css" />
-                <Link to={'http://127.0.0.1:8000/user/dashboard'}>
-                <span className="hover-text" style={{ marginLeft: "5px" }}>Thông tin tài khoản</span>
-                </Link>
-              </div>
-              <div className="css-logout">
-                <LogoutOutlined className="icon-css" />
-                <span
-                  style={{ marginLeft: "5px" }}
-                  onClick={() => handleLogout()}
+              <div className="custom-user" ref={ref}>
+                <div
+                  className="css-contact"
+                  style={{
+                    marginTop: "15px",
+                    marginLeft: "10px",
+                    display: "flex",
+                    justifyContent: "start",
+                    alignItems: "center",
+                  }}
                 >
-                  Đăng xuất
-                </span>
+                  <InfoCircleOutlined className="icon-css" />
+                  <Link to={"http://127.0.0.1:8000/user/dashboard"}>
+                    <span className="hover-text" style={{ marginLeft: "5px" }}>
+                      Thông tin tài khoản
+                    </span>
+                  </Link>
+                </div>
+                <div className="css-logout" onClick={() => handleLogout()}>
+                  <LogoutOutlined className="icon-css" />
+                  <span style={{ marginLeft: "5px" }}>Đăng xuất</span>
+                </div>
               </div>
-            </div>
             )}
             {/* end */}
             <div
@@ -307,7 +301,7 @@ const Header: React.FC = () => {
                     /> */}
                     <a
                       className="account-icon account hover-user"
-                      onClick={()=> handleClick()}
+                      onClick={() => handleClick()}
                     >
                       <svg
                         className="d-inline-flex align-items-center justify-content-center"
@@ -361,10 +355,7 @@ const Header: React.FC = () => {
                   </a>
                 )}
               </div>
-              <a
-                className="account-icon search"
-                onClick={openSearchPopup}
-              >
+              <a className="account-icon search" onClick={openSearchPopup}>
                 <svg
                   className="d-inline-flex align-items-center justify-content-center"
                   width={28}

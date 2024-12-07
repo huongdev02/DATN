@@ -5,6 +5,9 @@ import { useAppDispatch } from "../../Redux/store";
 import axios from "axios";
 import { notification } from "antd";
 import { addToCart } from "../../Redux/Reducer/CartReducer";
+import { IProduct } from "../../types/cart";
+import api from "../../Axios/Axios";
+import { Link } from "react-router-dom";
 import {
   MinusOutlined,
   PlusOutlined,
@@ -16,6 +19,7 @@ const ProductDetailComponent: React.FC = () => {
   const dispatch = useAppDispatch();
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [productById, setProductById] = useState<IProduct[]>([]);
   const [error, setError] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -30,6 +34,21 @@ const ProductDetailComponent: React.FC = () => {
   const handleIncrease = () => {
     setQuantity((prevQuantity) => prevQuantity + 1);
   };
+
+  const GetProductsById = async () => {
+    try {
+      const { data } = await api.get(`/categories/${id}/products`);
+      setProductById(data.products);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+  };
+
+  useEffect(() => {
+    GetProductsById();
+  }, [id]);
 
   const handleDecrease = () => {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
@@ -235,6 +254,7 @@ const ProductDetailComponent: React.FC = () => {
                           className="button-color"
                           key={color.id}
                           style={{
+                            fontFamily:'Raleway',
                             padding: "10px 15px",
                             border:
                               selectedColor === color.name_color
@@ -293,7 +313,7 @@ const ProductDetailComponent: React.FC = () => {
                     {/* <div className="font-sm neutral-500 mb-15">Quantity</div> */}
                     <div className="box-form-cart">
                       <div className="form-cart">
-                        <button className="minus" onClick={handleDecrease}>
+                        <button  style={{border:'1px solid gray', borderRight:'none'}}  className="minus" onClick={handleDecrease}>
                           <MinusOutlined />
                         </button>
                         <input
@@ -303,7 +323,7 @@ const ProductDetailComponent: React.FC = () => {
                           value={quantity}
                           readOnly
                         />
-                        <button className="plus" onClick={handleIncrease}>
+                        <button style={{border:'1px solid gray', borderLeft:'none'}} className="plus" onClick={handleIncrease}>
                           <PlusOutlined />
                         </button>
                       </div>
@@ -334,6 +354,7 @@ const ProductDetailComponent: React.FC = () => {
               <ul className="nav-tabs nav-tab-product" role="tablist">
                 <li className="nav-item" role="presentation">
                   <button
+                   style={{ fontFamily: "Raleway" }}
                     className="nav-link active"
                     id="description-tab"
                     data-bs-toggle="tab"
@@ -348,6 +369,7 @@ const ProductDetailComponent: React.FC = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   <button
+                   style={{ fontFamily: "Raleway" }}
                     className="nav-link"
                     id="ingredients-tab"
                     data-bs-toggle="tab"
@@ -362,6 +384,7 @@ const ProductDetailComponent: React.FC = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   <button
+                   style={{ fontFamily: "Raleway" }}
                     className="nav-link"
                     id="vendor-tab"
                     data-bs-toggle="tab"
@@ -446,9 +469,10 @@ const ProductDetailComponent: React.FC = () => {
             <div className="row">
               {productById.map((product, index) => (
                 <div className="col-lg-3 col-sm-6">
+                     <Link to={`/product-detail/${product.id}`}>
                   <div className="cardProduct wow fadeInUp" key={index}>
                     <div className="cardImage">
-                      <label className="lbl-hot">hot</label>
+                      {/* <label className="lbl-hot">hot</label> */}
                       <a href="product-single.html">
                         <img
                           className="imageMain"
@@ -466,10 +490,8 @@ const ProductDetailComponent: React.FC = () => {
                       </div>
                     </div>
                     <div className="cardInfo">
-                    <Link to={`/product-detail/${product.id}`}>
-                      <h6 className="font-md-bold cardTitle">{product.name}</h6>
-                    </Link>
-                      <p className="font-lg cardDesc">
+                      <h6 style={{fontFamily:'Raleway', fontWeight:'normal'}} className=" cardTitle">{product.name}</h6>
+                      <p style={{fontFamily:'Raleway'}} className="font-lg cardDesc">
                         {" "}
                         {Math.round(product.price).toLocaleString("vi", {
                           style: "currency",
@@ -478,6 +500,7 @@ const ProductDetailComponent: React.FC = () => {
                       </p>
                     </div>
                   </div>
+                  </Link>
                 </div>
               ))}
             </div>

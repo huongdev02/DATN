@@ -88,9 +88,9 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
                   </div>
                   <div className="cardInfo">
                     <Link to={`/product-detail/${product.id}`}>
-                      <h6 className="font-md-bold cardTitle">{product.name}</h6>
+                      <h6 style={{fontFamily:'Raleway', fontWeight:'normal'}} className="cardTitle">{product.name}</h6>
                     </Link>
-                    <p className="font-lg cardDesc">
+                    <p style={{fontFamily:'Raleway'}} className="font-lg cardDesc">
                       {Math.round(product.price).toLocaleString("vi", {
                         style: "currency",
                         currency: "VND",

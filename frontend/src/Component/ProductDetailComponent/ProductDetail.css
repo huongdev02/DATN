@@ -10,37 +10,30 @@
     margin-top: 15px;
    padding: 10px;
 }
-
-.minus{
-    font-size: 16px;
-    border: 1px solid gray;
-    border-right: none;
-}
-.plus{
-    font-size: 16px;
-    border: 1px solid gray;
-    border-left: none;
-}
 .rating{
-   
     margin-bottom: 20px;
     font-family: "Raleway";
     font-weight: 300;
     font-size: 18px;
  
 }
+
+
+.css-button-add{
+    padding: 0px 20px;
+    font-size: 18px;
+    border: none;
+    background-color: rgb(159,134,217);
+    color: white;
+    font-family: "Raleway";
+}
+
+.css-button-add:hover{
+    background-color: rgb(142, 108, 221);
+}
 :where(.css-dev-only-do-not-override-1x0dypw).ant-rate {
     font-size: 30px;
     color: yellow;
-}
-
-.css-button-add{
-    font-size: 18px;
-    color: white;
-    border: 1px solid rgb(159,134,217);
-    background-color: rgb(159,134,217);
-    padding: 0px 20px;
-    font-family: "Raleway";
 }
 
 

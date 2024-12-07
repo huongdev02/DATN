@@ -82,9 +82,9 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
         <div className="box-filters-sidebar">
           <div className="row">
             <div className="col-lg-12 col-md-6">
-              <h5 className="font-3xl-bold mt-5">Lọc sản phẩm</h5>
+              <h5 style={{fontFamily:'Raleway'}} className="font-3xl-bold mt-5">Lọc sản phẩm</h5>
               <div className="block-filter">
-                <h6 style={{ marginBottom: "15px" }}>Danh mục</h6>
+                <h6 style={{ marginBottom: "15px", fontFamily:'Raleway' }}>Danh mục</h6>
                 <div className="box-collapse">
                   <ul className="list-filter-checkbox">
                     {categories.map((category) => (
@@ -95,7 +95,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                             checked={selectedCategory === category.name}
                             onChange={() => handleCategoryChange(category.name)}
                           />
-                          <span className="text-small">{category.name}</span>
+                          <span style={{fontFamily:'Raleway'}} className="text-small">{category.name}</span>
                           <span className="checkmark" />
                         </label>
                       </li>
@@ -107,7 +107,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
             {/* Giá tiền */}
             <div className="col-lg-12 col-md-6">
               <div className="block-filter">
-                <h6 style={{ marginBottom: "15px" }}>Giá tiền</h6>
+                <h6 style={{ marginBottom: "15px", fontFamily:'Raleway' }}>Giá tiền</h6>
                 <div className="box-collapse">
                   <ul className="list-filter-checkbox">
                     <li>
@@ -117,7 +117,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                           onChange={() => handlePriceChange([0, 499999])}
                           checked={priceRange?.[0] === 0 && priceRange?.[1] === 499999}
                         />
-                        <span className="text-small">Dưới 500.000đ</span>
+                        <span  className="text-small">Dưới 500.000đ</span>
                         <span className="checkmark" />
                       </label>
                     </li>
@@ -172,12 +172,13 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
             {/* Size */}
             <div className="col-lg-12 col-md-6">
               <div className="block-filter" style={{ cursor: 'pointer' }}>
-                <h6 style={{ marginBottom: "15px" }}>Size</h6>
+                <h6 style={{ marginBottom: "15px" , fontFamily:'Raleway'}}>Size</h6>
                 <div className="box-collapse">
                   <div className="block-size">
                     <div className="list-sizes">
                       {sizes.map((size) => (
                         <span
+                        style={{ fontFamily:'Raleway' }}
                           key={size.id}
                           onClick={() => handleSizeClick(size.size)}
                         >
@@ -192,7 +193,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
             {/* Màu sắc */}
             <div className="col-lg-12 col-md-6">
               <div className="block-filter">
-                <h6 style={{ marginBottom: "15px" }}>Màu sắc</h6>
+                <h6 style={{ marginBottom: "15px", fontFamily:'Raleway' }}>Màu sắc</h6>
                 <div className="box-collapse">
                   <ul className="list-color">
                     {colors.map((color) => (
@@ -201,7 +202,7 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                         key={color.id}
                         onClick={() => handleColorClick(color.name_color)}
                       >
-                        <span className="box-color">
+                        <span style={{fontFamily:'Raleway'}} className="box-color">
                          {color.name_color}
                         </span>
                       </li>
