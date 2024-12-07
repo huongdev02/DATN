@@ -64,34 +64,34 @@ class OrderController extends Controller
 
             if ($voucherId) {
                 $voucher = Voucher::find($voucherId);
-            
+
                 if ($voucher && $voucher->is_active == 1 && $voucher->quantity > 0) {
                     $currentDate = now();
-            
+
                     // Kiểm tra nếu người dùng đã sử dụng voucher này
                     $voucherUsageExists = DB::table('voucher_usages')
                         ->where('user_id', auth()->id())
                         ->where('voucher_id', $voucherId)
                         ->exists();
-            
+
                     if ($voucherUsageExists) {
                         return response()->json(['message' => 'Bạn đã sử dụng voucher này rồi.'], 400);
                     }
-            
+
                     // Kiểm tra ngày bắt đầu và ngày kết thúc của voucher
                     if ($currentDate < $voucher->start_day || $currentDate > $voucher->end_day) {
                         return response()->json(['message' => 'Phiếu giảm giá đã hết hạn hoặc chưa có hiệu lực.'], 400);
                     }
-            
+
                     // Kiểm tra tổng tiền đơn hàng
                     if ($totalAmount <= $voucher->total_min) {
                         return response()->json(['message' => 'Tổng số tiền đặt hàng thấp hơn mức tối thiểu bắt buộc để được hưởng ưu đãi.'], 400);
                     }
-            
+
                     if ($totalAmount >= $voucher->total_max) {
                         return response()->json(['message' => 'Tổng số tiền đặt hàng vượt quá mức tối đa được phép hưởng ưu đãi.'], 400);
                     }
-            
+
                     // Tính giá trị giảm giá và cập nhật số lượng voucher
                     $discountValue = min($voucher->discount_value, $totalAmount);
                     $voucher->increment('used_times');
@@ -100,11 +100,11 @@ class OrderController extends Controller
                     return response()->json(['message' => 'Phiếu mua hàng không hợp lệ'], 400);
                 }
             }
-            
+
 
             $totalAmount -= $discountValue;
 
-            
+
             $order = Order::create([
                 'user_id' => $userId,
                 'quantity' => $totalQuantity,
@@ -178,55 +178,48 @@ class OrderController extends Controller
     // Hàm để tạo URL thanh toán VNPay
     private function createVnpayPaymentUrl($order)
     {
-        $vnpUrl = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html';
-        $vnpTmnCode = 'YC61PH62'; // Mã Merchant ID
-        $vnpHashSecret = 'IIFJR43KSJ1C5KVRPSO3PJTU8DN4EKJ5'; // Secret Key
-        $vnpOrderInfo = 'Thanh toán đơn hàng ' . $order->id;
-        $vnpAmount = (int) round($order->total_amount * 100); // Số tiền (đơn vị: đồng)
-        $vnpReturnUrl = route('payment.result'); // URL nhận kết quả thanh toán
-    
-        Log::info('Order Details:', [
-            'order_id' => $order->id,
-            'total_amount' => $order->total_amount,
-            'vnpAmount' => $vnpAmount,
-        ]);
-    
-        // Tạo danh sách tham số
+        // Cấu hình thông tin VNPay từ file .env
+        $vnpUrl = env('VNP_URL');
+        $vnpTmnCode = env('VNP_TMN_CODE'); // Merchant ID
+        $vnpHashSecret = env('VNP_HASH_SECRET'); // Secret Key
+        $vnpReturnUrl = env('VNP_RETURN_URL');  // URL trả về sau khi thanh toán
+
+        // Số tiền thanh toán (VNPay yêu cầu tính theo đơn vị đồng)
+        $vnpAmount = (int) round($order->total_amount * 100); // Amount in VND
+
+        // Kiểm tra số tiền hợp lệ
+        if ($vnpAmount <= 0) {
+            Log::error('Invalid order amount.', ['order_id' => $order->id, 'amount' => $vnpAmount]);
+            throw new \Exception('Invalid order amount.');
+        }
+
+        // Tạo các tham số VNPay
         $vnpParams = [
             'vnp_TmnCode' => $vnpTmnCode,
             'vnp_Amount' => $vnpAmount,
-            'vnp_OrderInfo' => $vnpOrderInfo,
-            'vnp_OrderType' => 'billpayment',
-            'vnp_ReturnUrl' => $vnpReturnUrl,
-            'vnp_TxnRef' => $order->id,
-            'vnp_CreateDate' => now()->format('YmdHis'),
-            'vnp_CurrCode' => 'VND',
-            'vnp_Locale' => 'vn',
+            'vnp_OrderInfo' => 'Payment for Order #' . $order->id,
+            'vnp_OrderType' => 'billpayment', // Loại đơn hàng
+            'vnp_ReturnUrl' => $vnpReturnUrl,  // URL trả về sau khi thanh toán
+            'vnp_TxnRef' => $order->id, // Mã đơn hàng (TxnRef)
+            'vnp_CreateDate' => now()->format('YmdHis'), // Thời gian tạo giao dịch
+            'vnp_CurrCode' => 'VND', // Mã đơn vị tiền tệ
+            'vnp_Locale' => 'vn', // Ngôn ngữ hiển thị
         ];
-    
-        // Log tham số trước khi sắp xếp
-        Log::info('VNPay Parameters before sorting:', $vnpParams);
-    
-        // Sắp xếp tham số theo thứ tự bảng chữ cái
+
+        // Sắp xếp các tham số theo thứ tự
         ksort($vnpParams);
-    
-        // Tạo chuỗi query
+
+        // Tạo chuỗi query không bao gồm vnp_SecureHash
         $query = urldecode(http_build_query($vnpParams));
-        Log::info('Query String:', ['query' => $query]);
-    
-        // Tạo hash dữ liệu (không thêm HashSecret vào query)
+
+        // Tạo mã bảo mật (Secure Hash)
         $vnpSecureHash = hash_hmac('sha512', $query, $vnpHashSecret);
-        Log::info('Secure Hash:', ['secure_hash' => $vnpSecureHash]);
-    
-        // Thêm hash vào tham số
         $vnpParams['vnp_SecureHash'] = $vnpSecureHash;
-    
-        // Tạo URL hoàn chỉnh
-        $vnpFullUrl = $vnpUrl . '?' . http_build_query($vnpParams);
-        Log::info('Full VNPay URL:', ['vnp_full_url' => $vnpFullUrl]);
-    
-        return $vnpFullUrl;
+
+        // Ghi log URL và tham số
+        Log::info('Generated VNPay URL', ['url' => $vnpUrl, 'params' => $vnpParams]);
+
+        // Trả về URL hoàn chỉnh
+        return $vnpUrl . '?' . http_build_query($vnpParams);
     }
-    
-    
 }

@@ -6,69 +6,105 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Payments;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
     public function handlePaymentResult(Request $request)
     {
         try {
+            Log::info('Payment result received', ['data' => $request->all()]);
+
             // Lấy các tham số trả về từ VNPay
-            $vnpAmount = $request->input('vnp_Amount'); // Số tiền thanh toán
-            $vnpTransactionNo = $request->input('vnp_TransactionNo'); // Mã giao dịch VNPay
-            $vnpResponseCode = $request->input('vnp_ResponseCode'); // Mã kết quả thanh toán
-            $vnpTxnRef = $request->input('vnp_TxnRef'); // ID đơn hàng
-            $vnpSecureHash = $request->input('vnp_SecureHash'); // Mã hash bảo mật
-    
-            // Kiểm tra chữ ký bảo mật (vnp_SecureHash) có hợp lệ không
-            $vnpHashSecret = 'IIFJR43KSJ1C5KVRPSO3PJTU8DN4EKJ5'; // Secret key của bạn
+            $vnpAmount = $request->input('vnp_Amount');
+            $vnpTransactionNo = $request->input('vnp_TransactionNo');
+            $vnpResponseCode = $request->input('vnp_ResponseCode');
+            $vnpTxnRef = $request->input('vnp_TxnRef');
+            $vnpSecureHash = $request->input('vnp_SecureHash');
+
+            // Lấy secret key từ file .env
+            $vnpHashSecret = env('VNP_HASH_SECRET');
+
+            // Kiểm tra chữ ký bảo mật
             $secureHashCheck = $this->generateVNPaySecureHash($request, $vnpHashSecret);
-    
+
+            Log::info('Secure hash comparison', [
+                'vnp_SecureHash' => $vnpSecureHash,
+                'generated_hash' => $secureHashCheck,
+            ]);
+
             if ($vnpSecureHash !== $secureHashCheck) {
+                Log::warning('Invalid secure hash', ['vnp_TxnRef' => $vnpTxnRef]);
                 return response()->json(['message' => 'Invalid secure hash.'], 400);
             }
-    
-            // Kiểm tra mã kết quả thanh toán từ VNPay
+
+            // Kiểm tra mã kết quả thanh toán
+            $order = Order::find($vnpTxnRef);
+
+            if (!$order) {
+                Log::warning('Order not found', ['vnp_TxnRef' => $vnpTxnRef]);
+                return response()->json(['message' => 'Order not found.'], 404);
+            }
+
             if ($vnpResponseCode === '00') {
-                // Thanh toán thành công, tạo bản ghi thanh toán trong bảng payments
                 Payments::create([
-                    'order_id' => $vnpTxnRef, // Gán ID đơn hàng
-                    'transaction_id' => $vnpTransactionNo, // Lưu mã giao dịch
-                    'payment_method' => 'online', // Phương thức thanh toán online
-                    'amount' => $vnpAmount / 100, // Số tiền thanh toán (lưu dưới dạng decimal)
-                    'status' => 'success', // Trạng thái thanh toán
-                    'response_code' => $vnpResponseCode, // Mã phản hồi từ VNPay
-                    'secure_hash' => $vnpSecureHash, // Lưu mã bảo mật
+                    'order_id' => $order->id,
+                    'transaction_id' => $vnpTransactionNo,
+                    'payment_method' => 'online',
+                    'amount' => $vnpAmount / 100,
+                    'status' => 'success',
+                    'response_code' => $vnpResponseCode,
+                    'secure_hash' => $vnpSecureHash,
                 ]);
-    
-                // Cập nhật trạng thái đơn hàng
-                $order = Order::find($vnpTxnRef);
-                if ($order) {
-                    $order->message = 'đã thanh toán'; // Cập nhật trạng thái đơn hàng thành "Đã thanh toán"
-                    $order->save();
-                }
-    
+
+                $order->status = 1; // Đã thanh toán
+                $order->save();
+
+                Log::info('Payment successful', ['order_id' => $order->id]);
                 return response()->json(['message' => 'Payment successful, payment record saved.'], 200);
             } else {
-                // Thanh toán thất bại
+                Payments::create([
+                    'order_id' => $order->id,
+                    'transaction_id' => $vnpTransactionNo,
+                    'payment_method' => 'online',
+                    'amount' => $vnpAmount / 100,
+                    'status' => 'failed',
+                    'response_code' => $vnpResponseCode,
+                    'secure_hash' => $vnpSecureHash,
+                ]);
+
+                Log::warning('Payment failed', [
+                    'order_id' => $order->id,
+                    'response_code' => $vnpResponseCode,
+                ]);
+
                 return response()->json(['message' => 'Payment failed.'], 400);
             }
         } catch (\Exception $e) {
+            Log::error('Payment handling error', [
+                'error' => $e->getMessage(),
+                'request_data' => $request->all(),
+            ]);
+
             return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
-    
 
     // Hàm kiểm tra và tạo mã hash để xác thực kết quả thanh toán
     private function generateVNPaySecureHash(Request $request, $secretKey)
     {
-        $vnpParams = $request->except('vnp_SecureHash'); // Loại bỏ tham số vnp_SecureHash
-        ksort($vnpParams); // Sắp xếp các tham số theo thứ tự
-    
-        // Xây dựng chuỗi query
-        $query = http_build_query($vnpParams);
-        // Tạo mã hash bảo mật
-        $hashData = $query . '&' . 'vnp_HashSecret=' . $secretKey;
-        return hash('sha256', $hashData); // Tạo mã hash bằng SHA-256
+        // Lấy tất cả các tham số từ request, loại trừ 'vnp_SecureHash'
+        $vnpParams = $request->except('vnp_SecureHash');
+
+        // Sắp xếp tham số theo thứ tự bảng chữ cái
+        ksort($vnpParams);
+
+        // Tạo chuỗi query
+        $query = urldecode(http_build_query($vnpParams));
+
+        Log::info('Generated hash data', ['query' => $query]); // Ghi log chuỗi query
+
+        // Tạo mã bảo mật (Secure Hash) bằng cách sử dụng hash_hmac
+        return hash_hmac('sha512', $query, $secretKey);
     }
-    
 }

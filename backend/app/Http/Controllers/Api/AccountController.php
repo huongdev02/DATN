@@ -80,17 +80,20 @@ class AccountController extends Controller
                     'status' => true,
                     'message' => 'Đăng nhập thành công',
                     'data' => [
-                        'id'        => $user->id,
-                        'email'     => $user->email,
-                        'username'      => $user->username,
-                        'fullname'      => $user->fullname,
-                        'birth_day' => $user->birth_day,
-                        'phone'     => $user->phone,
-                        'address'   => $user->address,
-                        'role'      => $user->role,
-                        'is_active' => $user->is_active,
-                        'avatar'    => $user->avatar ? asset($user->avatar) : null,
-                        'token'     => $token, // Gửi token đầy đủ
+                        'user' => [
+                            'id'        => $user->id,
+                            'email'     => $user->email,
+                            'username'  => $user->username,
+                            'fullname'  => $user->fullname,
+                            'birth_day' => $user->birth_day,
+                            'phone'     => $user->phone,
+                            'address'   => $user->address,
+                            'role'      => $user->role,
+                            'is_active' => $user->is_active,
+                           'avatar' => $user->avatar ? asset('storage/' . ltrim($user->avatar, '/')) : null,
+
+                        ],
+                        'token' => $token
                     ]
                 ], 200);
             }
