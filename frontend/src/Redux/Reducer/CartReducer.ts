@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { get } from 'http';
 
 // Định nghĩa kiểu dữ liệu cho CartItem
@@ -49,6 +50,7 @@ const initialState: CartState = {
 
 // Lấy giỏ hàng
 export const fetchCart = createAsyncThunk<CartItem[], number, { rejectValue: string }>(
+  
   'cart/fetchCart',
   async (_, { rejectWithValue }) => {
     try {
@@ -59,6 +61,10 @@ export const fetchCart = createAsyncThunk<CartItem[], number, { rejectValue: str
         return rejectWithValue('Không tìm thấy thông tin người dùng');
       }
 
+      if (!token) {
+        return rejectWithValue('Token không hợp lệ hoặc không có');
+      }
+
       let parsedUser;
       try {
         parsedUser = JSON.parse(user);
@@ -66,11 +72,9 @@ export const fetchCart = createAsyncThunk<CartItem[], number, { rejectValue: str
         return rejectWithValue('Dữ liệu người dùng không hợp lệ');
       }
 
-      const userId = parsedUser?.id;
-
-      if (!token) {
-        return rejectWithValue('Token không hợp lệ hoặc không có');
-      }
+      
+      
+      const userId = parsedUser.id
 
       const response = await fetch(`http://127.0.0.1:8000/api/carts/${userId}`, {
         method: 'GET',
