@@ -59,11 +59,14 @@ class PaymentController extends Controller
                     'secure_hash' => $vnpSecureHash,
                 ]);
 
-                $order->status = 1; // Đã thanh toán
+                $order->message = 'Đã thanh toán'; // Đã thanh toán
                 $order->save();
 
                 Log::info('Payment successful', ['order_id' => $order->id]);
-                return response()->json(['message' => 'Payment successful, payment record saved.'], 200);
+                return response()->json([
+                    'status'    => true,
+                    'message' => 'Thanh toán thành công'
+                ], 200);
             } else {
                 Payments::create([
                     'order_id' => $order->id,
@@ -80,7 +83,11 @@ class PaymentController extends Controller
                     'response_code' => $vnpResponseCode,
                 ]);
 
-                return response()->json(['message' => 'Payment failed.'], 400);
+                $order->status = 4; // Trạng thái "Hủy"
+                $order->message = 'Đơn hàng của bạn đã bị hủy do thanh toán thất bại'; // Thông báo cho người dùng
+                $order->save();
+
+                return response()->json(['message' => 'Thanh toán thất bại, khởi tạo đơn hàng không thành công'], 400);
             }
         } catch (\Exception $e) {
             Log::error('Payment handling error', [
@@ -95,10 +102,10 @@ class PaymentController extends Controller
     {
         // Exclude the 'vnp_SecureHash' parameter
         $vnpParams = $request->except('vnp_SecureHash');
-    
+
         // Sort the parameters alphabetically by key
         ksort($vnpParams);
-    
+
         // Build the query string
         $query = '';
         foreach ($vnpParams as $key => $value) {
@@ -106,12 +113,11 @@ class PaymentController extends Controller
         }
         // Remove the last '&'
         $query = rtrim($query, '&');
-    
+
         // Log the query string before generating the hash
         Log::info('Generated query string before hash generation', ['query' => $query]);
-    
+
         // Generate the secure hash using HMAC-SHA512
         return hash_hmac('sha512', $query, $secretKey);
     }
-    
 }

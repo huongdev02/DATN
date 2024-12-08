@@ -24,13 +24,13 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
-                                <span class="badge bg-danger">{{ $voucher->type == 0 ? 'Shop Style' : 'Voucher Độc Quyền' }}</span>
+                                <span class="badge bg-danger">{{ $voucher->type == 0 ? 'Shop Mall' : 'Voucher Độc Quyền' }}</span>
                             </div>
-                            <h5 class="card-title mt-2">Giảm {{ $voucher->discount_value }}% Giảm tối đa {{ $voucher->max_discount }}đ</h5>
-                            <p class="card-text">Đơn tối thiểu: {{ $voucher->discount_min }}đ</p>
+                            <h5 class="card-title mt-2">Giảm {{ $voucher->discount_value }} đ</h5>
+                            <p class="card-text">Đơn tối thiểu: {{ $voucher->total_min }}đ</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">Có hiệu lực: {{ $voucher->used_times }}</small>
-                                <button class="btn btn-outline-primary">Dùng Sau</button>
+                                <small class="text-muted">Có hiệu lực đến: {{ $voucher->end_day }}</small>
+                      
                             </div>
                         </div>
                     </div>

@@ -37,7 +37,7 @@ class AdminController extends Controller
     $completedOrders = Order::where('status', 3)->count();
 
     // Tính tổng đơn hàng chưa xử lý (status = 1 là chưa xử lý)
-    $pendingOrders = Order::where('status', 1)->count();
+    $pendingOrders = Order::where('status', 0)->count();
 
     // Tính tổng doanh thu
     $totalRevenue = Order::sum('total_amount');

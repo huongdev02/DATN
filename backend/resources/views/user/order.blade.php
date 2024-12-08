@@ -79,7 +79,15 @@
                                     <p class="mb-0 text-danger fw-bold">
                                         ₫{{ number_format($orderDetail->total, 0, ',', '.') }}</p>
                                 </div>
+
                             </div>
+
+                            <p
+                                class="{{ $order->status == 3 ? 'text-success' : ($order->status == 4 ? 'text-danger' : 'text-muted') }}">
+                                {{ $order->message }}
+                            </p>
+
+
                             @php
                                 $orderTotal += $orderDetail->total;
                             @endphp
@@ -112,12 +120,46 @@
                                     data-bs-target="#confirmReceiptModal-{{ $order->id }}">Đã nhận hàng</button>
                             @elseif($order->status == 3)
                                 <!-- Show "Đánh giá" button when order is "Hoàn thành" -->
-                                <button class="btn btn-outline-warning btn-sm me-2" data-bs-toggle="modal"
-                                    data-bs-target="#reviewModal-{{ $order->id }}">Đánh giá</button>
+                                @php
+                                    $reviewExists = \App\Models\Review::where('order_id', $order->id)->exists();
+                                @endphp
+                                @if ($reviewExists)
+                                    <button class="btn btn-outline-warning btn-sm me-2"
+                                        onclick="alert('Bạn đã đánh giá đơn hàng này rồi.')">Đã đánh giá</button>
+                                @else
+                                    <button class="btn btn-outline-warning btn-sm me-2" data-bs-toggle="modal"
+                                        data-bs-target="#reviewModal-{{ $order->id }}">Đánh giá</button>
+                                @endif
                             @endif
                         </div>
                     </div>
                 </div>
+
+                <!-- Confirm Receipt Modal -->
+                <div class="modal fade" id="confirmReceiptModal-{{ $order->id }}" tabindex="-1"
+                    aria-labelledby="confirmReceiptModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="confirmReceiptModalLabel">Xác nhận đã nhận hàng</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('done', $order->id) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <div class="modal-body">
+                                    <p>Bạn có chắc chắn đã nhận hàng và muốn hoàn thành đơn hàng này?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                    <button type="submit" class="btn btn-success">Xác nhận</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
 
                 <!-- Cancel Order Modal -->
                 <div class="modal fade" id="cancelOrderModal-{{ $order->id }}" tabindex="-1"
@@ -136,9 +178,11 @@
                                     <div class="mb-3">
                                         <label for="cancelReason" class="form-label">Chọn lý do hủy đơn hàng:</label>
                                         <select class="form-select" id="cancelReason" name="cancel_reason" required>
-                                            <option value="Tôi không muốn đặt hàng nữa">Tôi không muốn đặt hàng nữa</option>
+                                            <option value="Tôi không muốn đặt hàng nữa">Tôi không muốn đặt hàng nữa
+                                            </option>
                                             <option value="Mặt hàng quá đắt">Mặt hàng quá đắt</option>
-                                            <option value="Thời gian giao hàng quá lâu">Thời gian giao hàng quá lâu</option>
+                                            <option value="Thời gian giao hàng quá lâu">Thời gian giao hàng quá lâu
+                                            </option>
                                             <option value="Other">Khác</option>
                                         </select>
                                     </div>
@@ -205,7 +249,7 @@
     </div>
 
     <div class="d-flex justify-content-center mt-4">
-        {{ $orders->links() }}
+        {{ $orders->appends(['status' => request()->get('status')])->links() }}
     </div>
 
 

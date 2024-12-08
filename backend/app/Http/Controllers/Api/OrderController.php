@@ -163,7 +163,7 @@ class OrderController extends Controller
             // Nếu là COD, trả về kết quả đơn hàng đã được tạo
             return response()->json([
                 'status' => true,
-                'message' => 'Order created successfully, please await delivery.',
+                'message' => 'Khởi tạo giao dịch thành công, vui lòng thanh toán để hoàn thành đơn hàng ',
                 'order_id' => $order->id,
                 'total_amount' => $totalAmount,
                 'order_details' => $orderDetails,
