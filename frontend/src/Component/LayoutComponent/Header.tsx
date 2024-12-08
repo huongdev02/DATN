@@ -80,7 +80,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
-
+    GetAllProducts()
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));
     }
@@ -486,8 +486,8 @@ const Header: React.FC = () => {
                           className="product-result"
                         />
                         <div className="text-result">
-                          <p className="name-result">{product.name}</p>
-                          <p className="price-result">
+                          <p style={{fontFamily:'Raleway'}} className="name-result">{product.name}</p>
+                          <p  style={{fontFamily:'Raleway'}}className="price-result">
                             {" "}
                             {Math.round(product.price).toLocaleString("vi", {
                               style: "currency",
@@ -499,7 +499,7 @@ const Header: React.FC = () => {
                     </Link>
                   ))
                 ) : (
-                  <div className="no-results">*Không tìm thấy sản phẩm nào</div>
+                  <div style={{fontFamily:'Raleway'}} className="no-results">*Không tìm thấy sản phẩm nào</div>
                 )}
               </div>
             )}

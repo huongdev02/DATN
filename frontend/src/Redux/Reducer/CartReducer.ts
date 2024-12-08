@@ -66,7 +66,7 @@ export const fetchCart = createAsyncThunk<CartItem[], number, { rejectValue: str
         return rejectWithValue('Dữ liệu người dùng không hợp lệ');
       }
 
-      const userId = parsedUser?.id;
+      const userId = parsedUser.user.id;
 
       if (!token) {
         return rejectWithValue('Token không hợp lệ hoặc không có');

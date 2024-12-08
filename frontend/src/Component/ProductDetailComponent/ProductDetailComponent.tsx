@@ -35,6 +35,10 @@ const ProductDetailComponent: React.FC = () => {
     setQuantity((prevQuantity) => prevQuantity + 1);
   };
 
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  console.log('siu', user);
+  
+
   const GetProductsById = async () => {
     try {
       const { data } = await api.get(`/categories/${id}/products`);
@@ -81,9 +85,9 @@ const ProductDetailComponent: React.FC = () => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const token = localStorage.getItem("token");
 
-    if (!user?.id) {
+    if (!user.user.id) {
       notification.error({
-        message: "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!",
+        message: "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng !",
       });
       navigate("/login");
       return;

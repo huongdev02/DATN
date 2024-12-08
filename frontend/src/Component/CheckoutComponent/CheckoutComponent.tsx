@@ -120,7 +120,7 @@ const CheckoutComponent: React.FC = () => {
       }
     
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const userId = user.id ? user.id.toString() : '';
+      const userId = user.user.id
       const addressData = {
         user_id: userId,
         recipient_name: recipientName,

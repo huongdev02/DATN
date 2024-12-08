@@ -5,6 +5,7 @@ import { fetchCart } from "../../Redux/Reducer/CartReducer";
 import { Link } from "react-router-dom";
 import { fetchVouchers } from "../../Redux/Reducer/VoucherReducer";
 import { DeleteOutlined } from "@ant-design/icons";
+import api from "../../Axios/Axios";
 
 interface CartProps {
   userId: number;
@@ -17,7 +18,10 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
   const [voucherCode, setVoucherCode] = useState<string>("");
   const [voucherValid, setVoucherValid] = useState<boolean | null>(null);
   const [discountValue, setDiscountValue] = useState<number>(0);
+  const [cartEmpty, setCartEmpty]= useState<boolean>(false)
   console.log(vouchers);
+
+
 
   useEffect(() => {
     dispatch(fetchCart(userId));
@@ -26,6 +30,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
   useEffect(() => {
     dispatch(fetchVouchers());
   }, [dispatch]);
+
 
   const handleVoucherInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVoucherCode(e.target.value);
@@ -108,7 +113,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                   </tr>
                 </thead>
                 {cart.length === 0 ? (
-                  <p>Giỏ Hàng của bạn trống</p>
+                  <p style={{ fontFamily:'Raleway', color:'red', marginTop:'40px', fontSize:'20px', fontWeight:'normal'}}>*Giỏ của bạn đang trống</p>
                 ) : (
                   cart.map((item) => (
                     <tbody key={item.id}>
@@ -193,7 +198,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                 )}
               </table>
             </div>
-
+           
             <div className="row">
               {/* Phần nhập mã giảm giá */}
               <div className="col-lg-5 mb-30">
@@ -210,7 +215,6 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                   </div>
                 </div>
               </div>
-
               {/* Phần tính tổng tiền giỏ hàng */}
               <div className="col-lg-4 mb-30">
                 <div className="box-cart-total">
@@ -232,7 +236,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                       </span>
                     </span>
                   </div>
-
+                 
                   {/* Hiển thị phí vận chuyển */}
                   <div className="item-total">
                     <span className="font-sm">Phí ship</span>
@@ -268,7 +272,6 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                   </Link>
                 </div>
               </div>
-
               <div className="col-lg-3 mb-30">
                 <div className="box-button-checkout">
                   <Link
@@ -294,6 +297,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                   </Link>
                 </div>
               </div>
+            
             </div>
           </div>
         </div>
