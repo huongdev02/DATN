@@ -82,7 +82,6 @@ Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager',
     Route::resource('categories', CategoryController::class);
     Route::resource('vouchers', VoucherController::class);
     Route::resource('orders', OrderController::class);
-    Route::resource('promotion', PromotionController::class);
     Route::resource('products', ProductController::class);
     Route::resource('review', QuanliReviewController::class);
     //quan li account, route nay chi co quyen admin

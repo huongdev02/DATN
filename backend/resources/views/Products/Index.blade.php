@@ -57,94 +57,104 @@
     @if ($products->isEmpty())
         <p class="text-center text-muted">Không có sản phẩm nào phù hợp với bộ lọc của bạn.</p>
     @else
-        <table class="table table-bordered table-hover text-center">
-            <thead class="table-light text-center">
-                <tr>
-                    <th>STT</th>
-                    <th>Tên</th>
-                    <th>Danh mục</th>
-                    <th>Đại diện</th>
-                    <th>Số lượng</th>
-                    <th>Bán</th>
-                    <th>Giá</th>
-                    <th>Mô tả</th>
-                    <th>Thư viện</th>
-                    <th>Kích cỡ</th>
-                    <th>Màu sắc</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($products as $index => $item)
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center">
+                <thead class="table-light text-center">
                     <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->categories->name }}</td>
-                        <td>
-                            <img src="{{ asset('storage/' . $item->avatar) }}" alt="{{ $item->name }}"
-                                style="width: 40px; height: 30px; border-radius: 8px;">
-                        </td>
-                        <td>{{ number_format($item->quantity) }}</td>
-                        <td>{{ number_format($item->sell_quantity) }}</td>
-                        <td>{{ number_format($item->price) }} VND</td>
-                        <td>{{ $item->description }}</td>
-                        <td>
-                            @if ($item->galleries->isNotEmpty())
-                                <div class="d-flex flex-wrap gap-2">
-                                    @foreach ($item->galleries as $gallery)
-                                        <img src="{{ $gallery->image_path }}" alt="Gallery Image" class="gallery-image"
-                                            style="width: 40px; height: 30px; border-radius: 5px;">
-                                    @endforeach
-                                </div>
-                            @else
-                                không có ảnh
-                            @endif
-                        </td>
-                        <td>
-                            @if ($item->sizes->isNotEmpty())
-                                {{ $item->sizes->pluck('size')->implode(', ') }}
-                            @else
-                                không có kích thước
-                            @endif
-                        </td>
-                        <td>
-                            @if ($item->colors->isNotEmpty())
-                                @foreach ($item->colors as $color)
-                                    @php
-                                        $colorCode = $colorMap[$color->name_color] ?? '#000000';
-                                    @endphp
-                                    <span class="color-circle"
-                                        style="background-color: {{ $colorCode }}; width: 20px; height: 20px; display: inline-block; border-radius: 50%; margin-right: 5px;"></span>
-                                @endforeach
-                            @else
-                                không có màu
-                            @endif
-                        </td>
-                        <td class="d-flex gap-2 justify-content-center">
-                            @if ($item->is_active == 1)
-                                <a href="{{ route('products.edit', $item->id) }}"
-                                    class="btn btn-outline-warning btn-sm">Cập nhật</a>
-                            @else
-                                <a href=""
-                                    onclick="return confirm('vui lòng cập nhật trạng thái sang hiển thị để thao tác')"
-                                    class="btn btn-outline-warning btn-sm">Cập nhật</a>
-                            @endif
-
-                            <!-- Toggle is_active (Hide/Show) -->
-                            <form action="{{ route('products.index') }}" method="GET" style="display: inline;">
-                                @csrf
-                                <input type="hidden" name="toggle_is_active" value="1">
-                                <input type="hidden" name="product_id" value="{{ $item->id }}">
-                                <button type="submit" class="btn btn-outline-secondary btn-sm"
-                                    onclick="return confirm('Bạn có chắc muốn thay đổi trạng thái ẩn/hiển thị sản phẩm này?')">
-                                    {{ $item->is_active == 1 ? 'Ẩn' : 'Hiện' }}
-                                </button>
-                            </form>
-                        </td>
+                        <th>STT</th>
+                        <th>Tên</th>
+                        <th>Danh mục</th>
+                        <th>Đại diện</th>
+                        <th>Số lượng</th>
+                        <th>Bán</th>
+                        <th>Giá</th>
+                        <th>Mô tả</th>
+                        <th>Thư viện</th>
+                        <th>Kích cỡ</th>
+                        <th>Màu sắc</th>
+                        <th>Thao tác</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($products as $index => $item)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->categories->name }}</td>
+                            <td>
+                                <img src="{{ asset('storage/' . $item->avatar) }}" alt="{{ $item->name }}"
+                                    style="width: 40px; height: 30px; border-radius: 8px;">
+                            </td>
+                            <td>{{ number_format($item->quantity) }}</td>
+                            <td>{{ number_format($item->sell_quantity) }}</td>
+                            <td>{{ number_format($item->price) }} VND</td>
+                            <td class="description" data-description="{{ $item->description }}">
+                                {{ Str::limit($item->description, 30) }}</td>
+
+                            <!-- Modal cho mô tả -->
+                            <div id="descriptionModal" class="description-modal">
+                                <div class="description-content"></div>
+                            </div>
+
+
+                            <td>
+                                @if ($item->galleries->isNotEmpty())
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach ($item->galleries as $gallery)
+                                            <img src="{{ $gallery->image_path }}" alt="Gallery Image" class="gallery-image"
+                                                style="width: 40px; height: 30px; border-radius: 5px;">
+                                        @endforeach
+                                    </div>
+                                @else
+                                    không có ảnh
+                                @endif
+                            </td>
+                            <td>
+                                @if ($item->sizes->isNotEmpty())
+                                    {{ $item->sizes->pluck('size')->implode(', ') }}
+                                @else
+                                    không có kích thước
+                                @endif
+                            </td>
+                            <td>
+                                @if ($item->colors->isNotEmpty())
+                                    @foreach ($item->colors as $color)
+                                        @php
+                                            $colorCode = $colorMap[$color->name_color] ?? '#000000';
+                                        @endphp
+                                        <span class="color-circle"
+                                            style="background-color: {{ $colorCode }}; width: 20px; height: 20px; display: inline-block; border-radius: 50%; margin-right: 5px;"></span>
+                                    @endforeach
+                                @else
+                                    không có màu
+                                @endif
+                            </td>
+                            <td class="d-flex gap-2 justify-content-center">
+                                @if ($item->is_active == 1)
+                                    <a href="{{ route('products.edit', $item->id) }}"
+                                        class="btn btn-outline-warning btn-sm">Cập nhật</a>
+                                @else
+                                    <a href=""
+                                        onclick="return confirm('vui lòng cập nhật trạng thái sang hiển thị để thao tác')"
+                                        class="btn btn-outline-warning btn-sm">Cập nhật</a>
+                                @endif
+
+                                <!-- Toggle is_active (Hide/Show) -->
+                                <form action="{{ route('products.index') }}" method="GET" style="display: inline;">
+                                    @csrf
+                                    <input type="hidden" name="toggle_is_active" value="1">
+                                    <input type="hidden" name="product_id" value="{{ $item->id }}">
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm"
+                                        onclick="return confirm('Bạn có chắc muốn thay đổi trạng thái ẩn/hiển thị sản phẩm này?')">
+                                        {{ $item->is_active == 1 ? 'Ẩn' : 'Hiện' }}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     @endif
 
     <style>
@@ -161,6 +171,32 @@
             height: 20px;
             border-radius: 50%;
             margin-right: 5px;
+        }
+
+        /* Đặt chiều dài tối đa cho cột mô tả */
+        .description {
+            max-width: 400px;
+            /* Thay đổi chiều rộng tối đa theo yêu cầu */
+            white-space: nowrap;
+            /* Không cho phép xuống dòng */
+            overflow: hidden;
+            /* Ẩn phần văn bản thừa */
+            text-overflow: ellipsis;
+            /* Hiển thị ba chấm khi quá dài */
+            cursor: pointer;
+            /* Thêm con trỏ để người dùng biết là có thể hover */
+        }
+
+        /* Thanh cuộn ngang khi bảng có nhiều cột */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-responsive table {
+            width: 100%;
+            min-width: 1000px;
+            /* Đảm bảo rằng bảng sẽ rộng hơn khi có nhiều cột */
         }
     </style>
 @endsection

@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -56,10 +57,14 @@ class OrderController extends Controller
             'shipAddress',
             'orderDetails.product',
             'orderDetails.color', // Lấy màu sắc của từng chi tiết đơn hàng
-            'orderDetails.size'   // Lấy kích cỡ của từng chi tiết đơn hàng
+            'orderDetails.size',  // Lấy kích cỡ của từng chi tiết đơn hàng
         ])->findOrFail($id);
+        
+        $payment = DB::table('payments')
+        ->where('order_id', $order->id)
+        ->first();
 
-        return view('order.show', compact('order'));
+        return view('order.show', compact('order', 'payment'));
     }
 
     /**

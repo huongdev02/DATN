@@ -21,7 +21,7 @@ class UserOrderController extends Controller
         }
 
         // Lấy danh sách đơn hàng, phân trang
-        $orders = $query->latest()->paginate(2);
+        $orders = $query->latest()->paginate(3);
 
         // Trả về view với danh sách đơn hàng
         return view('user.order', compact('orders'));
@@ -69,7 +69,7 @@ class UserOrderController extends Controller
             $otherReason = $request->input('other_reason');
             $message = $cancelReason;
 
-            if ($cancelReason === 'Other' && !empty($otherReason)) {
+            if ($cancelReason === 'Khác' && !empty($otherReason)) {
                 $message .= ": " . $otherReason;
             }
 
@@ -112,6 +112,7 @@ class UserOrderController extends Controller
 
         // Cập nhật trạng thái đơn hàng thành "Hoàn thành" (status = 3)
         $order->status = 3;
+        $order->message = 'Hoàn thành';
         $order->save();
 
         // Gửi thông báo thành công và chuyển hướng

@@ -101,9 +101,7 @@ class OrderController extends Controller
                 }
             }
 
-
             $totalAmount -= $discountValue;
-
 
             $order = Order::create([
                 'user_id' => $userId,
@@ -154,7 +152,7 @@ class OrderController extends Controller
 
             // Kiểm tra phương thức thanh toán: nếu là Online Payment (payment_method = 2)
             if ($request->input('payment_method') == 2) {
-                $vnpayUrl = $this->createVnpayPaymentUrl($order); // Hàm để tạo URL thanh toán VNPay
+                $vnpayUrl = $this->createPaymentUrl($request, $totalAmount, $order->id); // Chuyển tham số đúng vào hàm
                 return response()->json([
                     'status' => true,
                     'message' => 'Order created successfully, please complete your payment.',
@@ -165,7 +163,7 @@ class OrderController extends Controller
             // Nếu là COD, trả về kết quả đơn hàng đã được tạo
             return response()->json([
                 'status' => true,
-                'message' => 'Order created successfully, please await delivery.',
+                'message' => 'Khởi tạo giao dịch thành công, vui lòng thanh toán để hoàn thành đơn hàng ',
                 'order_id' => $order->id,
                 'total_amount' => $totalAmount,
                 'order_details' => $orderDetails,
@@ -175,51 +173,88 @@ class OrderController extends Controller
         }
     }
 
+
     // Hàm để tạo URL thanh toán VNPay
-    private function createVnpayPaymentUrl($order)
+    public function createPaymentUrl(Request $request, $totalAmount, $orderId)
     {
-        // Cấu hình thông tin VNPay từ file .env
-        $vnpUrl = env('VNP_URL');
-        $vnpTmnCode = env('VNP_TMN_CODE'); // Merchant ID
-        $vnpHashSecret = env('VNP_HASH_SECRET'); // Secret Key
-        $vnpReturnUrl = env('VNP_RETURN_URL');  // URL trả về sau khi thanh toán
-
-        // Số tiền thanh toán (VNPay yêu cầu tính theo đơn vị đồng)
-        $vnpAmount = (int) round($order->total_amount * 100); // Amount in VND
-
+        $vnp_TmnCode = env('VNP_TMN_CODE'); // Mã website của bạn trên VNPay
+        $vnp_HashSecret = env('VNP_HASH_SECRET'); // Chuỗi bí mật để mã hóa
+        $vnp_Url = env('VNP_URL'); // URL thanh toán của VNPay
+        $vnp_ReturnUrl = env('VNP_RETURN_URL'); // URL trả về sau khi thanh toán
+    
+        // Ghi log thông tin cấu hình
+        Log::info('VNPay Config:', [
+            'VNP_TMN_CODE' => $vnp_TmnCode,
+            'VNP_HASH_SECRET' => $vnp_HashSecret,
+            'VNP_URL' => $vnp_Url,
+            'VNP_RETURN_URL' => $vnp_ReturnUrl
+        ]);
+    
         // Kiểm tra số tiền hợp lệ
-        if ($vnpAmount <= 0) {
-            Log::error('Invalid order amount.', ['order_id' => $order->id, 'amount' => $vnpAmount]);
-            throw new \Exception('Invalid order amount.');
+        if ($totalAmount < 5000 || $totalAmount >= 1000000000) {
+            Log::error('Invalid transaction amount:', ['amount' => $totalAmount]);
+            return response()->json(['error' => 'Số tiền không hợp lệ, phải từ 5,000 VNĐ đến dưới 1 tỷ VNĐ.'], 400);
         }
-
-        // Tạo các tham số VNPay
-        $vnpParams = [
-            'vnp_TmnCode' => $vnpTmnCode,
-            'vnp_Amount' => $vnpAmount,
-            'vnp_OrderInfo' => 'Payment for Order #' . $order->id,
-            'vnp_OrderType' => 'billpayment', // Loại đơn hàng
-            'vnp_ReturnUrl' => $vnpReturnUrl,  // URL trả về sau khi thanh toán
-            'vnp_TxnRef' => $order->id, // Mã đơn hàng (TxnRef)
-            'vnp_CreateDate' => now()->format('YmdHis'), // Thời gian tạo giao dịch
-            'vnp_CurrCode' => 'VND', // Mã đơn vị tiền tệ
-            'vnp_Locale' => 'vn', // Ngôn ngữ hiển thị
+    
+        // Dữ liệu giao dịch
+        $vnp_TxnRef = $orderId; // Mã giao dịch là order_id
+        $vnp_OrderInfo = 'Thanh toán đơn hàng #' . $orderId; // Nội dung thanh toán
+        $vnp_OrderType = 'billpayment'; // Loại giao dịch
+        $vnp_Amount = (int) ($totalAmount * 100); // Số tiền (VNĐ nhân 100)
+        $vnp_Locale = 'vn'; // Ngôn ngữ
+        $vnp_IpAddr = $request->ip(); // IP của người dùng
+    
+        // Ghi log dữ liệu đầu vào
+        Log::info('VNPay Request Input:', $request->all());
+        Log::info('Transaction Data:', [
+            'TxnRef' => $vnp_TxnRef,
+            'OrderInfo' => $vnp_OrderInfo,
+            'OrderType' => $vnp_OrderType,
+            'Amount' => $vnp_Amount,
+            'Locale' => $vnp_Locale,
+            'IpAddr' => $vnp_IpAddr
+        ]);
+    
+        // Tạo dữ liệu đầu vào cho VNPay
+        $inputData = [
+            "vnp_Version" => "2.1.0",
+            "vnp_TmnCode" => $vnp_TmnCode,
+            "vnp_Amount" => $vnp_Amount,
+            "vnp_Command" => "pay",
+            "vnp_CreateDate" => date('YmdHis'),
+            "vnp_CurrCode" => "VND",
+            "vnp_IpAddr" => $vnp_IpAddr,
+            "vnp_Locale" => $vnp_Locale,
+            "vnp_OrderInfo" => $vnp_OrderInfo,
+            "vnp_OrderType" => $vnp_OrderType,
+            "vnp_ReturnUrl" => $vnp_ReturnUrl,
+            "vnp_TxnRef" => $vnp_TxnRef,
         ];
-
-        // Sắp xếp các tham số theo thứ tự
-        ksort($vnpParams);
-
-        // Tạo chuỗi query không bao gồm vnp_SecureHash
-        $query = urldecode(http_build_query($vnpParams));
-
-        // Tạo mã bảo mật (Secure Hash)
-        $vnpSecureHash = hash_hmac('sha512', $query, $vnpHashSecret);
-        $vnpParams['vnp_SecureHash'] = $vnpSecureHash;
-
-        // Ghi log URL và tham số
-        Log::info('Generated VNPay URL', ['url' => $vnpUrl, 'params' => $vnpParams]);
-
-        // Trả về URL hoàn chỉnh
-        return $vnpUrl . '?' . http_build_query($vnpParams);
+    
+        // Sắp xếp dữ liệu đầu vào theo thứ tự
+        ksort($inputData);
+    
+        // Tạo chuỗi dữ liệu để mã hóa
+        $query = "";
+        $hashdata = "";
+        foreach ($inputData as $key => $value) {
+            $hashdata .= ($hashdata ? '&' : '') . urlencode($key) . "=" . urlencode($value);
+            $query .= urlencode($key) . "=" . urlencode($value) . '&';
+        }
+    
+        // Ghi log dữ liệu sau khi xử lý
+        Log::info('VNPay Input Data Sorted:', $inputData);
+        Log::info('Hash Data String:', ['hashdata' => $hashdata]);
+    
+        // Tính toán mã hash sử dụng chuỗi dữ liệu và secret key
+        $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
+        Log::info('Generated Secure Hash:', ['secure_hash' => $vnpSecureHash]);
+    
+        // Tạo URL thanh toán
+        $vnp_Url = $vnp_Url . "?" . $query . 'vnp_SecureHash=' . $vnpSecureHash;
+        Log::info('Generated VNPay URL:', ['url' => $vnp_Url]);
+    
+        return response()->json(['payment_url' => $vnp_Url]);
     }
+    
 }

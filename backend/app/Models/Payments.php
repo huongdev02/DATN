@@ -17,4 +17,9 @@ class Payments extends Model
         'response_code',
         'secure_hash',
     ];
+    // Model Payment
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
 }
