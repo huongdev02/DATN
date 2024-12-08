@@ -468,7 +468,7 @@ const ProductDetailComponent: React.FC = () => {
                           <div>
                             <img
                               className="img-rating"
-                              src={`${review.image_url}`}
+                              src={`${review.user_avatar}`}
                               alt=""
                             />
                           </div>
