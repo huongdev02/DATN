@@ -5,6 +5,7 @@ import { fetchCart } from "../../Redux/Reducer/CartReducer";
 import { Link } from "react-router-dom";
 import { fetchVouchers } from "../../Redux/Reducer/VoucherReducer";
 import { DeleteOutlined } from "@ant-design/icons";
+import api from "../../Axios/Axios";
 
 interface CartProps {
   userId: number;
@@ -19,6 +20,8 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
   const [discountValue, setDiscountValue] = useState<number>(0);
   const [cartEmpty, setCartEmpty]= useState<boolean>(false)
   console.log(vouchers);
+
+
 
   useEffect(() => {
     dispatch(fetchCart(userId));
