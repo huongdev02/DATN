@@ -6,8 +6,11 @@ import axios from "axios";
 import { notification } from "antd";
 import { addToCart } from "../../Redux/Reducer/CartReducer";
 import { IProduct } from "../../types/cart";
+import { Rate } from 'antd';
 import api from "../../Axios/Axios";
 import { Link } from "react-router-dom";
+
+
 import {
   MinusOutlined,
   PlusOutlined,
@@ -24,6 +27,7 @@ const ProductDetailComponent: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
+  const [isCate, setIsCate] = useState<number>(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const navigate = useNavigate();
 
@@ -36,23 +40,7 @@ const ProductDetailComponent: React.FC = () => {
   };
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  console.log('siu', user);
-  
-
-  const GetProductsById = async () => {
-    try {
-      const { data } = await api.get(`/categories/${id}/products`);
-      setProductById(data.products);
-      
-    } catch (error) {
-      console.log(error);
-      
-    }
-  };
-
-  useEffect(() => {
-    GetProductsById();
-  }, [id]);
+  console.log("siu", user);
 
   const handleDecrease = () => {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
@@ -79,7 +67,25 @@ const ProductDetailComponent: React.FC = () => {
     fetchProductDetail();
   }, [id]);
 
-  console.log(product, "kkkkkkkkkkkkk");
+  console.log("review sp", product);
+
+  useEffect(() => {
+    const GetProductsById = async () => {
+      try {
+        if (product?.categories?.id) {
+          const { data } = await api.get(
+            `/categories/${product.categories.id}/products`
+          );
+          console.log("sản phẩm thoe id", data);
+          setProductById(data.products);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    GetProductsById();
+  }, [product]);
 
   const handleAddToCart = async () => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -193,16 +199,7 @@ const ProductDetailComponent: React.FC = () => {
                     <div className="product-image-slider">
                       <figure className="border-radius-10">
                         <a className="glightbox">
-                          <img
-                            width={"100%"}
-                            src={
-                              product.galleries &&
-                              product.galleries[selectedIndex]
-                                ? `${product.galleries[selectedIndex].image_path}`
-                                : product.avatar
-                            }
-                            alt={product.name}
-                          />
+                          <img width={"100%"} src={`${product.avatar}`} />
                         </a>
                       </figure>
                     </div>
@@ -258,7 +255,7 @@ const ProductDetailComponent: React.FC = () => {
                           className="button-color"
                           key={color.id}
                           style={{
-                            fontFamily:'Raleway',
+                            fontFamily: "Raleway",
                             padding: "10px 15px",
                             border:
                               selectedColor === color.name_color
@@ -317,7 +314,14 @@ const ProductDetailComponent: React.FC = () => {
                     {/* <div className="font-sm neutral-500 mb-15">Quantity</div> */}
                     <div className="box-form-cart">
                       <div className="form-cart">
-                        <button  style={{border:'1px solid gray', borderRight:'none'}}  className="minus" onClick={handleDecrease}>
+                        <button
+                          style={{
+                            border: "1px solid gray",
+                            borderRight: "none",
+                          }}
+                          className="minus"
+                          onClick={handleDecrease}
+                        >
                           <MinusOutlined />
                         </button>
                         <input
@@ -327,7 +331,14 @@ const ProductDetailComponent: React.FC = () => {
                           value={quantity}
                           readOnly
                         />
-                        <button style={{border:'1px solid gray', borderLeft:'none'}} className="plus" onClick={handleIncrease}>
+                        <button
+                          style={{
+                            border: "1px solid gray",
+                            borderLeft: "none",
+                          }}
+                          className="plus"
+                          onClick={handleIncrease}
+                        >
                           <PlusOutlined />
                         </button>
                       </div>
@@ -358,7 +369,7 @@ const ProductDetailComponent: React.FC = () => {
               <ul className="nav-tabs nav-tab-product" role="tablist">
                 <li className="nav-item" role="presentation">
                   <button
-                   style={{ fontFamily: "Raleway" }}
+                    style={{ fontFamily: "Raleway" }}
                     className="nav-link active"
                     id="description-tab"
                     data-bs-toggle="tab"
@@ -373,7 +384,7 @@ const ProductDetailComponent: React.FC = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   <button
-                   style={{ fontFamily: "Raleway" }}
+                    style={{ fontFamily: "Raleway" }}
                     className="nav-link"
                     id="ingredients-tab"
                     data-bs-toggle="tab"
@@ -388,7 +399,7 @@ const ProductDetailComponent: React.FC = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                   <button
-                   style={{ fontFamily: "Raleway" }}
+                    style={{ fontFamily: "Raleway" }}
                     className="nav-link"
                     id="vendor-tab"
                     data-bs-toggle="tab"
@@ -398,18 +409,24 @@ const ProductDetailComponent: React.FC = () => {
                     aria-controls="vendor"
                     aria-selected="false"
                   >
-                    Nguồn gốc
+                    Đánh giá
                   </button>
                 </li>
               </ul>
               {/* Tab */}
+
               <div className="tab-content">
                 <div
                   className="tab-pane fade show active"
                   id="description"
                   role="tabpanel"
                   aria-labelledby="description-tab"
-                ></div>
+                >
+                  <span style={{ fontFamily: "Raleway", fontSize: "15px" }}>
+                    {product.description}
+                  </span>
+                </div>
+                {/* size */}
                 <div
                   className="tab-pane fade"
                   id="ingredients"
@@ -435,6 +452,8 @@ const ProductDetailComponent: React.FC = () => {
                     </table>
                   </div>
                 </div>
+                {/* end */}
+                {/* Đánh giá */}
                 <div
                   className="tab-pane fade"
                   id="vendor"
@@ -442,74 +461,97 @@ const ProductDetailComponent: React.FC = () => {
                   aria-labelledby="vendor-tab"
                 >
                   <div className="table-responsive">
-                    <table className="table table-striped">
-                      <tbody>
-                        <tr>
-                          <th>Color</th>
-                          <td> Red</td>
-                        </tr>
-                        <tr>
-                          <th>Size</th>
-                          <td> XL</td>
-                        </tr>
-                        <tr>
-                          <th>Weight</th>
-                          <td> 300gr</td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    {/* Đánh giá */}
+                    {product.reviews.map((review: any, index: any) => (
+                      <>
+                        <section className="layout-rating" key={index}>
+                          <div>
+                            <img
+                              className="img-rating"
+                              src={`${review.image_url}`}
+                              alt=""
+                            />
+                          </div>
+                          <div className="text-rating">
+                            <span className="name-user">
+                              {review.user_name}
+                            </span>
+                            {/* {dayjs(review.created_at).format('DD/MM/YYYY HH:mm:ss')} */}
+                            <div className="star-ratings">
+                            <Rate disabled defaultValue={review.rating} />
+                            </div>
+                            <p style={{fontSize:'14px'}} className="content-rating">{review.comment}</p>
+                          </div>
+                        </section>
+                        <hr className="hr-rating" />
+                      </>
+                    ))}
+
+                    {/* end */}
                   </div>
                 </div>
+                {/* end */}
               </div>
             </div>
-              {/* Sản phẩm cùng danh mục */}
-        <section className="section block-may-also-like recent-viewed">
-        <div className="container">
-            <div className="top-head justify-content-center">
-              <h4 className="text-uppercase brand-1 brush-bg">
-                Sản phẩm liên quan
-              </h4>
-            </div>
-            <div className="row">
-              {productById.map((product, index) => (
-                <div className="col-lg-3 col-sm-6">
-                     <Link to={`/product-detail/${product.id}`}>
-                  <div className="cardProduct wow fadeInUp" key={index}>
-                    <div className="cardImage">
-                      {/* <label className="lbl-hot">hot</label> */}
-                      <a href="product-single.html">
-                        <img
-                          className="imageMain"
-                          src={product.avatar_url}
-                          alt="kidify"
-                        />
-                        <img
-                          className="imageHover"
-                          src={product.avatar_url}
-                          alt="kidify"
-                        />
-                      </a>
-                      <div className="button-select">
-                        <a href="product-single.html">Add to Cart</a>
-                      </div>
-                    </div>
-                    <div className="cardInfo">
-                      <h6 style={{fontFamily:'Raleway', fontWeight:'normal'}} className=" cardTitle">{product.name}</h6>
-                      <p style={{fontFamily:'Raleway'}} className="font-lg cardDesc">
-                        {" "}
-                        {Math.round(product.price).toLocaleString("vi", {
-                          style: "currency",
-                          currency: "VND",
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                  </Link>
+            {/* Sản phẩm cùng danh mục */}
+            <section className="section block-may-also-like recent-viewed">
+              <div className="container">
+                <div className="top-head justify-content-center">
+                  <h4 className="text-uppercase brand-1 brush-bg">
+                    Sản phẩm liên quan
+                  </h4>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
+                <div className="row">
+                  {productById.map((product, index) => (
+                    <div className="col-lg-3 col-sm-6">
+                      <Link to={`/product-detail/${product.id}`}>
+                        <div className="cardProduct wow fadeInUp" key={index}>
+                          <div className="cardImage">
+                            {/* <label className="lbl-hot">hot</label> */}
+                            <a href="product-single.html">
+                              <img
+                                className="imageMain"
+                                src={product.avatar_url}
+                                alt="kidify"
+                              />
+                              <img
+                                className="imageHover"
+                                src={product.avatar_url}
+                                alt="kidify"
+                              />
+                            </a>
+                            <div className="button-select">
+                              <a href="product-single.html">Add to Cart</a>
+                            </div>
+                          </div>
+                          <div className="cardInfo">
+                            <h6
+                              style={{
+                                fontFamily: "Raleway",
+                                fontWeight: "normal",
+                              }}
+                              className=" cardTitle"
+                            >
+                              {product.name}
+                            </h6>
+                            <p
+                              style={{ fontFamily: "Raleway" }}
+                              className="font-lg cardDesc"
+                            >
+                              {" "}
+                              {Math.round(product.price).toLocaleString("vi", {
+                                style: "currency",
+                                currency: "VND",
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
           </div>
         </section>
       </main>

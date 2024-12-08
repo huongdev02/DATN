@@ -31,9 +31,39 @@
 .css-button-add:hover{
     background-color: #E35946;
 }
-:where(.css-dev-only-do-not-override-1x0dypw).ant-rate {
-    font-size: 30px;
-    color: yellow;
+:where(.css-dev-only-do-not-override-1x0dypw).ant-rate .ant-rate-star-half .ant-rate-star-first, :where(.css-dev-only-do-not-override-1x0dypw).ant-rate .ant-rate-star-full .ant-rate-star-second {
+    color: gold;
 }
 
 
+.img-rating{
+    border: 1px solid white;
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+   
+}
+
+.hr-rating{
+  border: 1px dotted grey;
+}
+
+.name-user{
+    font-family: "Raleway";
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.content-rating{
+    margin-top:  5px;
+    font-family: "Raleway";
+    font-size: 11px;
+}
+
+.layout-rating{
+    gap: 10px;
+    display: flex;
+    justify-content: start;
+  
+}
