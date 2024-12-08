@@ -50,13 +50,13 @@ Route::put('/cart/{cartId}/update/{productId}', [CartController::class, 'updateC
 
 Route::get('categories/{category}/products', [ProductController::class, 'getProductsByCategory']);
 Route::apiResource('products', ProductController::class);
-Route::resource('promotions', PromotionController::class);
+
 Route::apiResource('categories', CategoryController::class);
 Route::get('products/category/{categoryId}', [CategoryController::class, 'productsByCategory']); 
 
 Route::get('topsell', [TopSellController::class, 'index'])->name('topsell');
 Route::get('newproduct', [NewProductController::class, 'index'])->name('newproduct');
-Route::get('promotion', [PromotionController::class, 'index'])->name('[promotion]');
+
 
 Route::controller(AccountController::class)->group(function () {
     Route::post('login', 'login')->name('login');

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Faker\Provider\ar_EG\Payment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,4 +50,6 @@ class Order extends Model
     {
         return $this->belongsTo(Voucher::class);
     }
+
+
 }
