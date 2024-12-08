@@ -62,12 +62,6 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{route('promotion.index')}}">
-                <span class="menu-title">Giảm giá</span>
-                <i class="mdi mdi-clipboard menu-icon"></i>
-            </a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" href="{{ route('managers.index') }}">
                 <span class="menu-title">người dùng</span>
                 <i class="mdi mdi-account menu-icon"></i>

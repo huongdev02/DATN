@@ -5,7 +5,7 @@
             <p class="card-text">{{ $data['count'] }} người dùng mới</p>
             <p class="card-text">
                 So với tháng trước:
-                <span class="font-weight-bold">{{ number_format($data['change'], 2) }}%</span>
+                <span class="font-weight-bold">{{ number_format($data['change'], 2) }}</span>
                 @if ($data['change'] > 0)
                     <i class="fas fa-arrow-up text-success"></i>
                 @elseif($data['change'] < 0)

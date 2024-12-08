@@ -64,7 +64,7 @@ class PaymentController extends Controller
 
                 Log::info('Payment successful', ['order_id' => $order->id]);
                 return response()->json([
-                    'status'    => true,
+                    'status'    => 'true',
                     'message' => 'Thanh toán thành công'
                 ], 200);
             } else {
@@ -87,7 +87,10 @@ class PaymentController extends Controller
                 $order->message = 'Đơn hàng của bạn đã bị hủy do thanh toán thất bại'; // Thông báo cho người dùng
                 $order->save();
 
-                return response()->json(['message' => 'Thanh toán thất bại, khởi tạo đơn hàng không thành công'], 400);
+                return response()->json([
+                    'status'    => 'false',
+                    'message' => 'Thanh toán thất bại, khởi tạo đơn hàng không thành công'
+                ], 400);
             }
         } catch (\Exception $e) {
             Log::error('Payment handling error', [
