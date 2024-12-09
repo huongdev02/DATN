@@ -1,81 +1,141 @@
-<div class="mt-4">
-    <h4>Thống kê Voucher</h4>
-    <p><strong>Tổng số voucher:</strong> {{ $data['total_vouchers'] }}</p>
-    <p><strong>Voucher đã sử dụng:</strong> {{ $data['used_vouchers'] }}</p>
-    <p><strong>Voucher còn lại:</strong> {{ $data['remaining_vouchers'] }}</p>
-    <p><strong>Tổng tiền đã giảm giá:</strong> {{ number_format($data['total_discounted'], 2) }} VND</p>
+<!-- Hiển thị kết quả lọc -->
+<div class="voucher-statistics mt-5 mb-3">
+    <h3 class="text-primary">Thống Kê Voucher Sử Dụng</h3>
+    <table class="table table-bordered mt-4">
+        <tr>
+            <th>Tổng số voucher đã sử dụng</th>
+            <td>{{ $data['voucher_used_count'] }}</td>
+        </tr>
+        <tr>
+            <th>Tổng giá trị giảm giá đã áp dụng</th>
+            <td>{{ number_format($data['total_discount_value'], 2) }} VND</td>
+        </tr>
+    </table>
 
-    @if ($data['most_used_voucher'])
-        <p><strong>Voucher được dùng nhiều nhất:</strong> 
-            {{ $data['most_used_voucher']->code }} ({{ $data['most_used_voucher']->used_times }} lần)
-        </p>
-    @endif
-</div>
-
-@if ($data['vouchers_with_days_left']->isNotEmpty())
-    <h5 class="mt-4">Danh sách voucher còn hạn sử dụng:</h5>
-    <table class="table table-bordered mb-5">
+    <h4 class="text-primary mt-4 mb-3">5 Voucher Được Sử Dụng Nhiều Nhất</h4>
+    <table class="table table-bordered mb-4">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Mã</th>
-                <th>Hạn sử dụng</th>
-                <th>Số ngày còn lại</th>
-                <th>Đã sử dụng</th>
+                <th>Voucher Code</th>
+                <th>Số lần sử dụng</th>
+                <th>Giá trị giảm giá</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($data['vouchers_with_days_left'] as $index => $voucher)
+            @foreach ($data['top_5_vouchers'] as $voucher)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
                     <td>{{ $voucher->code }}</td>
-                    <td>{{ $voucher->end_day }}</td>
-                    <td>{{ $voucher->days_left }} ngày</td>
-                    <td>{{ $voucher->used_times }}</td>
+                    <td>{{ $voucher->usage_count }}</td>
+                    <td>{{ number_format($voucher->total_discount_value, 2) }} VND</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-@endif
+</div>
 
-@if ($startDate && $endDate)
-    <div class="mt-4">
-        <h5>Thống kê theo bộ lọc ({{ $startDate->format('d/m/Y') }} - {{ $endDate->format('d/m/Y') }})</h5>
-        <p><strong>Tổng số voucher đã sử dụng:</strong> {{ $data['filtered_used_count'] }}</p>
-        <p><strong>Tổng tiền đã giảm giá:</strong> {{ number_format($data['filtered_discounted_total'], 2) }} VND</p>
+<!-- Hiển thị dữ liệu hệ thống voucher -->
+<div class="voucher-system-summary mt-5 mb-5">
+    <h3 class="text-primary">Tổng Quan Hệ Thống Voucher</h3>
+    <table class="table table-bordered mt-4">
+        <tr>
+            <th>Tổng số voucher đang hoạt động</th>
+            <td>{{ $data['total_vouchers'] }}</td>
+        </tr>
+        <tr>
+            <th>Tổng số voucher đã sử dụng</th>
+            <td>{{ $data['total_used_vouchers'] }}</td>
+        </tr>
+        <tr>
+            <th>Tổng giá trị giảm giá đã áp dụng</th>
+            <td>{{ number_format($data['total_discount_applied'], 2) }} VND</td>
+        </tr>
+    </table>
 
-        @if ($data['most_used_voucher_filtered'])
-            <p><strong>Voucher được dùng nhiều nhất trong khoảng thời gian:</strong> 
-                {{ $data['most_used_voucher_filtered']->code }}
-            </p>
-        @endif
+    <h4 class="text-primary mt-4 mb-3">Voucher Còn Hạn</h4>
+    <table class="table table-bordered mb-4">
+        <thead>
+            <tr>
+                <th>Voucher Code</th>
+                <th>Giá trị</th>
+                <th>Áp dụng từ</th>
+                <th>Số lượng</th>
+                <th>Hết hạn vào</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($data['valid_vouchers'] as $voucher)
+                <tr>
+                    <td>{{ $voucher->code }}</td>
+                    <td>{{ number_format($voucher->discount_value, 2) }} VND</td>
+                    <td>{{ number_format($voucher->total_min, 2) }} VND</td>
+                    <td>{{ $voucher->quantity }}</td>
+                    <td>{{ \Carbon\Carbon::parse($voucher->end_day)->format('d/m/Y') }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 
-        @if ($data['filtered_vouchers']->isNotEmpty())
-            <h6 class="mt-4">Danh sách voucher đã sử dụng:</h6>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Mã Voucher</th>
-                        <th>Người dùng</th>
-                        <th>Đơn hàng</th>
-                        <th>Giá trị giảm</th>
-                        <th>Ngày sử dụng</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data['filtered_vouchers'] as $index => $usage)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $usage->voucher->code }}</td>
-                            <td>{{ $usage->user->name ?? 'N/A' }}</td>
-                            <td>{{ $usage->order->id ?? 'N/A' }}</td>
-                            <td>{{ number_format($usage->discount_value, 2) }}</td>
-                            <td>{{ $usage->created_at->format('d/m/Y') }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @endif
-    </div>
-@endif
+<style>
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        background-color: #fff;
+        border-collapse: collapse;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-bordered {
+        border: 1px solid #ddd;
+    }
+
+    .table th, .table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .table td {
+        color: #495057;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    h3, h4 {
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    h4 {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .voucher-statistics, .voucher-system-summary {
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+        margin-bottom: 30px;
+    }
+
+    .text-primary {
+        color: #007bff;
+    }
+
+    .mt-5, .mb-5, .mt-4, .mb-4, .mt-3, .mb-3 {
+        margin-top: 1.25rem !important;
+        margin-bottom: 1.25rem !important;
+    }
+</style>

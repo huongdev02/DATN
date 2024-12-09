@@ -1,83 +1,94 @@
 <div class="container">
-    <h1 class="mt-4 mb-4">Thống kê tỉ lệ đơn hàng</h1>
-
-    <!-- Tổng đơn hàng và tỉ lệ hoàn thành -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h4>Tổng đơn hàng</h4>
-            <p><strong>{{ $data['total_orders'] }}</strong></p>
-        </div>
-        <div class="col-md-6">
-            <h4>Tỉ lệ hoàn thành đơn</h4>
-            <p><strong>{{ $data['completion_rate'] }}%</strong></p>
-            <p>Tổng số đơn hoàn thành (status = 3): <strong>{{ $data['completed_orders'] }}</strong></p>
-        </div>
+    <!-- Tổng Quan -->
+    <div class="dashboard-summary mb-4">
+        <h3 class="mb-3">Tổng Quan Đơn Hàng</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tổng Số Đơn Hàng</th>
+                    <th>Đơn Hàng Hủy</th>
+                    <th>Đơn Hàng Hoàn Thành</th>
+                    <th>Tỷ Lệ Hoàn Thành</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ $data['total_orders'] }}</td>
+                    <td>{{ $data['canceled_orders'] }}</td>
+                    <td>{{ $data['completed_orders'] }}</td>
+                    <td>{{ $data['completion_rate'] }}%</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-    <!-- Tổng số đơn hàng đã hủy và lý do hủy phổ biến nhất -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h4>Tổng số đơn hàng đã hủy</h4>
-            <p><strong>{{ $data['canceled_orders'] }}</strong></p>
-            <p>Tỉ lệ hủy đơn: <strong>{{ $data['cancel_rate'] }}%</strong></p>
-        </div>
-        <div class="col-md-6">
-            <h4>Lý do hủy đơn phổ biến nhất</h4>
-            <p><strong>{{ $data['most_common_reason'] }}</strong></p>
-        </div>
+    <!-- Đơn Hàng Trong Tháng -->
+    <div class="monthly-orders mb-4">
+        <h3 class="mb-3">Đơn Hàng Tháng Này</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tổng Số Đơn Hàng</th>
+                    <th>Đơn Hàng Hủy</th>
+                    <th>Đơn Hàng Hoàn Thành</th>
+                    <th>Tỷ Lệ Hoàn Thành Tháng Này</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ $data['total_orders_this_month'] }}</td>
+                    <td>{{ $data['canceled_orders_this_month'] }}</td>
+                    <td>{{ $data['completed_orders_this_month'] }}</td>
+                    <td>{{ $data['completion_rate_this_month'] }}%</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-    <!-- Thống kê lý do hủy đơn -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h4>Thống kê lý do hủy đơn</h4>
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Lý do</th>
-                        <th>Số lượng</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data['reason_counts'] as $reason => $count)
-                        <tr>
-                            <td>{{ $reason }}</td>
-                            <td>{{ $count }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+    <!-- Thông Tin Hủy Đơn -->
+    <div class="cancel-reasons mb-4">
+        <h3 class="mb-3">Lý Do Hủy Đơn</h3>
+        @if (count($data['cancel_reasons']) > 0)
+            <ul class="list-group">
+                @foreach ($data['cancel_reasons'] as $reason)
+                    <li class="list-group-item">
+                        <strong>{{ $reason['message'] }}</strong> - Số lần hủy: {{ $reason['count'] }}
+                    </li>
+                @endforeach
+            </ul>
+        @else
+            <p>Không có lý do hủy đơn nào.</p>
+        @endif
     </div>
 
-    <!-- Thống kê phương thức thanh toán -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h4>Thống kê phương thức thanh toán</h4>
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Phương thức</th>
-                        <th>Số lượng</th>
-                        <th>Tỉ lệ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data['payment_rates'] as $method => $rate)
-                        <tr>
-                            <td>
-                                @if ($method === 'COD')
-                                    Thanh toán khi nhận hàng (COD)
-                                @elseif ($method === 'Online Payment')
-                                    Thanh toán trực tuyến
-                                @endif
-                            </td>
-                            <td>{{ $data['payment_rates'][$method] }}</td>
-                            <td>{{ $rate }}%</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+    <!-- Lý Do Hủy Phổ Biến Nhất -->
+    <div class="most-common-reason mb-4">
+        <h3 class="mb-3">Lý Do Hủy Phổ Biến Nhất</h3>
+        <p>{{ $data['most_common_cancel_reason'] }}</p>
+    </div>
+
+    <!-- Thông Tin Hệ Thống -->
+    <div class="system-summary mb-4">
+        <h3 class="mb-3">Thông Tin Hệ Thống</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tổng Số Đơn Hàng Hệ Thống</th>
+                    <th>Các Đơn Chưa Xử Lí - Đang Vận Chuyển</th>
+                    <th>Đơn Hàng Hủy Hệ Thống</th>
+                    <th>Đơn Hàng Hoàn Thành Hệ Thống</th>
+                    <th>Tỷ Lệ Hoàn Thành Hệ Thống</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ $data['total_orders_system'] }}</td>
+                    <td>{{ $data['other_status_orders_system'] }}</td>
+                    <td>{{ $data['canceled_orders_system'] }}</td>
+                    <td>{{ $data['completed_orders_system'] }}</td>
+                    <td>{{ $data['completion_rate_system'] }}%</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

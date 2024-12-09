@@ -194,80 +194,163 @@ class ThongkeController extends Controller
         return view('thongke.tonkho', compact('data'));
     }
 
+    public function tiledon(Request $request)
+    {
+        // Lấy ngày bắt đầu và kết thúc từ form lọc (nếu có)
+        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : null;
+        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
+    
+        // Phần 1: Số liệu theo form (dữ liệu động theo thời gian lọc)
+        $ordersQuery = Order::query();
+    
+        // Thêm điều kiện lọc theo khoảng thời gian nếu có
+        if ($startDate && $endDate) {
+            $ordersQuery->whereBetween('created_at', [$startDate, $endDate]);
+        }
+    
+        // Tính tổng đơn hàng, các đơn đã hủy, các đơn đã hoàn thành, phương thức thanh toán
+        $totalOrders = $ordersQuery->count();
+        $canceledOrders = $ordersQuery->where('status', 4)->count();
+        $completedOrders = $ordersQuery->where('status', 3)->count();
+        $onlinePaymentOrders = $ordersQuery->where('payment_method', 2)->count();
+        $codPaymentOrders = $ordersQuery->where('payment_method', 1)->count();
+    
+        // Tính tỉ lệ hoàn thành, hủy đơn, tỉ lệ thanh toán online và COD
+        $completionRate = $totalOrders > 0 ? ($completedOrders / $totalOrders) * 100 : 0;
+        $cancelRate = $totalOrders > 0 ? ($canceledOrders / $totalOrders) * 100 : 0;
+        $onlinePaymentRate = $totalOrders > 0 ? ($onlinePaymentOrders / $totalOrders) * 100 : 0;
+        $codPaymentRate = $totalOrders > 0 ? ($codPaymentOrders / $totalOrders) * 100 : 0;
+    
+        // Phần 2: Dữ liệu tháng này (cố định theo tháng hiện tại)
+        $monthStart = Carbon::now()->startOfMonth();
+        $monthEnd = Carbon::now()->endOfMonth();
+    
+        $monthlyOrders = Order::whereBetween('created_at', [$monthStart, $monthEnd])->get();
+    
+        $totalOrdersThisMonth = $monthlyOrders->count();
+        $canceledOrdersThisMonth = $monthlyOrders->where('status', 4)->count();
+        $completedOrdersThisMonth = $monthlyOrders->where('status', 3)->count();
+        $onlinePaymentOrdersThisMonth = $monthlyOrders->where('payment_method', 2)->count();
+        $codPaymentOrdersThisMonth = $monthlyOrders->where('payment_method', 1)->count();
+    
+        $completionRateThisMonth = $totalOrdersThisMonth > 0 ? ($completedOrdersThisMonth / $totalOrdersThisMonth) * 100 : 0;
+        $cancelRateThisMonth = $totalOrdersThisMonth > 0 ? ($canceledOrdersThisMonth / $totalOrdersThisMonth) * 100 : 0;
+        $onlinePaymentRateThisMonth = $totalOrdersThisMonth > 0 ? ($onlinePaymentOrdersThisMonth / $totalOrdersThisMonth) * 100 : 0;
+        $codPaymentRateThisMonth = $totalOrdersThisMonth > 0 ? ($codPaymentOrdersThisMonth / $totalOrdersThisMonth) * 100 : 0;
+    
+        // Phần 3: Dữ liệu toàn hệ thống (cố định không thay đổi theo form)
+        $totalOrdersSystem = Order::count();
+        $canceledOrdersSystem = Order::where('status', 4)->count();
+        $completedOrdersSystem = Order::where('status', 3)->count();
+        $onlinePaymentOrdersSystem = Order::where('payment_method', 2)->count();
+        $codPaymentOrdersSystem = Order::where('payment_method', 1)->count();
+    
+        // Đếm các đơn hàng có trạng thái khác ngoài hoàn thành (3) và hủy (4)
+        $otherStatusOrdersSystem = Order::whereNotIn('status', [3, 4])->count(); // Đơn hàng không phải hoàn thành và hủy
+    
+        $completionRateSystem = $totalOrdersSystem > 0 ? ($completedOrdersSystem / $totalOrdersSystem) * 100 : 0;
+        $cancelRateSystem = $totalOrdersSystem > 0 ? ($canceledOrdersSystem / $totalOrdersSystem) * 100 : 0;
+        $onlinePaymentRateSystem = $totalOrdersSystem > 0 ? ($onlinePaymentOrdersSystem / $totalOrdersSystem) * 100 : 0;
+        $codPaymentRateSystem = $totalOrdersSystem > 0 ? ($codPaymentOrdersSystem / $totalOrdersSystem) * 100 : 0;
+    
+        // Lý do hủy đơn
+        $cancelReasons = Order::where('status', 4)
+            ->select('message', DB::raw('count(*) as count'))
+            ->groupBy('message')
+            ->get();
+    
+        // Tìm lý do hủy phổ biến nhất
+        $mostCommonCancelReason = $cancelReasons->sortByDesc('count')->first();
+    
+        // Dữ liệu trả về view
+        $data = [
+            'total_orders' => $totalOrders,
+            'canceled_orders' => $canceledOrders,
+            'completed_orders' => $completedOrders,
+            'online_payment_orders' => $onlinePaymentOrders,
+            'cod_payment_orders' => $codPaymentOrders,
+            'completion_rate' => $completionRate,
+            'cancel_rate' => $cancelRate,
+            'online_payment_rate' => $onlinePaymentRate,
+            'cod_payment_rate' => $codPaymentRate,
+            'total_orders_this_month' => $totalOrdersThisMonth,
+            'canceled_orders_this_month' => $canceledOrdersThisMonth,
+            'completed_orders_this_month' => $completedOrdersThisMonth,
+            'online_payment_orders_this_month' => $onlinePaymentOrdersThisMonth,
+            'cod_payment_orders_this_month' => $codPaymentOrdersThisMonth,
+            'completion_rate_this_month' => $completionRateThisMonth,
+            'cancel_rate_this_month' => $cancelRateThisMonth,
+            'online_payment_rate_this_month' => $onlinePaymentRateThisMonth,
+            'cod_payment_rate_this_month' => $codPaymentRateThisMonth,
+            'total_orders_system' => $totalOrdersSystem,
+            'canceled_orders_system' => $canceledOrdersSystem,
+            'completed_orders_system' => $completedOrdersSystem,
+            'online_payment_orders_system' => $onlinePaymentOrdersSystem,
+            'cod_payment_orders_system' => $codPaymentOrdersSystem,
+            'completion_rate_system' => $completionRateSystem,
+            'cancel_rate_system' => $cancelRateSystem,
+            'online_payment_rate_system' => $onlinePaymentRateSystem,
+            'cod_payment_rate_system' => $codPaymentRateSystem,
+            'other_status_orders_system' => $otherStatusOrdersSystem, // Thêm biến đếm các đơn hàng có trạng thái ngoài hoàn thành và hủy
+            'cancel_reasons' => $cancelReasons,
+            'most_common_cancel_reason' => $mostCommonCancelReason ? $mostCommonCancelReason->message : null,
+        ];
+    
+        // Nếu yêu cầu AJAX, trả về dữ liệu JSON
+        if ($request->ajax()) {
+            return view('thongke.tiledon', compact('data'))->render();
+        }
+    
+        // Trả về view
+        return view('thongke.tiledon', compact('data'));
+    }
+    
+
+
+
     public function voucher(Request $request)
     {
-        // Lấy ngày bắt đầu và kết thúc từ form lọc
+        // Lấy ngày bắt đầu và kết thúc từ form lọc (nếu có)
         $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : null;
         $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
 
-        // Tổng số voucher trên toàn hệ thống
-        $totalVouchers = Voucher::selectRaw('SUM(quantity + used_times) as total')->value('total') ?? 0;
+        // Khởi tạo query cho Voucher Usages (dùng để đếm số voucher đã dùng và tổng tiền giảm giá)
+        $voucherUsageQuery = Voucher_usage::join('vouchers', 'voucher_usages.voucher_id', '=', 'vouchers.id')
+            ->select('voucher_usages.voucher_id', 'vouchers.code')
+            ->where('vouchers.is_active', 1); // Chỉ lấy voucher đang hoạt động
 
-        // Tổng số voucher đã sử dụng
-        $usedVouchers = Voucher::sum('used_times');
-
-        // Tổng số voucher còn lại
-        $remainingVouchers = Voucher::sum('quantity');
-
-        // Tổng số tiền đã giảm giá
-        $totalDiscounted = Voucher::selectRaw('SUM(used_times * discount_value) as total_discount')
-            ->value('total_discount') ?? 0;
-
-        // Tính voucher được dùng nhiều nhất trên hệ thống
-        $mostUsedVoucher = Voucher::orderBy('used_times', 'desc')->first();
-
-        // Tính số ngày còn hạn sử dụng của các voucher (đang hoạt động)
-        $vouchersWithDaysLeft = Voucher::select('id', 'code', 'end_day', 'used_times')
-            ->where('is_active', 1)
-            ->whereNotNull('end_day')
-            ->get()
-            ->map(function ($voucher) {
-                $voucher->days_left = Carbon::now()->diffInDays(Carbon::parse($voucher->end_day), false);
-                return $voucher;
-            });
-
-        // Dữ liệu theo bộ lọc (chỉ áp dụng khi có startDate và endDate)
-        $filteredVouchers = collect();
-        $filteredUsedCount = 0;
-        $filteredDiscountedTotal = 0;
-        $mostUsedVoucherFiltered = null;
-
+        // Thêm điều kiện lọc theo khoảng thời gian nếu có
         if ($startDate && $endDate) {
-            // Lọc các voucher được sử dụng trong khoảng thời gian
-            $filteredVouchers = Voucher_usage::whereBetween('created_at', [$startDate, $endDate])
-                ->with('voucher')
-                ->get();
-
-            // Tổng số voucher được sử dụng trong khoảng thời gian
-            $filteredUsedCount = $filteredVouchers->count();
-
-            // Tổng số tiền giảm giá trong khoảng thời gian
-            $filteredDiscountedTotal = $filteredVouchers->sum('discount_value');
-
-            // Voucher được sử dụng nhiều nhất trong khoảng thời gian
-            $mostUsedVoucherFilteredId = Voucher_usage::whereBetween('created_at', [$startDate, $endDate])
-                ->select('voucher_id', DB::raw('COUNT(*) as usage_count'))
-                ->groupBy('voucher_id')
-                ->orderByDesc('usage_count')
-                ->value('voucher_id');
-
-            $mostUsedVoucherFiltered = $mostUsedVoucherFilteredId
-                ? Voucher::find($mostUsedVoucherFilteredId)
-                : null;
+            $voucherUsageQuery->whereBetween('voucher_usages.created_at', [$startDate, $endDate]);
         }
 
-        // Chuẩn bị dữ liệu để truyền vào view
+        // Tính số lượng voucher đã dùng, tổng tiền giảm giá trong khoảng thời gian lọc
+        $voucherUsedCount = $voucherUsageQuery->count();
+        $totalDiscountValue = $voucherUsageQuery->sum('voucher_usages.discount_value');
+
+        // Lấy 5 voucher đã được sử dụng nhiều nhất trong khoảng thời gian lọc
+        $top5Vouchers = $voucherUsageQuery
+            ->selectRaw('voucher_usages.voucher_id, vouchers.code, COUNT(voucher_usages.voucher_id) as usage_count, SUM(voucher_usages.discount_value) as total_discount_value')
+            ->groupBy('voucher_usages.voucher_id', 'vouchers.code') // Group by the necessary columns
+            ->orderByRaw('usage_count DESC')
+            ->limit(5)
+            ->get();
+
+        // Dữ liệu cứng (hoạt động độc lập với form lọc)
+        $totalVouchers = Voucher::where('is_active', 1)->count();
+        $totalUsedVouchers = Voucher_usage::count();
+        $totalDiscountApplied = Voucher_usage::sum('discount_value');
+        $validVouchers = Voucher::where('end_day', '>', Carbon::now())->get();
+
+        // Chuẩn bị dữ liệu để đổ vào view
         $data = [
+            'voucher_used_count' => $voucherUsedCount,
+            'total_discount_value' => $totalDiscountValue,
+            'top_5_vouchers' => $top5Vouchers,
             'total_vouchers' => $totalVouchers,
-            'used_vouchers' => $usedVouchers,
-            'remaining_vouchers' => $remainingVouchers,
-            'total_discounted' => $totalDiscounted,
-            'most_used_voucher' => $mostUsedVoucher,
-            'vouchers_with_days_left' => $vouchersWithDaysLeft,
-            'filtered_vouchers' => $filteredVouchers,
-            'filtered_used_count' => $filteredUsedCount,
-            'filtered_discounted_total' => $filteredDiscountedTotal,
-            'most_used_voucher_filtered' => $mostUsedVoucherFiltered,
+            'total_used_vouchers' => $totalUsedVouchers,
+            'total_discount_applied' => $totalDiscountApplied,
+            'valid_vouchers' => $validVouchers,
         ];
 
         // Nếu request là AJAX
@@ -278,89 +361,16 @@ class ThongkeController extends Controller
         // Trả về view
         return view('thongke.voucher', compact('data'));
     }
-
-    public function tiledon(Request $request)
-    {
-        // Lấy ngày bắt đầu và kết thúc từ form lọc (nếu có)
-        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : null;
-        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
-
-        // Query cơ bản
-        $query = Order::query();
-
-        // Tổng số đơn hàng
-        $totalOrders = $query->count();
-
-        // Tổng số đơn hàng đã hủy
-        $canceledOrders = $query->where('status', 4)->count();
-
-        // Tỉ lệ hủy đơn
-        $cancelRate = $totalOrders > 0 ? round(($canceledOrders / $totalOrders) * 100, 2) : 0;
-
-        // Lý do hủy đơn, tìm lý do phổ biến nhất
-        $cancelReasons = [
-            'Tôi không muốn đặt hàng nữa',
-            'Mặt hàng quá đắt',
-            'Thời gian giao hàng quá lâu',
-            'Đơn hàng của bạn đã bị hủy do thanh toán thất bại',
-            'Khác'
-        ];
-        $reasonCounts = [];
-        foreach ($cancelReasons as $reason) {
-            $reasonCounts[$reason] = $query->where('status', 4)->where('message', $reason)->count();
-        }
-        $mostCommonReason = collect($reasonCounts)->sortDesc()->keys()->first();
-
-        // Tổng số đơn hoàn thành
-        $completedOrders = $query->where('status', 3)->count();
-
-        // Tỉ lệ hoàn thành đơn
-        $completionRate = $totalOrders > 0 ? round(($completedOrders / $totalOrders) * 100, 2) : 0;
-
-        // Thống kê phương thức thanh toán
-        $paymentMethodCounts = [
-            'COD' => $query->where('payment_method', 0)->count(),
-            'Online Payment' => $query->where('payment_method', 1)->count(),
-        ];
-
-        // Tổng đơn theo phương thức thanh toán
-        $paymentTotals = array_sum($paymentMethodCounts);
-        $paymentRates = [];
-        foreach ($paymentMethodCounts as $method => $count) {
-            $paymentRates[$method] = $paymentTotals > 0 ? round(($count / $paymentTotals) * 100, 2) : 0;
-        }
-
-        // Chuẩn bị dữ liệu để đổ vào view
-        $data = [
-            'total_orders' => $totalOrders,
-            'canceled_orders' => $canceledOrders,
-            'cancel_rate' => $cancelRate,
-            'most_common_reason' => $mostCommonReason,
-            'completed_orders' => $completedOrders,
-            'completion_rate' => $completionRate,
-            'payment_rates' => $paymentRates,
-            'reason_counts' => $reasonCounts,
-        ];
-
-        // Nếu request là AJAX
-        if ($request->ajax()) {
-            return view('thongke.tiledon', compact('data'))->render();
-        }
-
-        // Trả về view
-        return view('thongke.tiledon', compact('data'));
-    }
-
     public function khachhang(Request $request)
     {
         // Lấy ngày bắt đầu và kết thúc từ form lọc (nếu có)
         $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : null;
         $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
-    
+
         // Query khách hàng đã mua hàng nhiều nhất tháng này
         $currentMonthStart = Carbon::now()->startOfMonth();
         $currentMonthEnd = Carbon::now()->endOfMonth();
-        
+
         $topCustomersThisMonth = User::join('orders', 'users.id', '=', 'orders.user_id')
             ->whereBetween('orders.created_at', [$currentMonthStart, $currentMonthEnd])
             ->select('users.id', 'users.email', 'users.avatar', DB::raw('COUNT(orders.id) as order_count'))
@@ -368,7 +378,7 @@ class ThongkeController extends Controller
             ->orderByDesc('order_count')
             ->limit(10)
             ->get();
-    
+
         // Query khách hàng đã mua hàng nhiều nhất toàn hệ thống
         $topCustomersAllTime = User::join('orders', 'users.id', '=', 'orders.user_id')
             ->select('users.id', 'users.email', 'users.avatar', DB::raw('COUNT(orders.id) as order_count'))
@@ -376,7 +386,7 @@ class ThongkeController extends Controller
             ->orderByDesc('order_count')
             ->limit(10)
             ->get();
-    
+
         // Query theo bộ lọc nếu có
         $filteredCustomers = collect();
         if ($startDate && $endDate) {
@@ -387,15 +397,14 @@ class ThongkeController extends Controller
                 ->orderByDesc('order_count')
                 ->get();
         }
-    
+
         // Dữ liệu để gửi vào view
         $data = [
             'top_customers_this_month' => $topCustomersThisMonth,
             'top_customers_all_time' => $topCustomersAllTime,
             'filtered_customers' => $filteredCustomers,
         ];
-    
+
         return view('thongke.khachhang', compact('data'));
     }
-    
 }
