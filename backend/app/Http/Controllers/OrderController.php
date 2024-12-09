@@ -23,7 +23,10 @@ class OrderController extends Controller
         }
 
         // Lấy danh sách đơn hàng (nếu không có trạng thái, sẽ lấy tất cả)
-        $orders = $query->latest()->paginate(5);
+        $orders = $query->orderByRaw("CASE WHEN status = 0 THEN 0 ELSE 1 END")
+        ->latest()
+        ->paginate(5);
+
 
         if ($request->has('order_id') && $request->has('status')) {
             $orderId = $request->input('order_id');

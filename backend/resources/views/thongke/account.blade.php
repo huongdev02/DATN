@@ -1,22 +1,32 @@
 <div class="card text-white bg-primary h-100">
     <div class="card-body">
         <h5 class="card-title">Số lượng người dùng mới</h5>
-        @if (isset($data['count']) && $data['count'] > 0)
-            <p class="card-text">{{ $data['count'] }} người dùng mới</p>
-            <p class="card-text">
-                So với tháng trước:
-                <span class="font-weight-bold">{{ number_format($data['change'], 2) }}</span>
-                @if ($data['change'] > 0)
-                    <i class="fas fa-arrow-up text-success"></i>
-                @elseif($data['change'] < 0)
-                    <i class="fas fa-arrow-down text-danger"></i>
-                @else
-                    <i class="fas fa-arrow-right text-muted"></i>
-                @endif
-            </p>
-            <p class="card-text">Người dùng mới tháng trước: {{ $data['last_count'] }} người</p>
-        @else
-            <p class="card-text">Không có dữ liệu người dùng mới.</p>
-        @endif
+
+        <!-- Dòng 2: Người dùng mới theo bộ lọc -->
+        <p class="card-text">
+            @if ($data['filtered_count'] > 0)
+                <span class="text-warning font-weight-bold">
+                    Người dùng mới trong khoảng thời gian được lọc:
+                </span>
+                <span class="font-weight-bold text-warning">
+                    {{ $data['filtered_count'] }} người
+                </span>
+            @else
+                <span class="text-warning font-weight-bold">
+                    Không có dữ liệu người dùng mới trong khoảng thời gian đã chọn.
+                </span>
+            @endif
+        </p>
+
+
+        <!-- Dòng 1: Người dùng mới trong tháng này -->
+        <p class="card-text">Người dùng mới tháng này:
+            <span class="font-weight-bold">{{ $data['current_count'] }}</span>
+        </p>
+
+        <!-- Dòng 3: Người dùng mới trong tháng trước -->
+        <p class="card-text">Người dùng mới tháng trước:
+            <span class="font-weight-bold">{{ $data['last_count'] }}</span>
+        </p>
     </div>
 </div>
