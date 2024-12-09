@@ -123,10 +123,10 @@ const Header: React.FC = () => {
         localStorage.setItem("token", userData.token);
         window.location.reload();
 
-        // notification.success({
-        //   message: "Đăng nhập thành công",
-        //   description: `Chào mừng, ${resultAction.payload.email}`,
-        // });
+        notification.success({
+          message: "Đăng nhập thành công",
+          description: `Chào mừng, ${resultAction.payload.email}`,
+        });
         setTimeout(() => {}, 1000);
       } else {
         notification.error({
