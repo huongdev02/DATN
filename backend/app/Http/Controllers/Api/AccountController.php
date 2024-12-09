@@ -21,28 +21,42 @@ class AccountController extends Controller
 
     public function register(Request $request)
     {
-        $user = $request->validate([
+        // Validate incoming request
+        $request->validate([
             'email' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
-            'password' => 'required|string|min:6|confirmed', // Use 'confirmed' for password confirmation
+            'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users,username'],  // Username validation
+            'password' => 'required|string|min:6',
+            'confirmPassword' => 'required|same:password', // Ensure confirm_password matches password
         ]);
-
+    
         try {
-            $user['password'] = Hash::make($request->input('password'));
-            $user['role'] = $request->filled('role') ? $request->input('role') : 0;
-
-            $user = User::query()->create($user);
+            // Prepare user data
+            $userData = [
+                'email' => $request->input('email'),
+                'username' => $request->input('username'),
+                'password' => Hash::make($request->input('password')),  // Hash the password
+                'role' => $request->filled('role') ? $request->input('role') : 0,  // Default role is 0
+            ];
+    
+            // Create user
+            $user = User::create($userData);
+    
+            // Return success response
             return response()->json([
                 'status' => true,
                 'message' => 'Đăng kí thành công',
                 'data' => [
-                    'email'     => $user->email,
-                    'password'  => $user->password,
+                    'email' => $user->email,
+                    'username' => $user->username,
                 ]
             ], 200);
-        } catch (Throwable $e) {
+    
+        } catch (\Throwable $e) {
+            // Handle error
             return back()->with('error', $e->getMessage());
         }
     }
+    
 
     public function login(Request $request)
     {

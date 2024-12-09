@@ -15,6 +15,7 @@ import {
 } from "@ant-design/icons";
 import { message } from "antd";
 import axios from "axios";
+import { registerUser } from "../../Redux/Reducer/Register";
 interface User {
   id: number;
   email: string;
@@ -37,8 +38,10 @@ const Header: React.FC = () => {
   const [activeTab, setActiveTab] = useState("login");
   const [products, setProducts] = useState<any[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const loading = useSelector((state: RootState) => state.auth.loading);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -137,6 +140,27 @@ const Header: React.FC = () => {
     } catch (err) {
       console.error("Đăng nhập thất bại:", err);
     }
+  };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      notification.error({
+        message: 'Lỗi đăng ký',
+        description: 'Mật khẩu và xác nhận mật khẩu không khớp!',
+        placement: 'topRight',  
+      });
+      return;
+    }
+
+    const userData = { email, username, password, confirmPassword }; 
+    dispatch(registerUser(userData));
+    notification.success({
+      message: 'Đăng ký thành công',
+      description: `Vui lòng đăng nhập để đặt hàng tại website`,
+      placement: 'topRight', 
+    });
+    setActiveTab("login");
   };
 
   const handleLogout = () => {
@@ -682,7 +706,7 @@ const Header: React.FC = () => {
             )}
 
             {activeTab === "signup" && (
-              <form action="">
+              <form onSubmit={handleSubmit}>
                 <div
                   className="form-register"
                   style={{ display: activeTab === "signup" ? "block" : "none" }}
@@ -692,6 +716,15 @@ const Header: React.FC = () => {
                       className="form-control"
                       type="text"
                       placeholder="Email"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Username"
+                      onChange={(e) => setUsername(e.target.value)}
                     />
                   </div>
                   <div className="form-group">
@@ -699,6 +732,7 @@ const Header: React.FC = () => {
                       className="form-control"
                       type="password"
                       placeholder="Password"
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
                   <div className="form-group">
@@ -706,6 +740,8 @@ const Header: React.FC = () => {
                       className="form-control"
                       type="password"
                       placeholder="Confirm Password"
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+
                     />
                   </div>
                   <div className="form-group">
