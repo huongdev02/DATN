@@ -351,9 +351,51 @@ class ThongkeController extends Controller
         return view('thongke.tiledon', compact('data'));
     }
 
-    public function khachhang()
+    public function khachhang(Request $request)
     {
-        //thong ke cac user da tung mua hang, user mua nhieu, user chua tung mua
-        return view('thongke.khachhang');
+        // Lấy ngày bắt đầu và kết thúc từ form lọc (nếu có)
+        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : null;
+        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
+    
+        // Query khách hàng đã mua hàng nhiều nhất tháng này
+        $currentMonthStart = Carbon::now()->startOfMonth();
+        $currentMonthEnd = Carbon::now()->endOfMonth();
+        
+        $topCustomersThisMonth = User::join('orders', 'users.id', '=', 'orders.user_id')
+            ->whereBetween('orders.created_at', [$currentMonthStart, $currentMonthEnd])
+            ->select('users.id', 'users.email', 'users.avatar', DB::raw('COUNT(orders.id) as order_count'))
+            ->groupBy('users.id', 'users.email', 'users.avatar')
+            ->orderByDesc('order_count')
+            ->limit(10)
+            ->get();
+    
+        // Query khách hàng đã mua hàng nhiều nhất toàn hệ thống
+        $topCustomersAllTime = User::join('orders', 'users.id', '=', 'orders.user_id')
+            ->select('users.id', 'users.email', 'users.avatar', DB::raw('COUNT(orders.id) as order_count'))
+            ->groupBy('users.id', 'users.email', 'users.avatar')
+            ->orderByDesc('order_count')
+            ->limit(10)
+            ->get();
+    
+        // Query theo bộ lọc nếu có
+        $filteredCustomers = collect();
+        if ($startDate && $endDate) {
+            $filteredCustomers = User::join('orders', 'users.id', '=', 'orders.user_id')
+                ->whereBetween('orders.created_at', [$startDate, $endDate])
+                ->select('users.id', 'users.email', 'users.avatar', DB::raw('COUNT(orders.id) as order_count'))
+                ->groupBy('users.id', 'users.email', 'users.avatar')
+                ->orderByDesc('order_count')
+                ->get();
+        }
+    
+        // Dữ liệu để gửi vào view
+        $data = [
+            'top_customers_this_month' => $topCustomersThisMonth,
+            'top_customers_all_time' => $topCustomersAllTime,
+            'filtered_customers' => $filteredCustomers,
+        ];
+    
+        return view('thongke.khachhang', compact('data'));
     }
+    
 }
