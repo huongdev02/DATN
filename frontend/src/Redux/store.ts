@@ -11,6 +11,7 @@ import AuthReducer from './Reducer/AuthReducer'
 import VoucherReducer from './Reducer/VoucherReducer'
 import OrderHistoryReducer from './Reducer/OrderHistoryReducer'
 import UserReducer from './Reducer/UserReducer'
+import priceReducer from './Reducer/PriceReducer';
 export const store = configureStore({
     reducer: {
         products: ProductReducer,
@@ -22,7 +23,8 @@ export const store = configureStore({
         auth: AuthReducer,
         voucherReducer: VoucherReducer,
         OrderHistoryReducer: OrderHistoryReducer,
-        UserReducer: UserReducer
+        UserReducer: UserReducer,
+        priceReducer: priceReducer,
     },
 });
 
