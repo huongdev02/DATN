@@ -33,12 +33,14 @@ interface Cart {
 
 interface CartState {
   cart: Cart | null;
+  totalQuantity: number,  // Thêm trường này để lưu tổng số lượng sản phẩm trong giỏ hàng
   items: CartItem[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
 
 const initialState: CartState = {
+  totalQuantity: 0,  // Thêm trường này để lưu tổng số lượng sản phẩm trong giỏ hàng
   cart: null,
   items: [],
   status: 'idle',
@@ -122,6 +124,7 @@ export const addToCart = createAsyncThunk<CartItem, { productId: number; quantit
         'http://127.0.0.1:8000/api/carts',
         { product_id: productId, quantity, size_id: sizeId, color_id: colorId },
         { headers: { Authorization: `Bearer ${token}` } }
+       
       );
       return response.data as CartItem;
     } catch (error: any) {
@@ -148,7 +151,7 @@ export const updateCartItem = createAsyncThunk<CartItem, { cartId: number; produ
   }
 );
 
-// Slice
+// Slice để quản lý giỏ hàng
 const CartReducer = createSlice({
   name: 'cart',
   initialState,
@@ -161,7 +164,9 @@ const CartReducer = createSlice({
       })
       .addCase(fetchCart.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
         state.status = 'succeeded';
-        state.items = action.payload; // Cập nhật các item trong giỏ hàng
+        state.items = action.payload;
+        // Tính lại tổng số lượng sản phẩm
+        state.totalQuantity = action.payload.reduce((total, item) => total + item.quantity, 0);
       })
       .addCase(fetchCart.rejected, (state, action) => {
         state.status = 'failed';
@@ -172,13 +177,20 @@ const CartReducer = createSlice({
       })
       .addCase(addToCart.fulfilled, (state, action: PayloadAction<CartItem>) => {
         state.status = 'succeeded';
-        const existingItem = state.items.find((item) => item.product_id === action.payload.product_id && item.size_id === action.payload.size_id && item.color_id === action.payload.color_id);
+        const existingItem = state.items.find(
+          (item) =>
+            item.product_id === action.payload.product_id &&
+            item.size_id === action.payload.size_id &&
+            item.color_id === action.payload.color_id
+        );
         if (existingItem) {
           existingItem.quantity = action.payload.quantity;
           existingItem.total = action.payload.total;
         } else {
           state.items.push(action.payload);
         }
+        // Tính lại tổng số lượng sau khi thêm sản phẩm vào giỏ
+        state.totalQuantity = state.items.reduce((total, item) => total + item.quantity, 0);
       })
       .addCase(addToCart.rejected, (state, action) => {
         state.status = 'failed';
@@ -190,7 +202,10 @@ const CartReducer = createSlice({
       .addCase(updateCartItem.fulfilled, (state, action: PayloadAction<CartItem>) => {
         state.status = 'succeeded';
         const itemIndex = state.items.findIndex(
-          (item) => item.product_id === action.payload.product_id && item.size_id === action.payload.size_id && item.color_id === action.payload.color_id
+          (item) =>
+            item.product_id === action.payload.product_id &&
+            item.size_id === action.payload.size_id &&
+            item.color_id === action.payload.color_id
         );
         if (itemIndex !== -1) {
           state.items[itemIndex] = {
@@ -199,6 +214,8 @@ const CartReducer = createSlice({
             total: action.payload.total,
           };
         }
+        // Tính lại tổng số lượng sau khi cập nhật sản phẩm trong giỏ
+        state.totalQuantity = state.items.reduce((total, item) => total + item.quantity, 0);
         localStorage.setItem('cartItems', JSON.stringify(state.items)); // Cập nhật giỏ hàng vào localStorage
       })
       .addCase(updateCartItem.rejected, (state, action) => {

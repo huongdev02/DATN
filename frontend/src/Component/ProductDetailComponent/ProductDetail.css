@@ -35,6 +35,11 @@
     color: gold;
 }
 
+:where(.css-dev-only-do-not-override-1x0dypw).ant-notification .ant-notification-notice-wrapper .ant-notification-notice {
+    border: 1px solid rgb(82,196,26);
+    border-left: 4px solid rgb(82,196,26);
+}
+
 
 .img-rating{
     border: 1px solid white;

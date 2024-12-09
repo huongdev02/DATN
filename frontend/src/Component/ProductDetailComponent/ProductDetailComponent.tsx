@@ -135,8 +135,9 @@ const ProductDetailComponent: React.FC = () => {
 
       await dispatch(addToCart(cartData));
       notification.success({
-        message: "Sản phẩm đã được thêm vào giỏ hàng!",
-      });
+        message: "Thêm vào giỏ hàng thành công !",
+        placement: "bottomRight",
+      })
       // navigate('/cart')
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error);

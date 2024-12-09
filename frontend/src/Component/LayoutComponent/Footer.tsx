@@ -8,15 +8,14 @@ const Footer:React.FC = () => {
      <footer className="footer">
   <div className="footer-1">
     <div className="container">
-      <div className="row">
+      <div className="row" style={{display:'flex', justifyContent:'start'}}>
         <div className="col-lg-3 col-md-3 mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".0s">
-          <h5 className="neutral-900 text-uppercase mb-30">CONTACT</h5>
-          <p className="neutral-900 font-lg desc-company">Monday to Friday 8 a.m - 5 p.m</p>
-          <p className="neutral-900 font-lg phone-footer">+01 456 789</p>
-          <p className="neutral-900 font-lg phone-footer">+01 567 890</p>
-          <p className="neutral-900 font-lg email-footer">contact@kidify.com</p>
+          <h5 className="neutral-900 text-uppercase mb-30">LIÊN HỆ</h5>
+          <p className="neutral-900 font-lg desc-company">Số 22, ngõ 20/4 phố Nghĩa Đô, Cầu Giấy, Hà Nội</p>
+          <p className="neutral-900 font-lg phone-footer">+84 (0)986936908</p>
+          <p className="neutral-900 font-lg email-footer">lienhe@likeshop.vn</p>
         </div>
-        <div className="col-lg-9 mb-30">
+        {/* <div className="col-lg-9 mb-30">
           <div className="row">
             <div className="col-lg-3 col-md-6 mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
               <h5 className="neutral-900 text-uppercase mb-30">Company</h5>
@@ -59,7 +58,7 @@ const Footer:React.FC = () => {
               </ul>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   </div>
@@ -68,7 +67,7 @@ const Footer:React.FC = () => {
       <div className="footer-bottom">
         <div className="row align-items-center">
           <div className="col-lg-3 col-md-12 text-center text-lg-start mb-20 wow animate__animated animate__fadeIn" data-wow-delay=".0s"><a href="index.html"><img src={Logo} alt="kidify" /></a></div>
-          <div className="col-lg-6 col-md-12 text-center mb-20 wow animate__animated animate__fadeIn" data-wow-delay=".0s"><span className="body-p1 neutral-900 mr-5">©2023</span><a href="#">Kidify</a>. All rights reserved</div>
+          <div className="col-lg-6 col-md-12 text-center mb-20 wow animate__animated animate__fadeIn" data-wow-delay=".0s"><span className="body-p1 neutral-900 mr-5">©2024</span><a href="#">Likeshop</a></div>
           <div className="col-lg-3 col-md-12 text-center text-lg-end mb-20 wow animate__animated animate__fadeIn" data-wow-delay=".0s">
             <div className="d-flex justify-content-center justify-content-lg-end align-items-center box-all-payments">
               <div className="d-inline-block box-payments">

@@ -5,8 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Redux/store";
 import { login } from "../../Redux/Reducer/AuthReducer";
 import { Button, Dropdown, Flex, MenuProps, notification, Space } from "antd";
+import { useNavigate } from "react-router-dom";
 import { CartItem } from "../../Redux/Reducer/CartReducer";
+import { useCart } from "../../context/cartContext";
 import "./Header.css";
+import api from "../../Axios/Axios";
+import { fetchCart } from "../../Redux/Reducer/CartReducer";
 import {
   InfoCircleFilled,
   InfoCircleOutlined,
@@ -31,6 +35,9 @@ interface User {
 }
 
 const Header: React.FC = () => {
+  // const { totalQuantity } = useCart();
+  const nav = useNavigate()
+  const { totalQuantity, status } = useSelector((state: RootState) => state.cart);
   const [searchText, setSearchText] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isCartActice, setIsCartActice] = useState(false);
@@ -47,6 +54,7 @@ const Header: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isShow, setIsShow] = useState(false);
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [check, setCheck] = useState<any>();
   const { cart } = useSelector((state: RootState) => state.cart);
   const cartItemsLength = JSON.parse(localStorage.getItem("cartItems") || "[]");
   const cartLength = cartItemsLength.length;
@@ -59,6 +67,12 @@ const Header: React.FC = () => {
       message.error("Lỗi api!");
     }
   };
+
+ 
+  
+
+  console.log("checkkkkk", check);
+  
 
   const handleClick = () => {
     setIsShow(true);
@@ -74,6 +88,9 @@ const Header: React.FC = () => {
     }
   };
 
+  console.log(totalQuantity, 'sollllll');
+  
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -84,28 +101,51 @@ const Header: React.FC = () => {
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
     GetAllProducts()
+   
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));
     }
   }, []);
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
+    const fetchAuthStatus = async () => {
+      const userData = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
 
-    if (userData && token) {
-      try {
-        const parsedUser = JSON.parse(userData);
-        setIsLoggedIn(true);
-        setUser(parsedUser.user);
-      } catch (error) {
-        console.error("Error parsing user data:", error);
+      // Kiểm tra nếu `userData` và `token` tồn tại
+      if (userData && token) {
+        try {
+          // Parse dữ liệu user từ localStorage
+          const parsedUser = JSON.parse(userData);
+          setIsLoggedIn(true);
+          setUser(parsedUser.user);
+
+          // Gọi API để kiểm tra auth
+          const res = await axios.get("http://127.0.0.1:8000/api/auth/check", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          // if(check.role === 0){
+          //   nav('http://127.0.0.1:8000/admin/dashboard')
+          // }else{
+          //   nav('http://127.0.0.1:8000/user/dashboard')
+          // }
+          // console.log("Auth Check Response:", res.data);
+          setCheck(res.data); // Lưu dữ liệu kiểm tra auth vào state
+        } catch (error) {
+          console.error("Error fetching auth status:", error);
+          setIsLoggedIn(false);
+          setUser(null);
+          setCheck(null);
+        }
+      } else {
+        console.log("No user data or token found in localStorage.");
       }
-    }
+    };
 
-    console.log("userData", userData);
-    console.log("token", token);
-  }, []);
+    fetchAuthStatus(); // Gọi hàm kiểm tra auth
+  }, []); // Chỉ chạy khi component được mount
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,11 +166,7 @@ const Header: React.FC = () => {
         localStorage.setItem("token", userData.token);
         window.location.reload();
 
-        notification.success({
-          message: "Đăng nhập thành công",
-          description: `Chào mừng, ${resultAction.payload.email}`,
-        });
-        setTimeout(() => {}, 1000);
+        
       } else {
         notification.error({
           message: "Tài khoản không chính khác",
@@ -163,17 +199,26 @@ const Header: React.FC = () => {
     setActiveTab("login");
   };
 
+  const navDashBoard = () => {
+    if (check.role === 2) {
+      window.location.href = 'http://127.0.0.1:8000/admin/dashboard';
+    } if (check.role === 0) {
+      window.location.href = 'http://127.0.0.1:8000/user/dashboard';  
+    }
+  };
+  
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     // localStorage.removeItem("cart");
     setIsLoggedIn(false);
     notification.success({
-      message: "Đăng xuất thành công",
+      message: "Đăng xuất thành công !",
+      placement:'bottomRight'
     });
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    nav('/')
+    
   };
 
   const items: MenuProps["items"] = [
@@ -292,11 +337,11 @@ const Header: React.FC = () => {
                   }}
                 >
                   <InfoCircleOutlined className="icon-css" />
-                  <Link to={"http://127.0.0.1:8000/user/dashboard"}>
-                    <span className="hover-text" style={{ marginLeft: "5px" }}>
+               
+                    <span onClick={()=>navDashBoard()} className="hover-text" style={{ marginLeft: "5px" }}>
                       Thông tin tài khoản
                     </span>
-                  </Link>
+                 
                 </div>
                 <div className="css-logout" onClick={() => handleLogout()}>
                   <LogoutOutlined className="icon-css" />
@@ -426,13 +471,12 @@ const Header: React.FC = () => {
                   </defs>
                 </svg>
               </a> */}
-
+              {/* Giỏ hàng nè */}
               <Link
                 to="/cart"
                 className="account-icon cart"
-                onClick={openCartPopup}
               >
-                <span className="number-tag">{cartLength}</span>
+                <span className="number-tag">{totalQuantity}</span>
                 <svg
                   width={28}
                   height={28}
@@ -454,6 +498,7 @@ const Header: React.FC = () => {
                   </defs>
                 </svg>
               </Link>
+              {/* end giỏ hàng */}
             </div>
           </div>
         </div>
@@ -531,84 +576,6 @@ const Header: React.FC = () => {
         </div>
       </div>
       {/* end tìm kiếm */}
-      <div
-        className="box-popup-cart perfect-scrollbar"
-        style={{ visibility: isCartActice ? "visible" : "hidden" }}
-      >
-        <div className="box-cart-overlay">
-          <div className={`box-cart-wrapper ${isCartActice ? "active" : ""}`}>
-            <a onClick={closeCartPopup} href="#">
-              <svg
-                className="icon-16 d-inline-flex align-items-center justify-content-center"
-                fill="#111111"
-                stroke="#111111"
-                width={24}
-                height={24}
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </a>
-            <h5 className="mb-15 mt-50">Your Cart</h5>
-            <div className="list-product-4 mb-50">
-              {cartItems.length > 0 ? (
-                cartItems.map((item, index) => (
-                  <div key={index} className="cardProduct cardProduct4">
-                    <div className="cardImage">
-                      {/* <Link to={`/product/${item.id}`}>
-                                                <img src={`http://127.0.0.1:8000/storage/${item.product.avatar}` || 'default-image.jpg'} alt={item.product.name} />
-                                            </Link> */}
-                    </div>
-                    <div className="cardInfo">
-                      <Link to={`/product/${item.id}`}>
-                        <h6 className="font-md-bold cardTitle">
-                          {item.product_name}
-                        </h6>
-                      </Link>
-                      <div className="product-price-bottom">
-                        <p className="font-lg cardDesc">
-                          {item.price.toLocaleString("vi-VN")}VNĐ x{" "}
-                          {item.quantity}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>Your cart is empty.</p>
-              )}
-            </div>
-            <Link
-              to="/cart"
-              onClick={closeCartPopup}
-              className="btn btn-brand-1-xl-bold w-100 font-md-bold"
-            >
-              View your cart
-              <svg
-                className="icon-16 ml-5"
-                fill="none"
-                stroke="#ffffff"
-                strokeWidth="1.5"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </div>
       <div
         className="box-popup-account"
         style={{

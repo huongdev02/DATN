@@ -9493,6 +9493,7 @@ h5.item-collapse.collapsed-item {
 
 .box-total-checkout {
   border: 1px solid #DBE2E5;
+  margin-top: 85px;
   padding: 21px 38px;
   border-radius: 4px;
   margin-left: 30px;

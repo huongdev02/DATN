@@ -267,7 +267,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                   </div>
                   <Link to={`/checkout/${userId}`}>
                     <button className="btn btn-brand-1-xl-bold w-100 font-sm-bold">
-                      Proceed To CheckOut
+                     Tiến hành thanh toán
                     </button>
                   </Link>
                 </div>

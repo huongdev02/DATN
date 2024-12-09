@@ -9,6 +9,7 @@ import Blog from '../Layout/Blog/Blog';
 import Found from '../Layout/Found/Found';
 import About from '../Layout/About/About';
 import OrderHistory from '../Layout/OrderHistory/OrderHistory';
+import ThankYou from '../thankYou/thankYou';
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,7 @@ const AppRoutes = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path='/blog' element={<Blog />} />
       <Route path='/about' element={<About />} />
+      <Route path='/thank' element={<ThankYou />} />
       <Route path='*' element={<Found />} />
     </Routes>
   );
