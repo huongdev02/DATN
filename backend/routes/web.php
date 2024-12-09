@@ -13,7 +13,6 @@ use App\Http\Controllers\LogoBannerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\QuanliReviewController;
 use App\Http\Controllers\ThongkeController;
 use App\Http\Controllers\UserOrderController;
@@ -94,7 +93,11 @@ Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager',
     Route::get('/thongke/account', [ThongkeController::class, 'account'])->name('thongke.account');
     Route::get('/thongke/orders', [ThongkeController::class, 'orders'])->name('thongke.orders');
     Route::get('/thongke/topproduct', [ThongkeController::class, 'topproduct'])->name('thongke.topproduct');
+    
     Route::get('/thongke/tonkho', [ThongkeController::class, 'tonkho'])->name('thongke.tonkho');
+    Route::get('/thongke/khachhang', [ThongkeController::class, 'khachhang'])->name('thongke.khachhang');
+    Route::get('/thongke/voucher', [ThongkeController::class, 'voucher'])->name('thongke.voucher');
+    Route::get('/thongke/tiledon', [ThongkeController::class, 'tiledon'])->name('thongke.tiledon');
 });
 
 // Route cho User

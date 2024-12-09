@@ -28,20 +28,19 @@
         </div>
     </div>
 
-
     <!-- Menu -->
     <div class="container mt-4">
         <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account"
                     type="button" role="tab">
-                    Thống kê Tài khoản
+                    Tài khoản
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button"
                     role="tab">
-                    Thống kê Đơn hàng
+                    Doanh thu - Dơn hàng
                 </button>
             </li>
             <li class="nav-item" role="presentation">
@@ -51,9 +50,27 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="top-products-tab" data-bs-toggle="tab" data-bs-target="#tonkho"
+                <button class="nav-link" id="tonkho-tab" data-bs-toggle="tab" data-bs-target="#tonkho"
                     type="button" role="tab">
-                    Sản phẩm tôn kho
+                    Tồn kho - Sắp hết
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="voucher-tab" data-bs-toggle="tab" data-bs-target="#voucher"
+                    type="button" role="tab">
+                    Voucher
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tiledon-tab" data-bs-toggle="tab" data-bs-target="#tiledon"
+                    type="button" role="tab">
+                    Tỉ lệ đơn
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="khachhang-tab" data-bs-toggle="tab" data-bs-target="#khachhang"
+                    type="button" role="tab">
+                    Khách hàng
                 </button>
             </li>
         </ul>
@@ -78,8 +95,6 @@
             </form>
         </div>
 
-        
-
         <!-- Nội dung của từng tab -->
         <div class="tab-content mt-4">
             <div class="tab-pane fade show active" id="account" role="tabpanel">
@@ -92,11 +107,19 @@
                 <div id="top-products-content" data-url="{{ route('thongke.topproduct') }}"></div>
             </div>
             <div class="tab-pane fade" id="tonkho" role="tabpanel">
-                <div id="top-products-content" data-url="{{ route('thongke.tonkho') }}"></div>
+                <div id="tonkho-content" data-url="{{ route('thongke.tonkho') }}"></div>
+            </div>
+            <div class="tab-pane fade" id="voucher" role="tabpanel">
+                <div id="voucher-content" data-url="{{ route('thongke.voucher') }}"></div>
+            </div>
+            <div class="tab-pane fade" id="tiledon" role="tabpanel">
+                <div id="tiledon-content" data-url="{{ route('thongke.tiledon') }}"></div>
+            </div>
+            <div class="tab-pane fade" id="khachhang" role="tabpanel">
+                <div id="khachhang-content" data-url="{{ route('thongke.khachhang') }}"></div>
             </div>
         </div>
     </div>
-
 
     <style>
         .dashboard-stats {
@@ -127,6 +150,7 @@
             font-weight: bold;
         }
     </style>
+
     <script>
         // Hàm tải dữ liệu qua AJAX
         function loadTabContent(tabId, url) {
@@ -162,7 +186,6 @@
                 });
         }
 
-
         // Lắng nghe sự kiện tab thay đổi
         document.querySelectorAll('.nav-link').forEach(tab => {
             tab.addEventListener('shown.bs.tab', function(event) {
@@ -180,29 +203,16 @@
             loadTabContent(tabId, url);
         });
 
-
-        // Tải dữ liệu của tab đầu tiên
+        // Cập nhật giá trị `current_url` khi tải trang ban đầu
         document.addEventListener('DOMContentLoaded', () => {
-            const activeTab = document.querySelector('.nav-link.active');
-            const tabId = activeTab.dataset.bsTarget.replace('#', '');
-            const url = document.getElementById(`${tabId}-content`).dataset.url;
-            loadTabContent(tabId, url);
-        });
-
-        
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Cập nhật giá trị `current_url` khi tải trang ban đầu
             updateCurrentUrl();
 
-            // Lắng nghe sự kiện khi chuyển tab
             document.querySelectorAll('.nav-link').forEach(tab => {
                 tab.addEventListener('shown.bs.tab', function(event) {
                     updateCurrentUrl();
                 });
             });
 
-            // Hàm cập nhật giá trị `current_url` dựa trên tab đang hoạt động
             function updateCurrentUrl() {
                 const activeTab = document.querySelector('.nav-link.active');
                 const tabId = activeTab.dataset.bsTarget.replace('#', '');
@@ -210,41 +220,21 @@
                 document.getElementById('current-url').value = url;
             }
 
-            // Cập nhật giá trị mặc định cho "Từ ngày" và "Đến ngày"
             const startDateInput = document.getElementById('start-date');
             const endDateInput = document.getElementById('end-date');
 
-            // Ngày đầu tháng
             const firstDayOfMonth = new Date();
             firstDayOfMonth.setDate(1);
             const formattedStartDate = firstDayOfMonth.toISOString().split('T')[0];
 
-            // Ngày hôm nay
             const today = new Date();
             const formattedEndDate = today.toISOString().split('T')[0];
 
-            // Đặt giá trị vào các input
             startDateInput.value = formattedStartDate;
             endDateInput.value = formattedEndDate;
-
-            // Lắng nghe sự kiện khi thay đổi tab để tải lại dữ liệu
-            document.querySelectorAll('.nav-link').forEach(tab => {
-                tab.addEventListener('shown.bs.tab', function(event) {
-                    const tabId = event.target.dataset.bsTarget.replace('#', '');
-                    const url = document.getElementById(`${tabId}-content`).dataset.url;
-                    loadTabContent(tabId, url);
-                });
-            });
-
-            // Tải dữ liệu của tab đầu tiên
-            const activeTab = document.querySelector('.nav-link.active');
-            const tabId = activeTab.dataset.bsTarget.replace('#', '');
-            const url = document.getElementById(`${tabId}-content`).dataset.url;
-            loadTabContent(tabId, url);
         });
 
-
-        //loc
+        // Lọc dữ liệu khi submit form
         document.getElementById('filter-stats-form').addEventListener('submit', function(event) {
             event.preventDefault();
 
