@@ -24,8 +24,8 @@ const New: React.FC = () => {
             <section className="section block-section-8">
                 <div className="container">
                     <div className="text-center">
-                        <h4 className="text-uppercase brand-1 mb-15 brush-bg wow animate__fadeIn animated">Latest News and Events</h4>
-                        <p className="font-lg neutral-500 mb-30 wow animate__animated animate__fadeIn">Don't miss out on great promotional news or upcoming<br className="d-none d-lg-block" />events in our store system</p>
+                        <h4 className="text-uppercase brand-1 mb-15 brush-bg wow animate__fadeIn animated">Tin tức và sự kiện mới nhất</h4>
+                        <p className="font-lg neutral-500 mb-30 wow animate__animated animate__fadeIn">Đừng bỏ lỡ những tin tức khuyến mại tuyệt vời hoặc<br className="d-none d-lg-block" />các sự kiện sắp tới trong hệ thống cửa hàng của chúng tôi</p>
                     </div>
                     <div className="row">
                         <div className="col-lg-4 col-md-6 wow animate__animated animate__fadeIn" data-wow-delay="0s">
