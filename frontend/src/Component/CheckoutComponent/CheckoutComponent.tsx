@@ -412,7 +412,7 @@ const CheckoutComponent: React.FC = () => {
                           <option value={1}>
                             COD (thanh toán khi nhận hàng)
                           </option>
-                          <option value={2}>VNPAY</option>
+                          <option value={2}>Thanh toán online</option>
                         </select>
                       </div>
                     </div>

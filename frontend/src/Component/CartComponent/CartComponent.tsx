@@ -6,7 +6,10 @@ import { Link } from "react-router-dom";
 import { fetchVouchers } from "../../Redux/Reducer/VoucherReducer";
 import { DeleteOutlined } from "@ant-design/icons";
 import api from "../../Axios/Axios";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import { Button, Modal, Space } from "antd";
 
+const { confirm } = Modal;
 interface CartProps {
   userId: number;
 }
@@ -18,10 +21,9 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
   const [voucherCode, setVoucherCode] = useState<string>("");
   const [voucherValid, setVoucherValid] = useState<boolean | null>(null);
   const [discountValue, setDiscountValue] = useState<number>(0);
-  const [cartEmpty, setCartEmpty]= useState<boolean>(false)
+  const [isCart, setIsCart] = useState<any[]>([]);
+  const [cartEmpty, setCartEmpty] = useState<boolean>(false);
   console.log(vouchers);
-
-
 
   useEffect(() => {
     dispatch(fetchCart(userId));
@@ -31,51 +33,69 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
     dispatch(fetchVouchers());
   }, [dispatch]);
 
-
   const handleVoucherInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVoucherCode(e.target.value);
   };
 
-  // const handleVoucherApply = () => {
-  //     if (vouchers?.vouchers?.length > 0) {
-  //         const foundVoucher = vouchers.vouchers.find(voucher => voucher.code === voucherCode);
+  const showDeleteConfirm = (id: any) => {
+    confirm({
+      title: "Bạn muốn xóa sản phẩm này khỏi giỏ hàng?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk() {
+        handleDelete(id); // Gọi hàm xóa khi nhấn OK
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
 
-  //         if (foundVoucher) {
-  //             const totalAmount = cart.reduce((acc, item) => acc + (Number(item.price) * Number(item.quantity)), 0);
-  //             const discountPercentage = Number(foundVoucher.discount_value);
-  //             const discount = (totalAmount * (discountPercentage / 100));
-  //             setDiscountValue(discount);
-  //             setVoucherValid(true);
-  //             console.log("Voucher code is valid:", voucherCode);
-  //         } else {
-  //             setVoucherValid(false);
-  //             setDiscountValue(0);
-  //             console.log("Voucher code is invalid.");
-  //         }
-  //     } else {
-  //         setVoucherValid(false);
-  //         setDiscountValue(0);
-  //         console.log("No vouchers available.");
-  //     }
-  // };
+  const getAllCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const user = localStorage.getItem("user");
+      if (user && token) {
+        let parsedUser;
+        try {
+          parsedUser = JSON.parse(user);
+        } catch (error) {
+          console.log("Dữ liệu người dùng không hợp lệ");
+          return;
+        }
+        const userId = parsedUser.user.id;
+        const { data } = await api.get(`/carts/${userId}`);
+        setIsCart(data.cart_items);
+        
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log("Cảtttttt", isCart);
+  const updateCartQuantity = async (id: any, quantity: number) => {
+    try {
+      await api.put(`/carts/${id}`, { quantity });
+      getAllCart();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  // const handleQuantityChange = (itemId: number, newQuantity: number) => {
-  //     if (newQuantity <= 0) return;
+  const handleDelete = async (productId: number) => {
+    try {
+      await api.delete(`/carts/${productId}`);
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  //     const updatedItem = cart.find(item => item.id === itemId);
-  //     if (updatedItem) {
-  //         const sizeId = updatedItem.size_id;
-  //         const colorId = updatedItem.color_id;
-
-  //         dispatch(updateCartItem({
-  //             cartId: updatedItem.cart_id,
-  //             productId: updatedItem.product_id,
-  //             quantity: newQuantity,
-  //             sizeId: sizeId,
-  //             colorId: colorId
-  //         }));
-  //     }
-  // };
+  useEffect(() => {
+    getAllCart();
+  }, []);
 
   return (
     <main className="main">
@@ -112,10 +132,21 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                     <th>Remove</th>
                   </tr>
                 </thead>
-                {cart.length === 0 ? (
-                  <p style={{ fontFamily:'Raleway', color:'red', marginTop:'40px', fontSize:'20px', fontWeight:'normal'}}>*Giỏ của bạn đang trống</p>
+                {isCart.length === 0 ? (
+                  <p
+                    style={{
+                      fontFamily: "Raleway",
+                      fontStyle: "italic",
+                      color: "red",
+                      marginTop: "40px",
+                      fontSize: "16px",
+                      fontWeight: "normal",
+                    }}
+                  >
+                    *Giỏ của bạn đang trống
+                  </p>
                 ) : (
-                  cart.map((item) => (
+                  isCart.map((item) => (
                     <tbody key={item.id}>
                       <tr>
                         <td>{item.product_name}</td>
@@ -139,8 +170,14 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                         <td>
                           <div className="product-quantity">
                             <div className="quantity">
-                                {/* Giảm sp */}
-                              <span className="icon icon-minus d-flex align-items-center">
+                              {/* Giảm số lượng */}
+                              <span
+                                className="icon icon-minus d-flex align-items-center"
+                                onClick={() =>
+                                  item.quantity > 1 &&
+                                  updateCartQuantity(item.id, item.quantity - 1)
+                                }
+                              >
                                 <svg
                                   width={24}
                                   height={24}
@@ -158,10 +195,15 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                                 className="input-quantity border-0 text-center"
                                 type="number"
                                 value={item.quantity}
-                                // onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))}
+                                readOnly
                               />
-                              {/* Tăng sp */}
-                              <span className="icon icon-plus d-flex align-items-center">
+                              {/* Tăng số lượng */}
+                              <span
+                                className="icon icon-plus d-flex align-items-center"
+                                onClick={() =>
+                                  updateCartQuantity(item.id, item.quantity + 1)
+                                }
+                              >
                                 <svg
                                   width={24}
                                   height={24}
@@ -190,7 +232,9 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                           </span>
                         </td>
                         <td>
-                          <DeleteOutlined />
+                          <DeleteOutlined
+                            onClick={() => showDeleteConfirm(item.id)}
+                          />
                         </td>
                       </tr>
                     </tbody>
@@ -198,7 +242,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                 )}
               </table>
             </div>
-           
+
             <div className="row">
               {/* Phần nhập mã giảm giá */}
               <div className="col-lg-5 mb-30">
@@ -236,7 +280,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                       </span>
                     </span>
                   </div>
-                 
+
                   {/* Hiển thị phí vận chuyển */}
                   <div className="item-total">
                     <span className="font-sm">Phí ship</span>
@@ -267,7 +311,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                   </div>
                   <Link to={`/checkout/${userId}`}>
                     <button className="btn btn-brand-1-xl-bold w-100 font-sm-bold">
-                     Tiến hành thanh toán
+                      Tiến hành thanh toán
                     </button>
                   </Link>
                 </div>
@@ -297,7 +341,6 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                   </Link>
                 </div>
               </div>
-            
             </div>
           </div>
         </div>

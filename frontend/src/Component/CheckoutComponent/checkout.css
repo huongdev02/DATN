@@ -1,5 +1,5 @@
 .name-pla::placeholder{
-  font-size: 12px;
+  font-size: 12px !important;
   font-family: "Raleway";
   font-style: italic;
 }
