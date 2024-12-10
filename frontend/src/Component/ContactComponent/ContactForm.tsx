@@ -9,39 +9,39 @@ const ContactForm: React.FC = () => {
         <div className="section block-blog-single block-contact">
             <div className="container-1190">
                 <div className="box-form-contact">
-                    <h3 className="font-4xl-bold mb-40">Get in Touch</h3>
+                    <h3 className="font-4xl-bold mb-40">Liên hệ</h3>
                     <div className="row">
                         <div className="col-lg-6">
                             <form action="#">
                                 <div className="row">
                                     <div className="col-lg-6">
                                         <div className="form-group">
-                                            <input className="form-control" type="text" placeholder="Your name *" />
+                                            <input className="form-control" type="text" placeholder="Họ tên*" />
                                         </div>
                                     </div>
                                     <div className="col-lg-6">
                                         <div className="form-group">
-                                            <input className="form-control" type="text" placeholder="Your email *" />
+                                            <input className="form-control" type="text" placeholder="Email*" />
                                         </div>
                                     </div>
                                     <div className="col-lg-6">
                                         <div className="form-group">
-                                            <input className="form-control" type="text" placeholder="Your phone number" />
+                                            <input className="form-control" type="text" placeholder="Số điện thoại của bạn*" />
                                         </div>
                                     </div>
                                     <div className="col-lg-6">
                                         <div className="form-group">
-                                            <input className="form-control" type="text" placeholder="Subject" />
+                                            <input className="form-control" type="text" placeholder="Đối tượng*" />
                                         </div>
                                     </div>
                                     <div className="col-lg-12">
                                         <div className="form-group">
-                                            <textarea className="form-control" rows={6} placeholder="Message / Note" defaultValue={""} />
+                                            <textarea className="form-control" rows={6} placeholder="Nội dung*" defaultValue={""} />
                                         </div>
                                     </div>
                                     <div className="col-lg-12">
                                         <div className="form-group">
-                                            <button className="btn btn-brand-1-medium">Submit Now</button>
+                                            <button className="btn btn-brand-1-medium">Gửi</button>
                                         </div>
                                     </div>
                                 </div>
@@ -49,10 +49,10 @@ const ContactForm: React.FC = () => {
                         </div>
                         <div className="col-lg-6">
                             <div className="box-contact-right">
-                                <h4 className="font-2xl-bold mb-10">Looking for support or chat with sales?</h4>
-                                <p className="font-md mb-40">If you need support with an existing Kidify issued card, please email: support@kidkify.com To talk with someone on our sales team, please Talk to an expert</p>
-                                <h4 className="font-2xl-bold mb-10">Address</h4>
-                                <p className="font-md"><strong className="font-md-bold">Kidify Corp</strong><br />456 Park Avenue South, Apt 7B<br />New York, NY 10016</p>
+                                <h4 className="font-2xl-bold mb-10">Bạn đang cần hỗ trợ hoặc trò chuyện với bộ phận bán hàng?</h4>
+                                <p className="font-md mb-40">Nếu bạn cần hỗ trợ về thẻ Likeshop hiện có, vui lòng gửi email tới: lienhe@likeshop.vn Để nói chuyện với ai đó trong nhóm bán hàng của chúng tôi, vui lòng nói chuyện với chuyên gia</p>
+                                <h4 className="font-2xl-bold mb-10">Địa chỉ</h4>
+                                <p className="font-md"><strong className="font-md-bold">Likeshop</strong><br />Số 22, ngõ 20/4 phố Nghĩa Đô<br />Cầu Giấy, Hà Nội</p>
                             </div>
                         </div>
                     </div>

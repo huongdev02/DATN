@@ -3,12 +3,11 @@ const Banner: React.FC = () => {
         <>
             <section className="section block-shop-head">
                 <div className="container">
-                    <h1 className="font-4xl-bold neutral-900">Baby Clothing</h1>
+                    <h1 className="font-4xl-bold neutral-900">Thời trang cho bé</h1>
                     <div className="breadcrumbs">
                         <ul>
-                            <li><a href="#">Home </a></li>
-                            <li><a href="#">Shop</a></li>
-                            <li> <a href="#">Boys Clothing</a></li>
+                            <li><a href="#">Trang chủ</a></li>
+                            <li><a href="#">Cửa hàng</a></li>
                         </ul>
                     </div>
                 </div>

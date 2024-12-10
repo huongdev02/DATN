@@ -7,11 +7,11 @@ const Maps: React.FC = () => {
                 <div className="container">
                     <div className="top-head-blog">
                         <div className="text-center">
-                            <h2 className="font-4xl-bold">Contact Us</h2>
+                            <h2 className="font-4xl-bold">Liên hệ</h2>
                             <div className="breadcrumbs d-inline-block">
                                 <ul>
-                                    <li><Link to="/">Home</Link></li>
-                                    <li><Link to='/contact'>Contact</Link></li>
+                                    <li><Link to="/">Trang chủ</Link></li>
+                                    <li><Link to='/contact'>Liên hệ</Link></li>
                                 </ul>
                             </div>
                         </div>
@@ -19,37 +19,7 @@ const Maps: React.FC = () => {
                 </div>
                 <div className="container-1190">
                     <div className="box-map">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1575.9094429793793!2d144.96780073900774!3d-37.817711024139996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642b6e9fcc44f%3A0x38e74745ead60eab!2sFed%20Square!5e0!3m2!1svi!2s!4v1684687900354!5m2!1svi!2s" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-                    </div>
-                    <div className="box-info-contact">
-                        <div className="row">
-                            <div className="col-lg-3 col-md-6 mb-15">
-                                <div className="cardContact cardChat">
-                                    <div className="cardInfo"><strong className="d-block mb-5 font-xl-bold">Chat to sales</strong>
-                                        <p className="font-md">Speak to our teamcom</p><a className="font-md" href="#">sales@kidify.com</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-3 col-md-6 mb-15">
-                                <div className="cardContact cardChat">
-                                    <div className="cardInfo"><strong className="d-block mb-5 font-xl-bold">Call us</strong><a className="font-md" href="#">+01 568 253</a><a className="font-md" href="#">+01 568 253</a></div>
-                                </div>
-                            </div>
-                            <div className="col-lg-3 col-md-6 mb-15">
-                                <div className="cardContact cardChat">
-                                    <div className="cardInfo"><strong className="d-block mb-5 font-xl-bold">Postal mail</strong>
-                                        <p className="font-md">456 Park Avenue South, Apt 7B<br />New York, NY 10016</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-3 col-md-6 mb-15">
-                                <div className="cardContact cardChat">
-                                    <div className="cardInfo"><strong className="d-block mb-5 font-xl-bold">Social Network</strong>
-                                        <p className="font-md">456 Park Avenue South, Apt 7B<br />New York, NY 10016</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m30!1m12!1m3!1d1861.782353884689!2d105.79318873859448!3d21.05009624515116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m15!3e2!4m3!3m2!1d21.0513203!2d105.79231279999999!4m5!1s0x3135ab24e0060115%3A0xaefdda57e38f9a1e!2zMjIgTmcuIDIwLzQsIE5naMSpYSDEkMO0LCBUw6J5IEjhu5MsIEjDoCBO4buZaSwgVmnhu4d0IE5hbQ!3m2!1d21.048797099999998!2d105.7967867!4m3!3m2!1d21.050541799999998!2d105.79275419999999!5e0!3m2!1svi!2s!4v1733848050314!5m2!1svi!2s" width="600" height="450" ></iframe> 
                     </div>
                 </div>
             </section>
