@@ -6,10 +6,9 @@ import axios from "axios";
 import { notification } from "antd";
 import { addToCart } from "../../Redux/Reducer/CartReducer";
 import { IProduct } from "../../types/cart";
-import { Rate } from 'antd';
+import { Rate } from "antd";
 import api from "../../Axios/Axios";
 import { Link } from "react-router-dom";
-
 
 import {
   MinusOutlined,
@@ -137,7 +136,7 @@ const ProductDetailComponent: React.FC = () => {
       notification.success({
         message: "Thêm vào giỏ hàng thành công !",
         placement: "bottomRight",
-      })
+      });
       // navigate('/cart')
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error);
@@ -213,19 +212,18 @@ const ProductDetailComponent: React.FC = () => {
                   <h2 style={{ fontFamily: "Raleway" }} className="font-2xl">
                     {product.name}
                   </h2>
-
-                  <div className="block-rating">
-                    {[...Array(5)].map((_, index) => (
-                      <img key={index} src={Star} alt="rating star" />
-                    ))}
-                    <span
-                      style={{ fontFamily: "Raleway" }}
+                     {/* Đánh giá trung bình */}
+                  <div className="block-rating" >
+                  <Rate style={{fontSize:'14px'}} disabled defaultValue={5} />
+                  </div>
+                  {/* end */}
+                  <span
+                      style={{ fontFamily: "Raleway"}}
                       className="font-md neutral-500"
                     >
                       (14 Reviews - 25 Orders)
                     </span>
-                  </div>
-                  <div className="block-price">
+                  <div className="block-price" style={{marginTop:'20px'}}>
                     <span
                       style={{ fontFamily: "Raleway", fontSize: "25px" }}
                       className="price-main"
@@ -387,21 +385,6 @@ const ProductDetailComponent: React.FC = () => {
                   <button
                     style={{ fontFamily: "Raleway" }}
                     className="nav-link"
-                    id="ingredients-tab"
-                    data-bs-toggle="tab"
-                    data-bs-target="#ingredients"
-                    type="button"
-                    role="tab"
-                    aria-controls="ingredients"
-                    aria-selected="false"
-                  >
-                    Thành phần
-                  </button>
-                </li>
-                <li className="nav-item" role="presentation">
-                  <button
-                    style={{ fontFamily: "Raleway" }}
-                    className="nav-link"
                     id="vendor-tab"
                     data-bs-toggle="tab"
                     data-bs-target="#vendor"
@@ -427,33 +410,6 @@ const ProductDetailComponent: React.FC = () => {
                     {product.description}
                   </span>
                 </div>
-                {/* size */}
-                <div
-                  className="tab-pane fade"
-                  id="ingredients"
-                  role="tabpanel"
-                  aria-labelledby="ingredients-tab"
-                >
-                  <div className="table-responsive">
-                    <table className="table table-striped">
-                      <tbody>
-                        <tr>
-                          <th>Color</th>
-                          <td> Red</td>
-                        </tr>
-                        <tr>
-                          <th>Size</th>
-                          <td> XL</td>
-                        </tr>
-                        <tr>
-                          <th>Weight</th>
-                          <td> 300gr</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                {/* end */}
                 {/* Đánh giá */}
                 <div
                   className="tab-pane fade"
@@ -479,9 +435,14 @@ const ProductDetailComponent: React.FC = () => {
                             </span>
                             {/* {dayjs(review.created_at).format('DD/MM/YYYY HH:mm:ss')} */}
                             <div className="star-ratings">
-                            <Rate disabled defaultValue={review.rating} />
+                              <Rate disabled defaultValue={review.rating} />
                             </div>
-                            <p style={{fontSize:'14px'}} className="content-rating">{review.comment}</p>
+                            <p
+                              style={{ fontSize: "14px" }}
+                              className="content-rating"
+                            >
+                              {review.comment}
+                            </p>
                           </div>
                         </section>
                         <hr className="hr-rating" />
