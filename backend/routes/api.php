@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\BlogController;
@@ -9,15 +10,12 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\LogoBannerController;
 use App\Http\Controllers\Api\NewProductController;
 use App\Http\Controllers\Api\OrderController;
-use App\Http\Controllers\Api\OrderHistoryController;
-use App\Http\Controllers\Api\PayController;
+
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\PromotionController;
 use App\Http\Controllers\Api\ShipAddressController;
 use App\Http\Controllers\Api\TopSellController;
 use App\Http\Controllers\Api\UserController;
-use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

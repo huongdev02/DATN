@@ -40,7 +40,6 @@
                         <li><a href="{{route('user.edit')}}">Hồ Sơ</a></li>
                         <li><a href="{{route('address.index')}}">Địa Chỉ</a></li>
                         <li><a href="{{route('user.changepass.form')}}">Đổi Mật Khẩu</a></li>
-                        <li><a href="#">Cài Đặt Thông Báo</a></li>
                     </ul>
                 </li>
                 <li><a href="{{route('userorder.index')}}" class="btn btn-light w-100 text-start">Đơn Mua</a></li>
