@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { notification, Modal } from "antd";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../Redux/store";
@@ -9,18 +9,28 @@ import api from "../../Axios/Axios";
 import axios from "axios";
 import { postOrder } from "../../Redux/Reducer/OrderReducer";
 import { fetchVouchers } from "../../Redux/Reducer/VoucherReducer";
+import { fetchPaymentStatus } from "../../Redux/Reducer/OrderReducer";
 import QR from "../../assets/imgs/qr.jpg";
-import './checkout.css'
+import "./checkout.css";
 
 const CheckoutComponent: React.FC = () => {
   const dispatch = useAppDispatch();
-  const nav = useNavigate()
-  const { userId } = useParams<{ userId: string }>();
+  const nav = useNavigate();
+  const { userId } = useParams<{ userId: string }>(); 
   const cart = useSelector((state: RootState) => state.cart);
-  const payment_url = useSelector((state: RootState) => state.order.payment_url);
+  const payment_url = useSelector(
+    (state: RootState) => state.order.payment_url
+  );
   const paymentMethod = 2;
   const vouchers = useSelector(
     (state: RootState) => state.voucherReducer.vouchers
+  );
+
+  const paymentStatus = useSelector(
+    (state: RootState) => state.order.payment_status
+  );
+  const paymentMessage = useSelector(
+    (state: RootState) => state.order.payment_message
   );
 
   const [totalPrice, setTotalPrice] = useState(0);
@@ -29,10 +39,13 @@ const CheckoutComponent: React.FC = () => {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [shipAddress, setShipAddress] = useState("");
-  const [paymentMethodId, setPaymentMethodId] = useState<number>(0); 
+  const [paymentMethodId, setPaymentMethodId] = useState<number>(0);
   const [voucherId, setVoucherId] = useState<number | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(false); 
 
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const navigate = useNavigate(); // Khởi tạo navigate
+  const location = useLocation();
   useEffect(() => {
     if (userId) {
       dispatch(fetchCart(Number(userId)));
@@ -100,7 +113,6 @@ const CheckoutComponent: React.FC = () => {
       postShipAddress(addressData)
     ).unwrap();
 
-
     // Thanh toán
     const orderData = {
       user_id: userId,
@@ -118,7 +130,6 @@ const CheckoutComponent: React.FC = () => {
       // Gửi yêu cầu thanh toán lên API (ví dụ sử dụng Redux action `postOrderPayment`)
       await dispatch(postOrder(orderData));
       if (payment_url && paymentMethod === 2) {
-
       }
       notification.success({
         message: "Thanh toán thành công",
@@ -155,36 +166,35 @@ const CheckoutComponent: React.FC = () => {
 
     const fetchCartItems = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
-        
+        const token = localStorage.getItem("token");
+        const user = localStorage.getItem("user");
+
         let parsedUser;
         try {
           parsedUser = JSON.parse(user!);
         } catch (error) {
-          console.error('Lỗi khi phân tích dữ liệu người dùng:', error);
+          console.error("Lỗi khi phân tích dữ liệu người dùng:", error);
         }
-  
+
         if (parsedUser && parsedUser.user) {
           const userId = parsedUser.user.id;
-  
-          const response = await axios.get(`http://127.0.0.1:8000/api/carts/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
+
+          const response = await axios.get(
+            `http://127.0.0.1:8000/api/carts/${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             }
-          });
-          const total = response.data.cart_items.length
-       
+          );
+          const total = response.data.cart_items.length;
         } else {
-          console.error('Không tìm thấy thông tin người dùng.');
+          console.error("Không tìm thấy thông tin người dùng.");
         }
       } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
+        console.error("Lỗi khi lấy dữ liệu giỏ hàng:", error);
       }
     };
-  
-   
-    
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const userId = user.user.id;
@@ -213,14 +223,16 @@ const CheckoutComponent: React.FC = () => {
         payment_method: paymentMethodId,
       };
 
-       const resultAction = await dispatch(postOrder(orderData)).unwrap();
-       if(paymentMethodId === 2 && resultAction.payment_url){
+      const resultAction = await dispatch(postOrder(orderData)).unwrap();
+      if (paymentMethodId === 2 && resultAction.payment_url) {
         window.location.href = resultAction.payment_url;
-       }else{
-        nav('/thank')
-       }
+      } else {
+      }
+      if (paymentMethodId === 1) {
+        nav("/order-success");
+      }
 
-       localStorage.removeItem("cartItems");
+      localStorage.removeItem("cartItems");
     } catch (err) {
       notification.error({
         message: "Lỗi khi đặt hàng",
@@ -228,6 +240,20 @@ const CheckoutComponent: React.FC = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (location.search) {
+      dispatch(fetchPaymentStatus(location.search));
+    }
+  }, [location.search, dispatch]);
+  useEffect(() => {
+    if (paymentStatus) {
+      if (paymentStatus === "true") {
+        nav("/thank");
+      } else {
+      }
+    }
+  }, [paymentStatus, paymentMessage]);
 
   return (
     <main className="main">
@@ -337,7 +363,7 @@ const CheckoutComponent: React.FC = () => {
                       </div>
                     </div>
                     <div className="col-lg-6" style={{ width: "100%" }}>
-                      <div className="form-group" >
+                      <div className="form-group">
                         <label
                           htmlFor=""
                           style={{
@@ -380,8 +406,12 @@ const CheckoutComponent: React.FC = () => {
                             setPaymentMethodId(Number(e.target.value))
                           }
                         >
-                          <option value="" className="name-pla">Chọn phương thức thanh toán*</option>
-                          <option value={1}>COD (thanh toán khi nhận hàng)</option>
+                          <option value="" className="name-pla">
+                            Chọn phương thức thanh toán*
+                          </option>
+                          <option value={1}>
+                            COD (thanh toán khi nhận hàng)
+                          </option>
                           <option value={2}>VNPAY</option>
                         </select>
                       </div>
@@ -404,7 +434,10 @@ const CheckoutComponent: React.FC = () => {
                             </span>
                             <span className="num-item">x{item.quantity}</span>
                             <span className="price-item font-md-bold">
-                              {(item.price * item.quantity).toLocaleString('vi', {style : 'currency', currency : 'VND'})}
+                              {(item.price * item.quantity).toLocaleString(
+                                "vi",
+                                { style: "currency", currency: "VND" }
+                              )}
                             </span>
                           </div>
                         </div>
@@ -415,7 +448,9 @@ const CheckoutComponent: React.FC = () => {
                     <div className="box-footer-checkout">
                       <div className="form-group">
                         <div className="mb-3">
-                          <span style={{fontFamily:'Raleway'}}>Chọn voucher</span>
+                          <span style={{ fontFamily: "Raleway" }}>
+                            Chọn voucher
+                          </span>
                           <select
                             style={{ marginTop: "5px" }}
                             name="voucher"

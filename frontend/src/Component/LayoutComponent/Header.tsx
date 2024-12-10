@@ -513,7 +513,7 @@ const Header: React.FC = () => {
       >
         <div className="box-search-overlay" />
         <div className={`box-search-wrapper ${isSearchActive ? "active" : ""}`}>
-          <a onClick={closeSearchPopup} className="btn-close-popup" href="#">
+          <a onClick={closeSearchPopup} className="btn-close-popup" >
             <svg
               className="icon-16 d-inline-flex align-items-center justify-content-center"
               fill="#111111"

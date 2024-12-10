@@ -10,6 +10,7 @@ import Found from '../Layout/Found/Found';
 import About from '../Layout/About/About';
 import OrderHistory from '../Layout/OrderHistory/OrderHistory';
 import ThankYou from '../thankYou/thankYou';
+import OrderSuccess from '../orderSuccess/orderSuccess';
 
 const AppRoutes = () => {
   return (
@@ -24,6 +25,7 @@ const AppRoutes = () => {
       <Route path='/blog' element={<Blog />} />
       <Route path='/about' element={<About />} />
       <Route path='/thank' element={<ThankYou />} />
+      <Route path='/order-success' element={<OrderSuccess/>} />
       <Route path='*' element={<Found />} />
     </Routes>
   );
