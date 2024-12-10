@@ -9522,7 +9522,7 @@ h5.item-collapse.collapsed-item {
 }
 .item-checkout .title-item {
   display: inline-block;
-  padding-right: 80px;
+  width: 100%;
   color: #1C1D1D;
 }
 .item-checkout .num-item {

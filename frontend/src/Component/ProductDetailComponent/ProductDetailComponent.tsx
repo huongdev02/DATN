@@ -148,7 +148,24 @@ const ProductDetailComponent: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div>
+        <div id="preloader-active">
+          <div className="preloader d-flex align-items-center justify-content-center">
+            <div className="preloader-inner position-relative">
+              <div className="page-loading text-center">
+                <div className="page-loading-inner">
+                  <div />
+                  <div />
+                  <div />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   if (error) return <div>{error}</div>;
   if (!product) return <div>Product not found.</div>;
 
@@ -211,7 +228,10 @@ const ProductDetailComponent: React.FC = () => {
               <div className="col-lg-5 box-images-product-middle">
                 <div className="box-product-info">
                   {/* <label className="flash-sale-red">Extra 2% off</label> */}
-                  <h2 style={{ fontFamily: "Raleway", marginBottom:'10px' }} className="font-2xl">
+                  <h2
+                    style={{ fontFamily: "Raleway", marginBottom: "10px" }}
+                    className="font-2xl"
+                  >
                     {product.name}
                   </h2>
                   {/* Đánh giá trung bình */}

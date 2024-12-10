@@ -18,6 +18,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
   const dispatch = useAppDispatch();
   const cart = useSelector((state: RootState) => state.cart.items);
   const vouchers = useSelector((state: RootState) => state.voucherReducer);
+  const [loading, setLoading] = useState(true);
   const [voucherCode, setVoucherCode] = useState<string>("");
   const [voucherValid, setVoucherValid] = useState<boolean | null>(null);
   const [discountValue, setDiscountValue] = useState<number>(0);
@@ -71,6 +72,8 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
       }
     } catch (error) {
       console.log(error);
+    } finally{
+      setLoading(false)
     }
   };
   console.log("Cảtttttt", isCart);
@@ -95,6 +98,25 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
   useEffect(() => {
     getAllCart();
   }, []);
+
+  if (loading)
+    return (
+      <div>
+        <div id="preloader-active">
+          <div className="preloader d-flex align-items-center justify-content-center">
+            <div className="preloader-inner position-relative">
+              <div className="page-loading text-center">
+                <div className="page-loading-inner">
+                  <div />
+                  <div />
+                  <div />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <main className="main">

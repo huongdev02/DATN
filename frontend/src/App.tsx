@@ -22,11 +22,6 @@ function App() {
           <div className="preloader d-flex align-items-center justify-content-center">
             <div className="preloader-inner position-relative">
               <div className="page-loading text-center">
-                <img
-                  className="d-inline-block"
-                  src={SvgLoading}
-                  alt="Kidify"
-                />
                 <div className="page-loading-inner">
                   <div />
                   <div />

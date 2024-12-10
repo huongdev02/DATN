@@ -230,6 +230,7 @@ const CheckoutComponent: React.FC = () => {
       }
       if (paymentMethodId === 1) {
         nav("/order-success");
+        window.scrollTo(0, 0); 
       }
 
       localStorage.removeItem("cartItems");
@@ -422,9 +423,9 @@ const CheckoutComponent: React.FC = () => {
                   <div className="box-total-checkout">
                     <div className="head-total-checkout">
                       <span className="font-xl-bold">Ảnh</span>
-                      <span className="font-xl-bold">Name</span>
-                      <span className="font-xl-bold">Quantity</span>
-                      <span className="font-xl-bold">Price</span>
+                      <span className="font-xl-bold">Tên</span>
+                      <span className="font-xl-bold">Số lượng</span>
+                      <span className="font-xl-bold">Giá</span>
                     </div>
                     {cart?.items && cart.items.length > 0 ? (
                       cart.items.map((item) => (
@@ -479,6 +480,15 @@ const CheckoutComponent: React.FC = () => {
                           <span className="font-xl-bold">Tạm tính</span>
                           <span className="font-md-bold">
                             {formatCurrency(subtotal)}
+                          </span>
+                        </div>
+                        <div className="item-checkout justify-content-between">
+                          <span className="font-sm">Phí ship</span>
+                          <span className="font-md-bold">
+                            {(30000).toLocaleString("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            })}
                           </span>
                         </div>
                         <div className="item-checkout justify-content-between">
