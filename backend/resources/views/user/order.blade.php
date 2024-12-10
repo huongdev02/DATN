@@ -221,7 +221,7 @@
                                             <option value="2">2 Sao</option>
                                             <option value="3">3 Sao</option>
                                             <option value="4">4 Sao</option>
-                                            <option value="5">5 Sao</option>
+                                            <option value="5" selected>5 Sao</option>
                                         </select>
                                     </div>
 
