@@ -24,59 +24,53 @@ const AboutComponent: React.FC = () => {
                     <div className="container">
                         <div className="top-head-blog">
                             <div className="text-center">
-                                <h2 className="font-4xl-bold">About Us</h2>
+                                <h2 className="font-4xl-bold">Giới thiệu về chúng tôi</h2>
                                 <div className="breadcrumbs d-inline-block">
                                     <ul>
-                                        <li><a href="#">Home</a></li>
-                                        <li><a href="#">Blog</a></li>
+                                        <li><a href="#">Trang chủ</a></li>
+                                        <li><a href="#">Tin tức</a></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                         <div className="feature-image"><img src={About} alt="kidify" /></div>
                         <div className="content-detail">
-                            <h2>Our Stories</h2>
+                            <h2>Câu chuyện của chúng tôi</h2>
                             <p />
-                            <p><strong>As parents, we know how important it is to have a smooth transition from playtime to bedtime. Children often get so involved in their playtime activities that they don't want to stop. However, when it's time to go to bed, they need to change into their pajamas.</strong></p>
-                            <p>This can be a hassle, especially if your child is not in the mood to cooperate. But what if there were outfits that could easily transition from playtime to bedtime? This would make our lives as parents so much easier! In this article, we'll discuss some outfits that can do just that.</p>
-                            <ul className="list-ticks">
-                                <li><img src={Tick} alt="kidify" />We provide qualified &amp; expert</li>
-                                <li><img src={Tick} alt="kidify" />Modern tools &amp; technology use</li>
-                                <li><img src={Tick} alt="kidify" />Neat &amp; cleaning top Services</li>
-                                <li><img src={Tick} alt="kidify" />We Develop Digital Future</li>
-                            </ul>
+                            <p><strong>Là cha mẹ, chúng ta biết tầm quan trọng của việc chuyển đổi suôn sẻ từ giờ chơi sang giờ đi ngủ. Trẻ em thường quá bận rộn với các hoạt động vui chơi đến mức không muốn dừng lại. Tuy nhiên, khi đến giờ đi ngủ, trẻ cần thay đồ ngủ.</strong></p>
+                            <p>Điều này có thể gây phiền toái, đặc biệt là nếu con bạn không có tâm trạng hợp tác. Nhưng nếu có những bộ trang phục có thể dễ dàng chuyển từ giờ chơi sang giờ đi ngủ thì sao? Điều này sẽ giúp cuộc sống của chúng ta với tư cách là cha mẹ dễ dàng hơn rất nhiều! Trong bài viết này, chúng ta sẽ thảo luận về một số bộ trang phục có thể làm được điều đó.</p>
                             <div className="box-experiences">
                                 <div className="row">
-                                    <div className="col-lg-4"><strong className="font-xl-bold">12 Years</strong>
-                                        <p className="font-md neutral-500">We’ve more than 12 years working experience.</p>
+                                    <div className="col-lg-4"><strong className="font-xl-bold">12 năm</strong>
+                                        <p className="font-md neutral-500">Chúng tôi có hơn 12 năm kinh nghiệm làm việc.</p>
                                     </div>
-                                    <div className="col-lg-4"><strong className="font-xl-bold">2000+ Employee</strong>
-                                        <p className="font-md neutral-500">We’ve more than 2000 employees working near you.</p>
+                                    <div className="col-lg-4"><strong className="font-xl-bold">2000+ Nhân viên</strong>
+                                        <p className="font-md neutral-500">Chúng tôi có hơn 2000 nhân viên làm việc gần bạn.</p>
                                     </div>
-                                    <div className="col-lg-4"><strong className="font-xl-bold">68 Branches</strong>
-                                        <p className="font-md neutral-500">We have 68 branches across the country and are expanding</p>
+                                    <div className="col-lg-4"><strong className="font-xl-bold">68 Chi nhánh</strong>
+                                        <p className="font-md neutral-500">Chúng tôi có 68 chi nhánh trên toàn quốc và đang mở rộng</p>
                                     </div>
                                 </div>
                             </div>
-                            <h2>Our Mission</h2>
-                            <p>This can be a hassle, especially if your child is not in the mood to cooperate. But what if there were outfits that could easily transition from playtime to bedtime? This would make our lives as parents so much easier! In this article, we'll discuss some outfits that can do just that.</p>
+                            <h2>Sứ mệnh của chúng tôi</h2>
+                            <p>Điều này có thể gây phiền toái, đặc biệt là nếu con bạn không có tâm trạng hợp tác. Nhưng nếu có những bộ trang phục có thể dễ dàng chuyển từ giờ chơi sang giờ đi ngủ thì sao? Điều này sẽ giúp cuộc sống của chúng ta với tư cách là cha mẹ dễ dàng hơn rất nhiều! Trong bài viết này, chúng ta sẽ thảo luận về một số bộ trang phục có thể làm được điều đó.</p>
                         </div>
                     </div>
                     <div className="box-gallery-about">
                         <div className="container-1190">
-                            <h2 className="font-3xl-bold mb-55">Our Gallery</h2>
+                            <h2 className="font-3xl-bold mb-55">Phòng trưng bày của chúng tôi</h2>
                             <div className="box-gallery-list">
                                 <div className="gallery-main"><a className="glightbox" href={Gallery}><img src={Gallery} alt="kidify" /></a></div>
                                 <div className="gallery-sub"><a className="glightbox" href={GalleryTwo}><img src={GalleryTwo} alt="kidify" /></a><a className="glightbox" href={GalleryThree}><img src={GalleryThree} alt="kidify" /></a><a className="glightbox" href={GalleryFour}><img src={GalleryFour} alt="kidify" /></a><a className="glightbox" href={GalleryFive}><img src={GalleryFive} alt="kidify" /></a></div>
                             </div>
                         </div>
                     </div>
-                    <div className="box-reviews-about">
+                    {/* <div className="box-reviews-about"> */}
                         <div className="content-detail mb-20">
-                            <h2 className="font-3xl-bold">Our Happy Customes</h2>
+                            <h2 className="font-3xl-bold">Phong tục hạnh phúc của chúng tôi</h2>
                         </div>
                         <div className="feature-image mb-0"><span className="title-left" /></div>
-                        <div className="box-slider-about box-slide-padding-left">
+                        {/* <div className="box-slider-about box-slide-padding-left">
                             <div className="box-swiper">
                                 <div className="swiper-container swiper-auto pt-35">
                                     <div className="swiper-wrapper">
@@ -163,13 +157,11 @@ const AboutComponent: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     <div className="container">
                         <div className="content-detail">
-                            <h2>Our Stories</h2>
-                            <p>Ex quos nemo a voluptatum delectus et totam soluta sit illo voluptatem in consequuntur sunt vel doloremque sunt eos nihil quas. Ut odit velit cum maxime corrupti qui quia corporis quo explicabo autem et fugit omnis aut fugiat quia sit molestias ipsam. Sit nihil quod non corrupti reprehenderit At saepe ducimus aut dolorem dolorum eum ratione expedita ab aliquid minima. A illum voluptas et inventore totam eum inventore enim in obcaecati aspernatur ea aliquam pariatur.</p>
-                            <p>Ad magnam rerum quo magni rerum ut accusamus vitae ut nobis voluptatum est dicta voluptate et libero similique. Sit harum porro non illum voluptatibus eum suscipit facere. Rem dolores dolorum ut doloribus impedit sed expedita quasi qui doloremque consequuntur eum vitae perferendis qui fugit temporibus.</p>
-                            <p>Est exercitationem natus eos repudiandae cumque ex voluptas officiis cum laborum aspernatur. Vel accusantium laborum qui modi praesentium hic quia consequatur ea nihil expedita aut tempore illum. Vel vitae praesentium sit neque delectus sit magnam tenetur ea blanditiis consequuntur cum quaerat sapiente in cumque molestias qui quibusdam inventore. Rem facere esse non ipsum quisquam et fugiat accusantium ut maxime blanditiis cum quis sint?</p>
+                            <h2>Câu chuyện của chúng tôi</h2>
+                            <p>Đây là bài tập cơ bản nhất mà bạn có thể bỏ qua và có thể thực hiện công việc của mình như một công việc khó khăn. Bạn có thể bị buộc tội lao động qui modi praesentium hic quia consequatur ea nihil expedita aut tempore illum. Vel vitae praesentium sit neque delectus sit magnam tenetur ea blanditiis consequuntur cum quaerat sapiente in cumque molestias qui quibusdam phát minh ra. Có phải đối mặt với điều này không phải là điều đáng tiếc và sự bất tiện mà bạn có thể gặp phải?</p>
                         </div>
                     </div>
                 </section>

@@ -303,16 +303,16 @@ const Header: React.FC = () => {
                       </Link>
                     </li>
                     <li>
-                      <Link to="/about">About</Link>
+                      <Link to="/about">Giới thiệu</Link>
                     </li>
                     <li className="has-mega-menu">
                       <Link to="/product">Cửa hàng</Link>
                     </li>
                     <li className="has-children">
-                      <Link to="/blog">Blog</Link>
+                      <Link to="/blog">Tin tức</Link>
                     </li>
                     <li>
-                      <Link to="/contact">Contact</Link>
+                      <Link to="/contact">Liên hệ</Link>
                     </li>
                   </ul>
                 </nav>
