@@ -86,6 +86,8 @@ const ProductDetailComponent: React.FC = () => {
     GetProductsById();
   }, [product]);
 
+  console.log("chi tiết sản phẩm", productById);
+
   const handleAddToCart = async () => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const token = localStorage.getItem("token");
@@ -158,13 +160,13 @@ const ProductDetailComponent: React.FC = () => {
             <div className="breadcrumbs">
               <ul>
                 <li>
-                  <a href="#">Home</a>
+                  <a href="#">Trang chủ</a>
                 </li>
                 <li>
-                  <a href="#">Shop</a>
+                  <a href="#">Cửa hàng</a>
                 </li>
                 <li>
-                  <a href="#">Boys Clothing</a>
+                  <a href="#">{product.name}</a>
                 </li>
               </ul>
             </div>
@@ -209,21 +211,28 @@ const ProductDetailComponent: React.FC = () => {
               <div className="col-lg-5 box-images-product-middle">
                 <div className="box-product-info">
                   {/* <label className="flash-sale-red">Extra 2% off</label> */}
-                  <h2 style={{ fontFamily: "Raleway" }} className="font-2xl">
+                  <h2 style={{ fontFamily: "Raleway", marginBottom:'10px' }} className="font-2xl">
                     {product.name}
                   </h2>
-                     {/* Đánh giá trung bình */}
-                  <div className="block-rating" >
-                  <Rate style={{fontSize:'14px'}} disabled defaultValue={5} />
-                  </div>
+                  {/* Đánh giá trung bình */}
+                  {product.reviews.length > 0 && (
+                    <div className="block-rating">
+                      <Rate
+                        style={{ fontSize: "14px" }}
+                        disabled
+                        defaultValue={5}
+                      />
+                    </div>
+                  )}
                   {/* end */}
                   <span
-                      style={{ fontFamily: "Raleway"}}
-                      className="font-md neutral-500"
-                    >
-                      (14 Reviews - 25 Orders)
-                    </span>
-                  <div className="block-price" style={{marginTop:'20px'}}>
+                    style={{ fontFamily: "Raleway" }}
+                    className="font-md neutral-500"
+                  >
+                    ({product.reviews.length} Reviews - {product.sell_quantity}{" "}
+                    Orders)
+                  </span>
+                  <div className="block-price" style={{ marginTop: "20px" }}>
                     <span
                       style={{ fontFamily: "Raleway", fontSize: "25px" }}
                       className="price-main"

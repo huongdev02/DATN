@@ -16,7 +16,7 @@ import "./checkout.css";
 const CheckoutComponent: React.FC = () => {
   const dispatch = useAppDispatch();
   const nav = useNavigate();
-  const { userId } = useParams<{ userId: string }>(); 
+  const { userId } = useParams<{ userId: string }>();
   const cart = useSelector((state: RootState) => state.cart);
   const payment_url = useSelector(
     (state: RootState) => state.order.payment_url
@@ -262,17 +262,17 @@ const CheckoutComponent: React.FC = () => {
           <div className="container">
             <div className="top-head-blog">
               <div className="text-center">
-                <h2 className="font-4xl-bold">Checkout</h2>
+                <h2 className="font-4xl-bold">Thanh toán</h2>
                 <div className="breadcrumbs d-inline-block">
                   <ul>
                     <li>
-                      <Link to="/">Home</Link>
+                      <Link to="/">Trang chủ</Link>
                     </li>
                     <li>
-                      <Link to="/shop">Shop</Link>
+                      <Link to="/shop">Cửa hàng</Link>
                     </li>
                     <li>
-                      <Link to="/checkout">Checkout</Link>
+                      <Link to="/checkout">Thanh toán</Link>
                     </li>
                   </ul>
                 </div>
@@ -299,7 +299,7 @@ const CheckoutComponent: React.FC = () => {
                           htmlFor=""
                           style={{
                             fontFamily: "Raleway",
-                            fontSize: "15px",
+                            fontSize: "17px",
                             fontWeight: "600",
                             marginBottom: "10px",
                           }}
@@ -309,7 +309,7 @@ const CheckoutComponent: React.FC = () => {
                         <input
                           className="form-control name-pla"
                           type="text"
-                          placeholder="*Nhập họ tên"
+                          placeholder="*Nhập họ tên của bạn"
                           name="recipient_name"
                           value={recipientName}
                           onChange={(e) => setRecipientName(e.target.value)}
@@ -322,7 +322,7 @@ const CheckoutComponent: React.FC = () => {
                           htmlFor=""
                           style={{
                             fontFamily: "Raleway",
-                            fontSize: "15px",
+                            fontSize: "17px",
                             fontWeight: "600",
                             marginBottom: "10px",
                           }}
@@ -345,7 +345,7 @@ const CheckoutComponent: React.FC = () => {
                           htmlFor=""
                           style={{
                             fontFamily: "Raleway",
-                            fontSize: "15px",
+                            fontSize: "17px",
                             fontWeight: "600",
                             marginBottom: "10px",
                           }}
@@ -368,7 +368,7 @@ const CheckoutComponent: React.FC = () => {
                           htmlFor=""
                           style={{
                             fontFamily: "Raleway",
-                            fontSize: "15px",
+                            fontSize: "17px",
                             fontWeight: "600",
                             marginBottom: "10px",
                           }}
@@ -379,7 +379,7 @@ const CheckoutComponent: React.FC = () => {
                           className="form-control name-pla"
                           type="text"
                           name="ship_address"
-                          placeholder="*Nhập địa chỉ"
+                          placeholder="*Nhập địa chỉ của bạn"
                           value={shipAddress}
                           onChange={(e) => setShipAddress(e.target.value)}
                         />
@@ -390,7 +390,7 @@ const CheckoutComponent: React.FC = () => {
                         <label
                           style={{
                             fontFamily: "Raleway",
-                            fontSize: "15px",
+                            fontSize: "17px",
                             fontWeight: "600",
                             marginBottom: "10px",
                           }}
@@ -421,6 +421,7 @@ const CheckoutComponent: React.FC = () => {
                 <div className="col-lg-5">
                   <div className="box-total-checkout">
                     <div className="head-total-checkout">
+                      <span className="font-xl-bold">Ảnh</span>
                       <span className="font-xl-bold">Name</span>
                       <span className="font-xl-bold">Quantity</span>
                       <span className="font-xl-bold">Price</span>
@@ -429,6 +430,13 @@ const CheckoutComponent: React.FC = () => {
                       cart.items.map((item) => (
                         <div key={item.id} className="box-list-item-checkout">
                           <div className="item-checkout">
+                            <span className="title-item">
+                              <img
+                                src={`http://127.0.0.1:8000/storage/${item.avatar}`}
+                                width={"70px"}
+                                alt={item.product_name}
+                              />
+                            </span>
                             <span className="title-item">
                               {item.product_name}
                             </span>

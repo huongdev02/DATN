@@ -68,7 +68,6 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
         const userId = parsedUser.user.id;
         const { data } = await api.get(`/carts/${userId}`);
         setIsCart(data.cart_items);
-        
       }
     } catch (error) {
       console.log(error);
@@ -103,17 +102,17 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
         <div className="container">
           <div className="top-head-blog">
             <div className="text-center">
-              <h2 className="font-4xl-bold">Shop Cart</h2>
+              <h2 className="font-4xl-bold">Giỏ hàng</h2>
               <div className="breadcrumbs d-inline-block">
                 <ul>
                   <li>
-                    <a href="#">Home</a>
+                    <a href="#">Trang chủ</a>
                   </li>
                   <li>
-                    <a href="#">Shop</a>
+                    <a href="#">Cửa hàng</a>
                   </li>
                   <li>
-                    <a href="#">Cart</a>
+                    <a href="#">Giỏ hàng</a>
                   </li>
                 </ul>
               </div>
@@ -124,12 +123,12 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
               <table className="table table-striped table-cart">
                 <thead>
                   <tr>
-                    <th>Product Name</th>
-                    <th>Avatar</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Subtotal</th>
-                    <th>Remove</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Ảnh</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tạm tính</th>
+                    <th>Hành động</th>
                   </tr>
                 </thead>
                 {isCart.length === 0 ? (
@@ -149,7 +148,13 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                   isCart.map((item) => (
                     <tbody key={item.id}>
                       <tr>
-                        <td>{item.product_name}</td>
+                        <td>
+                          <p>  {item.product_name}</p>
+                          <div style={{display:'flex', gap:'10px', justifyContent:'center'}}>
+                           <span style={{fontFamily:'Raleway', fontSize:'18px'}}>(</span> <p style={{fontFamily:'Raleway', fontSize:'14px'}}>{item.color}</p>,
+                            <p style={{fontFamily:'Raleway', fontSize:'13px'}}>{item.size}</p><span style={{fontFamily:'Raleway', fontSize:'18px'}}>)</span>
+                          </div>
+                        </td>
                         <td>
                           <img
                             src={`http://127.0.0.1:8000/storage/${item.avatar}`}
@@ -158,7 +163,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                           />
                         </td>
                         <td>
-                          <span className="brand-1">
+                          <span className="brand-1" style={{fontFamily:'Raleway'}}>
                             {Number(item.price)
                               ? Number(item.price).toLocaleString("vi-VN", {
                                   style: "currency",
@@ -221,7 +226,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                           </div>
                         </td>
                         <td>
-                          <span className="brand-1">
+                          <span className="brand-1" style={{fontFamily:'Raleway'}}>
                             {(
                               Number(item?.price || 0) *
                               Number(item?.quantity || 1)
@@ -243,9 +248,11 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
               </table>
             </div>
 
-            <div className="row">
-              {/* Phần nhập mã giảm giá */}
-              <div className="col-lg-5 mb-30">
+            <div
+              className="row"
+              style={{ display: "flex", justifyContent: "end" }}
+            >
+              {/* <div className="col-lg-5 mb-30">
                 <div className="box-form-discount">
                   <div className="box-form-discount-inner">
                     <input
@@ -255,11 +262,12 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                       value={voucherCode}
                       onChange={handleVoucherInputChange}
                     />
-                    {/* <button className="btn btn-apply" onClick={handleVoucherApply}>Apply</button> */}
+                   
                   </div>
                 </div>
-              </div>
+              </div> */}
               {/* Phần tính tổng tiền giỏ hàng */}
+              {isCart.length > 0 && (
               <div className="col-lg-4 mb-30">
                 <div className="box-cart-total">
                   {/* Hiển thị subtotal (tổng tiền giỏ hàng trước khi áp dụng voucher) */}
@@ -267,7 +275,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                     <span className="font-sm">Tạm tính</span>
                     <span className="font-md-bold">
                       <span>
-                        {cart
+                        {isCart
                           .reduce(
                             (acc, item) =>
                               acc + Number(item.price) * Number(item.quantity),
@@ -296,7 +304,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                     <span className="font-xl-bold">
                       <span>
                         {(
-                          cart.reduce(
+                          isCart.reduce(
                             (acc, item) =>
                               acc + Number(item.price) * Number(item.quantity),
                             0
@@ -316,13 +324,14 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                   </Link>
                 </div>
               </div>
+              )}
               <div className="col-lg-3 mb-30">
                 <div className="box-button-checkout">
                   <Link
                     to="/product"
                     className="btn btn-brand-1-border-2 mr-10"
                   >
-                    Continue Shopping
+                    Tiếp tục mua sắm
                     <svg
                       className="icon-16 ml-5"
                       fill="none"
