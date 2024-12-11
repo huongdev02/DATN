@@ -28,7 +28,7 @@ class AccountController extends Controller
             'password' => 'required|string|min:6',
             'confirmPassword' => 'required|same:password', // Ensure confirm_password matches password
         ]);
-    
+
         try {
             // Prepare user data
             $userData = [
@@ -37,10 +37,10 @@ class AccountController extends Controller
                 'password' => Hash::make($request->input('password')),  // Hash the password
                 'role' => $request->filled('role') ? $request->input('role') : 0,  // Default role is 0
             ];
-    
+
             // Create user
             $user = User::create($userData);
-    
+
             // Return success response
             return response()->json([
                 'status' => true,
@@ -50,13 +50,12 @@ class AccountController extends Controller
                     'username' => $user->username,
                 ]
             ], 200);
-    
         } catch (\Throwable $e) {
             // Handle error
             return back()->with('error', $e->getMessage());
         }
     }
-    
+
 
     public function login(Request $request)
     {
@@ -66,14 +65,14 @@ class AccountController extends Controller
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
-
+    
             // Kiểm tra xem có tồn tại tài khoản với email và mật khẩu không
             if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], true)) {
                 $request->session()->regenerate();
-
+    
                 // Lấy thông tin người dùng đã đăng nhập
                 $user = Auth::user();
-
+    
                 // Kiểm tra trạng thái tài khoản
                 if ($user->is_active == 0) {
                     Auth::logout();
@@ -81,14 +80,14 @@ class AccountController extends Controller
                         'error' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.'
                     ], 403);
                 }
-
-                /**
-                 * @var User $user
-                 */
-
-                // Tạo token cho người dùng
+    
+                 /** @var User $user */
+                // Tạo token cho người dùng (để dùng ở React)
                 $token = $user->createToken('API Token')->plainTextToken;
-
+    
+                // **Quan trọng:** Đăng nhập người dùng vào session
+                Auth::login($user, true); // Tạo session cho người dùng
+    
                 // Trả về dữ liệu người dùng và token
                 return response()->json([
                     'status' => true,
@@ -104,14 +103,13 @@ class AccountController extends Controller
                             'address'   => $user->address,
                             'role'      => $user->role,
                             'is_active' => $user->is_active,
-                           'avatar' => $user->avatar ? asset('storage/' . ltrim($user->avatar, '/')) : null,
-
+                            'avatar'    => $user->avatar ? asset('storage/' . ltrim($user->avatar, '/')) : null,
                         ],
                         'token' => $token
                     ]
                 ], 200);
             }
-
+    
             return response()->json([
                 'error' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu'
             ], 401);
@@ -119,7 +117,8 @@ class AccountController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
-
+    
+    
 
     public function show($userId)
     {
