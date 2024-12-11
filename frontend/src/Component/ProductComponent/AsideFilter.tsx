@@ -4,7 +4,7 @@ import { IProduct, Size, Color } from "../../types/cart";
 import api from "../../Axios/Axios";
 import { message } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
-import './ProductComponent.css'
+import "./ProductComponent.css";
 interface AsideFilterProps {
   setFilters: React.Dispatch<
     React.SetStateAction<{
@@ -22,8 +22,9 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
   const [sizes, setSizes] = useState<Size[]>([]);
   const [colors, setColors] = useState<Color[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<any | null>(null);
+  const [selectedColor, setSelectedColor] = useState<any | null>(null);
   const [priceRange, setPriceRange] = useState<[number, number] | null>(null);
-
   const GetAllCategory = async () => {
     try {
       const { data } = await api.get("/categories");
@@ -49,9 +50,12 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
   }, []);
 
   const handleSizeClick = (size: string) => {
-    setFilters((prev) => ({ ...prev, size }));
+    setSelectedSize(size === selectedSize ? null : size);
+    setFilters((prev) => ({
+      ...prev,
+      size: prev.size === size ? null : size,
+    }));
   };
-
   const handleCategoryChange = (categoryName: string) => {
     if (selectedCategory === categoryName) {
       setSelectedCategory(null);
@@ -63,11 +67,19 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
   };
 
   const handleColorClick = (color: string) => {
-    setFilters((prev) => ({ ...prev, color }));
+    setSelectedColor(color === selectedColor ? null : color);
+    setFilters((prev) => ({
+      ...prev,
+      color: prev.color === color ? null : color,
+    }));
   };
 
   const handlePriceChange = (range: [number, number]) => {
-    if (priceRange && priceRange[0] === range[0] && priceRange[1] === range[1]) {
+    if (
+      priceRange &&
+      priceRange[0] === range[0] &&
+      priceRange[1] === range[1]
+    ) {
       setPriceRange(null);
       setFilters((prev) => ({ ...prev, priceRange: null }));
     } else {
@@ -82,9 +94,16 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
         <div className="box-filters-sidebar">
           <div className="row">
             <div className="col-lg-12 col-md-6">
-              <h5 style={{fontFamily:'Raleway'}} className="font-3xl-bold mt-5">Lọc sản phẩm</h5>
+              <h5
+                style={{ fontFamily: "Raleway" }}
+                className="font-3xl-bold mt-5"
+              >
+                Lọc sản phẩm
+              </h5>
               <div className="block-filter">
-                <h6 style={{ marginBottom: "15px", fontFamily:'Raleway' }}>Danh mục</h6>
+                <h6 style={{ marginBottom: "15px", fontFamily: "Raleway" }}>
+                  Danh mục
+                </h6>
                 <div className="box-collapse">
                   <ul className="list-filter-checkbox">
                     {categories.map((category) => (
@@ -95,7 +114,12 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                             checked={selectedCategory === category.name}
                             onChange={() => handleCategoryChange(category.name)}
                           />
-                          <span style={{fontFamily:'Raleway'}} className="text-small">{category.name}</span>
+                          <span
+                            style={{ fontFamily: "Raleway" }}
+                            className="text-small"
+                          >
+                            {category.name}
+                          </span>
                           <span className="checkmark" />
                         </label>
                       </li>
@@ -107,59 +131,83 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
             {/* Giá tiền */}
             <div className="col-lg-12 col-md-6">
               <div className="block-filter">
-                <h6 style={{ marginBottom: "15px", fontFamily:'Raleway' }}>Giá tiền</h6>
+                <h6 style={{ marginBottom: "15px", fontFamily: "Raleway" }}>
+                  Giá tiền
+                </h6>
                 <div className="box-collapse">
                   <ul className="list-filter-checkbox">
                     <li>
                       <label className="cb-container">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           onChange={() => handlePriceChange([0, 499999])}
-                          checked={priceRange?.[0] === 0 && priceRange?.[1] === 499999}
+                          checked={
+                            priceRange?.[0] === 0 && priceRange?.[1] === 499999
+                          }
                         />
-                        <span  className="text-small">Dưới 500.000đ</span>
+                        <span className="text-small">Dưới 500.000đ</span>
                         <span className="checkmark" />
                       </label>
                     </li>
                     <li>
                       <label className="cb-container">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           onChange={() => handlePriceChange([500000, 1000000])}
-                          checked={priceRange?.[0] === 500000 && priceRange?.[1] === 1000000}
+                          checked={
+                            priceRange?.[0] === 500000 &&
+                            priceRange?.[1] === 1000000
+                          }
                         />
-                        <span className="text-small">Từ 500.000đ <ArrowRightOutlined /> 1.000.000đ</span>
+                        <span className="text-small">
+                          Từ 500.000đ <ArrowRightOutlined /> 1.000.000đ
+                        </span>
                         <span className="checkmark" />
                       </label>
                     </li>
                     <li>
                       <label className="cb-container">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           onChange={() => handlePriceChange([1000000, 1500000])}
-                          checked={priceRange?.[0] === 1000000 && priceRange?.[1] === 1500000}
+                          checked={
+                            priceRange?.[0] === 1000000 &&
+                            priceRange?.[1] === 1500000
+                          }
                         />
-                        <span className="text-small">Từ 1.000.000đ <ArrowRightOutlined /> 1.500.000đ</span>
+                        <span className="text-small">
+                          Từ 1.000.000đ <ArrowRightOutlined /> 1.500.000đ
+                        </span>
                         <span className="checkmark" />
                       </label>
                     </li>
                     <li>
                       <label className="cb-container">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           onChange={() => handlePriceChange([1500000, 2000000])}
-                          checked={priceRange?.[0] === 1500000 && priceRange?.[1] === 2000000}
+                          checked={
+                            priceRange?.[0] === 1500000 &&
+                            priceRange?.[1] === 2000000
+                          }
                         />
-                        <span className="text-small">Từ 1.500.000đ <ArrowRightOutlined /> 2.000.000đ</span>
+                        <span className="text-small">
+                          Từ 1.500.000đ <ArrowRightOutlined /> 2.000.000đ
+                        </span>
                         <span className="checkmark" />
                       </label>
                     </li>
                     <li>
                       <label className="cb-container">
-                        <input 
-                          type="checkbox" 
-                          onChange={() => handlePriceChange([2000000, Infinity])}
-                          checked={priceRange?.[0] === 2000000 && priceRange?.[1] === Infinity}
+                        <input
+                          type="checkbox"
+                          onChange={() =>
+                            handlePriceChange([2000000, Infinity])
+                          }
+                          checked={
+                            priceRange?.[0] === 2000000 &&
+                            priceRange?.[1] === Infinity
+                          }
                         />
                         <span className="text-small">Trên 2.000.000đ</span>
                         <span className="checkmark" />
@@ -171,17 +219,21 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
             </div>
             {/* Size */}
             <div className="col-lg-12 col-md-6">
-              <div className="block-filter" style={{ cursor: 'pointer' }}>
-                <h6 style={{ marginBottom: "15px" , fontFamily:'Raleway'}}>Size</h6>
+              <div className="block-filter" style={{ cursor: "pointer" }}>
+                <h6 style={{ marginBottom: "15px", fontFamily: "Raleway" }}>
+                  Size
+                </h6>
                 <div className="box-collapse">
                   <div className="block-size">
                     <div className="list-sizes">
-                      {sizes.map((size) => (
+                      {sizes.map((size, index) => (
                         <span
-                        style={{ fontFamily:'Raleway' }}
-                          key={size.id}
+                          style={{ fontFamily: "Raleway" }}
+                          key={index}
+                          className={selectedSize === size.size ? "active" : ""}
                           onClick={() => handleSizeClick(size.size)}
                         >
+                          {" "}
                           {size.size}
                         </span>
                       ))}
@@ -193,21 +245,26 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
             {/* Màu sắc */}
             <div className="col-lg-12 col-md-6">
               <div className="block-filter">
-                <h6 style={{ marginBottom: "15px", fontFamily:'Raleway' }}>Màu sắc</h6>
+                <h6 style={{ marginBottom: "15px", fontFamily: "Raleway" }}>
+                  Màu sắc
+                </h6>
                 <div className="box-collapse">
-                  <ul className="list-color">
+                  <div className="list-color">
                     {colors.map((color) => (
-                      <li
-                       className="filter-color"
+                      <span
+                      style={{paddingTop:'7px', cursor:'pointer', paddingBottom:'7px', paddingRight:'8px', paddingLeft:'8px', fontFamily:'Raleway' }}
+                        className={
+                          selectedColor === color.name_color
+                            ? "active"
+                            : "filter-color"
+                        }
                         key={color.id}
                         onClick={() => handleColorClick(color.name_color)}
                       >
-                        <span style={{fontFamily:'Raleway'}} className="box-color">
-                         {color.name_color}
-                        </span>
-                      </li>
+                        {color.name_color}
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
             </div>
