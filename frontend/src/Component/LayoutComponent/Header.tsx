@@ -618,7 +618,7 @@ const Header: React.FC = () => {
               href="#"
               onClick={showLoginForm}
             >
-              Login
+              Đăng nhập
             </a>
             <a
               className={`button-tab btn-for-signup ${
@@ -627,7 +627,7 @@ const Header: React.FC = () => {
               href="#"
               onClick={showSignUpForm}
             >
-              Sign Up
+              Đăng ký 
             </a>
             {activeTab === "login" && (
               <form action="" onSubmit={handleLogin}>
@@ -636,7 +636,7 @@ const Header: React.FC = () => {
                     <input
                       className="form-control"
                       type="email"
-                      placeholder="Email"
+                      placeholder="Nhập địa chỉ email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -645,14 +645,14 @@ const Header: React.FC = () => {
                     <input
                       className="form-control"
                       type="password"
-                      placeholder="Password"
+                      placeholder="Nhập mật khẩu"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
                   <div className="form-group">
                     <a className="brand-1 font-sm buttun-forgotpass" href="#">
-                      Forgot your password?
+                      Quên mật khẩu?
                     </a>
                   </div>
                   <div className="form-group">
@@ -660,12 +660,12 @@ const Header: React.FC = () => {
                       className="btn btn-login d-block"
                       disabled={loading}
                     >
-                      {loading ? "Login..." : "Login"}
+                      {loading ? "Đăng nhập..." : "Đăng nhập"}
                     </button>
                   </div>
                   <div className="form-group mt-100 text-center">
                     <a className="font-sm" href="#">
-                      Privacy &amp; Terms
+                      {/* Privacy &amp; Terms */}
                     </a>
                   </div>
                 </div>
@@ -678,27 +678,27 @@ const Header: React.FC = () => {
                   className="form-register"
                   style={{ display: activeTab === "signup" ? "block" : "none" }}
                 >
-                  <div className="form-group">
+                   <div className="form-group">
                     <input
                       className="form-control"
                       type="text"
-                      placeholder="Email"
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Username"
+                      placeholder="Tên đăng nhập"
                       onChange={(e) => setUsername(e.target.value)}
                     />
                   </div>
                   <div className="form-group">
                     <input
                       className="form-control"
+                      type="text"
+                      placeholder="Tài khoản email"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      className="form-control"
                       type="password"
-                      placeholder="Password"
+                      placeholder="Mật khẩu"
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
@@ -706,31 +706,32 @@ const Header: React.FC = () => {
                     <input
                       className="form-control"
                       type="password"
-                      placeholder="Confirm Password"
+                      placeholder="Xác nhận lại mật khẩu"
                       onChange={(e) => setConfirmPassword(e.target.value)}
 
                     />
                   </div>
                   <div className="form-group">
                     <button className="btn btn-login d-block">
-                      Create my account
+                      Đăng ký tài khoản
                     </button>
                   </div>
                   <div className="text-center">
                     <p className="body-p2 neutral-medium-dark">
-                      Already have an account?{" "}
-                      <a
+                      Bạn đã có tài khoản rồi?{" "}
+                      <a 
+                        style={{color:'red'}}
                         className="neutral-dark login-now"
                         href="#"
                         onClick={showLoginForm}
                       >
-                        Login Now
+                        Đăng nhập ngay
                       </a>
                     </p>
                   </div>
                   <div className="form-group mt-100 text-center">
                     <a className="font-sm" href="#">
-                      Privacy &amp; Terms
+                      {/* Privacy &amp; Terms */}
                     </a>
                   </div>
                 </div>

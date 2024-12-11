@@ -250,6 +250,7 @@ const CheckoutComponent: React.FC = () => {
       if (paymentMethodId === 1) {
         nav("/order-success");
         window.scrollTo(0, 0);
+        window.location.reload()
       }
 
       localStorage.removeItem("cartItems");
@@ -529,13 +530,14 @@ const CheckoutComponent: React.FC = () => {
                             Free
                           </span>
                         </div>
+                        {isVoucher?.length > 0 && (
                         <div className="item-checkout justify-content-between">
                           <span className="font-sm">Mã giảm giá</span>
                           <span className="font-md-bold">
                             {discount > 0 ? formatCurrency(discount) : "0"}
                           </span>
                         </div>
-
+                        )}
                         <div className="item-checkout justify-content-between">
                           <span className="font-xl-bold">Tổng cộng</span>
                           <span className="font-md-bold">
