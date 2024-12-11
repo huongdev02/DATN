@@ -13,3 +13,13 @@
 .list-sizes span:hover {
   box-shadow: 1px 1px rgb(205, 179, 225);
 }
+.list-sizes span.active {
+  background-color: rgb(206, 167, 236);
+  color: white;
+}
+.list-color span.active{
+  background-color: rgb(206, 167, 236);
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
