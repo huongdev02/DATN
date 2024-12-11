@@ -2,6 +2,11 @@
     border: 1px solid black;
     width: 50%;
 }
+
+.check-quantity{
+    font-family: "Raleway";
+    font-size: 30px;
+}
 .comment{
     width: 50%;
     height: 10vw;

@@ -338,6 +338,33 @@ const ProductDetailComponent: React.FC = () => {
                       ))}
                     </div>
                   </div>
+                  {/* Tình trạng */}
+                  <div className="block-size">
+                    <span style={{ fontFamily: "Raleway" }}>Tình trạng:</span>
+                    {product.quantity > 0 ? (
+                      <span
+                        style={{
+                          fontFamily: "Raleway",
+                          fontSize: "21px",
+                          color: "rgb(159,134,217)",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        Còn hàng
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          fontFamily: "Raleway",
+                          fontSize: "21px",
+                          color: "rgb(159,134,217)",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        Hết hàng
+                      </span>
+                    )}
+                  </div>
                   <div className="block-quantity">
                     {/* <div className="font-sm neutral-500 mb-15">Quantity</div> */}
                     <div className="box-form-cart">
