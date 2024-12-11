@@ -72,6 +72,9 @@ class ProductController extends Controller
                 'reviews' // Load reviews
             ]);
 
+            // Tính toán rating trung bình
+            $averageRating = $product->reviews->avg('rating');
+
             // Định dạng dữ liệu galleries
             $product->galleries = $product->galleries->map(function ($gallery) {
                 return [
@@ -112,6 +115,7 @@ class ProductController extends Controller
                 'sizes' => $product->sizes,
                 'galleries' => $product->galleries,
                 'reviews' => $product->reviews, // Bao gồm reviews
+                'average_rating' => round($averageRating, 2), // Hiển thị rating trung bình làm tròn 2 chữ số
                 'created_at' => $product->created_at,
                 'updated_at' => $product->updated_at,
             ];
@@ -121,6 +125,7 @@ class ProductController extends Controller
             return response()->json(['message' => 'Không thể lấy thông tin sản phẩm: ' . $e->getMessage()], 500);
         }
     }
+
 
 
     public function getProductsByCategory($categoryId)
