@@ -50,7 +50,7 @@ class AccountController extends Controller
                     'username' => $user->username,
                 ]
             ], 200);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // Handle error
             return back()->with('error', $e->getMessage());
         }

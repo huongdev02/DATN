@@ -62,7 +62,7 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 // Route cho Admin
-Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager', 'web'])->group(function () {
+Route::controller(AdminController::class)->middleware(['auth', 'admin','web'])->group(function () {
     Route::get('/admin/dashboard',  'admin')->name('admin.dashboard');
     // Đổi mật khẩu
     Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form');
@@ -84,8 +84,7 @@ Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager',
     Route::resource('products', ProductController::class);
     Route::resource('review', QuanliReviewController::class);
     //quan li account, route nay chi co quyen admin
-    Route::resource('managers', ManagerUserController::class)
-        ->middleware(['auth', 'admin']);
+    Route::resource('managers', ManagerUserController::class);
 
     //route thong ke
     Route::get('/search', [AdminController::class, 'search'])->name('search');
@@ -101,7 +100,7 @@ Route::controller(AdminController::class)->middleware(['auth', 'AdminOrManager',
 });
 
 // Route cho User
-Route::controller(UserController::class)->middleware(['auth', 'user'])->group(function () {
+Route::controller(UserController::class)->middleware(['auth', 'web', 'user'])->group(function () {
     Route::get('/user/dashboard', 'user')->name('user.dashboard');
     // Đổi mật khẩu
     Route::get('/user/change-password', 'changepass')->name('user.changepass.form');
