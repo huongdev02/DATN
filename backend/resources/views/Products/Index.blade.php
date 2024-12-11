@@ -157,6 +157,11 @@
         </div>
     @endif
 
+
+    <div class="d-flex justify-content-center mt-4">
+        {{ $products->appends(['status' => request()->get('status')])->links() }}
+    </div>
+
     <style>
         .gallery-image {
             width: 40px;
