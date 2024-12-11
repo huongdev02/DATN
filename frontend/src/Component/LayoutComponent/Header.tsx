@@ -145,7 +145,7 @@ const Header: React.FC = () => {
     };
 
     fetchAuthStatus(); // Gọi hàm kiểm tra auth
-  }, []); // Chỉ chạy khi component được mount
+  }, []); // Chỉ chạy khi component được mount abc
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
