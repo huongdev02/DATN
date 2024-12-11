@@ -3,7 +3,7 @@
         <li class="nav-item nav-profile dropdown no-arrow">
             <a href="#" class="nav-link d-flex align-items-center" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="nav-profile-image mt-5 mb-3">
-                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="profile" class="img-profile rounded-circle" style="width: 80px; height: 35px;" /> <!-- Thay đổi kích thước ở đây -->
+                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="profile" class="img-profile rounded-circle mt-2" style="width: 80px; height: 30px;" /> <!-- Thay đổi kích thước ở đây -->
                     <span class="login-status online"></span>
                 </div>
                 <div class="nav-profile-text d-flex flex-column mt-5">

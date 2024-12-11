@@ -78,7 +78,7 @@
 
         <div class="mb-3">
             <label for="description">Description:</label>
-            <textarea  rows="10" name="description" class="form-control">{{ old('description', $product->description) }}</textarea>
+            <textarea  rows="30" name="description" class="form-control">{{ old('description', $product->description) }}</textarea>
         </div>
 
         <div class="mb-3">
@@ -117,7 +117,7 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">Update Product</button>
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
             <a href="{{ route('products.index') }}" class="btn btn-secondary">Quay lại</a>
         </div>
     </form>

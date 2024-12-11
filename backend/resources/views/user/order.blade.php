@@ -87,6 +87,12 @@
                                 {{ $order->message }}
                             </p>
 
+                            <div class="d-flex">
+                                <p>
+                                    Đã tạo lúc: <p class="ms-3" style="color: green">{{ $order->created_at }}</p>
+                                </p>
+                            </div>
+
 
                             @php
                                 $orderTotal += $orderDetail->total;

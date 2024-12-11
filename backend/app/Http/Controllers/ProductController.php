@@ -124,7 +124,7 @@ class ProductController extends Controller
                 }
             }
 
-            return redirect()->route('products.index')->with('success', 'Product created successfully!');
+            return redirect()->route('products.index')->with('success', 'Thêm mới sản phẩm thành công');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to create product: ' . $e->getMessage());
         }
@@ -217,7 +217,7 @@ class ProductController extends Controller
             // Xóa sản phẩm
             $product->delete();
 
-            return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
+            return redirect()->route('products.index')->with('success', 'Thao tác thành công');
         }
 
         // Nếu không thỏa mãn điều kiện, trả về thông báo lỗi
