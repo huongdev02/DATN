@@ -156,9 +156,9 @@ const ProductDetailComponent: React.FC = () => {
             <div className="preloader-inner position-relative">
               <div className="page-loading text-center">
                 <div className="page-loading-inner">
-                  <div />
-                  <div />
-                  <div />
+                  <div/>
+                  <div/>
+                  <div/>
                 </div>
               </div>
             </div>
