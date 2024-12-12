@@ -36,10 +36,8 @@ interface User {
 
 const Header: React.FC = () => {
   // const { totalQuantity } = useCart();
-  const nav = useNavigate();
-  const { totalQuantity, status } = useSelector(
-    (state: RootState) => state.cart
-  );
+  const nav = useNavigate()
+  const { totalQuantity, status } = useSelector((state: RootState) => state.cart);
   const [searchText, setSearchText] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isCartActice, setIsCartActice] = useState(false);
@@ -47,10 +45,10 @@ const Header: React.FC = () => {
   const [activeTab, setActiveTab] = useState("login");
   const [products, setProducts] = useState<any[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const loading = useSelector((state: RootState) => state.auth.loading);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -58,8 +56,9 @@ const Header: React.FC = () => {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [check, setCheck] = useState<any>();
   const { cart } = useSelector((state: RootState) => state.cart);
+  const cartItemsLength = JSON.parse(localStorage.getItem("cartItems") || "[]");
+  const cartLength = cartItemsLength.length;
   const ref = useRef<HTMLDivElement>(null);
-
   const GetAllProducts = async () => {
     try {
       const { data } = await axios.get("http://127.0.0.1:8000/api/products");
@@ -69,6 +68,12 @@ const Header: React.FC = () => {
     }
   };
 
+ 
+  
+
+  console.log("checkkkkk", check);
+  
+
   const handleClick = () => {
     setIsShow(true);
   };
@@ -77,47 +82,75 @@ const Header: React.FC = () => {
     product.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const handleClickOutside = (event: any) => {
+    if (ref.current && !ref.current.contains(event.target)) {
+      setIsShow(false);
+    }
+  };
+
+  console.log(totalQuantity, 'sollllll');
+  
+
   useEffect(() => {
-    GetAllProducts();
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   useEffect(() => {
-    const fetchAuthStatus = async () => {
-      const userData = localStorage.getItem("user");
-      const token = localStorage.getItem("token");
+    const storedCart = localStorage.getItem("cartItems");
+    GetAllProducts()
+   
+    if (storedCart) {
+      setCartItems(JSON.parse(storedCart));
+    }
+  }, []);
 
-      // Kiểm tra nếu `userData` và `token` tồn tại
-      if (userData && token) {
-        try {
-          // Parse dữ liệu user từ localStorage
-          const parsedUser = JSON.parse(userData);
-          setIsLoggedIn(true);
-          setUser(parsedUser.user);
+  // useEffect(() => {
+  //   const fetchAuthStatus = async () => {
+  //     const userData = localStorage.getItem("user");
+  //     const token = localStorage.getItem("token");
 
-          // Gọi API để kiểm tra auth
-          const res = await axios.get("http://127.0.0.1:8000/api/auth/check", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setCheck(res.data); 
-        } catch (error) {
-          console.error("Error fetching auth status:", error);
-          setIsLoggedIn(false);
-          setUser(null);
-          setCheck(null);
-        }
-      } else {
-        console.log("No user data or token found in localStorage.");
-      }
-    };
+  //     // Kiểm tra nếu `userData` và `token` tồn tại
+  //     if (userData && token) {
+  //       try {
+  //         // Parse dữ liệu user từ localStorage
+  //         const parsedUser = JSON.parse(userData);
+  //         setIsLoggedIn(true);
+  //         setUser(parsedUser.user);
 
-    fetchAuthStatus(); // Gọi hàm kiểm tra auth
-  }, []); // Chỉ chạy khi component được mount
+  //         // Gọi API để kiểm tra auth
+  //         const res = await axios.get("http://127.0.0.1:8000/api/auth/check", {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         });
+  //         // if(check.role === 0){
+  //         //   nav('http://127.0.0.1:8000/admin/dashboard')
+  //         // }else{
+  //         //   nav('http://127.0.0.1:8000/user/dashboard')
+  //         // }
+  //         // console.log("Auth Check Response:", res.data);
+  //         setCheck(res.data); // Lưu dữ liệu kiểm tra auth vào state
+  //       } catch (error) {
+  //         console.error("Error fetching auth status:", error);
+  //         setIsLoggedIn(false);
+  //         setUser(null);
+  //         setCheck(null);
+  //       }
+  //     } else {
+  //       console.log("No user data or token found in localStorage.");
+  //     }
+  //   };
+
+  //   fetchAuthStatus(); // Gọi hàm kiểm tra auth
+  // }, []); // Chỉ chạy khi component được mount
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-   
+    console.log("Email:", email);
+    console.log("Password:", password);
     if (!password.trim() || !email.trim()) {
       notification.error({
         message: "Vui lòng nhập đầy đủ thông tin",
@@ -131,7 +164,9 @@ const Header: React.FC = () => {
         const userData = resultAction.payload;
         localStorage.setItem("user", JSON.stringify(userData));
         localStorage.setItem("token", userData.token);
-  
+        window.location.reload();
+
+        
       } else {
         notification.error({
           message: "Tài khoản không chính khác",
@@ -147,31 +182,31 @@ const Header: React.FC = () => {
 
     if (password !== confirmPassword) {
       notification.error({
-        message: "Lỗi đăng ký",
-        description: "Mật khẩu và xác nhận mật khẩu không khớp!",
-        placement: "topRight",
+        message: 'Lỗi đăng ký',
+        description: 'Mật khẩu và xác nhận mật khẩu không khớp!',
+        placement: 'topRight',  
       });
       return;
     }
 
-    const userData = { email, username, password, confirmPassword };
+    const userData = { email, username, password, confirmPassword }; 
     dispatch(registerUser(userData));
     notification.success({
-      message: "Đăng ký thành công",
+      message: 'Đăng ký thành công',
       description: `Vui lòng đăng nhập để đặt hàng tại website`,
-      placement: "topRight",
+      placement: 'topRight', 
     });
     setActiveTab("login");
   };
 
   const navDashBoard = () => {
     if (check.role === 2) {
-      window.location.href = "http://127.0.0.1:8000/admin/dashboard";
-    }
-    if (check.role === 0) {
-      window.location.href = "http://127.0.0.1:8000/user/dashboard";
+      window.location.href = 'http://127.0.0.1:8000/admin/dashboard';
+    } if (check.role === 0) {
+      window.location.href = 'http://127.0.0.1:8000/user/dashboard';  
     }
   };
+  
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -180,9 +215,10 @@ const Header: React.FC = () => {
     setIsLoggedIn(false);
     notification.success({
       message: "Đăng xuất thành công !",
-      placement: "bottomRight",
+      placement:'bottomRight'
     });
-    nav("/");
+    nav('/')
+    
   };
 
   const items: MenuProps["items"] = [
@@ -301,14 +337,11 @@ const Header: React.FC = () => {
                   }}
                 >
                   <InfoCircleOutlined className="icon-css" />
-
-                  <span
-                    onClick={() => navDashBoard()}
-                    className="hover-text"
-                    style={{ marginLeft: "5px" }}
-                  >
-                    Thông tin tài khoản
-                  </span>
+               
+                    <span onClick={()=>navDashBoard()} className="hover-text" style={{ marginLeft: "5px" }}>
+                      Thông tin tài khoản
+                    </span>
+                 
                 </div>
                 <div className="css-logout" onClick={() => handleLogout()}>
                   <LogoutOutlined className="icon-css" />
@@ -439,7 +472,10 @@ const Header: React.FC = () => {
                 </svg>
               </a> */}
               {/* Giỏ hàng nè */}
-              <Link to="/cart" className="account-icon cart">
+              <Link
+                to="/cart"
+                className="account-icon cart"
+              >
                 <span className="number-tag">{totalQuantity}</span>
                 <svg
                   width={28}
@@ -477,7 +513,7 @@ const Header: React.FC = () => {
       >
         <div className="box-search-overlay" />
         <div className={`box-search-wrapper ${isSearchActive ? "active" : ""}`}>
-          <a onClick={closeSearchPopup} className="btn-close-popup">
+          <a onClick={closeSearchPopup} className="btn-close-popup" >
             <svg
               className="icon-16 d-inline-flex align-items-center justify-content-center"
               fill="#111111"
@@ -519,16 +555,8 @@ const Header: React.FC = () => {
                           className="product-result"
                         />
                         <div className="text-result">
-                          <p
-                            style={{ fontFamily: "Raleway" }}
-                            className="name-result"
-                          >
-                            {product.name}
-                          </p>
-                          <p
-                            style={{ fontFamily: "Raleway" }}
-                            className="price-result"
-                          >
+                          <p style={{fontFamily:'Raleway'}} className="name-result">{product.name}</p>
+                          <p  style={{fontFamily:'Raleway'}}className="price-result">
                             {" "}
                             {Math.round(product.price).toLocaleString("vi", {
                               style: "currency",
@@ -540,9 +568,7 @@ const Header: React.FC = () => {
                     </Link>
                   ))
                 ) : (
-                  <div style={{ fontFamily: "Raleway" }} className="no-results">
-                    *Không tìm thấy sản phẩm nào
-                  </div>
+                  <div style={{fontFamily:'Raleway'}} className="no-results">*Không tìm thấy sản phẩm nào</div>
                 )}
               </div>
             )}
@@ -601,7 +627,7 @@ const Header: React.FC = () => {
               href="#"
               onClick={showSignUpForm}
             >
-              Đăng ký
+              Đăng ký 
             </a>
             {activeTab === "login" && (
               <form action="" onSubmit={handleLogin}>
@@ -652,7 +678,7 @@ const Header: React.FC = () => {
                   className="form-register"
                   style={{ display: activeTab === "signup" ? "block" : "none" }}
                 >
-                  <div className="form-group">
+                   <div className="form-group">
                     <input
                       className="form-control"
                       type="text"
@@ -682,6 +708,7 @@ const Header: React.FC = () => {
                       type="password"
                       placeholder="Xác nhận lại mật khẩu"
                       onChange={(e) => setConfirmPassword(e.target.value)}
+
                     />
                   </div>
                   <div className="form-group">
@@ -692,8 +719,8 @@ const Header: React.FC = () => {
                   <div className="text-center">
                     <p className="body-p2 neutral-medium-dark">
                       Bạn đã có tài khoản rồi?{" "}
-                      <a
-                        style={{ color: "red" }}
+                      <a 
+                        style={{color:'red'}}
                         className="neutral-dark login-now"
                         href="#"
                         onClick={showLoginForm}
