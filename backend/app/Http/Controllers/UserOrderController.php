@@ -11,8 +11,12 @@ class UserOrderController extends Controller
 {
     public function index(Request $request)
     {
-        // Khởi tạo truy vấn với eager loading
-        $query = Order::with(['orderDetails.product.categories', 'user', 'review', 'orderDetails.color', 'orderDetails.size']);
+        // Lấy thông tin người dùng hiện tại
+        $user = auth()->user();
+
+        // Khởi tạo truy vấn với eager loading, chỉ lấy đơn hàng của người dùng đang đăng nhập
+        $query = Order::with(['orderDetails.product.categories', 'user', 'review', 'orderDetails.color', 'orderDetails.size'])
+            ->where('user_id', $user->id);
 
         // Nếu có giá trị status, áp dụng điều kiện where
         if ($request->has('status') && $request->get('status') !== null) {
