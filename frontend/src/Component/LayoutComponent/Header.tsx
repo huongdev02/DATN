@@ -69,10 +69,7 @@ const Header: React.FC = () => {
   };
 
  
-  
 
-  console.log("checkkkkk", check);
-  
 
   const handleClick = () => {
     setIsShow(true);
