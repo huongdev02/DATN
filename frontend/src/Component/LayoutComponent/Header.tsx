@@ -60,6 +60,7 @@ const Header: React.FC = () => {
   const { cart } = useSelector((state: RootState) => state.cart);
   const cartItemsLength = JSON.parse(localStorage.getItem("cartItems") || "[]");
   const cartLength = cartItemsLength.length;
+  const [ isLogo, setLogo] = useState<any>()
   const ref = useRef<HTMLDivElement>(null);
   const [userLocala, setUserLocala] = useState<any>();
 
@@ -71,6 +72,22 @@ const Header: React.FC = () => {
       message.error("Lỗi api!");
     }
   };
+
+  useEffect(()=>{
+    const GetLogo = async () => {
+      try {
+        const { data } = await  axios.get(`http://127.0.0.1:8000/api/logobanner/${1}`);
+         setLogo(data.image)
+      } catch (error) {
+        message.error("Lỗi api!");
+      }
+    };
+    GetLogo()
+  },[])
+  
+  console.log("Logooooo", isLogo);
+  
+  
 
   useEffect(() => {
     const userLocal = localStorage.getItem("user");
@@ -109,7 +126,6 @@ const Header: React.FC = () => {
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
     GetAllProducts();
-
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));
     }
@@ -298,7 +314,7 @@ const Header: React.FC = () => {
           <div className="main-header">
             <div className="header-logo">
               <Link to="/" className="d-flex">
-                <img alt="kidify" src={Logo} />
+                <img src={isLogo} alt="" width={'120px'}/>
               </Link>
             </div>
             <div className="header-menu">

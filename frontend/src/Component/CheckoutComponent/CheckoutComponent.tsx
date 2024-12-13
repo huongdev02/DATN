@@ -248,9 +248,8 @@ const CheckoutComponent: React.FC = () => {
       } else {
       }
       if (paymentMethodId === 1) {
-        nav("/order-success");
         window.scrollTo(0, 0);
-        window.location.reload()
+        nav("/order-success");
       }
 
       localStorage.removeItem("cartItems");
