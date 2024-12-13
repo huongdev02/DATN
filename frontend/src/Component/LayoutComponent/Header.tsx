@@ -36,8 +36,10 @@ interface User {
 
 const Header: React.FC = () => {
   // const { totalQuantity } = useCart();
-  const nav = useNavigate()
-  const { totalQuantity, status } = useSelector((state: RootState) => state.cart);
+  const nav = useNavigate();
+  const { totalQuantity, status } = useSelector(
+    (state: RootState) => state.cart
+  );
   const [searchText, setSearchText] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isCartActice, setIsCartActice] = useState(false);
@@ -45,10 +47,10 @@ const Header: React.FC = () => {
   const [activeTab, setActiveTab] = useState("login");
   const [products, setProducts] = useState<any[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const loading = useSelector((state: RootState) => state.auth.loading);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -60,7 +62,6 @@ const Header: React.FC = () => {
   const cartLength = cartItemsLength.length;
   const ref = useRef<HTMLDivElement>(null);
   const [userLocala, setUserLocala] = useState<any>();
-
 
   const GetAllProducts = async () => {
     try {
@@ -75,16 +76,12 @@ const Header: React.FC = () => {
     const userLocal = localStorage.getItem("user");
     if (userLocal) {
       const parsedUser = JSON.parse(userLocal);
-      setUserLocala(parsedUser.user); 
-      setIsLoggedIn(true)
+      setUserLocala(parsedUser.user);
+      setIsLoggedIn(true);
     }
   }, []);
 
-  console.log('user locallll', userLocala);
-  
- 
-  
-
+  console.log("user locallll", userLocala);
 
   const handleClick = () => {
     setIsShow(true);
@@ -100,8 +97,7 @@ const Header: React.FC = () => {
     }
   };
 
-  console.log(totalQuantity, 'sollllll');
-  
+  console.log(totalQuantity, "sollllll");
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -112,8 +108,8 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
-    GetAllProducts()
-   
+    GetAllProducts();
+
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));
     }
@@ -177,8 +173,6 @@ const Header: React.FC = () => {
         localStorage.setItem("user", JSON.stringify(userData));
         localStorage.setItem("token", userData.token);
         window.location.reload();
-
-        
       } else {
         notification.error({
           message: "Tài khoản không chính khác",
@@ -194,47 +188,45 @@ const Header: React.FC = () => {
 
     if (password !== confirmPassword) {
       notification.error({
-        message: 'Lỗi đăng ký',
-        description: 'Mật khẩu và xác nhận mật khẩu không khớp!',
-        placement: 'topRight',  
+        message: "Lỗi đăng ký",
+        description: "Mật khẩu và xác nhận mật khẩu không khớp!",
+        placement: "topRight",
       });
       return;
     }
 
-    const userData = { email, username, password, confirmPassword }; 
+    const userData = { email, username, password, confirmPassword };
     dispatch(registerUser(userData));
     notification.success({
-      message: 'Đăng ký thành công',
+      message: "Đăng ký thành công",
       description: `Vui lòng đăng nhập để đặt hàng tại website`,
-      placement: 'topRight', 
+      placement: "topRight",
     });
     setActiveTab("login");
   };
 
   const navDashBoard = () => {
     if (check.role === 2) {
-      window.location.href = 'http://127.0.0.1:8000/admin/dashboard';
-    } if (check.role === 0) {
-      window.location.href = 'http://127.0.0.1:8000/user/dashboard';  
+      window.location.href = "http://127.0.0.1:8000/admin/dashboard";
+    }
+    if (check.role === 0) {
+      window.location.href = "http://127.0.0.1:8000/user/dashboard";
     }
   };
-  
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-     
+
     setIsLoggedIn(false);
-    window.location.reload()
-    setTimeout(()=>{
+    window.location.reload();
+    setTimeout(() => {
       notification.success({
         message: "Đăng xuất thành công !",
-        placement:'bottomRight'
+        placement: "bottomRight",
       });
-      nav('/')
-    },500)
-   
-    
+      nav("/");
+    }, 500);
   };
 
   const items: MenuProps["items"] = [
@@ -353,11 +345,14 @@ const Header: React.FC = () => {
                   }}
                 >
                   <InfoCircleOutlined className="icon-css" />
-               
-                    <span onClick={()=>navDashBoard()} className="hover-text" style={{ marginLeft: "5px" }}>
-                      Thông tin tài khoản
-                    </span>
-                 
+
+                  <span
+                    onClick={() => navDashBoard()}
+                    className="hover-text"
+                    style={{ marginLeft: "5px" }}
+                  >
+                    Thông tin tài khoản
+                  </span>
                 </div>
                 <div className="css-logout" onClick={() => handleLogout()}>
                   <LogoutOutlined className="icon-css" />
@@ -374,70 +369,47 @@ const Header: React.FC = () => {
                 justifyContent: "end",
               }}
             >
-              <div style={{ width: "70px" }} className="account-icon account">
+              <div className="account-icon account">
                 {isLoggedIn && userLocala ? (
-                  <div className="dropdown">
-                    <span className="hi-user">{userLocala.email}</span>
-                    {/* <img
-                      style={{ borderRadius: "50%" }}
+                  <div  onClick={() => handleClick()} className="dropdown" style={{display:'flex', justifyContent:'center', alignItems:'center', width:'85px'}}>
+                    <img
+                      style={{ borderRadius: "50%", marginRight:'8px'}}
                       className="dropbtn"
-                      src={user.avatar}
+                      src={userLocala.avatar}
                       alt=""
-                    /> */}
-                    <a
-                      className="account-icon account hover-user"
-                      onClick={() => handleClick()}
-                    >
-                      <svg
-                        className="d-inline-flex align-items-center justify-content-center"
-                        width={28}
-                        height={28}
-                        viewBox="0 0 28 28"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g clipPath="url(#clip0_116_451)">
-                          <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_116_451">
-                            <rect
-                              width={24}
-                              height={24}
-                              fill="white"
-                              transform="translate(2 2)"
-                            />
-                          </clipPath>
-                        </defs>
-                      </svg>
-                    </a>
+                    />
+                     <span className="hi-user" style={{cursor:'pointer'}}>
+                      {userLocala.fullname || userLocala.email}
+                    </span>
                   </div>
                 ) : (
-                  <a
-                    className="account-icon account"
-                    onClick={openAccountPopup}
-                  >
-                    <svg
-                      className="d-inline-flex align-items-center justify-content-center"
-                      width={28}
-                      height={28}
-                      viewBox="0 0 28 28"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clipPath="url(#clip0_116_451)">
-                        <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_116_451">
-                          <rect
-                            width={24}
-                            height={24}
-                            fill="white"
-                            transform="translate(2 2)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                  </a>
+                  // <a
+                  //   className="account-icon account"
+                  //   onClick={openAccountPopup}
+                  // >
+                  //   <svg
+                  //     className="d-inline-flex align-items-center justify-content-center"
+                  //     width={28}
+                  //     height={28}
+                  //     viewBox="0 0 28 28"
+                  //     xmlns="http://www.w3.org/2000/svg"
+                  //   >
+                  //     <g clipPath="url(#clip0_116_451)">
+                  //       <path d="M6 24C6 21.8783 6.84285 19.8434 8.34315 18.3431C9.84344 16.8429 11.8783 16 14 16C16.1217 16 18.1566 16.8429 19.6569 18.3431C21.1571 19.8434 22 21.8783 22 24H20C20 22.4087 19.3679 20.8826 18.2426 19.7574C17.1174 18.6321 15.5913 18 14 18C12.4087 18 10.8826 18.6321 9.75736 19.7574C8.63214 20.8826 8 22.4087 8 24H6ZM14 15C10.685 15 8 12.315 8 9C8 5.685 10.685 3 14 3C17.315 3 20 5.685 20 9C20 12.315 17.315 15 14 15ZM14 13C16.21 13 18 11.21 18 9C18 6.79 16.21 5 14 5C11.79 5 10 6.79 10 9C10 11.21 11.79 13 14 13Z" />
+                  //     </g>
+                  //     <defs>
+                  //       <clipPath id="clip0_116_451">
+                  //         <rect
+                  //           width={24}
+                  //           height={24}
+                  //           fill="white"
+                  //           transform="translate(2 2)"
+                  //         />
+                  //       </clipPath>
+                  //     </defs>
+                  //   </svg>
+                  // </a>
+                  <span className="text-login-z"  onClick={openAccountPopup}>Đăng nhập</span>
                 )}
               </div>
               <a className="account-icon search" onClick={openSearchPopup}>
@@ -488,10 +460,7 @@ const Header: React.FC = () => {
                 </svg>
               </a> */}
               {/* Giỏ hàng nè */}
-              <Link
-                to="/cart"
-                className="account-icon cart"
-              >
+              <Link to="/cart" className="account-icon cart">
                 <span className="number-tag">{totalQuantity}</span>
                 <svg
                   width={28}
@@ -529,7 +498,7 @@ const Header: React.FC = () => {
       >
         <div className="box-search-overlay" />
         <div className={`box-search-wrapper ${isSearchActive ? "active" : ""}`}>
-          <a onClick={closeSearchPopup} className="btn-close-popup" >
+          <a onClick={closeSearchPopup} className="btn-close-popup">
             <svg
               className="icon-16 d-inline-flex align-items-center justify-content-center"
               fill="#111111"
@@ -571,8 +540,16 @@ const Header: React.FC = () => {
                           className="product-result"
                         />
                         <div className="text-result">
-                          <p style={{fontFamily:'Raleway'}} className="name-result">{product.name}</p>
-                          <p  style={{fontFamily:'Raleway'}}className="price-result">
+                          <p
+                            style={{ fontFamily: "Raleway" }}
+                            className="name-result"
+                          >
+                            {product.name}
+                          </p>
+                          <p
+                            style={{ fontFamily: "Raleway" }}
+                            className="price-result"
+                          >
                             {" "}
                             {Math.round(product.price).toLocaleString("vi", {
                               style: "currency",
@@ -584,7 +561,9 @@ const Header: React.FC = () => {
                     </Link>
                   ))
                 ) : (
-                  <div style={{fontFamily:'Raleway'}} className="no-results">*Không tìm thấy sản phẩm nào</div>
+                  <div style={{ fontFamily: "Raleway" }} className="no-results">
+                    *Không tìm thấy sản phẩm nào
+                  </div>
                 )}
               </div>
             )}
@@ -643,7 +622,7 @@ const Header: React.FC = () => {
               href="#"
               onClick={showSignUpForm}
             >
-              Đăng ký 
+              Đăng ký
             </a>
             {activeTab === "login" && (
               <form action="" onSubmit={handleLogin}>
@@ -694,7 +673,7 @@ const Header: React.FC = () => {
                   className="form-register"
                   style={{ display: activeTab === "signup" ? "block" : "none" }}
                 >
-                   <div className="form-group">
+                  <div className="form-group">
                     <input
                       className="form-control"
                       type="text"
@@ -724,7 +703,6 @@ const Header: React.FC = () => {
                       type="password"
                       placeholder="Xác nhận lại mật khẩu"
                       onChange={(e) => setConfirmPassword(e.target.value)}
-
                     />
                   </div>
                   <div className="form-group">
@@ -735,8 +713,8 @@ const Header: React.FC = () => {
                   <div className="text-center">
                     <p className="body-p2 neutral-medium-dark">
                       Bạn đã có tài khoản rồi?{" "}
-                      <a 
-                        style={{color:'red'}}
+                      <a
+                        style={{ color: "red" }}
                         className="neutral-dark login-now"
                         href="#"
                         onClick={showLoginForm}
