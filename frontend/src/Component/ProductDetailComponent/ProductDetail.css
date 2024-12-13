@@ -42,7 +42,7 @@
 } 
 
 .css-button-add:hover{
-    background-color: #E35946;
+   opacity: 0.9;
 }
 :where(.css-dev-only-do-not-override-1x0dypw).ant-rate .ant-rate-star-half .ant-rate-star-first, :where(.css-dev-only-do-not-override-1x0dypw).ant-rate .ant-rate-star-full .ant-rate-star-second {
     color: gold;
