@@ -59,6 +59,9 @@ const Header: React.FC = () => {
   const cartItemsLength = JSON.parse(localStorage.getItem("cartItems") || "[]");
   const cartLength = cartItemsLength.length;
   const ref = useRef<HTMLDivElement>(null);
+  const [userLocala, setUserLocala] = useState<any>();
+
+
   const GetAllProducts = async () => {
     try {
       const { data } = await axios.get("http://127.0.0.1:8000/api/products");
@@ -68,7 +71,19 @@ const Header: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const userLocal = localStorage.getItem("user");
+    if (userLocal) {
+      const parsedUser = JSON.parse(userLocal);
+      setUserLocala(parsedUser.user); 
+      setIsLoggedIn(true)
+    }
+  }, []);
+
+  console.log('user locallll', userLocala);
+  
  
+  
 
 
   const handleClick = () => {
@@ -208,13 +223,17 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    // localStorage.removeItem("cart");
+     
     setIsLoggedIn(false);
-    notification.success({
-      message: "Đăng xuất thành công !",
-      placement:'bottomRight'
-    });
-    nav('/')
+    window.location.reload()
+    setTimeout(()=>{
+      notification.success({
+        message: "Đăng xuất thành công !",
+        placement:'bottomRight'
+      });
+      nav('/')
+    },500)
+   
     
   };
 
@@ -356,9 +375,9 @@ const Header: React.FC = () => {
               }}
             >
               <div style={{ width: "70px" }} className="account-icon account">
-                {isLoggedIn && user ? (
+                {isLoggedIn && userLocala ? (
                   <div className="dropdown">
-                    <span className="hi-user">{user.email}</span>
+                    <span className="hi-user">{userLocala.email}</span>
                     {/* <img
                       style={{ borderRadius: "50%" }}
                       className="dropbtn"
