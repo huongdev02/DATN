@@ -1,7 +1,0 @@
-:where(.css-dev-only-do-not-override-142vneq).ant-modal-confirm-confirm .ant-modal-confirm-body>.anticon{
-    color: red;
-}
-:where(.css-dev-only-do-not-override-142vneq).ant-notification .ant-notification-notice-wrapper .ant-notification-notice {
-    border: 1px solid #52c41a;
-    border-left: 4px solid #52c41a;
-}
