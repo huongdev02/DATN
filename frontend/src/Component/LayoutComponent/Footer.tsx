@@ -1,21 +1,52 @@
-import MasterCart from '../../assets/imgs/template/icons/mastercard.svg'
-import GooglePay from '../../assets/imgs/template/icons/googlepay.svg'
-import Payoneer from '../../assets/imgs/template/icons/payoneer.svg'
-import Logo from '../../assets/imgs/template/logo.svg'
-const Footer:React.FC = () => {
-    return(
-        <>
-     <footer className="footer">
-  <div className="footer-1">
-    <div className="container">
-      <div className="row" style={{display:'flex', justifyContent:'start'}}>
-        <div className="col-lg-3 col-md-3 mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".0s">
-          <h5 className="neutral-900 text-uppercase mb-30">LIÊN HỆ</h5>
-          <p className="neutral-900 font-lg desc-company">Số 22, ngõ 20/4 phố Nghĩa Đô, Cầu Giấy, Hà Nội</p>
-          <p className="neutral-900 font-lg phone-footer">+84 (0)986936908</p>
-          <p className="neutral-900 font-lg email-footer">lienhe@likeshop.vn</p>
-        </div>
-        {/* <div className="col-lg-9 mb-30">
+import MasterCart from "../../assets/imgs/template/icons/mastercard.svg";
+import GooglePay from "../../assets/imgs/template/icons/googlepay.svg";
+import Payoneer from "../../assets/imgs/template/icons/payoneer.svg";
+import Logo from "../../assets/imgs/template/logo.svg";
+import { useEffect, useState } from "react";
+import api from "../../Axios/Axios";
+import axios from "axios";
+const Footer: React.FC = () => {
+
+  const [ isLogo, setLogo] = useState<any>()
+   
+
+  useEffect(()=>{
+    const GetLogo = async () => {
+      try {
+        const { data } = await  axios.get(`http://127.0.0.1:8000/api/logobanner/${1}`);
+         setLogo(data.image)
+      } catch (error) {
+         console.log(error);
+         
+      }
+    };
+    GetLogo()
+  },[])
+  return (
+    <>
+      <footer className="footer">
+        <div className="footer-1">
+          <div className="container">
+            <div
+              className="row"
+              style={{ display: "flex", justifyContent: "start" }}
+            >
+              <div
+                className="col-lg-3 col-md-3 mb-30 wow animate__animated animate__fadeIn"
+                data-wow-delay=".0s"
+              >
+                <h5 className="neutral-900 text-uppercase mb-30">LIÊN HỆ</h5>
+                <p className="neutral-900 font-lg desc-company">
+                  Số 22, ngõ 20/4 phố Nghĩa Đô, Cầu Giấy, Hà Nội
+                </p>
+                <p className="neutral-900 font-lg phone-footer">
+                  +84 (0)986936908
+                </p>
+                <p className="neutral-900 font-lg email-footer">
+                  lienhe@likeshop.vn
+                </p>
+              </div>
+              {/* <div className="col-lg-9 mb-30">
           <div className="row">
             <div className="col-lg-3 col-md-6 mb-30 wow animate__animated animate__fadeIn" data-wow-delay=".1s">
               <h5 className="neutral-900 text-uppercase mb-30">Company</h5>
@@ -59,32 +90,47 @@ const Footer:React.FC = () => {
             </div>
           </div>
         </div> */}
-      </div>
-    </div>
-  </div>
-  <div className="footer-2">
-    <div className="container">
-      <div className="footer-bottom">
-        <div className="row align-items-center">
-          <div className="col-lg-3 col-md-12 text-center text-lg-start mb-20 wow animate__animated animate__fadeIn" data-wow-delay=".0s"><a href="index.html"><img src={Logo} alt="kidify" /></a></div>
-          <div className="col-lg-6 col-md-12 text-center mb-20 wow animate__animated animate__fadeIn" data-wow-delay=".0s"><span className="body-p1 neutral-900 mr-5">©2024</span><a href="#">Likeshop</a></div>
-          <div className="col-lg-3 col-md-12 text-center text-lg-end mb-20 wow animate__animated animate__fadeIn" data-wow-delay=".0s">
-            <div className="d-flex justify-content-center justify-content-lg-end align-items-center box-all-payments">
-              <div className="d-inline-block box-payments">
-                <img src={MasterCart} alt="kidify" />
-                <img src={GooglePay} alt="kidify" />
-                <img src={Payoneer} alt="kidify" />
-                </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</footer>
+        <div className="footer-2">
+          <div className="container">
+            <div className="footer-bottom">
+              <div className="row align-items-center">
+                <div
+                  className="col-lg-3 col-md-12 text-center text-lg-start mb-20 wow animate__animated animate__fadeIn"
+                  data-wow-delay=".0s"
+                >
+                  <a href="index.html">
+                    <img src={isLogo} alt="" width={'100px'} />
+                  </a>
+                </div>
+                <div
+                  className="col-lg-6 col-md-12 text-center mb-20 wow animate__animated animate__fadeIn"
+                  data-wow-delay=".0s"
+                >
+                  <span className="body-p1 neutral-900 mr-5">©2024</span>
+                  <a href="#">Likeshop</a>
+                </div>
+                <div
+                  className="col-lg-3 col-md-12 text-center text-lg-end mb-20 wow animate__animated animate__fadeIn"
+                  data-wow-delay=".0s"
+                >
+                  <div className="d-flex justify-content-center justify-content-lg-end align-items-center box-all-payments">
+                    {/* <div className="d-inline-block box-payments">
+                      <img src={MasterCart} alt="kidify" />
+                      <img src={GooglePay} alt="kidify" />
+                      <img src={Payoneer} alt="kidify" />
+                    </div> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+};
 
-        </>
-    )
-}
-
-export default Footer
+export default Footer;

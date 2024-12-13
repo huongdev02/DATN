@@ -1,5 +1,5 @@
 import React from 'react';
-
+import api from '../../Axios/Axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import Banner from '../../assets/imgs/page/homepage1/banner.png';
@@ -8,7 +8,24 @@ import Sale from '../../assets/imgs/page/homepage1/sale.png';
 import Leaf from '../../assets/imgs/page/homepage1/leaf.png'
 import Star from '../../assets/imgs/page/homepage1/star.png'
 import Arrow from '../../assets/imgs/template/icons/arrow.svg'
+import { useEffect, useState } from 'react';
 const BannerComponent: React.FC = () => {
+ 
+    const [banner, setBanner]= useState<any>()
+    
+    useEffect(()=>{
+        const GetLogo = async () => {
+          try {
+            const { data } = await  api.get(`/logobanner/${2}`);
+             setBanner(data.image)
+          } catch (error) {
+             console.log(error);
+          }
+        };
+        GetLogo()
+      },[])
+    
+
     return (
         <section className="section banner-homepage1">
             <div className="container">
