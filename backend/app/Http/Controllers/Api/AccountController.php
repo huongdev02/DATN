@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ship_address;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -65,14 +66,14 @@ class AccountController extends Controller
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
-    
+
             // Kiểm tra xem có tồn tại tài khoản với email và mật khẩu không
             if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], true)) {
                 $request->session()->regenerate();
-    
+
                 // Lấy thông tin người dùng đã đăng nhập
                 $user = Auth::user();
-    
+
                 // Kiểm tra trạng thái tài khoản
                 if ($user->is_active == 0) {
                     Auth::logout();
@@ -80,14 +81,14 @@ class AccountController extends Controller
                         'error' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.'
                     ], 403);
                 }
-    
-                 /** @var User $user */
+
+                /** @var User $user */
                 // Tạo token cho người dùng (để dùng ở React)
                 $token = $user->createToken('API Token')->plainTextToken;
-    
+
                 // **Quan trọng:** Đăng nhập người dùng vào session
                 Auth::login($user, true); // Tạo session cho người dùng
-    
+
                 // Trả về dữ liệu người dùng và token
                 return response()->json([
                     'status' => true,
@@ -109,7 +110,7 @@ class AccountController extends Controller
                     ]
                 ], 200);
             }
-    
+
             return response()->json([
                 'error' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu'
             ], 401);
@@ -117,8 +118,8 @@ class AccountController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
-    
-    
+
+
 
     public function show($userId)
     {
@@ -168,6 +169,21 @@ class AccountController extends Controller
         } catch (Throwable $e) {
             return response()->json(['error' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
         }
+    }
+    public function address(Request $request)
+    {
+        $userId = auth()->id(); // Lấy ID người dùng đang đăng nhập
+
+        $shipAddress = Ship_address::where('user_id', $userId)
+            ->orderByDesc('is_default') // Sắp xếp để ưu tiên địa chỉ mặc định
+            ->orderByDesc('created_at') // Sau đó ưu tiên bản ghi mới nhất
+            ->first(); // Lấy bản ghi đầu tiên
+
+        if ($shipAddress) {
+            return response()->json(["status" => "success", "data" => $shipAddress]);
+        }
+
+        return response()->json(["status" => "error", "message" => "No shipping address found"], 404);
     }
 
 

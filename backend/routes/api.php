@@ -43,6 +43,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('carts', CartController::class)->middleware('auth:sanctum');
 Route::apiResource('orders', OrderController::class)->middleware('auth:sanctum');
 Route::apiResource('vouchers', VoucherController::class)->middleware('auth:sanctum');
+    //diachi
+Route::get('/address',[AccountController::class, 'address'])->name('address')->middleware('auth:sanctum');
+
 Route::get('/cart/{user_id}', [CartController::class, 'getCartByUserId']);
 Route::put('/cart/{cartId}/update/{productId}', [CartController::class, 'updateCartItem']);
 
