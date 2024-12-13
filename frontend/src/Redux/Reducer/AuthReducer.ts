@@ -21,7 +21,6 @@ const initialState: AuthState = {
 };
 
 export const login = createAsyncThunk('auth/login', async (credentials: { email: string; password: string }) => {
-    // Gửi yêu cầu đăng nhập tới API
     const response = await fetch('http://127.0.0.1:8000/api/login', {
         method: 'POST',
         headers: {
@@ -30,27 +29,16 @@ export const login = createAsyncThunk('auth/login', async (credentials: { email:
         body: JSON.stringify(credentials),
     });
 
-    // Kiểm tra nếu phản hồi không hợp lệ
     if (!response.ok) {
         throw new Error('Login failed');
     }
 
-    // Giả sử dữ liệu trả về là data.data chứa token
     const data = await response.json();
-
     const token = data.data.token;
 
-    // Loại bỏ 3 ký tự đầu của token
-    const trimmedToken = token.slice(3); // Loại bỏ 3 ký tự đầu
 
-    // Lưu token đã chỉnh sửa vào localStorage
-    localStorage.setItem('token', trimmedToken);
-
-    // Trả về đối tượng với token đã loại bỏ 3 ký tự đầu
-    return { ...data.data, token: trimmedToken };
+    return { ...data.data, token: token };
 });
-
-
 
 const AuthReducer = createSlice({
     name: 'auth',

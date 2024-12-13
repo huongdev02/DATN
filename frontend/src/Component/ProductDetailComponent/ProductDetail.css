@@ -33,6 +33,14 @@
     font-family: "Raleway";
 }
 
+:where(.css-dev-only-do-not-override-142vneq).ant-pagination .ant-pagination-item-active{
+    border-color: blueviolet;
+    border: none;
+    color: white;
+    background: linear-gradient(to right,#673ab7, #af99d8);
+
+} 
+
 .css-button-add:hover{
    opacity: 0.9;
 }

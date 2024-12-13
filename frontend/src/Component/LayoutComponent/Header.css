@@ -1,31 +1,30 @@
-.input-search{
-    width: 100%;
-    height: 40px;
-    border-radius: 6px;
-    border: 1px solid gray;
-    padding-left: 10px;
-   
+.input-search {
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid gray;
+  padding-left: 10px;
 }
-.input-search::placeholder{
-   color: grey;
+.input-search::placeholder {
+  color: grey;
 }
-.css-logout{
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    margin-left: 10px;
-    margin-top: 10px;
-}
-
-.css-logout:hover{
-    color: rgb(159,134,217) ;
+.css-logout {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-left: 10px;
+  margin-top: 10px;
 }
 
-.css-contact:hover{
-    color:rgb(159,134,217) ;
+.css-logout:hover {
+  color: rgb(159, 134, 217);
 }
 
-.hi-user{
+.css-contact:hover {
+  color: rgb(159, 134, 217);
+}
+
+/* .hi-user{
    position: absolute;
    left: -110px;
    font-family: "Raleway";
@@ -33,69 +32,77 @@
    font-weight: 600;
    top: 5px;
    font-size: 14px;
+} */
+
+.hover-text:hover {
+  color: rgb(159, 134, 217);
 }
 
-.hover-text:hover{
-    color: rgb(159,134,217);
+.text-login-z {
+  font-size: 16px;
+  font-weight: 700;
+  background: linear-gradient(153deg, rgb(105, 72, 183) 0%, rgb(159, 134, 217) 100%);
+  background-clip: text;
+  color: transparent;
+  cursor: pointer;
+  font-family: "Raleway";
 }
 
-.custom-user{
-    cursor: pointer;
-    display: block;
-    justify-content: start;
-    border: 1px solid rgb(159,134,217);
-    border-radius: 8px;
-    background-color: white;
-    width: 180px;
-    height: 80px;
-    top: 60px;
-    color: rgb(47,37,44);
-    right: 68px;
-    position: absolute;
-    font-size: 14px;
-    font-weight: 600;
-    font-family: "Raleway";
-    text-align: start;
+.custom-user {
+  cursor: pointer;
+  display: block;
+  justify-content: start;
+  border: 1px solid rgb(159, 134, 217);
+  border-radius: 8px;
+  background-color: white;
+  width: 180px;
+  height: 80px;
+  top: 68px;
+  color: rgb(47, 37, 44);
+  right: -35px;
+  position: absolute;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Raleway";
+  text-align: start;
 }
 
 .box-popup-search .btn-close-popup {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 5;
-    line-height: 25px;
-   
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 5;
+  line-height: 25px;
 }
-.product-result{
-    border: 1px solid rgb(245,245,245);
-    padding: 5px 10px;
-    width: 80px;
-    height: 100px;
-    border-radius: 6px;
-    object-fit: cover;
+.product-result {
+  border: 1px solid rgb(245, 245, 245);
+  padding: 5px 10px;
+  width: 80px;
+  height: 100px;
+  border-radius: 6px;
+  object-fit: cover;
 }
-.name-result{
-    margin-top: 10px;
-    margin-left: 10px;
-    font-weight: 700;
-    font-size: 18px;
+.name-result {
+  margin-top: 10px;
+  margin-left: 10px;
+  font-weight: 700;
+  font-size: 18px;
 }
-.price-result{
-    margin-top: 10px;
-    margin-left: 10px;
-    font-size: 16px;
-    color: gray;
+.price-result {
+  margin-top: 10px;
+  margin-left: 10px;
+  font-size: 16px;
+  color: gray;
 }
-.product-item{
-    margin-left: 10px;
-    margin-top: 10px;
-    display: flex;
-    justify-content: start; 
+.product-item {
+  margin-left: 10px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: start;
 }
-.product-item:hover{
-   background-color: rgb(245,245,245);
-   
+.product-item:hover {
+  background-color: rgb(245, 245, 245);
 }
-.no-results{
-    color: red;
+.no-results {
+  color: red;
 }

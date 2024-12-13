@@ -8,7 +8,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 import api from "../../Axios/Axios";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Modal, Space } from "antd";
-
+import './cart.css'
 const { confirm } = Modal;
 interface CartProps {
   userId: number;
@@ -46,7 +46,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
       okType: "danger",
       cancelText: "Hủy",
       onOk() {
-        handleDelete(id); // Gọi hàm xóa khi nhấn OK
+        handleDelete(id); 
       },
       onCancel() {
         console.log("Cancel");
@@ -171,10 +171,12 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                     <tbody key={item.id}>
                       <tr>
                         <td>
-                          <p>  {item.product_name}</p>
-                          <div style={{display:'flex', gap:'10px', justifyContent:'center'}}>
-                           <span style={{fontFamily:'Raleway', fontSize:'18px'}}>(</span> <p style={{fontFamily:'Raleway', fontSize:'14px'}}>{item.color}</p>,
-                            <p style={{fontFamily:'Raleway', fontSize:'13px'}}>{item.size}</p><span style={{fontFamily:'Raleway', fontSize:'18px'}}>)</span>
+                          <p>{item.product_name}</p>
+                          <div style={{display:'flex', gap:'3px', justifyContent:'center'}}>
+                           <span style={{fontFamily:'Raleway', fontSize:'18px'}}></span> 
+                            <p style={{ fontSize:'12px', color:'gray'}}>{item.color}</p>
+                            <span style={{color:'gray'}}>,</span>
+                            <p style={{ fontSize:'12px', color:'gray'}}>{item.size}</p>
                           </div>
                         </td>
                         <td>

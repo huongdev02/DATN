@@ -34,13 +34,15 @@ const CheckoutComponent: React.FC = () => {
   );
 
   const [totalPrice, setTotalPrice] = useState(0);
-  const [discount, setDiscount] = useState<number>(0);
   const [recipientName, setRecipientName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [shipAddress, setShipAddress] = useState("");
   const [paymentMethodId, setPaymentMethodId] = useState<number>(0);
   const [voucherId, setVoucherId] = useState<number | null>(null);
+  const [isVoucher, setVouchers] = useState<any[]>([]);
+  const [selectedVoucher, setSelectedVoucher] = React.useState(null);
+  const [discount, setDiscount] = React.useState(0);
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -77,6 +79,21 @@ const CheckoutComponent: React.FC = () => {
       currency: "VND",
     });
   };
+
+  const getVouchers = async () => {
+    try {
+      const response = await api.get("/vouchers");
+      setVouchers(response.data.vouchers);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getVouchers();
+  }, []);
+
+  console.log("tát cả voi chừo", isVoucher);
 
   const handleModalClose = () => {
     setShowModal(false); // Đóng modal khi nhấn nút "Cancel"
@@ -121,6 +138,7 @@ const CheckoutComponent: React.FC = () => {
       phone_number: phoneNumber,
       subtotal: subtotal,
       totalPrice,
+      voucher_id: voucherId,
       status: 1,
       ship_method: 1,
       payment_method: paymentMethodId,
@@ -217,6 +235,7 @@ const CheckoutComponent: React.FC = () => {
         ship_address_id: shipAddressResponse.id,
         phone_number: phoneNumber,
         subtotal: subtotal,
+        voucher_id: voucherId,
         totalPrice,
         status: 1,
         ship_method: 1,
@@ -230,7 +249,8 @@ const CheckoutComponent: React.FC = () => {
       }
       if (paymentMethodId === 1) {
         nav("/order-success");
-        window.scrollTo(0, 0); 
+        window.scrollTo(0, 0);
+        window.location.reload()
       }
 
       localStorage.removeItem("cartItems");
@@ -256,6 +276,23 @@ const CheckoutComponent: React.FC = () => {
     }
   }, [paymentStatus, paymentMessage]);
 
+  const handleVoucherChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const voucherId = Number(event.target.value);
+    setVoucherId(voucherId);
+
+    const selectedVoucher = isVoucher.find((vou) => vou.id === voucherId);
+    if (selectedVoucher) {
+      setDiscount(selectedVoucher.discount_value || 0);
+    } else {
+      setDiscount(0);
+    }
+  };
+
+
+  useEffect(() => {
+    setTotalPrice(subtotal - discount);
+  }, [subtotal, discount]);
+  
   return (
     <main className="main">
       <form onSubmit={handlePlaceOrder}>
@@ -407,7 +444,7 @@ const CheckoutComponent: React.FC = () => {
                             setPaymentMethodId(Number(e.target.value))
                           }
                         >
-                          <option value="" className="name-pla">
+                          <option  disabled value="" className="name-pla">
                             Chọn phương thức thanh toán*
                           </option>
                           <option value={1}>
@@ -454,28 +491,29 @@ const CheckoutComponent: React.FC = () => {
                     ) : (
                       <div>No items in your cart</div>
                     )}
+                    {/* Chọn mã giảm giá */}
                     <div className="box-footer-checkout">
                       <div className="form-group">
-                        <div className="mb-3">
-                          <span style={{ fontFamily: "Raleway" }}>
-                            Chọn voucher
-                          </span>
-                          <select
-                            style={{ marginTop: "5px" }}
-                            name="voucher"
-                            className="form-control"
-                            value={voucherId || ""}
-                            onChange={(e) =>
-                              setVoucherId(Number(e.target.value))
-                            }
-                          >
-                            {/* {vouchers?.map((voucher) => (
-                              <option key={voucher.id} value={voucher.id}>
-                                {voucher.name} - {formatCurrency(voucher.discount_value)}
+                        {isVoucher?.length > 0 && (
+                          <div className="mb-3">
+                            <select
+                              className="chon-vou"
+                              onChange={handleVoucherChange}
+                              value={voucherId || ""}
+                            >
+                              <option value="" disabled>
+                                Chọn mã giảm giá
                               </option>
-                            ))} */}
-                          </select>
-                        </div>
+                              {isVoucher.map((voucher) => (
+                                <option key={voucher.id} value={voucher.id}>
+                                  {voucher.code} - Giảm{" "}
+                                  {formatCurrency(voucher.discount_value)}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
                         <div className="item-checkout justify-content-between">
                           <span className="font-xl-bold">Tạm tính</span>
                           <span className="font-md-bold">
@@ -485,22 +523,25 @@ const CheckoutComponent: React.FC = () => {
                         <div className="item-checkout justify-content-between">
                           <span className="font-sm">Phí ship</span>
                           <span className="font-md-bold">
-                            {(30000).toLocaleString("vi-VN", {
+                            {/* {(30000).toLocaleString("vi-VN", {
                               style: "currency",
                               currency: "VND",
-                            })}
+                            })} */}
+                            Free
                           </span>
                         </div>
+                        {isVoucher?.length > 0 && (
                         <div className="item-checkout justify-content-between">
                           <span className="font-sm">Mã giảm giá</span>
                           <span className="font-md-bold">
-                            {formatCurrency(discount)}
+                            {discount > 0 ? formatCurrency(discount) : "0"}
                           </span>
                         </div>
+                        )}
                         <div className="item-checkout justify-content-between">
-                          <span className="font-sm">Thành tiền</span>
-                          <span className="font-xl-bold">
-                            {formatCurrency(totalPrice)}
+                          <span className="font-xl-bold">Tổng cộng</span>
+                          <span className="font-md-bold">
+                            {formatCurrency(subtotal - discount)}
                           </span>
                         </div>
                       </div>

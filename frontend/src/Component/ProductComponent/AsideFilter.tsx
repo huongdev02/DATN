@@ -25,6 +25,12 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
   const [selectedSize, setSelectedSize] = useState<any | null>(null);
   const [selectedColor, setSelectedColor] = useState<any | null>(null);
   const [priceRange, setPriceRange] = useState<[number, number] | null>(null);
+<<<<<<< HEAD
+=======
+  const [selectedSize, setSelectedSize] = useState<any | null>(null);
+  const [selectedColor, setSelectedColor] = useState<any | null>(null);
+
+>>>>>>> backup-devnew-11/12
   const GetAllCategory = async () => {
     try {
       const { data } = await api.get("/categories");
@@ -252,7 +258,19 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                   <div className="list-color">
                     {colors.map((color) => (
                       <span
+<<<<<<< HEAD
                       style={{paddingTop:'7px', cursor:'pointer', paddingBottom:'7px', paddingRight:'8px', paddingLeft:'8px', fontFamily:'Raleway' }}
+=======
+                        style={{
+                          paddingTop: "7px",
+                          cursor: "pointer",
+                          paddingBottom: "7px",
+                          paddingRight: "8px",
+                          marginLeft:'5px',
+                          paddingLeft: "8px",
+                          fontFamily: "Raleway",
+                        }}
+>>>>>>> backup-devnew-11/12
                         className={
                           selectedColor === color.name_color
                             ? "active"
@@ -261,7 +279,16 @@ const AsideFilter: React.FC<AsideFilterProps> = ({ setFilters }) => {
                         key={color.id}
                         onClick={() => handleColorClick(color.name_color)}
                       >
+<<<<<<< HEAD
                         {color.name_color}
+=======
+                        <span
+                          style={{ fontFamily: "Raleway" }}
+                          className="box-color"
+                        >
+                          {color.name_color}
+                        </span>
+>>>>>>> backup-devnew-11/12
                       </span>
                     ))}
                   </div>

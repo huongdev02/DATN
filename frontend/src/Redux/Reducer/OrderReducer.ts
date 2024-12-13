@@ -8,6 +8,7 @@ export interface Order {
   total_amount: number;
   ship_method: number;
   payment_method: number;
+  voucher_id: any;
   ship_address_id: number;
   status: number;
   order_details?: OrderDetail[];

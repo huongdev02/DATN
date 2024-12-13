@@ -14,6 +14,7 @@
   box-shadow: 1px 1px rgb(205, 179, 225);
 }
 .list-sizes span.active {
+<<<<<<< HEAD
    background-color: rgb(206, 167, 236);
    color: white;
 }
@@ -21,9 +22,18 @@
 
 
 
+=======
+  background-color: rgb(206, 167, 236);
+  color: white;
+}
+>>>>>>> backup-devnew-11/12
 .list-color span.active{
   background-color: rgb(206, 167, 236);
   color: white;
   cursor: pointer;
   border-radius: 6px;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> backup-devnew-11/12
