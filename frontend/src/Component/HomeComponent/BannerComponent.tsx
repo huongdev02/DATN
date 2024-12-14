@@ -12,6 +12,8 @@ import { useEffect, useState } from 'react';
 const BannerComponent: React.FC = () => {
  
     const [banner, setBanner]= useState<any>()
+    const [banner2, setBanner2]= useState<any>()
+    
     
     useEffect(()=>{
         const GetLogo = async () => {
@@ -22,7 +24,16 @@ const BannerComponent: React.FC = () => {
              console.log(error);
           }
         };
+        const GetLogo2 = async () => {
+            try {
+              const { data } = await  api.get(`/logobanner/${4}`);
+               setBanner2(data.image)
+            } catch (error) {
+               console.log(error);
+            }
+          };
         GetLogo()
+        GetLogo2()
       },[])
     
 
@@ -40,7 +51,7 @@ const BannerComponent: React.FC = () => {
                             <div className="box-banner-home1">
                                 <div
                                     className="box-cover-image wow animate__animated animate__fadeInLeft"
-                                    style={{ backgroundImage: `url(${Banner})` }}
+                                    style={{ backgroundImage: `url(${banner})` }}
                                 />
                                 <div className="box-banner-info">
                                     <div className="block-sale wow animate__animated animate__fadeInTop">
@@ -73,7 +84,7 @@ const BannerComponent: React.FC = () => {
                             <div className="box-banner-home1">
                                 <div
                                     className="box-cover-image wow animate__animated animate__fadeInLeft"
-                                    style={{ backgroundImage: `url(${BannerTwo})` }}
+                                    style={{ backgroundImage: `url(${banner2})` }}
                                 />
                                 <div className="box-banner-info wow animate__animated animate__zoomIn">
                                     <div className="block-sale wow animate__animated animate__fadeInTop">
@@ -95,7 +106,7 @@ const BannerComponent: React.FC = () => {
                                             </a>
                                             <a className="btn btn-arrow-right wow animate__animated animate__zoomIn" href="#">
                                                 Learn More
-                                                <img src="assets/imgs/template/icons/arrow.svg" alt="Kidify" />
+                                        
                                             </a>
                                         </div>
                                     </div>
