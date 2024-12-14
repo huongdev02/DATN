@@ -11,10 +11,13 @@ import IgTwo from '../../assets/imgs/page/homepage1/instagram2.png'
 import IgFive from '../../assets/imgs/page/homepage1/instagram5.png'
 import Promotion from '../../assets/imgs/template/promotion.png'
 import PromotionBanner from '../../assets/imgs/template/promotion-banner.png'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import api from '../../Axios/Axios'
 const New: React.FC = () => {
-    const [isOpen, setIsOpen] = useState(true);
 
+
+    
+    const [isOpen, setIsOpen] = useState(true);
     const closeModal = (e: React.MouseEvent) => {
         e.preventDefault();
         setIsOpen(false);

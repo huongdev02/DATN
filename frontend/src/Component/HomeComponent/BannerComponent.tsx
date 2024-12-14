@@ -13,21 +13,28 @@ const BannerComponent: React.FC = () => {
  
     const [banner, setBanner]= useState<any>()
     const [banner2, setBanner2]= useState<any>()
-    
+    const [bannerData, setBannerData]= useState<any>()
+    const [bannerDes, setBannerDes]= useState<any>()
+    const [bannerTitle, setBannerTitle]= useState<any>()
+    const [bannerDes2, setBannerDes2]= useState<any>()
     
     useEffect(()=>{
         const GetLogo = async () => {
           try {
             const { data } = await  api.get(`/logobanner/${2}`);
              setBanner(data.image)
+             setBannerTitle(data.title)
+             setBannerDes2(data.description)
           } catch (error) {
              console.log(error);
           }
         };
         const GetLogo2 = async () => {
             try {
-              const { data } = await  api.get(`/logobanner/${4}`);
+              const { data } = await  api.get(`/logobanner/${3}`);
                setBanner2(data.image)
+               setBannerData(data.title)
+               setBannerDes(data.description)
             } catch (error) {
                console.log(error);
             }
@@ -35,6 +42,9 @@ const BannerComponent: React.FC = () => {
         GetLogo()
         GetLogo2()
       },[])
+
+      console.log("Banner", bannerData);
+      
     
 
     return (
@@ -54,20 +64,20 @@ const BannerComponent: React.FC = () => {
                                     style={{ backgroundImage: `url(${banner})` }}
                                 />
                                 <div className="box-banner-info">
-                                    <div className="block-sale wow animate__animated animate__fadeInTop">
+                                    {/* <div className="block-sale wow animate__animated animate__fadeInTop">
                                         <img src={Sale} alt="Kidify" />
-                                    </div>
+                                    </div> */}
                                     <div className="blockleaf rotateme">
                                         <img src={Leaf} alt="Kidify" />
                                     </div>
                                     <div className="block-info-banner">
-                                        <p className="font-3xl-bold neutral-900 title-line mb-10 wow animate__animated animate__zoomIn">Winter</p>
+                                        <p className="font-3xl-bold neutral-900 title-line mb-10 wow animate__animated animate__zoomIn">{bannerTitle}</p>
                                         <h2 className="heading-banner mb-10 wow animate__animated animate__zoomIn">
-                                            <span className="text-up">sale off</span>
-                                            <span className="text-under">sale off</span>
+                                            <span className="text-up">{bannerDes2}</span>
+                                            <span className="text-under">{bannerDes2}</span>
                                         </h2>
-                                        <h4 className="heading-4 title-line-2 mb-30 wow animate__animated animate__zoomIn">Anything for your baby</h4>
-                                        <div className="text-center mt-10">
+                                        {/* <h4 className="heading-4 title-line-2 mb-30 wow animate__animated animate__zoomIn">Anything for your baby</h4> */}
+                                        {/* <div className="text-center mt-10">
                                             <a className="btn btn-double-border wow animate__animated animate__zoomIn" href="#">
                                                 <span>View All Deals</span>
                                             </a>
@@ -75,7 +85,7 @@ const BannerComponent: React.FC = () => {
                                                 Learn More
                                                 <img src={Arrow} alt="Kidify" />
                                             </a>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>
@@ -87,20 +97,20 @@ const BannerComponent: React.FC = () => {
                                     style={{ backgroundImage: `url(${banner2})` }}
                                 />
                                 <div className="box-banner-info wow animate__animated animate__zoomIn">
-                                    <div className="block-sale wow animate__animated animate__fadeInTop">
+                                    {/* <div className="block-sale wow animate__animated animate__fadeInTop">
                                         <img src={Sale} alt="Kidify" />
-                                    </div>
+                                    </div> */}
                                     <div className="blockleaf rotateme">
                                         <img src={Star} alt="Kidify" />
                                     </div>
                                     <div className="block-info-banner">
-                                        <p className="font-3xl-bold neutral-900 title-line mb-10 wow animate__animated animate__zoomIn">Winter</p>
+                                        <p className="font-3xl-bold neutral-900 title-line mb-10 wow animate__animated animate__zoomIn">{bannerData}</p>
                                         <h2 className="heading-banner mb-10 wow animate__animated animate__zoomIn">
-                                            <span className="text-up">sale off</span>
-                                            <span className="text-under">sale off</span>
+                                        <span className="text-up">{bannerDes}</span>
+                                        <span className="text-under">{bannerDes}</span>
                                         </h2>
-                                        <h4 className="heading-4 title-line-2 mb-30 wow animate__animated animate__zoomIn">Anything for your baby</h4>
-                                        <div className="text-center mt-10">
+                                        {/* <h4 className="heading-4 title-line-2 mb-30 wow animate__animated animate__zoomIn">Anything for your baby</h4> */}
+                                        {/* <div className="text-center mt-10">
                                             <a className="btn btn-double-border wow animate__animated animate__zoomIn" href="#">
                                                 <span>View All Deals</span>
                                             </a>
@@ -108,7 +118,7 @@ const BannerComponent: React.FC = () => {
                                                 Learn More
                                         
                                             </a>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>

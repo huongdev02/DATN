@@ -63,6 +63,7 @@ const Header: React.FC = () => {
   const [ isLogo, setLogo] = useState<any>()
   const ref = useRef<HTMLDivElement>(null);
   const [userLocala, setUserLocala] = useState<any>();
+  const [isToken, setIsToken]= useState<any>()
 
   const GetAllProducts = async () => {
     try {
@@ -95,10 +96,11 @@ const Header: React.FC = () => {
       const parsedUser = JSON.parse(userLocal);
       setUserLocala(parsedUser.user);
       setIsLoggedIn(true);
+      setIsToken(parsedUser.token)
     }
   }, []);
 
-  console.log("user locallll", userLocala);
+  console.log("user locallll", isToken);
 
   const handleClick = () => {
     setIsShow(true);
@@ -131,45 +133,6 @@ const Header: React.FC = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   const fetchAuthStatus = async () => {
-  //     const userData = localStorage.getItem("user");
-  //     const token = localStorage.getItem("token");
-
-  //     // Kiểm tra nếu `userData` và `token` tồn tại
-  //     if (userData && token) {
-  //       try {
-  //         // Parse dữ liệu user từ localStorage
-  //         const parsedUser = JSON.parse(userData);
-  //         setIsLoggedIn(true);
-  //         setUser(parsedUser.user);
-
-  //         // Gọi API để kiểm tra auth
-  //         const res = await axios.get("http://127.0.0.1:8000/api/auth/check", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         });
-  //         // if(check.role === 0){
-  //         //   nav('http://127.0.0.1:8000/admin/dashboard')
-  //         // }else{
-  //         //   nav('http://127.0.0.1:8000/user/dashboard')
-  //         // }
-  //         // console.log("Auth Check Response:", res.data);
-  //         setCheck(res.data); // Lưu dữ liệu kiểm tra auth vào state
-  //       } catch (error) {
-  //         console.error("Error fetching auth status:", error);
-  //         setIsLoggedIn(false);
-  //         setUser(null);
-  //         setCheck(null);
-  //       }
-  //     } else {
-  //       console.log("No user data or token found in localStorage.");
-  //     }
-  //   };
-
-  //   fetchAuthStatus(); // Gọi hàm kiểm tra auth
-  // }, []); // Chỉ chạy khi component được mount
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -222,13 +185,12 @@ const Header: React.FC = () => {
   };
 
   const navDashBoard = () => {
-    if (check.role === 2) {
-      window.location.href = "http://127.0.0.1:8000/admin/dashboard";
+    if (isToken) {
+        const tokenNew = isToken.includes("|") ? isToken.split("|")[1] : isToken;
+        window.location.href = `http://localhost:8000/user/dashboard?token=${tokenNew}`;
     }
-    if (check.role === 0) {
-      window.location.href = "http://127.0.0.1:8000/user/dashboard";
-    }
-  };
+};
+
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -361,14 +323,14 @@ const Header: React.FC = () => {
                   }}
                 >
                   <InfoCircleOutlined className="icon-css" />
-
-                  <span
+                  <a        
                     onClick={() => navDashBoard()}
+                    target="_blank"
                     className="hover-text"
                     style={{ marginLeft: "5px" }}
                   >
                     Thông tin tài khoản
-                  </span>
+                  </a>
                 </div>
                 <div className="css-logout" onClick={() => handleLogout()}>
                   <LogoutOutlined className="icon-css" />
