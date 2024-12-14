@@ -3387,8 +3387,8 @@ a.follow-vendor {
 .box-cover-image {
   position: relative;
   background-position: left top;
-  background-repeat: no-repeat;
-  background-size: contain;
+  /* background-repeat: no-repeat; */
+  /* background-size: contain; */
   height: 708px;
   background-color: #E3CEE3;
 }
