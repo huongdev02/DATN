@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ship_address;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,7 +52,7 @@ class AccountController extends Controller
                 ]
             ], 200);
     
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // Handle error
             return back()->with('error', $e->getMessage());
         }
@@ -82,12 +83,12 @@ class AccountController extends Controller
                     ], 403);
                 }
 
-                /**
-                 * @var User $user
-                 */
-
-                // Tạo token cho người dùng
+                /** @var User $user */
+                // Tạo token cho người dùng (để dùng ở React)
                 $token = $user->createToken('API Token')->plainTextToken;
+
+                // **Quan trọng:** Đăng nhập người dùng vào session
+                Auth::login($user, true); // Tạo session cho người dùng
 
                 // Trả về dữ liệu người dùng và token
                 return response()->json([
@@ -104,8 +105,7 @@ class AccountController extends Controller
                             'address'   => $user->address,
                             'role'      => $user->role,
                             'is_active' => $user->is_active,
-                           'avatar' => $user->avatar ? asset('storage/' . ltrim($user->avatar, '/')) : null,
-
+                            'avatar'    => $user->avatar ? asset('storage/' . ltrim($user->avatar, '/')) : null,
                         ],
                         'token' => $token
                     ]
@@ -119,6 +119,7 @@ class AccountController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
 
 
     public function show($userId)
@@ -171,6 +172,21 @@ class AccountController extends Controller
         }
     }
 
+    public function address(Request $request)
+    {
+        $userId = auth()->id(); // Lấy ID người dùng đang đăng nhập
+
+        $shipAddress = Ship_address::where('user_id', $userId)
+            ->orderByDesc('is_default') // Sắp xếp để ưu tiên địa chỉ mặc định
+            ->orderByDesc('created_at') // Sau đó ưu tiên bản ghi mới nhất
+            ->first(); // Lấy bản ghi đầu tiên
+
+        if ($shipAddress) {
+            return response()->json(["status" => "success", "data" => $shipAddress]);
+        }
+
+        return response()->json(["status" => "error", "message" => "No shipping address found"], 404);
+    }
 
 
     public function checkAuth(Request $request)

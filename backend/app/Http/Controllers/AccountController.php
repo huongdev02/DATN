@@ -60,7 +60,7 @@ class AccountController extends Controller
                 return back()->withErrors(['token' => $e->getMessage()]);
             }
     
-            return redirect("http://localhost:5001/?user_id={$userId}")
+            return redirect("http://localhost:3000/?user_id={$userId}")
                 ->with('success', 'Đăng kí tài khoản thành công')
                 ->withCookie($cookie)
                 ->withCookie($userCookie); 
@@ -129,7 +129,7 @@ class AccountController extends Controller
             }
     
             // Chuyển hướng với ID người dùng qua URL
-            return redirect("http://localhost:5001/?user_id={$userId}")
+            return redirect("http://localhost:3000/?user_id={$userId}")
                 ->with('success', 'Đăng nhập thành công')
                 ->withCookie($cookie)
                 ->withCookie($userCookie); 
@@ -180,7 +180,7 @@ class AccountController extends Controller
         $cookieUserId = Cookie::forget('user_id');
     
         // Chuyển hướng và xóa cả hai cookie
-        return redirect('http://localhost:5001/')
+        return redirect('http://localhost:3000/')
             ->with('success', 'Đã đăng xuất thành công')
             ->withCookie($cookieToken)
             ->withCookie($cookieUserId);
