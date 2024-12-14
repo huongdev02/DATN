@@ -11,6 +11,7 @@ import About from '../Layout/About/About';
 import OrderHistory from '../Layout/OrderHistory/OrderHistory';
 import ThankYou from '../thankYou/thankYou';
 import OrderSuccess from '../orderSuccess/orderSuccess';
+import BlogDetail from '../Component/Detail-Blog/BlogDetail';
 
 const AppRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const AppRoutes = () => {
       <Route path="/order-history" element={<OrderHistory />} />
       <Route path="/contact" element={<Contact />} />
       <Route path='/blog' element={<Blog />} />
+      <Route path='/blog-detail/:id' element={<BlogDetail/>} />
       <Route path='/about' element={<About />} />
       <Route path='/thank' element={<ThankYou />} />
       <Route path='/order-success' element={<OrderSuccess/>} />

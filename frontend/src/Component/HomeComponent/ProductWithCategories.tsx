@@ -45,15 +45,15 @@ const ProductWithCategories: React.FC = () => {
     }
   };
 
-  const boyProducts = products.filter(
-    (product) => product.categories.name === "Nam"
-  );
-  const girlProducts = products.filter(
-    (product) => product.categories.name === "Nữ"
-  );
-  const kidProducts = products.filter(
-    (product) => product.categories.name === "Trẻ em"
-  );
+  // const boyProducts = products.filter(
+  //   (product) => product.categories.name === "Nam"
+  // );
+  // const girlProducts = products.filter(
+  //   (product) => product.categories.name === "Nữ"
+  // );
+  // const kidProducts = products.filter(
+  //   (product) => product.categories.name === "Trẻ em"
+  // );
 
   useEffect(() => {
     GetProductCategory();
@@ -151,10 +151,10 @@ const ProductWithCategories: React.FC = () => {
                           </div>
                         </div>
                         <div className="cardInfo">
-                          <h6 className="font-md-bold cardTitle">
+                          <h6 className="font-md-bold cardTitle" style={{fontFamily:'Raleway', fontWeight:'normal'}}>
                             {product.name}
                           </h6>
-                          <p className="font-lg cardDesc">
+                          <p className="font-lg cardDesc" style={{fontFamily:'Raleway'}}>
                             {" "}
                             {Math.round(product.price ?? 0).toLocaleString(
                               "vi-VN",
@@ -201,10 +201,10 @@ const ProductWithCategories: React.FC = () => {
                           </div>
                         </div>
                         <div className="cardInfo">
-                          <h6 className="font-md-bold cardTitle">
+                          <h6 className="font-md-bold cardTitle" style={{fontFamily:'Raleway', fontWeight:'normal'}}>
                             {product.name}
                           </h6>
-                          <p className="font-lg cardDesc">
+                          <p className="font-lg cardDesc" style={{fontFamily:'Raleway'}}>
                             {" "}
                             {Math.round(product.price ?? 0).toLocaleString(
                               "vi-VN",
@@ -251,10 +251,10 @@ const ProductWithCategories: React.FC = () => {
                           </div>
                         </div>
                         <div className="cardInfo">
-                          <h6 className="font-md-bold cardTitle">
+                          <h6 className="font-md-bold cardTitle" style={{fontFamily:'Raleway', fontWeight:'normal'}}>
                             {product.name}
                           </h6>
-                          <p className="font-lg cardDesc">
+                          <p className="font-lg cardDesc" style={{fontFamily:'Raleway'}}>
                             {" "}
                             {Math.round(product.price ?? 0).toLocaleString(
                               "vi-VN",
