@@ -16,22 +16,30 @@ class tokenAuth
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
+
     public function handle($request, Closure $next)
-{
-    if ($request->has('token')) {
-        // Lấy token từ bảng personal_access_tokens
-        $accessToken = PersonalAccessToken::findToken($request->token);
+    {
+        // Kiểm tra xem request có chứa token không
+        if ($request->has('token')) {
+            // Lấy token từ request
+            $token = $request->input('token');
 
-        if ($accessToken) {
-            // Lấy user từ token và đăng nhập
-            $user = $accessToken->tokenable;
-            Auth::login($user);
+            // Tìm token trong bảng personal_access_tokens
+            $accessToken = PersonalAccessToken::where('token', hash('sha256', $token))->first();
 
-            return redirect()->to('/user/dashboard'); // Chuyển vào dashboard
+            if ($accessToken) {
+                // Lấy user từ token
+                $user = $accessToken->tokenable;
+
+                // Đăng nhập user vào hệ thống
+                Auth::login($user);
+
+                // Nếu token hợp lệ, tiếp tục xử lý request mà không chuyển hướng
+                return $next($request);
+            }
         }
+
+        // Nếu không tìm thấy token hoặc token không hợp lệ, chuyển hướng về trang login
+        return redirect()->route('login')->with('error', 'Vui lòng đăng nhập lại');
     }
-
-    return redirect()->route('login')->with('error', 'Vui lòng đăng nhập lại');
-}
-
 }
