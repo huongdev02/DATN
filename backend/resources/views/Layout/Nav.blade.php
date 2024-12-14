@@ -1,6 +1,6 @@
 <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
     <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-      <a class="navbar-brand brand-logo" href="index.html"><img style="width: 150px; height: 150px;" src="{{asset('assets/images/logo.png')}}" alt="logo" /></a>
+      <a class="navbar-brand brand-logo" href="index.html"><img style="width: 100px; height: 80px;" src="{{asset('assets/images/logo.png')}}" alt="logo" /></a>
       {{-- <a class="navbar-brand brand-logo-mini" href="index.html"><img src="{{asset('assets/images/logo.png')}}"
           alt="logo" /></a> --}}
     </div>
