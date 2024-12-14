@@ -12,11 +12,36 @@ import IgFive from '../../assets/imgs/page/homepage1/instagram5.png'
 import Promotion from '../../assets/imgs/template/promotion.png'
 import PromotionBanner from '../../assets/imgs/template/promotion-banner.png'
 import { useState, useEffect } from 'react'
+import axios from 'axios'
+import './new.css'
 import api from '../../Axios/Axios'
 const New: React.FC = () => {
+  
+
+    const [ blog, setBlog]  = useState<any[]>([])
+
+    useEffect(()=>{
+        const GetLogo = async () => {
+          try {
+            const { data } = await  axios.get(`http://127.0.0.1:8000/api/blog`);
+             setBlog(data)
+          } catch (error) {
+             console.log(error);
+             
+          }
+        };
+        GetLogo()
+      },[])
 
 
-    
+      const maxLength = 140;
+      const truncateText = (text: any) => {
+        if (text.length > maxLength) {
+          return text.substring(0, maxLength) + '...';
+        }
+        return text;
+      };
+
     const [isOpen, setIsOpen] = useState(true);
     const closeModal = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -31,54 +56,26 @@ const New: React.FC = () => {
                         <p className="font-lg neutral-500 mb-30 wow animate__animated animate__fadeIn">Đừng bỏ lỡ những tin tức khuyến mại tuyệt vời hoặc<br className="d-none d-lg-block" />các sự kiện sắp tới trong hệ thống cửa hàng của chúng tôi</p>
                     </div>
                     <div className="row">
-                        <div className="col-lg-4 col-md-6 wow animate__animated animate__fadeIn" data-wow-delay="0s">
+                        {blog.map((b, index)=>(
+                        <div key={index} className="col-lg-4 col-md-6 wow animate__animated animate__fadeIn" data-wow-delay="0s">
                             <div className="cardBlog wow fadeInUp">
                                 <div className="cardImage">
-                                    <div className="box-date-info">
+                                    {/* <div className="box-date-info">
                                         <div className="box-inner-date">
                                             <div className="heading-6">21</div>
                                             <p className="font-md neutral-900">Jun</p>
                                         </div>
-                                    </div><a href="blog-single.html"><img src={Blog} alt="kidify" /></a>
+                                    </div> */}
+                                    <a href="blog-single.html"><img src={b.image} alt="kidify" style={{width:'100%', height:'350px'}} /></a>
                                 </div>
                                 <div className="cardInfo"><a className="cardTitle" href="blog-single.html">
-                                    <h5 className="font-xl-bold">Eco-Friendly Children's Clothing: 5 Sustainable Brands</h5></a>
-                                    <p className="cardDesc font-lg neutral-500">Prioritize sustainability with 5 eco-friendly brands that offer organic cotton and recycled materials for children's clothing</p><a className="btn btn-arrow-right" href="blog-single.html">Keep reading<img src={Arrow} alt="Kidify" /><img className="hover-icon" src={ArrowHover} alt="Kidify" /></a>
+                                    <h5 className="font-xl-bold">{b.title}</h5></a>
+                                    <p className="cardDesc font-lg neutral-500">{truncateText(b.description)}</p>
+                                    <a className="btn btn-arrow-right" href="blog-single.html">Xem chi tiết<img src={Arrow} alt="Kidify" /><img className="hover-icon" src={ArrowHover} alt="Kidify" /></a>
                                 </div>
                             </div>
                         </div>
-                        <div className="col-lg-4 col-md-6 wow animate__animated animate__fadeIn" data-wow-delay="0.2s">
-                            <div className="cardBlog wow fadeInUp">
-                                <div className="cardImage">
-                                    <div className="box-date-info">
-                                        <div className="box-inner-date">
-                                            <div className="heading-6">21</div>
-                                            <p className="font-md neutral-900">Jun</p>
-                                        </div>
-                                    </div><a href="blog-single.html"><img src={BlogTwo} alt="kidify" /></a>
-                                </div>
-                                <div className="cardInfo"><a className="cardTitle" href="blog-single.html">
-                                    <h5 className="font-xl-bold">Styling Children for Formal Events: Tips for Dressing to Impress</h5></a>
-                                    <p className="cardDesc font-lg neutral-500">Get tips on how to dress your child for formal events, including choosing the right attire and accessories for both style and comfort</p><a className="btn btn-arrow-right" href="blog-single.html">Keep reading<img src={Arrow} alt="Kidify" /><img className="hover-icon" src={ArrowHover} alt="Kidify" /></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-4 col-md-6 d-md-none d-lg-block wow animate__animated animate__fadeIn" data-wow-delay="0.4s">
-                            <div className="cardBlog wow fadeInUp">
-                                <div className="cardImage">
-                                    <div className="box-date-info">
-                                        <div className="box-inner-date">
-                                            <div className="heading-6">21</div>
-                                            <p className="font-md neutral-900">Jun</p>
-                                        </div>
-                                    </div><a href="blog-single.html"><img src={BlogThree} alt="kidify" /></a>
-                                </div>
-                                <div className="cardInfo"><a className="cardTitle" href="blog-single.html">
-                                    <h5 className="font-xl-bold">Discover the Latest Trends for Kids Fashion in 2023: Top 10 Trendy Styles</h5></a>
-                                    <p className="cardDesc font-lg neutral-500">As the fashion industry continues to evolve, children's fashion is no exception. This article explores the latest trends for kids fashion in 2023</p><a className="btn btn-arrow-right" href="blog-single.html">Keep reading<img src={Arrow} alt="Kidify" /><img className="hover-icon" src={ArrowHover} alt="Kidify" /></a>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>

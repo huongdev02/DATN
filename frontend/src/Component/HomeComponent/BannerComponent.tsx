@@ -76,16 +76,16 @@ const BannerComponent: React.FC = () => {
                                             <span className="text-up">{bannerDes2}</span>
                                             <span className="text-under">{bannerDes2}</span>
                                         </h2>
-                                        {/* <h4 className="heading-4 title-line-2 mb-30 wow animate__animated animate__zoomIn">Anything for your baby</h4> */}
-                                        {/* <div className="text-center mt-10">
-                                            <a className="btn btn-double-border wow animate__animated animate__zoomIn" href="#">
-                                                <span>View All Deals</span>
+                                        <h4 className="heading-4 title-line-2 mb-30 wow animate__animated animate__zoomIn">Anything for your baby</h4>
+                                        <div className="text-center mt-10">
+                                            <a className="btn btn-double-border wow animate__animated animate__zoomIn" href="/product">
+                                                <span>Mua sắm ngay</span>
                                             </a>
-                                            <a className="btn btn-arrow-right wow animate__animated animate__zoomIn" href="#">
+                                            {/* <a className="btn btn-arrow-right wow animate__animated animate__zoomIn" href="#">
                                                 Learn More
                                                 <img src={Arrow} alt="Kidify" />
-                                            </a>
-                                        </div> */}
+                                            </a> */}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -109,16 +109,16 @@ const BannerComponent: React.FC = () => {
                                         <span className="text-up">{bannerDes}</span>
                                         <span className="text-under">{bannerDes}</span>
                                         </h2>
-                                        {/* <h4 className="heading-4 title-line-2 mb-30 wow animate__animated animate__zoomIn">Anything for your baby</h4> */}
-                                        {/* <div className="text-center mt-10">
-                                            <a className="btn btn-double-border wow animate__animated animate__zoomIn" href="#">
-                                                <span>View All Deals</span>
+                                        <h4 className="heading-4 title-line-2 mb-30 wow animate__animated animate__zoomIn">Anything for your baby</h4>
+                                        <div className="text-center mt-10">
+                                            <a className="btn btn-double-border wow animate__animated animate__zoomIn" href="/product">
+                                                <span>Mua sắm ngay</span>
                                             </a>
-                                            <a className="btn btn-arrow-right wow animate__animated animate__zoomIn" href="#">
+                                            {/* <a className="btn btn-arrow-right wow animate__animated animate__zoomIn" href="#">
                                                 Learn More
                                         
-                                            </a>
-                                        </div> */}
+                                            </a> */}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

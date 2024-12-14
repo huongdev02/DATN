@@ -161,7 +161,7 @@ const AboutComponent: React.FC = () => {
                     <div className="container">
                         <div className="content-detail">
                             <h2>Câu chuyện của chúng tôi</h2>
-                            <p>Đây là bài tập cơ bản nhất mà bạn có thể bỏ qua và có thể thực hiện công việc của mình như một công việc khó khăn. Bạn có thể bị buộc tội lao động qui modi praesentium hic quia consequatur ea nihil expedita aut tempore illum. Vel vitae praesentium sit neque delectus sit magnam tenetur ea blanditiis consequuntur cum quaerat sapiente in cumque molestias qui quibusdam phát minh ra. Có phải đối mặt với điều này không phải là điều đáng tiếc và sự bất tiện mà bạn có thể gặp phải?</p>
+                            <p>Đây là bài tập cơ bản nhất mà bạn có thể bỏ qua và có thể thực hiện công việc của mình như một công việc khó khăn. Bạn có thể bị buộc tội lao động, có phải đối mặt với điều này không phải là điều đáng tiếc và sự bất tiện mà bạn có thể gặp phải?</p>
                         </div>
                     </div>
                 </section>

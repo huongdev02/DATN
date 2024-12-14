@@ -62,7 +62,7 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 // Route cho Admin
-Route::controller(AdminController::class)->middleware(['token.auth', 'admin'])->group(function () {
+Route::controller(AdminController::class)->middleware(['web', 'admin'])->group(function () {
     Route::get('/admin/dashboard',  'admin')->name('admin.dashboard');
     // Đổi mật khẩu
     Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form');
