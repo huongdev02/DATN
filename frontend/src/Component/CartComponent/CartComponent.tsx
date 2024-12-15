@@ -23,6 +23,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
   const [voucherValid, setVoucherValid] = useState<boolean | null>(null);
   const [discountValue, setDiscountValue] = useState<number>(0);
   const [isCart, setIsCart] = useState<any[]>([]);
+  const [numberCart0, setNumberCart0] = useState<any[]>([]);
   const [cartEmpty, setCartEmpty] = useState<boolean>(false);
   console.log(vouchers);
 
@@ -76,6 +77,8 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
       setLoading(false)
     }
   };
+
+
   console.log("Cảtttttt", isCart);
   const updateCartQuantity = async (id: any, quantity: number) => {
     try {

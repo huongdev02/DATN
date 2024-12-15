@@ -6,6 +6,7 @@ import axios from "axios";
 import { notification } from "antd";
 import { addToCart } from "../../Redux/Reducer/CartReducer";
 import { IProduct } from "../../types/cart";
+import { message } from "antd";
 import { Rate } from "antd";
 import api from "../../Axios/Axios";
 import { Link } from "react-router-dom";
@@ -133,13 +134,15 @@ const ProductDetailComponent: React.FC = () => {
         colorId,
       };
       console.log(cartData);
-
-      await dispatch(addToCart(cartData));
-      notification.success({
-        message: "Thêm vào giỏ hàng thành công !",
-        placement: "bottomRight",
-      });
-      // navigate('/cart')
+      if (product.quantity > 0) {
+        await dispatch(addToCart(cartData));
+        notification.success({
+          message: "Thêm vào giỏ hàng thành công !",
+          placement: "bottomRight",
+        });
+      } else {
+        message.error('Sản phẩm này hiện không còn hàng !')
+      }
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error);
       notification.error({
@@ -156,9 +159,9 @@ const ProductDetailComponent: React.FC = () => {
             <div className="preloader-inner position-relative">
               <div className="page-loading text-center">
                 <div className="page-loading-inner">
-                  <div/>
-                  <div/>
-                  <div/>
+                  <div />
+                  <div />
+                  <div />
                 </div>
               </div>
             </div>
