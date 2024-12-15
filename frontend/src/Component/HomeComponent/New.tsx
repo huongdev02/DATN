@@ -74,7 +74,7 @@ const New: React.FC = () => {
                                             <p className="font-md neutral-900">Jun</p>
                                         </div>
                                     </div> */}
-                      <a href="blog-single.html">
+                      <a>
                         <img
                           src={b.image}
                           alt="kidify"
@@ -83,7 +83,7 @@ const New: React.FC = () => {
                       </a>
                     </div>
                     <div className="cardInfo">
-                      <a className="cardTitle" href="blog-single.html">
+                      <a className="cardTitle">
                         <h5 className="font-xl-bold">{b.title}</h5>
                       </a>
                       <p className="cardDesc font-lg neutral-500">
@@ -91,7 +91,7 @@ const New: React.FC = () => {
                       </p>
                       <a
                         className="btn btn-arrow-right"
-                        href="blog-single.html"
+                    
                       >
                         Xem chi tiết
                         <img src={Arrow} alt="Kidify" />

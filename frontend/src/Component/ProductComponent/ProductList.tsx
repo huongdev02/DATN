@@ -18,6 +18,7 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [current, setCurrent] = useState(1);
+  const [loading, setLoading] = useState(true);
   const pageSize = 20;
 
   const onChange: PaginationProps['onChange'] = (page) => {
@@ -32,6 +33,8 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
       setFilteredProducts(data.products);
     } catch (error) {
       message.error("Lỗi api!");
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -52,6 +55,25 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
   }, [filters, products]);
 
   const paginatedProducts = filteredProducts.slice((current - 1) * pageSize, current * pageSize);
+
+  if (loading)
+    return (
+      <div>
+        <div id="preloader-active">
+          <div className="preloader d-flex align-items-center justify-content-center">
+            <div className="preloader-inner position-relative">
+              <div className="page-loading text-center">
+                <div className="page-loading-inner">
+                  <div />
+                  <div />
+                  <div />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <>

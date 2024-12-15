@@ -43,6 +43,7 @@ const CheckoutComponent: React.FC = () => {
   const [isVoucher, setVouchers] = useState<any[]>([]);
   const [selectedVoucher, setSelectedVoucher] = React.useState(null);
   const [discount, setDiscount] = React.useState(0);
+  const [loading, setLoading] = useState(true);
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -86,6 +87,8 @@ const CheckoutComponent: React.FC = () => {
       setVouchers(response.data.vouchers);
     } catch (error) {
       console.log(error);
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -290,6 +293,25 @@ const CheckoutComponent: React.FC = () => {
   useEffect(() => {
     setTotalPrice(subtotal - discount);
   }, [subtotal, discount]);
+
+  if (loading)
+    return (
+      <div>
+        <div id="preloader-active">
+          <div className="preloader d-flex align-items-center justify-content-center">
+            <div className="preloader-inner position-relative">
+              <div className="page-loading text-center">
+                <div className="page-loading-inner">
+                  <div />
+                  <div />
+                  <div />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   
   return (
     <main className="main">
