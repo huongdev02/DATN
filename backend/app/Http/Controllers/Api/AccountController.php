@@ -25,7 +25,6 @@ class AccountController extends Controller
         // Validate incoming request
         $request->validate([
             'email' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
-            'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users,username'],  // Username validation
             'password' => 'required|string|min:6',
             'confirmPassword' => 'required|same:password', // Ensure confirm_password matches password
         ]);
@@ -34,7 +33,6 @@ class AccountController extends Controller
             // Prepare user data
             $userData = [
                 'email' => $request->input('email'),
-                'username' => $request->input('username'),
                 'password' => Hash::make($request->input('password')),  // Hash the password
                 'role' => $request->filled('role') ? $request->input('role') : 0,  // Default role is 0
             ];
@@ -48,7 +46,6 @@ class AccountController extends Controller
                 'message' => 'Đăng kí thành công',
                 'data' => [
                     'email' => $user->email,
-                    'username' => $user->username,
                 ]
             ], 200);
     
