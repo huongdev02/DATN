@@ -92,18 +92,13 @@
                                     Đã tạo lúc: <p class="ms-3" style="color: green">{{ $order->created_at }}</p>
                                 </p>
                             </div>
-
-
-                            @php
-                                $orderTotal += $orderDetail->total;
-                            @endphp
                         @endforeach
                     </div>
 
                     <!-- Display Order Total -->
                     <div class="card-footer bg-light d-flex justify-content-between align-items-center py-3">
                         <h6 class=" m-0">Thành tiền: <span
-                                class="fw-bold text-danger">₫{{ number_format($orderTotal, 0, ',', '.') }}</span></h6>
+                                class="fw-bold text-danger">₫{{ number_format($order->total_amount ?? 0) }}</span></h6>
 
                         <h6 class="mt-1">Đã giảm giá:
                             <span class="text-warning">

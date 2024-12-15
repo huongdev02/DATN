@@ -17,7 +17,7 @@
     <div class="d-flex">
         <!-- Phần Menu -->
         <div class="menu-container bg-light p-3">
-            <a href="http://127.0.0.1:8000/user/dashboard">
+            <a href="{{route('user.dashboard')}}">
             <div class="nav-profile-text d-flex align-items-center">
               
                 <img src="{{ asset('storage/' . Auth::user()->avatar) }}" width="50px" alt="profile" class="img-profile rounded-circle" />

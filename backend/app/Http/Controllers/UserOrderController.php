@@ -11,8 +11,12 @@ class UserOrderController extends Controller
 {
     public function index(Request $request)
     {
+        // Lấy người dùng hiện tại
+        $user = auth()->user();
+
         // Khởi tạo truy vấn với eager loading
-        $query = Order::with(['orderDetails.product.categories', 'user', 'review', 'orderDetails.color', 'orderDetails.size']);
+        $query = Order::with(['orderDetails.product.categories', 'user', 'review', 'orderDetails.color', 'orderDetails.size'])
+            ->where('user_id', $user->id); // Lọc đơn hàng theo người dùng hiện tại
 
         // Nếu có giá trị status, áp dụng điều kiện where
         if ($request->has('status') && $request->get('status') !== null) {
@@ -26,11 +30,6 @@ class UserOrderController extends Controller
         // Trả về view với danh sách đơn hàng
         return view('user.order', compact('orders'));
     }
-
-
-
-
-
 
 
     public function show($id)
