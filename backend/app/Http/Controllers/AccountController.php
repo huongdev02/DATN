@@ -155,8 +155,8 @@ class AccountController extends Controller
             $user->tokens()->delete();
     
             // Lấy ID người dùng từ Auth
-            $userId = Auth::id(); // Sử dụng Auth::id() để lấy ID người dùng
-            
+            $userId = Auth::id();
+    
             if ($userId) {
                 // Tạo đường dẫn file chính xác
                 $filePath = 'user_' . $userId . '.txt';
@@ -175,15 +175,15 @@ class AccountController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
     
-        // Xóa cookie chứa token và user_id
-        $cookieToken = Cookie::forget('token');
-        $cookieUserId = Cookie::forget('user_id');
+        // Xóa session và cookie
+        session()->forget('laravel_session');
+        Cookie::forget('token');
+        Cookie::forget('user_id');
+        session()->flush();
     
-        // Chuyển hướng và xóa cả hai cookie
+        // Chuyển hướng
         return redirect('http://localhost:3000/')
-            ->with('success', 'Đã đăng xuất thành công')
-            ->withCookie($cookieToken)
-            ->withCookie($cookieUserId);
+            ->with('success', 'Đã đăng xuất thành công');
     }
     
     

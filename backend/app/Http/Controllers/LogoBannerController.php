@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LogoBanner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class LogoBannerController extends Controller
 {
@@ -35,27 +36,61 @@ class LogoBannerController extends Controller
         return redirect()->route('logo_banners.index')->with('success', 'Logo/Banner added successfully.');
     }
 
-    public function edit(LogoBanner $logoBanner)
+    public function edit($id)
     {
+        $logoBanner = LogoBanner::findOrFail($id);
         return view('logo_banners.edit', compact('logoBanner'));
     }
 
-    public function update(Request $request, LogoBanner $logoBanner)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'type' => 'required|in:1,2',
+        // Kiểm tra dữ liệu gửi lên
+        $data = $request->validate([
+            'type' => 'required',
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:500',
-            'image' => 'required|mimes:jpeg,png,jpg,gif,svg|max:8192',
+            'description' => 'nullable|string|max:8192',
+            'image' => 'nullable|image', // Không bắt buộc phải có hình ảnh
+            'is_active' => 'required|boolean', // Đảm bảo is_active được gửi đúng
         ]);
 
-        $logoBanner->update($request->all());
+        $logoBanner = LogoBanner::findOrFail($id);
+
+        // Nếu có hình ảnh mới, lưu và cập nhật
+        if ($request->hasFile('image')) {
+            // Xóa hình cũ nếu có
+            if ($logoBanner->image) {
+                Storage::delete('public/' . $logoBanner->image);
+            }
+
+            // Lưu hình ảnh mới
+            $data['image'] = $request->file('image')->store('logo_banner', 'public');
+        }
+
+        // Cập nhật logoBanner
+        $logoBanner->update($data);
+
         return redirect()->route('logo_banners.index')->with('success', 'Logo/Banner updated successfully.');
     }
 
+
+
     public function destroy(LogoBanner $logoBanner)
     {
+        // Kiểm tra nếu trạng thái is_active của logoBanner là 1 (hoạt động)
+        if ($logoBanner->is_active == 1) {
+            return redirect()->route('logo_banners.index')->with('error', 'Không thể xóa Logo/Banner đang hoạt động.');
+        }
+
+        // Kiểm tra nếu không còn bản ghi nào cùng type
+        $countSameType = LogoBanner::where('type', $logoBanner->type)->count();
+
+        if ($countSameType <= 1) {
+            return redirect()->route('logo_banners.index')->with('error', 'Không thể xóa vì không còn bản ghi nào cùng loại.');
+        }
+
+        // Xóa Logo/Banner
         $logoBanner->delete();
+
         return redirect()->route('logo_banners.index')->with('success', 'Logo/Banner deleted successfully.');
     }
 }

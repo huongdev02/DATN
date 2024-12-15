@@ -62,8 +62,8 @@ Route::controller(AccountController::class)->group(function () {
 });
 
 // Route cho Admin
-Route::controller(AdminController::class)->middleware(['web', 'admin'])->group(function () {
-    Route::get('/admin/dashboard',  'admin')->name('admin.dashboard');
+Route::controller(AdminController::class)->middleware(['admin', 'auth'])->group(function () {
+    Route::get('/admin/dashboard',  'admin')->name('admin.dashboard')->middleware('token.auth');
     // Đổi mật khẩu
     Route::get('/admin/change-password', 'changepass')->name('admin.changepass.form');
     Route::post('/admin/change-password', 'changepass_')->name('admin.password.change');
@@ -101,8 +101,8 @@ Route::controller(AdminController::class)->middleware(['web', 'admin'])->group(f
 });
 
 // Route cho User
-Route::controller(UserController::class)->middleware(['token.auth', 'user'])->group(function () {
-    Route::get('/user/dashboard', 'user')->name('user.dashboard');
+Route::controller(UserController::class)->middleware(['user', 'auth'])->group(function () {
+    Route::get('/user/dashboard', 'user')->name('user.dashboard')->middleware('token.auth');
     // Đổi mật khẩu
     Route::get('/user/change-password', 'changepass')->name('user.changepass.form');
     Route::post('/user/change-password', 'changepass_')->name('user.password.change');

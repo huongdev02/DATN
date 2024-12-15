@@ -6,6 +6,7 @@ use App\Models\PersonalAccessToken;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class tokenAuth
@@ -19,34 +20,86 @@ class tokenAuth
 
     public function handle($request, Closure $next)
     {
+        // Log toàn bộ request nhận được
+        Log::info('Middleware triggered. Request data: ', $request->all());
+
+        // Kiểm tra nếu user đã đăng nhập qua session
+        if (Auth::check()) {
+            Log::info('User is already authenticated via session. User ID: ' . Auth::id());
+            return $next($request);
+        }
+
         // Kiểm tra xem request có chứa token không
         if ($request->has('token')) {
             // Lấy token từ request
             $token = $request->input('token');
+            Log::info('Token received: ' . $token);
 
-            // Tìm token trong bảng personal_access_tokens
-            $accessToken = PersonalAccessToken::where('token', hash('sha256', $token))->first();
+            // Hash token và tìm trong bảng personal_access_tokens
+            $hashedToken = hash('sha256', $token);
+            Log::info('Hashed token: ' . $hashedToken);
+
+            $accessToken = PersonalAccessToken::where('token', $hashedToken)->first();
 
             if ($accessToken) {
+                Log::info('Token found in database. AccessToken ID: ' . $accessToken->id);
+
                 // Lấy user từ token
                 $user = $accessToken->tokenable;
 
-                // Đăng nhập user vào hệ thống
-                Auth::login($user);
+                if ($user) {
+                    Log::info('User retrieved from token. User ID: ' . $user->id . ', Role: ' . $user->role);
 
-                // Kiểm tra vai trò của người dùng và chuyển hướng tương ứng
-                if ($user->role == 0) {
-                    return redirect()->route('user.dashboard'); // Chuyển đến dashboard của user
-                } elseif ($user->role == 2) {
-                    return redirect()->route('admin.dashboard'); // Chuyển đến dashboard của admin
+                    // Đăng nhập user vào hệ thống
+                    Auth::login($user);
+                    Log::info('User logged in successfully.');
+
+                    // Lưu token vào session để sử dụng cho các request tiếp theo
+                    session(['auth_token' => $token]);
+
+                    return $next($request); // Chuyển đến request tiếp theo
+                } else {
+                    Log::error('Failed to retrieve user from tokenable relation.');
                 }
-
-                // Nếu role không khớp, chuyển hướng về trang mặc định
-                return back(); // Hoặc thay thế bằng route mặc định
+            } else {
+                Log::warning('Token not found in database.');
             }
+        } elseif (session()->has('auth_token')) {
+            // Nếu không có token trong request nhưng có trong session
+            $token = session('auth_token');
+            Log::info('Token retrieved from session: ' . $token);
+
+            // Hash token và tìm trong bảng personal_access_tokens
+            $hashedToken = hash('sha256', $token);
+            $accessToken = PersonalAccessToken::where('token', $hashedToken)->first();
+
+            if ($accessToken) {
+                Log::info('Session token validated. AccessToken ID: ' . $accessToken->id);
+
+                // Lấy user từ token
+                $user = $accessToken->tokenable;
+
+                if ($user) {
+                    Log::info('User retrieved from session token. User ID: ' . $user->id . ', Role: ' . $user->role);
+
+                    // Đăng nhập user vào hệ thống
+                    Auth::login($user);
+                    Log::info('User logged in successfully from session token.');
+
+                    return $next($request); // Chuyển đến request tiếp theo
+                } else {
+                    Log::error('Failed to retrieve user from tokenable relation for session token.');
+                }
+            } else {
+                Log::warning('Session token not found in database. Clearing session.');
+                session()->forget('auth_token');
+            }
+        } else {
+            Log::warning('Token not found in request or session.');
         }
 
-        // Nếu không tìm thấy token hoặc token không hợp lệ, chuyển hướng về trang login
-        return redirect()->route('login')->with('error', 'Vui lòng đăng nhập lại');
+        // Nếu không tìm thấy token hoặc token không hợp lệ
+        Log::info('Redirecting to login due to invalid or missing token.');
+        return redirect()->route('login')->with('error', 'Vui lòng đăng nhập lại.');
     }
 }
