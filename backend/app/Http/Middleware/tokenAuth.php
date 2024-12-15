@@ -34,8 +34,15 @@ class tokenAuth
                 // Đăng nhập user vào hệ thống
                 Auth::login($user);
 
-                // Nếu token hợp lệ, tiếp tục xử lý request mà không chuyển hướng
-                return $next($request);
+                // Kiểm tra vai trò của người dùng và chuyển hướng tương ứng
+                if ($user->role == 0) {
+                    return redirect()->route('user.dashboard'); // Chuyển đến dashboard của user
+                } elseif ($user->role == 2) {
+                    return redirect()->route('admin.dashboard'); // Chuyển đến dashboard của admin
+                }
+
+                // Nếu role không khớp, chuyển hướng về trang mặc định
+                return back(); // Hoặc thay thế bằng route mặc định
             }
         }
 

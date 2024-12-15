@@ -67,29 +67,25 @@ class AccountController extends Controller
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
-
+    
             // Kiểm tra xem có tồn tại tài khoản với email và mật khẩu không
-            if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], true)) {
-                $request->session()->regenerate();
-
+            if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+    
                 // Lấy thông tin người dùng đã đăng nhập
                 $user = Auth::user();
-
+    
                 // Kiểm tra trạng thái tài khoản
                 if ($user->is_active == 0) {
-                    Auth::logout();
+                    Auth::logout();  // Đảm bảo không có session nào được tạo
                     return response()->json([
                         'error' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.'
                     ], 403);
                 }
-
+    
                 /** @var User $user */
                 // Tạo token cho người dùng (để dùng ở React)
                 $token = $user->createToken('API Token')->plainTextToken;
-
-                // **Quan trọng:** Đăng nhập người dùng vào session
-                Auth::login($user, true); // Tạo session cho người dùng
-
+    
                 // Trả về dữ liệu người dùng và token
                 return response()->json([
                     'status' => true,
@@ -111,7 +107,7 @@ class AccountController extends Controller
                     ]
                 ], 200);
             }
-
+    
             return response()->json([
                 'error' => 'Tài khoản không tồn tại hoặc sai tài khoản, mật khẩu'
             ], 401);
@@ -119,6 +115,7 @@ class AccountController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+    
 
 
 
