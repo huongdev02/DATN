@@ -17,7 +17,7 @@
     <div class="d-flex">
         <!-- Phần Menu -->
         <div class="menu-container bg-light p-3">
-            <a href="{{route('user.dashboard')}}">
+            <a href="{{route('user.edit')}}">
             <div class="nav-profile-text d-flex align-items-center">
               
                 <img src="{{ asset('storage/' . Auth::user()->avatar) }}" width="50px" alt="profile" class="img-profile rounded-circle" />
@@ -32,6 +32,7 @@
             </div>
         </a>
             <ul class="menu list-unstyled">
+                <li><a href="http://localhost:3000" class="btn btn-light w-100 text-start">Quay lại trang chủ</a></li>
                 <li class="dropdown">
                     <button class="dropdown-btn btn btn-light w-100 text-start" onclick="toggleDropdown(this)">
                         <i class="icon-user"></i> Tài Khoản Của Tôi
@@ -43,7 +44,6 @@
                     </ul>
                 </li>
                 <li><a href="{{route('userorder.index')}}" class="btn btn-light w-100 text-start">Đơn Mua</a></li>
-                <li><a href="#" class="btn btn-light w-100 text-start">Thông Báo</a></li>
                 <li><a href="{{route('uservouchers.index')}}" class="btn btn-light w-100 text-start">Kho Voucher</a></li>
                 <li>
                     <form action="{{ route('logout') }}" method="POST">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Voucher_usage;
 use Illuminate\Http\Request;
 use App\Models\Payments;
@@ -50,7 +51,7 @@ class PaymentController extends Controller
 
             // Nếu mã thanh toán thành công
             if ($vnpResponseCode === '00') {
-                Payments::create([
+                Payment::create([
                     'order_id' => $order->id,
                     'transaction_id' => $vnpTransactionNo,
                     'payment_method' => 'online',
@@ -67,7 +68,7 @@ class PaymentController extends Controller
                 return redirect('http://localhost:3000/thank');
             } else {
                 // Tạo bản ghi thanh toán thất bại
-                Payments::create([
+                Payment::create([
                     'order_id' => $order->id,
                     'transaction_id' => $vnpTransactionNo,
                     'payment_method' => 'online',

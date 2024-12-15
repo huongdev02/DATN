@@ -59,16 +59,14 @@ class OrderController extends Controller
             'product',
             'shipAddress',
             'orderDetails.product',
-            'orderDetails.color', // Lấy màu sắc của từng chi tiết đơn hàng
-            'orderDetails.size',  // Lấy kích cỡ của từng chi tiết đơn hàng
+            'orderDetails.color',
+            'orderDetails.size',
+            'payment' // Load thông tin thanh toán của đơn hàng
         ])->findOrFail($id);
-        
-        $payment = DB::table('payments')
-        ->where('order_id', $order->id)
-        ->first();
-
-        return view('order.show', compact('order', 'payment'));
+    
+        return view('order.show', compact('order'));
     }
+    
 
     /**
      * Show the form for editing the specified resource.

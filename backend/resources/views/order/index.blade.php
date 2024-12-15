@@ -62,38 +62,33 @@
                                     id="orderStatusForm-{{ $order->id }}">
                                     <input type="hidden" name="order_id" value="{{ $order->id }}">
                                     <select name="status" class="form-select" onchange="confirmAndSubmit(this)">
-                                        <option value="0" style="color: gray;"
-                                            {{ $order->status == 0 ? 'selected' : '' }}
+                                        <option value="0" {{ $order->status == 0 ? 'selected' : '' }}
                                             {{ $order->status != 0 ? 'disabled' : '' }}>
                                             Chờ xử lý
                                         </option>
-                                        <option value="1" style="color: blue;"
-                                            {{ $order->status == 1 ? 'selected' : '' }}
+                                        <option value="1" {{ $order->status == 1 ? 'selected' : '' }}
                                             {{ $order->status >= 1 ? 'disabled' : '' }}>
                                             Đã xử lý
                                         </option>
-                                        <option value="2" style="color: orange;"
-                                            {{ $order->status == 2 ? 'selected' : '' }}
+                                        <option value="2" {{ $order->status == 2 ? 'selected' : '' }}
                                             {{ $order->status >= 2 ? 'disabled' : '' }}>
                                             Đang vận chuyển
                                         </option>
-                                        <option value="3" style="color: green;"
-                                            {{ $order->status == 3 ? 'selected' : '' }}
+                                        <option value="3" {{ $order->status == 3 ? 'selected' : '' }}
                                             {{ $order->status >= 3 ? 'disabled' : '' }}>
                                             Giao hàng thành công
                                         </option>
-                                        <option value="4" style="color: red;"
-                                            {{ $order->status == 4 ? 'selected' : '' }}
+                                        <option value="4" {{ $order->status == 4 ? 'selected' : '' }}
                                             {{ $order->status == 4 ? 'disabled' : '' }}>
                                             Đã hủy
                                         </option>
-                                        <option value="5" style="color: purple;"
-                                            {{ $order->status == 5 ? 'selected' : '' }}
+                                        <option value="5" {{ $order->status == 5 ? 'selected' : '' }}
                                             {{ $order->status == 5 ? 'disabled' : '' }}>
                                             Đã trả lại
                                         </option>
                                     </select>
                                 </form>
+
 
                                 <script>
                                     function confirmAndSubmit(selectElement) {
@@ -128,6 +123,68 @@
     <div class="d-flex justify-content-center mt-4">
         {{ $orders->links() }}
     </div>
+
+    <style>
+        /* Chỉnh sửa màu sắc các option để chúng luôn dễ nhìn */
+        select.form-select {
+            font-weight: bold;
+            color: #7339b6;
+            /* Màu chữ mặc định */
+            background-color: #f8f9fa;
+            /* Màu nền sáng cho select */
+        }
+
+        /* Các option bên trong select */
+        select.form-select option {
+            color: #000;
+            /* Màu chữ đen cho tất cả các option */
+            background-color: #fff;
+            /* Màu nền trắng */
+        }
+
+        select.form-select option[value="0"] {
+
+            color: #d3d3d3;
+            /* Màu chữ đen */
+        }
+
+        select.form-select option[value="1"] {
+
+            color: #4e73df;
+            /* Màu chữ trắng */
+        }
+
+        select.form-select option[value="2"] {
+            /* Màu nền cam cho trạng thái 'Đang vận chuyển' */
+            color: #f39c12;
+            /* Màu chữ trắng */
+        }
+
+        select.form-select option[value="3"] {
+            /* Màu nền xanh lá cho trạng thái 'Giao hàng thành công' */
+            color: #28a745;
+            /* Màu chữ trắng */
+        }
+
+        select.form-select option[value="4"] {
+            /* Màu nền đỏ cho trạng thái 'Đã hủy' */
+            color: #dc3545;
+            /* Màu chữ trắng */
+        }
+
+        select.form-select option[value="5"] {
+            /* Màu nền tím cho trạng thái 'Đã trả lại' */
+            color: #6f42c1;
+            /* Màu chữ trắng */
+        }
+
+        /* Chỉnh sửa màu sắc khi select được focus */
+        select.form-select:focus {
+            border-color: #4e73df;
+            outline: none;
+        }
+    </style>
+
 
     <script>
         function confirmAndSubmit(selectElement) {

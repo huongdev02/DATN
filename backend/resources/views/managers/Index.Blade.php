@@ -19,7 +19,14 @@
 
     <h1 class="text-center mt-5 mb-3">Danh sách Người dùng</h1>
 
-    <div class="table-responsive mt-3">
+    <!-- Menu lọc trạng thái -->
+    <div class="mb-3">
+        <a href="{{ route('managers.index') }}" class="btn btn-info">Tất cả trạng thái</a>
+        <a href="{{ route('managers.index', ['is_active' => 'locked']) }}" class="btn btn-warning">Đã khóa</a>
+        <a href="{{ route('managers.index', ['is_active' => 'normal']) }}" class="btn btn-success">Bình thường</a>
+    </div>
+
+    <div class="table-responsive mt-5">
         <table class="table table-bordered table-hover text-center">
             <thead class="thead-dark">
                 <tr>
@@ -39,8 +46,7 @@
                 @foreach ($data as $user)
                     <tr>
                         <td>{{ $user->id }}</td>
-                        <td><img src="{{ asset('storage/' . $user->avatar) }}" class="rounded-circle" width="50px"
-                                height="50px"></td>
+                        <td><img src="{{ asset('storage/' . $user->avatar) }}" class="rounded-circle" width="50px" height="50px"></td>
                         <td>{{ $user->fullname }}</td>
                         <td>{{ $user->birth_day }}</td>
                         <td>{{ $user->phone }}</td>
@@ -61,24 +67,16 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <form action="{{ route('managers.update', $user->id) }}" method="POST"
-                                style="display: inline;">
+                            <form action="{{ route('managers.update', $user->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('PATCH')
                                 @if ($user->is_active)
-                                    <button type="submit" class="btn btn-warning btn-sm"
-                                        onclick="return confirm('Bạn có chắc chắn muốn khóa tài khoản này?')">
-                                        Khóa account
-                                    </button>
+                                    <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Bạn có chắc chắn muốn khóa tài khoản này?')">Khóa tài khoản </button>
                                 @else
-                                    <button type="submit" class="btn btn-success btn-sm"
-                                        onclick="return confirm('Bạn có chắc chắn muốn mở khóa tài khoản này?')">
-                                        Mở khóa account
-                                    </button>
+                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Bạn có chắc chắn muốn mở khóa tài khoản này?')">Mở khóa tài khoản </button>
                                 @endif
                             </form>
                         </td>
-
                     </tr>
                 @endforeach
             </tbody>

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -10,20 +11,29 @@ use Throwable;
 class ManagerUserController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = User::query();
+{
+    $query = User::query();
 
-        if (!$request->has('role')) {
-            $query->whereIn('role', [0, 1]);
-        } else {
-            $role = $request->get('role');
-            $query->where('role', $role);
+    // Lọc chỉ lấy tài khoản có role là 0
+    $query->where('role', 0);
+
+    // Lọc theo trạng thái is_active nếu có
+    if ($request->has('is_active')) {
+        $is_active = $request->get('is_active');
+        if ($is_active === 'locked') {
+            $query->where('is_active', 0); // Đã khóa
+        } elseif ($is_active === 'normal') {
+            $query->where('is_active', 1); // Bình thường
         }
-
-        $data = $query->latest()->paginate(5);
-
-        return view('managers.index', compact('data'));
     }
+
+    // Lấy dữ liệu với phân trang
+    $data = $query->latest()->paginate(5);
+
+    return view('managers.index', compact('data'));
+}
+
+
 
     public function update($id)
     {
@@ -39,4 +49,3 @@ class ManagerUserController extends Controller
         }
     }
 }
-

@@ -21,6 +21,13 @@ class LogoBannerController extends Controller
 
     public function store(Request $request)
     {
+        // Kiểm tra xem trong bảng LogoBanner đã có đủ 3 bản ghi chưa
+        $bannerCount = LogoBanner::count();
+        if ($bannerCount >= 3) {
+            return back()->with('error', 'Đã đủ 3 bản ghi, không thể thêm mới.');
+        }
+
+        // Validate dữ liệu từ request
         $data = $request->validate([
             'type' => 'required',
             'title' => 'required|string|max:255',
@@ -28,13 +35,17 @@ class LogoBannerController extends Controller
             'image' => 'required|image',
         ]);
 
+        // Nếu có file hình ảnh, lưu vào storage
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('logo_banner', 'public'); // Lưu file vào storage/app/public/logo_banner
         }
 
+        // Tạo mới bản ghi
         LogoBanner::create($data);
+
         return redirect()->route('logo_banners.index')->with('success', 'Logo/Banner added successfully.');
     }
+
 
     public function edit($id)
     {
@@ -70,27 +81,5 @@ class LogoBannerController extends Controller
         $logoBanner->update($data);
 
         return redirect()->route('logo_banners.index')->with('success', 'Logo/Banner updated successfully.');
-    }
-
-
-
-    public function destroy(LogoBanner $logoBanner)
-    {
-        // Kiểm tra nếu trạng thái is_active của logoBanner là 1 (hoạt động)
-        if ($logoBanner->is_active == 1) {
-            return redirect()->route('logo_banners.index')->with('error', 'Không thể xóa Logo/Banner đang hoạt động.');
-        }
-
-        // Kiểm tra nếu không còn bản ghi nào cùng type
-        $countSameType = LogoBanner::where('type', $logoBanner->type)->count();
-
-        if ($countSameType <= 1) {
-            return redirect()->route('logo_banners.index')->with('error', 'Không thể xóa vì không còn bản ghi nào cùng loại.');
-        }
-
-        // Xóa Logo/Banner
-        $logoBanner->delete();
-
-        return redirect()->route('logo_banners.index')->with('success', 'Logo/Banner deleted successfully.');
     }
 }

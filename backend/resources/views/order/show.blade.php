@@ -59,33 +59,42 @@
             <h4>Tổng tiền: <span class="text-success">{{ number_format($order->total_amount) }} VNĐ</span></h4>
 
             @if ($order->payment_method == 2)
-                <!-- Thêm thông tin thanh toán online từ bảng payments -->
+                <!-- Thông tin thanh toán online -->
                 @if ($order->payment)
+                    <!-- Kiểm tra nếu có dữ liệu payment -->
                     <div class="mt-3">
                         <h5>Thông tin thanh toán online</h5>
                         <ul>
                             <li><strong>Mã giao dịch:</strong>
                                 {{ $order->payment->transaction_id ?? 'Không có thông tin' }}</li>
                             <li><strong>Ngày thanh toán:</strong>
-                                {{ $order->payment->payment_date ?? 'Không có thông tin' }}</li>
+                                {{ $order->payment->created_at ? $order->payment->created_at->format('d-m-Y H:i') : 'Không có thông tin' }}
+                            </li>
                             <li><strong>Số tiền thanh toán:</strong>
-                                ₫{{ number_format($order->payment->amount, 0, ',', '.') ?? 'Không có thông tin' }}</li>
-                            <li><strong>Trạng thái:</strong> {{ $order->payment->status ?? 'Không có thông tin' }}</li>
+                                ₫{{ isset($order->payment->amount) ? number_format($order->payment->amount, 0, ',', '.') : 'Không có thông tin' }}
+                            </li>
+                            <li><strong>Trạng thái:</strong>
+                                {{ $order->payment->status ?? 'Không có thông tin' }}
+                            </li>
                         </ul>
                     </div>
                 @else
+                    <!-- Không có dữ liệu thanh toán online -->
                     <div class="mt-3">
                         <h5>Không có thông tin thanh toán online</h5>
                     </div>
                 @endif
             @elseif ($order->payment_method == 1)
-                <!-- Thông báo COD -->
+                <!-- Thông tin thanh toán COD -->
                 <div class="mt-3">
                     <h4>Phương thức thanh toán: <span class="text-success">COD (Thanh toán khi nhận hàng)</span></h4>
                 </div>
+            @else
+                <!-- Phương thức thanh toán không xác định -->
+                <div class="mt-3">
+                    <h5>Phương thức thanh toán không xác định</h5>
+                </div>
             @endif
-
-
 
 
             <h4>Đã giảm giá:
