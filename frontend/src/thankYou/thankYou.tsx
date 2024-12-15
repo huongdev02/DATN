@@ -14,8 +14,8 @@ function ThankYou() {
             </div>
           </div>
 
-          <span className="text-succsess">Thanh toán thành công !</span>
-          <p className="text-thank">Cảm ơn quý khách đã ủng hộ</p>
+          <span className="text-succsess">Thanh toán thành công</span>
+          <p className="text-thank">Cảm ơn quý khách đã ủng hộ !</p>
         </div>
       </section>
     </>

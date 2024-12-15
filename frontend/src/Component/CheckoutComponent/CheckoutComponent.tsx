@@ -46,7 +46,7 @@ const CheckoutComponent: React.FC = () => {
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const navigate = useNavigate(); // Khởi tạo navigate
+  const navigate = useNavigate(); 
   const location = useLocation();
   useEffect(() => {
     if (userId) {
@@ -248,8 +248,7 @@ const CheckoutComponent: React.FC = () => {
       } else {
       }
       if (paymentMethodId === 1) {
-        window.scrollTo(0, 0);
-        nav("/order-success");
+        window.location.href = "/order-success";
       }
 
       localStorage.removeItem("cartItems");
