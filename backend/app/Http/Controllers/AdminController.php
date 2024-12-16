@@ -40,7 +40,7 @@ class AdminController extends Controller
     $pendingOrders = Order::where('status', 0)->count();
 
     // Tính tổng doanh thu
-    $totalRevenue = Order::sum('total_amount');
+    $totalRevenue = Order::where('status', 3)->sum('total_amount');
 
     return view('admin.dashboard', compact('totalUsers', 'completedOrders', 'totalRevenue', 'pendingOrders'));
 }

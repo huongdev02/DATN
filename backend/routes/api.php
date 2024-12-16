@@ -81,5 +81,3 @@ Route::get('payment/result', [PaymentController::class, 'handlePaymentResult'])-
 
 
 Route::post('password/email', [PassWordController::class, 'sendResetLink']);
-Route::get('password/reset/{token}', [PassWordController::class, 'showResetForm']);
-Route::post('password/reset', [PassWordController::class, 'resetPassword']);
