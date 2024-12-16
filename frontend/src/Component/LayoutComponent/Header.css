@@ -106,3 +106,9 @@
 .no-results {
   color: red;
 }
+
+.notice-error {
+  border: 1px solid red !important;
+  border-left: 4px solid red !important;
+}
+

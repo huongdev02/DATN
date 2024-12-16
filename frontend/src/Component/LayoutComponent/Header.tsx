@@ -61,16 +61,16 @@ const Header: React.FC = () => {
   const { cart } = useSelector((state: RootState) => state.cart);
   const cartItemsLength = JSON.parse(localStorage.getItem("cartItems") || "[]");
   const cartLength = cartItemsLength.length;
-  const [ isLogo, setLogo] = useState<any>()
+  const [isLogo, setLogo] = useState<any>();
   const ref = useRef<HTMLDivElement>(null);
   const [userLocala, setUserLocala] = useState<any>();
-  const [isToken, setIsToken]= useState<any>()
-
+  const [isToken, setIsToken] = useState<any>();
 
   const {
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<any>();
 
@@ -81,15 +81,15 @@ const Header: React.FC = () => {
         notification.success({
           message: "Đăng ký tài khoản thành công",
         });
-       window.location.href = '/'
+        window.location.href = "/";
       }
     } catch (error) {
-       notification.error({
+      notification.error({
         message: "Đăng ký thất bại",
+        className: "notice-error",
       });
     }
   };
-  
 
   const GetAllProducts = async () => {
     try {
@@ -100,21 +100,21 @@ const Header: React.FC = () => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const GetLogo = async () => {
       try {
-        const { data } = await  axios.get(`http://127.0.0.1:8000/api/logobanner/${1}`);
-         setLogo(data.image)
+        const { data } = await axios.get(
+          `http://127.0.0.1:8000/api/logobanner/${1}`
+        );
+        setLogo(data.image);
       } catch (error) {
         message.error("Lỗi api!");
       }
     };
-    GetLogo()
-  },[])
-  
+    GetLogo();
+  }, []);
+
   console.log("Logooooo", isLogo);
-  
-  
 
   useEffect(() => {
     const userLocal = localStorage.getItem("user");
@@ -122,7 +122,7 @@ const Header: React.FC = () => {
       const parsedUser = JSON.parse(userLocal);
       setUserLocala(parsedUser.user);
       setIsLoggedIn(true);
-      setIsToken(parsedUser.token)
+      setIsToken(parsedUser.token);
     }
   }, []);
 
@@ -159,7 +159,6 @@ const Header: React.FC = () => {
     }
   }, []);
 
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Email:", email);
@@ -181,6 +180,7 @@ const Header: React.FC = () => {
       } else {
         notification.error({
           message: "Tài khoản không chính khác",
+          className: "notice-error",
         });
         setPassword("");
       }
@@ -212,11 +212,10 @@ const Header: React.FC = () => {
 
   const navDashBoard = () => {
     if (isToken) {
-        const tokenNew = isToken.includes("|") ? isToken.split("|")[1] : isToken;
-        window.location.href = `http://localhost:8000/user/dashboard?token=${tokenNew}`;
+      const tokenNew = isToken.includes("|") ? isToken.split("|")[1] : isToken;
+      window.location.href = `http://localhost:8000/user/dashboard?token=${tokenNew}`;
     }
-};
-
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -302,7 +301,7 @@ const Header: React.FC = () => {
           <div className="main-header">
             <div className="header-logo">
               <Link to="/" className="d-flex">
-                <img src={isLogo} alt="" width={'120px'}/>
+                <img src={isLogo} alt="" width={"120px"} />
               </Link>
             </div>
             <div className="header-menu">
@@ -349,7 +348,7 @@ const Header: React.FC = () => {
                   }}
                 >
                   <InfoCircleOutlined className="icon-css" />
-                  <a        
+                  <a
                     onClick={() => navDashBoard()}
                     target="_blank"
                     className="hover-text"
@@ -375,14 +374,23 @@ const Header: React.FC = () => {
             >
               <div className="account-icon account">
                 {isLoggedIn && userLocala ? (
-                  <div  onClick={() => handleClick()} className="dropdown" style={{display:'flex', justifyContent:'center', alignItems:'center', width:'85px'}}>
+                  <div
+                    onClick={() => handleClick()}
+                    className="dropdown"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "85px",
+                    }}
+                  >
                     <img
-                      style={{ borderRadius: "50%", marginRight:'8px'}}
+                      style={{ borderRadius: "50%", marginRight: "8px" }}
                       className="dropbtn"
                       src={userLocala.avatar}
                       alt=""
                     />
-                     <span className="hi-user" style={{cursor:'pointer'}}>
+                    <span className="hi-user" style={{ cursor: "pointer" }}>
                       {userLocala.fullname || userLocala.email}
                     </span>
                   </div>
@@ -413,7 +421,9 @@ const Header: React.FC = () => {
                   //     </defs>
                   //   </svg>
                   // </a>
-                  <span className="text-login-z"  onClick={openAccountPopup}>Đăng nhập</span>
+                  <span className="text-login-z" onClick={openAccountPopup}>
+                    Đăng nhập
+                  </span>
                 )}
               </div>
               <a className="account-icon search" onClick={openSearchPopup}>
@@ -610,16 +620,16 @@ const Header: React.FC = () => {
           <div className="box-banner-popup" />
           <div className="form-account-info">
             <a
-              style={{cursor:'pointer'}}
+              style={{ cursor: "pointer" }}
               className={`button-tab btn-for-login ${
                 activeTab === "login" ? "active" : ""
-              }`}   
+              }`}
               onClick={showLoginForm}
             >
               Đăng nhập
             </a>
             <a
-              style={{cursor:'pointer'}}
+              style={{ cursor: "pointer" }}
               className={`button-tab btn-for-signup ${
                 activeTab === "signup" ? "active" : ""
               }`}
@@ -671,12 +681,12 @@ const Header: React.FC = () => {
             )}
 
             {activeTab === "signup" && (
-              <form  onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div
                   className="form-register"
                   style={{ display: activeTab === "signup" ? "block" : "none" }}
                 >
-                   {/* <div className="form-group">
+                  {/* <div className="form-group">
                     <input
                       className="form-control"
                       placeholder="Tên đăng nhập của bạn"
@@ -693,8 +703,16 @@ const Header: React.FC = () => {
                       type="email"
                       {...register("email", {
                         required: "*Không bỏ trống email",
+                        pattern: {
+                          value:
+                            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                          message: "*Email không hợp lệ",
+                        },
                       })}
                     />
+                    {errors.email && (
+                      <p className="error" style={{color:'red', marginTop:'10px'}}>*email thiếu @ và không hợp lệ</p>
+                    )}
                   </div>
                   <div className="form-group">
                     <input
@@ -702,20 +720,33 @@ const Header: React.FC = () => {
                       type="password"
                       placeholder="Nhập mật khẩu"
                       {...register("password", {
-                        required: "*Không bỏ trống email",
+                        required: "*Không bỏ trống mật khẩu",
+                        minLength: {
+                          value: 7,
+                          message: "*Mật khẩu phải có ít nhất 7 ký tự",
+                        },
                       })}
                     />
+                    {errors.password && (
+                      <p className="error" style={{color:'red', marginTop:'10px'}}>*mật khẩu phải có ít nhất 7 ký tự</p>
+                    )}
                   </div>
                   <div className="form-group">
                     <input
                       className="form-control"
                       type="password"
-                      placeholder="Xác nhận lại mật khẩu"   
+                      placeholder="Xác nhận lại mật khẩu"
                       {...register("confirmPassword", {
-                        required: "*Không bỏ trống email",
-                      })} 
+                        validate: (value) =>
+                          value === getValues("password") ||
+                          "*Mật khẩu xác nhận không khớp",
+                      })}
                     />
+                    {errors.confirmPassword && (
+                      <p className="error" style={{color:'red', marginTop:'10px'}}>*mật khẩu xác nhận không khớp</p>
+                    )}
                   </div>
+
                   <div className="form-group">
                     <button type="submit" className="btn btn-login d-block">
                       Đăng ký tài khoản
@@ -734,9 +765,7 @@ const Header: React.FC = () => {
                     </p>
                   </div>
                   <div className="form-group mt-100 text-center">
-                    <a className="font-sm">
-                      {/* Privacy &amp; Terms */}
-                    </a>
+                    <a className="font-sm">{/* Privacy &amp; Terms */}</a>
                   </div>
                 </div>
               </form>
