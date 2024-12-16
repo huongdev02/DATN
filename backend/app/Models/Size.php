@@ -17,10 +17,6 @@ class Size extends Model
         return $this->belongsToMany(Product::class);
     }
 
-    public function productDetails()
-    {
-        return $this->hasMany(Product_Detail::class);
-    }
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);

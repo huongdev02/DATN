@@ -20,8 +20,8 @@ class Message extends Model
         return $this->belongsTo(Conversation::class);
     }
 
-    public function user()
+    public function sender()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'sender_id');
     }
 }

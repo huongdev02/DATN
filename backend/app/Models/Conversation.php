@@ -13,8 +13,18 @@ class Conversation extends Model
         'staff_id',
     ];
 
-    public function users()
+    public function user()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(User::class, 'staff_id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
     }
 }
