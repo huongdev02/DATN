@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông báo giao hàng thành công</title>
+</head>
+<body>
+    <h2>Thông báo về đơn hàng của bạn</h2>
+    <p>Chào bạn,</p>
+    <p>Chúng tôi xin thông báo rằng đơn hàng với mã đơn hàng <strong>#{{ $order->id }}</strong> của bạn đã được giao thành công.</p>
+    <p>Cảm ơn bạn đã tin tưởng mua sắm tại cửa hàng của chúng tôi!</p>
+    <p>Trân trọng!</p>
+</body>
+</html>

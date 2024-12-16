@@ -4,12 +4,13 @@ namespace App\Mail;
 
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class OrderStatusChanged extends Mailable
+class OrderDelivered extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -46,7 +47,7 @@ class OrderStatusChanged extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.order_status_changed', // View bạn đã tạo trong resources/views/emails/order_status_changed.blade.php
+            view: 'email.order_delivered', // Bạn có thể tạo view này trong resources/views/emails/order_delivered.blade.php
             with: [
                 'order' => $this->order, // Truyền thông tin đơn hàng vào view
             ]
