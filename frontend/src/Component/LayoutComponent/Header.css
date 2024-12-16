@@ -11,7 +11,7 @@
 .dropdown {
   width: 190px !important;
   display: flex !important;
-  justify-content: start !important;
+  justify-content: end !important;
   align-items: center !important;
 }
 .css-logout {
@@ -67,7 +67,7 @@
   background-color: white;
   width: 180px;
   height: 80px;
-  top: 80px;
+  top: 85px;
   color: rgb(47, 37, 44);
   right: 40px;
   position: absolute;
