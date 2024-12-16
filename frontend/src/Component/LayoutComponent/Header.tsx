@@ -377,12 +377,6 @@ const Header: React.FC = () => {
                   <div
                     onClick={() => handleClick()}
                     className="dropdown"
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "85px",
-                    }}
                   >
                     <img
                       style={{ borderRadius: "50%", marginRight: "8px" }}

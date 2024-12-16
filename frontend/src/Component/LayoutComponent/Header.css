@@ -8,6 +8,12 @@
 .input-search::placeholder {
   color: grey;
 }
+.dropdown {
+  width: 190px !important;
+  display: flex !important;
+  justify-content: start !important;
+  align-items: center !important;
+}
 .css-logout {
   display: flex;
   justify-content: start;
@@ -41,7 +47,11 @@
 .text-login-z {
   font-size: 16px;
   font-weight: 700;
-  background: linear-gradient(153deg, rgb(105, 72, 183) 0%, rgb(159, 134, 217) 100%);
+  background: linear-gradient(
+    153deg,
+    rgb(105, 72, 183) 0%,
+    rgb(159, 134, 217) 100%
+  );
   background-clip: text;
   color: transparent;
   cursor: pointer;
@@ -57,9 +67,9 @@
   background-color: white;
   width: 180px;
   height: 80px;
-  top: 85px;
+  top: 80px;
   color: rgb(47, 37, 44);
-  right: -35px;
+  right: 40px;
   position: absolute;
   font-size: 14px;
   font-weight: 600;
@@ -111,4 +121,3 @@
   border: 1px solid red !important;
   border-left: 4px solid red !important;
 }
-
