@@ -15,3 +15,17 @@
   border: 1px solid red !important;
   border-left: 4px solid red !important;
 }
+.button-address{
+  width: 215px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  cursor: pointer;
+  font-family: "Raleway";
+  font-weight: 600;
+  height: 35px;
+  padding: 0px 15px;
+  border-bottom: 1px solid #86C4CD;
+  margin-bottom: 15px;
+  
+}

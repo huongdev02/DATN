@@ -11,6 +11,7 @@ import { postOrder } from "../../Redux/Reducer/OrderReducer";
 import { fetchVouchers } from "../../Redux/Reducer/VoucherReducer";
 import { fetchPaymentStatus } from "../../Redux/Reducer/OrderReducer";
 import QR from "../../assets/imgs/qr.jpg";
+import { EnvironmentFilled, EnvironmentOutlined, EnvironmentTwoTone} from "@ant-design/icons";
 import "./checkout.css";
 
 const CheckoutComponent: React.FC = () => {
@@ -44,7 +45,7 @@ const CheckoutComponent: React.FC = () => {
   const [selectedVoucher, setSelectedVoucher] = React.useState(null);
   const [discount, setDiscount] = React.useState(0);
   const [loading, setLoading] = useState(true);
-
+  const [isAddress, setIsAddress] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const navigate = useNavigate(); 
@@ -92,14 +93,27 @@ const CheckoutComponent: React.FC = () => {
     }
   };
 
+  const getAddress = async () =>{
+    try {
+      const response = await api.get("/address");
+      setIsAddress(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally{
+      setLoading(false)
+    }
+  }
+  
+
   useEffect(() => {
     getVouchers();
+    getAddress()
   }, []);
 
-  console.log("tát cả voi chừo", isVoucher);
+  console.log("tát cả voi chừo", isAddress);
 
   const handleModalClose = () => {
-    setShowModal(false); // Đóng modal khi nhấn nút "Cancel"
+    setShowModal(false); 
   };
 
   const handlePaymentSuccess = async (e: React.FormEvent) => {
@@ -352,8 +366,12 @@ const CheckoutComponent: React.FC = () => {
                       marginBottom: "10px",
                     }}
                   >
-                    Thông tin thanh toán
+                    Thông tin thanh toán 
                   </h4>
+                  <div className="button-address">
+                  <EnvironmentFilled style={{color:'red'}}/>
+                  <span style={{marginLeft:'5px'}}>Địa chỉ mặc định của bạn</span>
+                  </div>
                   <div>
                     <div className="col-lg-6" style={{ width: "100%" }}>
                       <div className="form-group">
@@ -460,7 +478,7 @@ const CheckoutComponent: React.FC = () => {
                           *Chọn phương thức thanh toán
                         </label>
                         <select
-                          style={{ marginTop: "5px" }}
+                          style={{ marginTop: "5px", fontSize: '14px', }}
                           name="paymentMethod"
                           className="form-control"
                           value={paymentMethodId || ""}
@@ -564,7 +582,7 @@ const CheckoutComponent: React.FC = () => {
                         )}
                         <div className="item-checkout justify-content-between">
                           <span className="font-xl-bold">Tổng cộng</span>
-                          <span className="font-md-bold">
+                          <span className="font-md-bold" style={{fontSize:'17px'}}>
                             {formatCurrency(subtotal - discount)}
                           </span>
                         </div>

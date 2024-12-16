@@ -29,6 +29,8 @@ const ProductDetailComponent: React.FC = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const [isCate, setIsCate] = useState<number>(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [checkAdmin, setCheckAdmin] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const convertToVND = (usdPrice: number) => {
@@ -64,10 +66,29 @@ const ProductDetailComponent: React.FC = () => {
       }
     };
 
+    const userz = localStorage.getItem("user");
+    const checkadmin = JSON.parse(userz!);
+
+    console.log(checkadmin, "alllll");
+
+    if (userz) {
+      try {
+        const checkadmin = JSON.parse(userz);
+        console.log(checkadmin, "alllll");
+        setIsLogin(true); 
+        if (checkadmin?.user?.role === 2) {
+          setCheckAdmin(true); 
+        } else {
+          setCheckAdmin(false); 
+        }
+      } catch (error) {
+        console.error("Dữ liệu trong localStorage không hợp lệ", error);
+      }
+    } else {
+      console.warn("Không tìm thấy user trong localStorage");
+    }
     fetchProductDetail();
   }, [id]);
-
-  console.log("review sp", product);
 
   useEffect(() => {
     const GetProductsById = async () => {
@@ -90,64 +111,56 @@ const ProductDetailComponent: React.FC = () => {
   console.log("chi tiết sản phẩm", productById);
 
   const handleAddToCart = async () => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const token = localStorage.getItem("token");
-
-    if (!user.user.id) {
-      notification.error({
-        message: "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng !",
-      });
-      navigate("/login");
-      return;
-    }
-
-    if (!token) {
-      notification.error({
-        message: "Token không hợp lệ. Vui lòng đăng nhập lại!",
-      });
-      return;
-    }
-
-    if (!selectedSize || !selectedColor) {
+    if (!isLogin) {
       notification.warning({
-        message:
-          "Vui lòng chọn kích thước và màu sắc trước khi thêm vào giỏ hàng!",
+        message: "Vui lòng đăng nhập để mua hàng !",
+        className: "warning-message",
+        placement: "bottomRight",
       });
       return;
     }
-
-    const sizeId = product.sizes.find(
-      (size: any) => size.size === selectedSize
-    )?.id;
-    const colorId = product.colors.find(
-      (color: any) => color.name_color === selectedColor
-    )?.id;
-
-    console.log("Selected Size ID:", sizeId);
-    console.log("Selected Color ID:", colorId);
-
-    try {
-      const cartData = {
-        productId: product.id,
-        quantity,
-        sizeId,
-        colorId,
-      };
-      console.log(cartData);
-      if (product.quantity > 0) {
-        await dispatch(addToCart(cartData));
-        notification.success({
-          message: "Thêm vào giỏ hàng thành công !",
-          placement: "bottomRight",
-        });
-      } else {
-        message.error('Sản phẩm này hiện không còn hàng !')
-      }
-    } catch (error) {
-      console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error);
-      notification.error({
-        message: "Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!",
+    if (checkAdmin) {
+      notification.warning({
+        message: "Admin không được phép mua hàng !",
+        className: "warning-message",
+        placement: "bottomRight",
       });
+      return;
+    } else {
+      if (!selectedSize || !selectedColor) {
+        notification.warning({
+          message:
+            "Vui lòng chọn kích thước và màu sắc trước khi thêm vào giỏ hàng!",
+        });
+      }
+      const sizeId = product.sizes.find(
+        (size: any) => size.size === selectedSize
+      )?.id;
+      const colorId = product.colors.find(
+        (color: any) => color.name_color === selectedColor
+      )?.id;
+      try {
+        const cartData = {
+          productId: product.id,
+          quantity,
+          sizeId,
+          colorId,
+        };
+        if (product.quantity > 0) {
+          await dispatch(addToCart(cartData));
+          notification.success({
+            message: "Thêm vào giỏ hàng thành công !",
+            placement: "bottomRight",
+          });
+        } else {
+          message.error("Sản phẩm này hiện không còn hàng !");
+        }
+      } catch (error) {
+        console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error);
+        notification.error({
+          message: "Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!",
+        });
+      }
     }
   };
 
