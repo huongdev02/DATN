@@ -160,10 +160,12 @@ const CheckoutComponent: React.FC = () => {
 
       // Đóng modal sau khi thanh toán thành công
       setShowModal(false);
-    } catch (err) {
+    } catch (error: any) {
+      const errorMessage = error?.data?.message 
       notification.error({
         message: "Lỗi khi thanh toán",
-        description: "Có sự cố khi thanh toán. Vui lòng thử lại.",
+        description: errorMessage,
+        className:'order-sai'
       });
     }
   };
@@ -255,10 +257,12 @@ const CheckoutComponent: React.FC = () => {
       }
 
       localStorage.removeItem("cartItems");
-    } catch (err) {
+    } catch (error: any) {
+      const errorMessage = error?.data?.message 
       notification.error({
-        message: "Lỗi khi đặt hàng",
-        description: "Có sự cố khi đặt hàng. Vui lòng thử lại.",
+        message: "Lỗi khi thanh toán",
+        description: errorMessage,
+        className:'order-sai'
       });
     }
   };
