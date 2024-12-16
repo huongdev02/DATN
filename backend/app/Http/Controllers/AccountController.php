@@ -177,8 +177,7 @@ class AccountController extends Controller
         session()->flush();
     
         // Chuyển hướng
-        return redirect('http://localhost:3000/')
-            ->with('success', 'Đã đăng xuất thành công');
+        return redirect('http://localhost:3000?logout=true')->with('success', 'Đã đăng xuất thành công');
     }
 
     public function rspassword()
