@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { CartItem } from "../../Redux/Reducer/CartReducer";
 import { useCart } from "../../context/cartContext";
 import "./Header.css";
+import { useForm, SubmitHandler } from "react-hook-form";
 import api from "../../Axios/Axios";
 import { fetchCart } from "../../Redux/Reducer/CartReducer";
 import {
@@ -60,10 +61,35 @@ const Header: React.FC = () => {
   const { cart } = useSelector((state: RootState) => state.cart);
   const cartItemsLength = JSON.parse(localStorage.getItem("cartItems") || "[]");
   const cartLength = cartItemsLength.length;
-  const [ isLogo, setLogo] = useState<any>()
+  const [isLogo, setLogo] = useState<any>();
   const ref = useRef<HTMLDivElement>(null);
   const [userLocala, setUserLocala] = useState<any>();
-  const [isToken, setIsToken]= useState<any>()
+  const [isToken, setIsToken] = useState<any>();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm<any>();
+
+  const onSubmit: SubmitHandler<any> = async (data) => {
+    try {
+      const response = await api.post("/register", data);
+      if (response?.status === 200) {
+        notification.success({
+          message: "Đăng ký tài khoản thành công",
+        });
+        window.location.href = "/";
+      }
+    } catch (error) {
+      notification.error({
+        message: "Đăng ký thất bại",
+        className: "notice-error",
+      });
+    }
+  };
 
   const GetAllProducts = async () => {
     try {
@@ -74,21 +100,21 @@ const Header: React.FC = () => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const GetLogo = async () => {
       try {
-        const { data } = await  axios.get(`http://127.0.0.1:8000/api/logobanner/${1}`);
-         setLogo(data.image)
+        const { data } = await axios.get(
+          `http://127.0.0.1:8000/api/logobanner/${1}`
+        );
+        setLogo(data.image);
       } catch (error) {
         message.error("Lỗi api!");
       }
     };
-    GetLogo()
-  },[])
-  
+    GetLogo();
+  }, []);
+
   console.log("Logooooo", isLogo);
-  
-  
 
   useEffect(() => {
     const userLocal = localStorage.getItem("user");
@@ -96,7 +122,7 @@ const Header: React.FC = () => {
       const parsedUser = JSON.parse(userLocal);
       setUserLocala(parsedUser.user);
       setIsLoggedIn(true);
-      setIsToken(parsedUser.token)
+      setIsToken(parsedUser.token);
     }
   }, []);
 
@@ -133,7 +159,6 @@ const Header: React.FC = () => {
     }
   }, []);
 
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Email:", email);
@@ -155,6 +180,7 @@ const Header: React.FC = () => {
       } else {
         notification.error({
           message: "Tài khoản không chính khác",
+          className: "notice-error",
         });
         setPassword("");
       }
@@ -162,35 +188,34 @@ const Header: React.FC = () => {
       console.error("Đăng nhập thất bại:", err);
     }
   };
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
 
-    if (password !== confirmPassword) {
-      notification.error({
-        message: "Lỗi đăng ký",
-        description: "Mật khẩu và xác nhận mật khẩu không khớp!",
-        placement: "topRight",
-      });
-      return;
-    }
+  //   if (password !== confirmPassword) {
+  //     notification.error({
+  //       message: "Lỗi đăng ký",
+  //       description: "Mật khẩu và xác nhận mật khẩu không khớp!",
+  //       placement: "topRight",
+  //     });
+  //     return;
+  //   }
 
-    const userData = { email, username, password, confirmPassword };
-    dispatch(registerUser(userData));
-    notification.success({
-      message: "Đăng ký thành công",
-      description: `Vui lòng đăng nhập để đặt hàng tại website`,
-      placement: "topRight",
-    });
-    setActiveTab("login");
-  };
+  //   const userData = { email, username, password, confirmPassword };
+  //   dispatch(registerUser(userData));
+  //   notification.success({
+  //     message: "Đăng ký thành công",
+  //     description: `Vui lòng đăng nhập để đặt hàng tại website`,
+  //     placement: "topRight",
+  //   });
+  //   setActiveTab("login");
+  // };
 
   const navDashBoard = () => {
     if (isToken) {
-        const tokenNew = isToken.includes("|") ? isToken.split("|")[1] : isToken;
-        window.location.href = `http://localhost:8000/user/dashboard?token=${tokenNew}`;
+      const tokenNew = isToken.includes("|") ? isToken.split("|")[1] : isToken;
+      window.location.href = `http://localhost:8000/user/dashboard?token=${tokenNew}`;
     }
-};
-
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -276,7 +301,7 @@ const Header: React.FC = () => {
           <div className="main-header">
             <div className="header-logo">
               <Link to="/" className="d-flex">
-                <img src={isLogo} alt="" width={'120px'}/>
+                <img src={isLogo} alt="" width={"120px"} />
               </Link>
             </div>
             <div className="header-menu">
@@ -323,7 +348,7 @@ const Header: React.FC = () => {
                   }}
                 >
                   <InfoCircleOutlined className="icon-css" />
-                  <a        
+                  <a
                     onClick={() => navDashBoard()}
                     target="_blank"
                     className="hover-text"
@@ -349,14 +374,23 @@ const Header: React.FC = () => {
             >
               <div className="account-icon account">
                 {isLoggedIn && userLocala ? (
-                  <div  onClick={() => handleClick()} className="dropdown" style={{display:'flex', justifyContent:'center', alignItems:'center', width:'85px'}}>
+                  <div
+                    onClick={() => handleClick()}
+                    className="dropdown"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "85px",
+                    }}
+                  >
                     <img
-                      style={{ borderRadius: "50%", marginRight:'8px'}}
+                      style={{ borderRadius: "50%", marginRight: "8px" }}
                       className="dropbtn"
                       src={userLocala.avatar}
                       alt=""
                     />
-                     <span className="hi-user" style={{cursor:'pointer'}}>
+                    <span className="hi-user" style={{ cursor: "pointer" }}>
                       {userLocala.fullname || userLocala.email}
                     </span>
                   </div>
@@ -387,7 +421,9 @@ const Header: React.FC = () => {
                   //     </defs>
                   //   </svg>
                   // </a>
-                  <span className="text-login-z"  onClick={openAccountPopup}>Đăng nhập</span>
+                  <span className="text-login-z" onClick={openAccountPopup}>
+                    Đăng nhập
+                  </span>
                 )}
               </div>
               <a className="account-icon search" onClick={openSearchPopup}>
@@ -563,7 +599,6 @@ const Header: React.FC = () => {
           <a
             className="btn-close-popup btn-close-popup-account"
             onClick={closeAccountPopup}
-            href="#"
           >
             <svg
               className="icon-16 d-inline-flex align-items-center justify-content-center"
@@ -585,19 +620,19 @@ const Header: React.FC = () => {
           <div className="box-banner-popup" />
           <div className="form-account-info">
             <a
+              style={{ cursor: "pointer" }}
               className={`button-tab btn-for-login ${
                 activeTab === "login" ? "active" : ""
               }`}
-              href="#"
               onClick={showLoginForm}
             >
               Đăng nhập
             </a>
             <a
+              style={{ cursor: "pointer" }}
               className={`button-tab btn-for-signup ${
                 activeTab === "signup" ? "active" : ""
               }`}
-              href="#"
               onClick={showSignUpForm}
             >
               Đăng ký
@@ -646,45 +681,74 @@ const Header: React.FC = () => {
             )}
 
             {activeTab === "signup" && (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div
                   className="form-register"
                   style={{ display: activeTab === "signup" ? "block" : "none" }}
                 >
+                  {/* <div className="form-group">
+                    <input
+                      className="form-control"
+                      placeholder="Tên đăng nhập của bạn"
+                      type="text"
+                      {...register("username", {
+                        required: "*Không bỏ trống email",
+                      })}
+                    />
+                  </div> */}
                   <div className="form-group">
                     <input
                       className="form-control"
-                      type="text"
-                      placeholder="Tên đăng nhập"
-                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Email của bạn"
+                      type="email"
+                      {...register("email", {
+                        required: "*Không bỏ trống email",
+                        pattern: {
+                          value:
+                            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                          message: "*Email không hợp lệ",
+                        },
+                      })}
                     />
-                  </div>
-                  <div className="form-group">
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Tài khoản email"
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
+                    {errors.email && (
+                      <p className="error" style={{color:'red', marginTop:'10px'}}>*email thiếu @ và không hợp lệ</p>
+                    )}
                   </div>
                   <div className="form-group">
                     <input
                       className="form-control"
                       type="password"
-                      placeholder="Mật khẩu"
-                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Nhập mật khẩu"
+                      {...register("password", {
+                        required: "*Không bỏ trống mật khẩu",
+                        minLength: {
+                          value: 7,
+                          message: "*Mật khẩu phải có ít nhất 7 ký tự",
+                        },
+                      })}
                     />
+                    {errors.password && (
+                      <p className="error" style={{color:'red', marginTop:'10px'}}>*mật khẩu phải có ít nhất 7 ký tự</p>
+                    )}
                   </div>
                   <div className="form-group">
                     <input
                       className="form-control"
                       type="password"
                       placeholder="Xác nhận lại mật khẩu"
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      {...register("confirmPassword", {
+                        validate: (value) =>
+                          value === getValues("password") ||
+                          "*Mật khẩu xác nhận không khớp",
+                      })}
                     />
+                    {errors.confirmPassword && (
+                      <p className="error" style={{color:'red', marginTop:'10px'}}>*mật khẩu xác nhận không khớp</p>
+                    )}
                   </div>
+
                   <div className="form-group">
-                    <button className="btn btn-login d-block">
+                    <button type="submit" className="btn btn-login d-block">
                       Đăng ký tài khoản
                     </button>
                   </div>
@@ -694,7 +758,6 @@ const Header: React.FC = () => {
                       <a
                         style={{ color: "red" }}
                         className="neutral-dark login-now"
-                        href="#"
                         onClick={showLoginForm}
                       >
                         Đăng nhập ngay
@@ -702,9 +765,7 @@ const Header: React.FC = () => {
                     </p>
                   </div>
                   <div className="form-group mt-100 text-center">
-                    <a className="font-sm" href="#">
-                      {/* Privacy &amp; Terms */}
-                    </a>
+                    <a className="font-sm">{/* Privacy &amp; Terms */}</a>
                   </div>
                 </div>
               </form>
