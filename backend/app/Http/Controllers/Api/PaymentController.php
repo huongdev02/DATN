@@ -46,7 +46,7 @@ class PaymentController extends Controller
 
             if (!$order) {
                 Log::warning('Order not found', ['vnp_TxnRef' => $vnpTxnRef]);
-                return redirect('http://localhost:3000/cart');
+                return redirect('http://localhost:3000/order-error');
             }
 
             // Nếu mã thanh toán thành công
@@ -90,7 +90,7 @@ class PaymentController extends Controller
                 $order->message = 'Đơn hàng của bạn đã bị hủy do thanh toán thất bại'; // Thông báo cho người dùng
                 $order->save();
             
-                return redirect('http://localhost:3000/cart');
+                return redirect('http://localhost:3000/order-error');
             }
             
         } catch (\Exception $e) {
