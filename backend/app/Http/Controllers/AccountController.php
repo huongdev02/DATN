@@ -140,11 +140,6 @@ class AccountController extends Controller
         ])->onlyInput('account');
     }
     
-    
-    
-    
-    
-    
     public function logout(Request $request)
     {
         /** @var User $user */
@@ -185,9 +180,6 @@ class AccountController extends Controller
         return redirect('http://localhost:3000/')
             ->with('success', 'Đã đăng xuất thành công');
     }
-    
-    
-
 
     public function rspassword()
     {
@@ -236,7 +228,7 @@ class AccountController extends Controller
         );
 
         if ($status === Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('success', 'Cập nhật mật khẩu thành công, xin mời đăng nhập');
+            return redirect('http://localhost:3000/login')->with('success', 'Cập nhật mật khẩu thành công, xin mời đăng nhập');
         } else {
             return back()->withErrors(['errors' => $status]);
         }

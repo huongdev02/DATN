@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
+
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\BlogController;
 
+use App\Http\Controllers\Api\PassWordController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\LogoBannerController;
@@ -77,3 +78,8 @@ Route::get('/user/{userId}', [UserController::class, 'show']);
 
 // routes/web.php
 Route::get('payment/result', [PaymentController::class, 'handlePaymentResult'])->name('payment.result');
+
+
+Route::post('password/email', [PassWordController::class, 'sendResetLink']);
+Route::get('password/reset/{token}', [PassWordController::class, 'showResetForm']);
+Route::post('password/reset', [PassWordController::class, 'resetPassword']);
