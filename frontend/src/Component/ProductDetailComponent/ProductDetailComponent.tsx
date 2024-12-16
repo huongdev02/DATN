@@ -243,7 +243,7 @@ const ProductDetailComponent: React.FC = () => {
                       <Rate
                         style={{ fontSize: "14px" }}
                         disabled
-                        defaultValue={5}
+                        defaultValue={product.average_rating}
                       />
                     </div>
                   )}
