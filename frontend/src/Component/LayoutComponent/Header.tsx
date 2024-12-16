@@ -83,13 +83,16 @@ const Header: React.FC = () => {
         });
         window.location.href = "/";
       }
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message;
       notification.error({
         message: "Đăng ký thất bại",
+        description: errorMessage, 
         className: "notice-error",
       });
     }
   };
+  
 
   const GetAllProducts = async () => {
     try {
@@ -705,7 +708,7 @@ const Header: React.FC = () => {
                       })}
                     />
                     {errors.email && (
-                      <p className="error" style={{color:'red', marginTop:'10px'}}>*email thiếu @ và không hợp lệ</p>
+                      <p style={{color:'red', marginTop:'3px'}}>*email thiếu @ và không hợp lệ</p>
                     )}
                   </div>
                   <div className="form-group">
@@ -722,7 +725,7 @@ const Header: React.FC = () => {
                       })}
                     />
                     {errors.password && (
-                      <p className="error" style={{color:'red', marginTop:'10px'}}>*mật khẩu phải có ít nhất 7 ký tự</p>
+                      <p style={{color:'red', marginTop:'3px'}}>*mật khẩu phải có ít nhất 7 ký tự</p>
                     )}
                   </div>
                   <div className="form-group">
@@ -737,7 +740,7 @@ const Header: React.FC = () => {
                       })}
                     />
                     {errors.confirmPassword && (
-                      <p className="error" style={{color:'red', marginTop:'10px'}}>*mật khẩu xác nhận không khớp</p>
+                      <p style={{color:'red', marginTop:'3px'}}>*mật khẩu xác nhận không khớp</p>
                     )}
                   </div>
 
