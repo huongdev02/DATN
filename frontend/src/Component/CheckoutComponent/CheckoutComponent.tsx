@@ -12,6 +12,7 @@ import { fetchVouchers } from "../../Redux/Reducer/VoucherReducer";
 import { fetchPaymentStatus } from "../../Redux/Reducer/OrderReducer";
 import QR from "../../assets/imgs/qr.jpg";
 import { EnvironmentFilled, EnvironmentOutlined, EnvironmentTwoTone} from "@ant-design/icons";
+import { Switch } from 'antd';
 import "./checkout.css";
 
 const CheckoutComponent: React.FC = () => {
@@ -80,6 +81,10 @@ const CheckoutComponent: React.FC = () => {
       style: "currency",
       currency: "VND",
     });
+  };
+
+  const onChange = (checked: boolean) => {
+    console.log(`switch to ${checked}`);
   };
 
   const getVouchers = async () => {
@@ -189,7 +194,7 @@ const CheckoutComponent: React.FC = () => {
 
     if (
       !recipientName ||
-      !email ||
+      // !email ||
       !phoneNumber ||
       !shipAddress ||
       !paymentMethodId
@@ -197,6 +202,7 @@ const CheckoutComponent: React.FC = () => {
       notification.error({
         message: "Thông tin không đầy đủ",
         description: "Vui lòng điền đầy đủ thông tin vào các trường bắt buộc.",
+        className: "validate-thieu"
       });
       return;
     }
@@ -371,6 +377,7 @@ const CheckoutComponent: React.FC = () => {
                   <div className="button-address">
                   <EnvironmentFilled style={{color:'red'}}/>
                   <span style={{marginLeft:'5px'}}>Địa chỉ mặc định của bạn</span>
+                  <Switch style={{marginLeft:'10px'}} defaultChecked onChange={onChange} />
                   </div>
                   <div>
                     <div className="col-lg-6" style={{ width: "100%" }}>
@@ -396,7 +403,7 @@ const CheckoutComponent: React.FC = () => {
                         />
                       </div>
                     </div>
-                    <div className="col-lg-6" style={{ width: "100%" }}>
+                    {/* <div className="col-lg-6" style={{ width: "100%" }}>
                       <div className="form-group">
                         <label
                           htmlFor=""
@@ -418,7 +425,7 @@ const CheckoutComponent: React.FC = () => {
                           onChange={(e) => setEmail(e.target.value)}
                         />
                       </div>
-                    </div>
+                    </div> */}
                     <div className="col-lg-6" style={{ width: "100%" }}>
                       <div className="form-group name-pla">
                         <label

@@ -16,7 +16,8 @@
   border-left: 4px solid red !important;
 }
 .button-address{
-  width: 215px;
+  width: 100%;
+  font-size: 17px;
   display: flex;
   justify-content: start;
   align-items: center;
@@ -25,7 +26,11 @@
   font-weight: 600;
   height: 35px;
   padding: 0px 15px;
-  border-bottom: 1px solid #86C4CD;
+  border-bottom: 1px dashed #d8e5e8;
   margin-bottom: 15px;
   
+}
+.validate-thieu{
+  border: 1px solid red !important;
+  border-left: 4px solid red !important;
 }
