@@ -121,7 +121,6 @@ class ProductController extends Controller
                 foreach ($request->file('image_path') as $image) {
                     $imagePath = $image->store('ProductGalleries', 'public');
                     Gallery::create(['product_id' => $product->id, 'image_path' => $imagePath]);
-                    Gallery::create(['product_id' => $product->id, 'image_path' => $imagePath]);
                 }
             }
 
