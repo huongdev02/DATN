@@ -134,14 +134,6 @@
             /* Màu nền sáng cho select */
         }
 
-        select.form-select {
-            font-weight: bold;
-            color: #7339b6;
-            /* Màu chữ mặc định */
-            background-color: #f8f9fa;
-            /* Màu nền sáng cho select */
-        }
-
         /* Các option bên trong select */
         select.form-select option {
             color: #000;
