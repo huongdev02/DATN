@@ -42,7 +42,6 @@ function BlogDetail() {
   }
 console.log("ok");
 console.log("ok");
-console.log("ok");
 
 
   if (loading)
