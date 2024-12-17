@@ -66,6 +66,10 @@
                                             {{ $order->status != 0 ? 'disabled' : '' }}>
                                             Chờ xử lý
                                         </option>
+                                          <option value="0" {{ $order->status == 0 ? 'selected' : '' }}
+                                            {{ $order->status != 0 ? 'disabled' : '' }}>
+                                            Chờ xử lý
+                                        </option>
                                         <option value="1" {{ $order->status == 1 ? 'selected' : '' }}
                                             {{ $order->status >= 1 ? 'disabled' : '' }}>
                                             Đã xử lý
