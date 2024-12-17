@@ -13,7 +13,7 @@ class UserController extends Controller
     {
         $user = User::find($userId);
 
-        if (!$user) {
+        if (!$user) {dsdsd
             return response()->json(['message' => 'Người dùng không tìm thấy'], 404);
         }
 
