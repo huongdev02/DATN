@@ -29,7 +29,6 @@
                 <option value="3" {{ request('status') == 3 ? 'selected' : '' }}>Giao hàng thành công</option>
                 <option value="4" {{ request('status') == 4 ? 'selected' : '' }}>Đã hủy</option>
                 <option value="5" {{ request('status') == 5 ? 'selected' : '' }}>Đã trả lại</option>
-                <option value="5" {{ request('status') == 5 ? 'selected' : '' }}>Đã trả lại</option>
             </select>
         </form>
 
