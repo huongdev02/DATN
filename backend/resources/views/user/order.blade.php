@@ -111,7 +111,28 @@
                                 <button class="btn btn-outline-danger btn-sm me-2" data-bs-toggle="modal"
                                     data-bs-target="#cancelOrderModal-{{ $order->id }}">Hủy Đơn Hàng</button>
                             @else
-                                <button class="btn btn-outline-secondary btn-sm me-2" disabled data-bs-toggle="tooltip"
+                            <button class="btn btn-outline-secondary btn-sm me-2" disabled data-bs-toggle="tooltip"
+                                    title="Không thể hủy khi đã vận chuyển, hoàn thành hoặc đã hủy">Hủy Đơn Hàng</button>
+                            @endif
+
+                            @if ($order->status == 2)
+                                <!-- Show "Đã nhận hàng" button when order is "Vận chuyển" -->
+                                <button class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal"
+                                    data-bs-target="#confirmReceiptModal-{{ $order->id }}">Đã nhận hàng</button>    <button class="btn btn-outline-secondary btn-sm me-2" disabled data-bs-toggle="tooltip"
+                                    title="Không thể hủy khi đã vận chuyển, hoàn thành hoặc đã hủy">Hủy Đơn Hàng</button>
+                            @endif
+
+                            @if ($order->status == 2)
+                                <!-- Show "Đã nhận hàng" button when order is "Vận chuyển" -->
+                                <button class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal"
+                                    data-bs-target="#confirmReceiptModal-{{ $order->id }}">Đã nhận hàng</button>    <button class="btn btn-outline-secondary btn-sm me-2" disabled data-bs-toggle="tooltip"
+                                    title="Không thể hủy khi đã vận chuyển, hoàn thành hoặc đã hủy">Hủy Đơn Hàng</button>
+                            @endif
+
+                            @if ($order->status == 2)
+                                <!-- Show "Đã nhận hàng" button when order is "Vận chuyển" -->
+                                <button class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal"
+                                    data-bs-target="#confirmReceiptModal-{{ $order->id }}">Đã nhận hàng</button>    <button class="btn btn-outline-secondary btn-sm me-2" disabled data-bs-toggle="tooltip"
                                     title="Không thể hủy khi đã vận chuyển, hoàn thành hoặc đã hủy">Hủy Đơn Hàng</button>
                             @endif
 
