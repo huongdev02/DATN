@@ -43,62 +43,84 @@
                         <li><a href="{{ route('user.edit') }}">Hồ Sơ</a></li>
                         <li><a href="{{ route('address.index') }}">Địa Chỉ</a></li>
                         <li><a href="{{ route('user.changepass.form') }}">Đổi Mật Khẩu</a></li>
-                        <a href="javascript:void(0)" class="chat-icon btn btn-primary" onclick="openChatPopup()">
+
+
+                        <!-- Icon mở chat -->
+                        <a href="javascript:void(0)" class="chat-icon btn btn-primary" onclick="toggleChatPopup()"
+                            style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
                             <i class="fa-solid fa-comments"></i>
                         </a>
-                        <!-- Modal Popup -->
-                        <div id="chatPopup" class="modal fade" tabindex="-1" role="dialog">
-                            <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Giao tiếp với quản trị viên</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- Nội dung đoạn chat -->
-                                        <div id="chatMessages" style="max-height: 400px; overflow-y: auto;">
-                                            <!-- Chat messages sẽ được load từ AJAX -->
-                                        </div>
-                                        <!-- Input để gửi tin nhắn -->
-                                        <form id="chatForm" onsubmit="sendMessage(event)">
-                                            <div class="input-group mt-3">
-                                                <input type="text" class="form-control" id="messageInput"
-                                                    placeholder="Nhập tin nhắn...">
-                                                <button type="submit" class="btn btn-primary">Gửi</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+
+                        <!-- Chat Popup -->
+                        <div id="chatPopup" class="chat-popup shadow-lg" style="display: none;">
+                            <div class="chat-header">
+                                <h5>Giao tiếp với quản trị viên</h5>
+                                <button type="button" class="close-btn" onclick="toggleChatPopup()">&times;</button>
+                            </div>
+                            <div class="chat-body" id="chatMessages">
+                                <!-- Tin nhắn sẽ được tải qua AJAX -->
+                                <p>Đang tải...</p>
+                            </div>
+                            <div class="chat-footer">
+                                <form id="chatForm" onsubmit="sendMessage(event)">
+                                    <input type="text" id="messageInput" placeholder="Nhập tin nhắn..."
+                                        class="form-control" />
+                                    <button type="submit" class="btn btn-primary">Gửi</button>
+                                </form>
                             </div>
                         </div>
 
                         <script>
-                            // Mở popup
-                            function openChatPopup() {
-                                // Hiển thị modal
-                                const chatPopup = new bootstrap.Modal(document.getElementById('chatPopup'));
-                                chatPopup.show();
+                            // Toggle chat popup visibility
+                            function toggleChatPopup() {
+                                const chatPopup = document.getElementById('chatPopup');
+                                const isVisible = chatPopup.style.display === 'block';
+                                chatPopup.style.display = isVisible ? 'none' : 'block';
 
-                                // Tải đoạn chat từ server
-                                loadChatMessages();
+                                // Nếu hiển thị, tải tin nhắn
+                                if (!isVisible) loadChatMessages();
                             }
 
-                            // AJAX để tải đoạn chat
+                            // Load chat messages
                             function loadChatMessages() {
                                 const chatMessages = document.getElementById('chatMessages');
                                 chatMessages.innerHTML = '<p>Đang tải...</p>';
 
-                                fetch('{{ route('userchat.index') }}') // Route để lấy tin nhắn
+                                fetch('{{ route('userchat.index') }}')
                                     .then(response => response.json())
                                     .then(data => {
                                         chatMessages.innerHTML = '';
-                                        data.messages.forEach(msg => {
-                                            const messageDiv = document.createElement('div');
-                                            messageDiv.className = msg.sender_id === {{ Auth::id() }} ? 'text-end' :
-                                            'text-start';
-                                            messageDiv.innerHTML = `<p><strong>${msg.sender_name}</strong>: ${msg.message}</p>`;
-                                            chatMessages.appendChild(messageDiv);
+                                        if (data.length === 0) {
+                                            chatMessages.innerHTML = '<p>Không có tin nhắn nào.</p>';
+                                            return;
+                                        }
+
+                                        // Nếu có quá nhiều tin nhắn, hiển thị ba chấm
+                                        const MAX_MESSAGES = 10;
+                                        if (data.length > MAX_MESSAGES) {
+                                            chatMessages.innerHTML = '<p>...</p>'; // Hiển thị ba chấm nếu có quá nhiều tin nhắn
+                                        }
+
+                                        // Duyệt qua các tin nhắn và hiển thị
+                                        data.slice(-MAX_MESSAGES).forEach(conversation => { // Lấy 10 tin nhắn cuối
+                                            conversation.messages.forEach(msg => {
+                                                const messageDiv = document.createElement('div');
+                                                messageDiv.className = msg.sender_id === {{ Auth::id() }} ? 'text-end' :
+                                                    'text-start';
+                                                messageDiv.innerHTML =
+                                                    `<p><strong>${msg.sender_name}</strong>: ${msg.message}</p>`;
+                                                chatMessages.appendChild(messageDiv);
+                                            });
+                                        });
+
+                                        // Cuộn xuống cuối
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                                        // Thêm sự kiện cuộn chuột để xem tin nhắn cũ
+                                        chatMessages.addEventListener('scroll', function() {
+                                            if (chatMessages.scrollTop === 0) {
+                                                loadMoreMessages(); // Nếu cuộn lên đầu, tải thêm tin nhắn
+                                            }
                                         });
                                     })
                                     .catch(err => {
@@ -107,7 +129,40 @@
                                     });
                             }
 
-                            // Gửi tin nhắn
+                            // Load thêm tin nhắn cũ khi cuộn lên
+                            function loadMoreMessages() {
+                                const chatMessages = document.getElementById('chatMessages');
+                                chatMessages.innerHTML = '<p>Đang tải thêm...</p>';
+
+                                fetch('{{ route('userchat.index') }}')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.length === 0) {
+                                            chatMessages.innerHTML = '<p>Không còn tin nhắn cũ.</p>';
+                                            return;
+                                        }
+
+                                        // Duyệt qua các tin nhắn cũ và thêm vào
+                                        data.forEach(conversation => {
+                                            conversation.messages.forEach(msg => {
+                                                const messageDiv = document.createElement('div');
+                                                messageDiv.className = msg.sender_id === admin ? 'text-end' : 'text-start';
+                                                messageDiv.innerHTML =
+                                                    `<p><strong>${msg.sender_name}</strong>: ${msg.message}</p>`;
+                                                chatMessages.prepend(messageDiv); // Thêm vào đầu danh sách tin nhắn
+                                            });
+                                        });
+
+                                        // Cuộn xuống cuối để xem tin nhắn mới nhất
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                    })
+                                    .catch(err => {
+                                        chatMessages.innerHTML = '<p>Không thể tải thêm tin nhắn. Vui lòng thử lại.</p>';
+                                        console.error(err);
+                                    });
+                            }
+
+                            // Send chat message
                             function sendMessage(event) {
                                 event.preventDefault();
 
@@ -116,7 +171,6 @@
 
                                 if (messageInput.value.trim() === '') return;
 
-                                // Gửi tin nhắn qua AJAX
                                 fetch('{{ route('userchat.store') }}', {
                                         method: 'POST',
                                         headers: {
@@ -129,18 +183,15 @@
                                     })
                                     .then(response => response.json())
                                     .then(data => {
-                                        // Thêm tin nhắn vào giao diện
                                         const messageDiv = document.createElement('div');
                                         messageDiv.className = 'text-end';
                                         messageDiv.innerHTML =
-                                            `<p><strong>{{ Auth::user()->fullname ?? 'Bạn' }}</strong>: ${messageInput.value}</p>`;
+                                            `<p><strong>{{ Auth::user()->fullname ?? 'Bạn' }}</strong>: ${data.message}</p>`;
                                         chatMessages.appendChild(messageDiv);
 
                                         // Cuộn xuống cuối
                                         chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                                        // Xóa nội dung input
-                                        messageInput.value = '';
+                                        messageInput.value = ''; // Xóa nội dung input
                                     })
                                     .catch(err => {
                                         console.error('Lỗi khi gửi tin nhắn:', err);
@@ -148,6 +199,81 @@
                                     });
                             }
                         </script>
+
+                        <!-- CSS -->
+                        <style>
+                            .chat-popup {
+                                position: fixed;
+                                bottom: 80px;
+                                right: 20px;
+                                width: 400px;
+                                /* Tăng chiều rộng */
+                                max-height: 500px;
+                                /* Tăng chiều cao */
+                                background: white;
+                                border: 1px solid #ccc;
+                                border-radius: 10px;
+                                overflow: hidden;
+                                z-index: 1001;
+                                display: flex;
+                                flex-direction: column;
+                            }
+
+                            .chat-header {
+                                background: #007bff;
+                                color: white;
+                                padding: 10px;
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            }
+
+                            .chat-header h5 {
+                                margin: 0;
+                                font-size: 16px;
+                            }
+
+                            .chat-header .close-btn {
+                                background: none;
+                                border: none;
+                                color: white;
+                                font-size: 20px;
+                                cursor: pointer;
+                            }
+
+                            .chat-body {
+                                flex: 1;
+                                padding: 10px;
+                                overflow-y: auto;
+                                max-height: calc(100% - 60px);
+                                /* Điều chỉnh chiều cao tối đa cho phù hợp */
+                            }
+
+                            .chat-body .more-messages {
+                                display: none;
+                                text-align: center;
+                                font-style: italic;
+                            }
+
+                            .chat-footer {
+                                padding: 10px;
+                                border-top: 1px solid #ccc;
+                                display: flex;
+                            }
+
+                            .chat-footer form {
+                                display: flex;
+                                width: 100%;
+                            }
+
+                            .chat-footer input {
+                                flex: 1;
+                                margin-right: 5px;
+                            }
+                        </style>
+
+
+
 
 
                     </ul>

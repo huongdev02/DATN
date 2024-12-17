@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ship_address;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -98,6 +99,9 @@ class UserController extends Controller
                 // Đặt tất cả các địa chỉ khác về 0
                    /**
                  * @var User $user
+                 */
+                  /**
+                 * @var Ship_address $user
                  */
                 $user->shipAddresses()->update(['is_default' => 0]);
 
