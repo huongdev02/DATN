@@ -6,6 +6,7 @@
 
 @section('content')
     <h1 class="text-center mb-4">Danh sách Đơn hàng</h1>
+    <h1 class="text-center mb-4">Danh sách Đơn hàng</h1>
 
     <div class="container mt-2">
         <!-- Navigation Tabs for Filtering by Order Status -->
