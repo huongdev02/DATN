@@ -17,6 +17,7 @@ import OrderError from '../oder-error/orderError';
 const AppRoutes = () => {
   return (
     <Routes>
+      <Route path='/' element={<Home />} />
       <Route path="/product" element={<Product />} />
       <Route path="/product-detail/:id" element={<ProductDetail />} />
       <Route path="/cart" element={<Cart />} />
