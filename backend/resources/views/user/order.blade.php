@@ -132,13 +132,6 @@
                             @if ($order->status == 2)
                                 <!-- Show "Đã nhận hàng" button when order is "Vận chuyển" -->
                                 <button class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal"
-                                    data-bs-target="#confirmReceiptModal-{{ $order->id }}">Đã nhận hàng</button>    <button class="btn btn-outline-secondary btn-sm me-2" disabled data-bs-toggle="tooltip"
-                                    title="Không thể hủy khi đã vận chuyển, hoàn thành hoặc đã hủy">Hủy Đơn Hàng</button>
-                            @endif
-
-                            @if ($order->status == 2)
-                                <!-- Show "Đã nhận hàng" button when order is "Vận chuyển" -->
-                                <button class="btn btn-outline-success btn-sm me-2" data-bs-toggle="modal"
                                     data-bs-target="#confirmReceiptModal-{{ $order->id }}">Đã nhận hàng</button>
                             @elseif($order->status == 3)
                                 <!-- Show "Đánh giá" button when order is "Hoàn thành" -->
