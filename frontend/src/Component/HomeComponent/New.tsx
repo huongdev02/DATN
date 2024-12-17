@@ -140,6 +140,7 @@ const New: React.FC = () => {
           </div>
         </div>
       </section>
+      {/* Quảng cáo  */}
       {isOpen && (
         <div className="box-popup-newsletter">
           <div className="box-newsletter-overlay" onClick={closeModal} />{" "}

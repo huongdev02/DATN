@@ -17,18 +17,27 @@
 }
 .button-address{
   width: 100%;
-  font-size: 17px;
+  font-size: 16px;
   display: flex;
   justify-content: start;
   align-items: center;
   cursor: pointer;
   font-family: "Raleway";
+  padding-bottom: 10px;
   font-weight: 600;
   height: 35px;
-  padding: 0px 15px;
   border-bottom: 1px dashed #d8e5e8;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
   
+}
+:where(.css-dev-only-do-not-override-142vneq).ant-switch.ant-switch-checked{
+  background: rgb(43, 218, 110);
+}
+.ant-switch-inner:hover{
+  background-color:  rgb(42, 211, 107)!important;
+}
+.ant-switch-inner{
+  width: 12px !important;
 }
 .validate-thieu{
   border: 1px solid red !important;

@@ -375,9 +375,9 @@ const CheckoutComponent: React.FC = () => {
                     Thông tin thanh toán 
                   </h4>
                   <div className="button-address">
-                  <EnvironmentFilled style={{color:'red'}}/>
+                  <EnvironmentOutlined/>
                   <span style={{marginLeft:'5px'}}>Địa chỉ mặc định của bạn</span>
-                  <Switch style={{marginLeft:'10px'}} defaultChecked onChange={onChange} />
+                  <Switch size="small" style={{marginLeft:'10px'}} defaultChecked onChange={onChange} />
                   </div>
                   <div>
                     <div className="col-lg-6" style={{ width: "100%" }}>
