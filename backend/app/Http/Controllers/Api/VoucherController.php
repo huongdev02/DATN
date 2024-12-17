@@ -23,7 +23,6 @@ class VoucherController extends Controller
         }
 
         $userId = Auth::id();
-        $userId = Auth::id();
 
         // Lấy giỏ hàng của người dùng
         $cart = Cart::where('user_id', $userId)->first();
