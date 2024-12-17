@@ -29,6 +29,7 @@ class VoucherController extends Controller
         if (!$cart) {
             return response()->json(['message' => 'No cart found.'], 400);
             return response()->json(['message' => 'No cart found.'], 400);
+            return response()->json(['message' => 'No cart found.'], 400);
         }
 
         $cartItems = CartItem::where('cart_id', $cart->id)->get();
