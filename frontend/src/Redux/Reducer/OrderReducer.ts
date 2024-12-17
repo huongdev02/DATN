@@ -21,7 +21,7 @@ export interface OrderDetail {
   name_product: string;
   size: string;
   color: string;
-  total: any;
+  total: string;
 }
 
 interface OrderState {
