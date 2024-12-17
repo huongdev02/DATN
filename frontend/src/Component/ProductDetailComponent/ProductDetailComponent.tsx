@@ -116,7 +116,6 @@ const ProductDetailComponent: React.FC = () => {
         message: "Vui lòng đăng nhập để mua hàng !",
         className: "warning-message",
         placement: "bottomRight",
-        placement: "bottomRight",
       });
       return;
     }
