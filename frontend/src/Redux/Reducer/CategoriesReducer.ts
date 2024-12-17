@@ -15,7 +15,7 @@ interface Colors {
 
 interface Sizes {
     id: string;
-    size: string;
+    size: any;
 }
 
 export interface Product {
