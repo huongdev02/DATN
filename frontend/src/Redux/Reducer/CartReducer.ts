@@ -19,7 +19,6 @@ export interface CartItem {
     name: string;
     avatar: string;
     price: number;
-    price: number;
   };
 }
 
