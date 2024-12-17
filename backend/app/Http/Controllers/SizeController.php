@@ -12,7 +12,7 @@ class SizeController extends Controller
      */
     public function index()
     {
-        $data = Size::latest('id')->paginate(5)->get();
+        $data = Size::latest('id')->paginate(5)->get;
         return view('bienthe.sizes.index', compact('data'));
     }
 
