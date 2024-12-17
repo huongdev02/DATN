@@ -68,7 +68,6 @@ const Header: React.FC = () => {
 
   const {
     register,
-    register,
     handleSubmit,
     setValue,
     getValues,
