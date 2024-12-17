@@ -307,6 +307,7 @@ const CheckoutComponent: React.FC = () => {
     }
   };
 console.log("ok");
+console.log("ok");
 
 
   useEffect(() => {
