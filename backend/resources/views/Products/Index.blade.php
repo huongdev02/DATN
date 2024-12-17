@@ -19,7 +19,6 @@
     @endif
 
     <h1 class="text-center mt-5 mb-3">Danh sách sản phẩm</h1>
-    <h1 class="text-center mt-5 mb-3">Danh sách sản phẩm</h1>
 
     <a href="{{ route('products.create') }}" class="btn btn-outline-success mb-4"
         style="font-size: 1.1em; padding: 10px 20px;">Thêm mới</a>
