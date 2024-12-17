@@ -19,7 +19,7 @@ class VoucherController extends Controller
             $voucher = Voucher::findOrFail($request->toggle_active);
             $voucher->is_active = !$voucher->is_active; // Đổi trạng thái
             $voucher->save();
-            return back()->with('success', 'Trạng thái danh mục đã được cập nhật th.');
+            return back()->with('success', 'Trạng thái danh mục đã được cập nhật tha.');
         }
 
         $query = Voucher::query();
