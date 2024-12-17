@@ -6,6 +6,7 @@
 
 @section('content')
     <h2 class="text-center"> Địa chỉ của tôi</h2>
+    <h2 class="text-center"> Địa chỉ của tôi</h2>
     <a href="{{ route('address.create') }}" class="btn btn-success">Thêm mới</a>
 
     <ul class="list-group mt-2">
