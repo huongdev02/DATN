@@ -14,7 +14,6 @@ class SizeController extends Controller
     {
         $data = Size::latest('id')->paginate(5);
         return view('bienthe.sizes.index', compact('data'));
-        return view('bienthe.sizes.index', compact('data'));
     }
 
     /**
