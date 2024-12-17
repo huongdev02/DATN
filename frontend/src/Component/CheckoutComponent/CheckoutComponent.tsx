@@ -307,6 +307,7 @@ const CheckoutComponent: React.FC = () => {
     }
   };
 
+console.log("add to cart");
 
   useEffect(() => {
     setTotalPrice(subtotal - discount);
