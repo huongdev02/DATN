@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { fetchCart } from "../../Redux/Reducer/CartReducer";
 import { Link } from "react-router-dom";
 import { fetchVouchers } from "../../Redux/Reducer/VoucherReducer";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import api from "../../Axios/Axios";
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import { ExclamationCircleFilled, EditFilled } from "@ant-design/icons";
 import { Button, Modal, Space } from "antd";
-import './cart.css'
+import { message } from "antd";
+import "./cart.css";
 const { confirm } = Modal;
 interface CartProps {
   userId: number;
@@ -25,7 +26,11 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
   const [isCart, setIsCart] = useState<any[]>([]);
   const [numberCart0, setNumberCart0] = useState<any[]>([]);
   const [cartEmpty, setCartEmpty] = useState<boolean>(false);
-  console.log(vouchers);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [productid, setProductId] = useState<any>();
+  const [selectedColor, setSelectedColor] = useState<any>(null);
+  const [selectedSize, setSelectedSize] = useState<any>(null);
+  const [isIdQuantity, setIdQuantity] = useState<any>();
 
   useEffect(() => {
     dispatch(fetchCart(userId));
@@ -47,12 +52,33 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
       okType: "danger",
       cancelText: "Hủy",
       onOk() {
-        handleDelete(id); 
+        handleDelete(id);
       },
       onCancel() {
         console.log("Cancel");
       },
     });
+  };
+
+  const showModal = (id: any, idcart: any) => {
+    setIsModalOpen(true);
+    setIdQuantity(idcart);
+    getVariant(id);
+  };
+
+  console.log("Biến thể", productid);
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+    if (selectedColor && selectedSize) {
+      updateVariant(isIdQuantity, selectedColor, selectedSize);
+    } else {
+      alert("Vui lòng chọn màu và kích thước!");
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   const getAllCart = async () => {
@@ -73,11 +99,10 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
       }
     } catch (error) {
       console.log(error);
-    } finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
-
 
   console.log("Cảtttttt", isCart);
   const updateCartQuantity = async (id: any, quantity: number) => {
@@ -89,10 +114,41 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
     }
   };
 
+  const updateVariant = async (id: any, color_id: any, size_id: any) => {
+    try {
+      await api.put(`/carts/${id}`, { color_id, size_id });
+      getAllCart();
+      message.success("Cập nhật giỏ hàng thành công !");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleColorSelect = (colorId: any) => {
+    setSelectedColor(colorId);
+  };
+
+  const handleSizeSelect = (sizeId: any) => {
+    setSelectedSize(sizeId);
+  };
+
+  const handleColorIdcart = (idCartss: any) => {
+    setIdQuantity(idCartss);
+  };
+
   const handleDelete = async (productId: number) => {
     try {
       await api.delete(`/carts/${productId}`);
       window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getVariant = async (idProduct: number) => {
+    try {
+      const res = await api.get(`/products/${idProduct}`);
+      setProductId(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -170,16 +226,31 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                     *Giỏ của bạn đang trống
                   </p>
                 ) : (
-                  isCart.map((item) => (
-                    <tbody key={item.id}>
+                  isCart.map((item, index) => (
+                    <tbody key={index}>
                       <tr>
                         <td>
                           <p>{item.product_name}</p>
-                          <div style={{display:'flex', gap:'3px', justifyContent:'center'}}>
-                           <span style={{fontFamily:'Raleway', fontSize:'18px'}}></span> 
-                            <p style={{ fontSize:'12px', color:'gray'}}>{item.color}</p>
-                            <span style={{color:'gray'}}>,</span>
-                            <p style={{ fontSize:'12px', color:'gray'}}>{item.size}</p>
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "3px",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontFamily: "Raleway",
+                                fontSize: "18px",
+                              }}
+                            ></span>
+                            <p style={{ fontSize: "12px", color: "gray" }}>
+                              {item.color}
+                            </p>
+                            <span style={{ color: "gray" }}>,</span>
+                            <p style={{ fontSize: "12px", color: "gray" }}>
+                              {item.size}
+                            </p>
                           </div>
                         </td>
                         <td>
@@ -190,7 +261,10 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                           />
                         </td>
                         <td>
-                          <span className="brand-1" style={{fontFamily:'Raleway'}}>
+                          <span
+                            className="brand-1"
+                            style={{ fontFamily: "Raleway" }}
+                          >
                             {Number(item.price)
                               ? Number(item.price).toLocaleString("vi-VN", {
                                   style: "currency",
@@ -253,7 +327,10 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                           </div>
                         </td>
                         <td>
-                          <span className="brand-1" style={{fontFamily:'Raleway'}}>
+                          <span
+                            className="brand-1"
+                            style={{ fontFamily: "Raleway" }}
+                          >
                             {(
                               Number(item?.price || 0) *
                               Number(item?.quantity || 1)
@@ -267,6 +344,10 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                           <DeleteOutlined
                             onClick={() => showDeleteConfirm(item.id)}
                           />
+                          <EditOutlined
+                            onClick={() => showModal(item.product_id, item.id)}
+                            style={{ paddingLeft: "10px" }}
+                          />
                         </td>
                       </tr>
                     </tbody>
@@ -274,6 +355,78 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
                 )}
               </table>
             </div>
+            <Modal
+              title={productid?.name}
+              open={isModalOpen}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              cancelText="Hủy"
+              okText="Lưu"
+            >
+              {/* color */}
+              <label
+                style={{
+                  fontFamily: "Raleway",
+                  fontSize: "16px",
+                  paddingTop: "15px",
+                  paddingBottom: "5px",
+                }}
+              >
+                Color: Chọn màu
+              </label>
+              <main className="variant-update">
+                {productid?.colors.map((cl: any) => (
+                  <div>
+                    <div>
+                      <button
+                        style={{
+                          color: selectedColor === cl?.id ? "white" : "black",
+                          backgroundColor:
+                            selectedColor === cl?.id
+                              ? "rgb(159,134,217)"
+                              : "white",
+                        }}
+                        onClick={() => handleColorSelect(cl?.id)}
+                        className="variants-update"
+                      >
+                        {cl?.name_color}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </main>
+
+              {/* size */}
+              <label
+                style={{
+                  fontFamily: "Raleway",
+                  fontSize: "16px",
+                  paddingTop: "15px",
+                  paddingBottom: "5px",
+                }}
+              >
+                Size: Chọn size
+              </label>
+              <main className="variant-update">
+                {productid?.sizes.map((sz: any) => (
+                  <div>
+                    <button
+                      style={{
+                        color: selectedSize === sz?.id ? "white" : "black",
+                        backgroundColor:
+                          selectedSize === sz?.id
+                            ? "rgb(159,134,217)"
+                            : "white",
+                      }}
+                      onClick={() => handleSizeSelect(sz?.id)}
+                      className="variants-update"
+                    >
+                      {sz?.size}
+                    </button>
+                  </div>
+                ))}
+              </main>
+            </Modal>
 
             <div
               className="row"
@@ -295,62 +448,64 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
               </div> */}
               {/* Phần tính tổng tiền giỏ hàng */}
               {isCart.length > 0 && (
-              <div className="col-lg-4 mb-30">
-                <div className="box-cart-total">
-                  {/* Hiển thị subtotal (tổng tiền giỏ hàng trước khi áp dụng voucher) */}
-                  <div className="item-total">
-                    <span className="font-sm">Tạm tính</span>
-                    <span className="font-md-bold">
-                      <span>
-                        {isCart
-                          .reduce(
-                            (acc, item) =>
-                              acc + Number(item.price) * Number(item.quantity),
-                            0
-                          )
-                          .toLocaleString("vi", {
-                            style: "currency",
-                            currency: "VND",
-                          })}
+                <div className="col-lg-4 mb-30">
+                  <div className="box-cart-total">
+                    {/* Hiển thị subtotal (tổng tiền giỏ hàng trước khi áp dụng voucher) */}
+                    <div className="item-total">
+                      <span className="font-sm">Tạm tính</span>
+                      <span className="font-md-bold">
+                        <span>
+                          {isCart
+                            .reduce(
+                              (acc, item) =>
+                                acc +
+                                Number(item.price) * Number(item.quantity),
+                              0
+                            )
+                            .toLocaleString("vi", {
+                              style: "currency",
+                              currency: "VND",
+                            })}
+                        </span>
                       </span>
-                    </span>
-                  </div>
+                    </div>
 
-                  {/* Hiển thị phí vận chuyển */}
-                  <div className="item-total">
-                    <span className="font-sm">Phí ship</span>
-                    <span className="font-md-bold">Free</span>
-                  </div>
-                  {/* <div className="item-total">
+                    {/* Hiển thị phí vận chuyển */}
+                    <div className="item-total">
+                      <span className="font-sm">Phí ship</span>
+                      <span className="font-md-bold">Free</span>
+                    </div>
+                    {/* <div className="item-total">
                     <span className="font-sm">Estimate for</span>
                     <span className="font-md-bold">United Kingdom</span>
                   </div> */}
 
-                  <div className="item-total border-0">
-                    <span className="font-sm">Tổng tiền</span>
-                    <span className="font-xl-bold">
-                      <span>
-                        {(
-                          isCart.reduce(
-                            (acc, item) =>
-                              acc + Number(item.price) * Number(item.quantity),
-                            0
-                          ) *
-                          (1 - discountValue / 100)
-                        ).toLocaleString("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        })}
+                    <div className="item-total border-0">
+                      <span className="font-sm">Tổng tiền</span>
+                      <span className="font-xl-bold">
+                        <span>
+                          {(
+                            isCart.reduce(
+                              (acc, item) =>
+                                acc +
+                                Number(item.price) * Number(item.quantity),
+                              0
+                            ) *
+                            (1 - discountValue / 100)
+                          ).toLocaleString("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          })}
+                        </span>
                       </span>
-                    </span>
+                    </div>
+                    <Link to={`/checkout/${userId}`}>
+                      <button className="btn btn-brand-1-xl-bold w-100 font-sm-bold">
+                        Tiến hành thanh toán
+                      </button>
+                    </Link>
                   </div>
-                  <Link to={`/checkout/${userId}`}>
-                    <button className="btn btn-brand-1-xl-bold w-100 font-sm-bold">
-                      Tiến hành thanh toán
-                    </button>
-                  </Link>
                 </div>
-              </div>
               )}
               <div className="col-lg-3 mb-30">
                 <div className="box-button-checkout">
