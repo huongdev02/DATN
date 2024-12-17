@@ -65,7 +65,7 @@ const Header: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [userLocala, setUserLocala] = useState<any>();
   const [isToken, setIsToken] = useState<any>();
-console.log("ccsad");
+console.log("ccssad");
 
   const {
     register,
