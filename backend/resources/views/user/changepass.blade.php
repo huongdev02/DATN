@@ -22,7 +22,6 @@
 
         <div>
             <label for="new_password_confirmation">Xác nhận mật khẩu mới</label>
-            <label for="new_password_confirmation">Xác nhận mật khẩu mới</label>
             <input type="password" class="form-control mb-5" name="new_password_confirmation" id="new_password_confirmation" required>
         </div>
         <div class="text-center"> 
