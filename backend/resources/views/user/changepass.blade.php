@@ -26,7 +26,6 @@
         </div>
         <div class="text-center"> 
             <button type="submit" class="btn btn-success text-center">Đổi mật khẩu</button>
-            <button type="submit" class="btn btn-success text-center">Đổi mật khẩu</button>
             <a href="{{route('user.dashboard')}}" class="btn btn-secondary">Quay lai</a>
         </div>
     </form>
