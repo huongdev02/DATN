@@ -11,7 +11,6 @@ import AuthReducer from './Reducer/AuthReducer'
 import VoucherReducer from './Reducer/VoucherReducer'
 import OrderHistoryReducer from './Reducer/OrderHistoryReducer'
 import UserReducer from './Reducer/UserReducer'
-import UserReducer from './Reducer/UserReducer'
 
 export const store = configureStore({
     reducer: {
