@@ -78,7 +78,6 @@ const OrderHistoryComponent: React.FC = () => {
     },
     {
       title: 'Giá Tiền',
-      title: 'Giá Tiền',
       key: 'productPrices',
       render: (record: any) => (
         <ul>
