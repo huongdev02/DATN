@@ -18,7 +18,7 @@ class ProductController extends Controller
     {
         // Initialize query with relations
         $query = Product::with(['galleries', 'categories', 'colors']);
-        $query;
+
         // Filter by is_active
         if ($request->filled('is_active')) {
             $query->where('is_active', $request->is_active);
