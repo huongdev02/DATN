@@ -29,6 +29,7 @@ const AboutComponent: React.FC = () => {
                                     <ul>
                                         <li><a href="#">Trang chủ</a></li>
                                         <li><a href="#">Tin tức</a></li>
+                                        <li><a href="#">Tin tức</a></li>
                                     </ul>
                                 </div>
                             </div>
