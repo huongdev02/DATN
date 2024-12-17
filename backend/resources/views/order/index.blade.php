@@ -70,7 +70,6 @@
                                             {{ $order->status >= 1 ? 'disabled' : '' }}>
                                             Đã xử lý
                                         </option>
-                                        
                                         <option value="2" {{ $order->status == 2 ? 'selected' : '' }}
                                             {{ $order->status >= 2 ? 'disabled' : '' }}>
                                             Đang vận chuyển
