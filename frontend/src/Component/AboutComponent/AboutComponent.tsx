@@ -24,6 +24,7 @@ const AboutComponent: React.FC = () => {
                     <div className="container">
                         <div className="top-head-blog">
                             <div className="text-center">
+                                <h2 className="font-4xl-bold">Giới thiệu về chúng tôi</h2>
                                 <div className="breadcrumbs d-inline-block">
                                     <ul>
                                         <li><a href="#">Trang chủ</a></li>
