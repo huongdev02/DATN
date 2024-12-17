@@ -16,7 +16,6 @@ class ReviewController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:1000',
             'image' => 'nullable|image',
-            'image' => 'nullable|image',
         ]);
     
         try {
