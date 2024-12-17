@@ -22,7 +22,6 @@
             <label for="ship_address" class="form-label">Địa chỉ</label>
             <input type="text" name="ship_address" id="ship_address" class="form-control mb-3"
                 value="{{ old('ship_address', $address->ship_address) }}" required>
-                value="{{ old('ship_address', $address->ship_address) }}" required>
         </div>
 
         <div class="mb-3">
