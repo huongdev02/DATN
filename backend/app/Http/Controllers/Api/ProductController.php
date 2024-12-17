@@ -17,6 +17,7 @@ class ProductController extends Controller
             $products = Product::with(['categories:id,name', 'colors:id,name_color', 'sizes:id,size'])
                 ->where('is_active', 1)
                 ->get();
+                ->get();
 
 
             // Lấy tất cả màu sắc và kích thước từ bảng colors và sizes
