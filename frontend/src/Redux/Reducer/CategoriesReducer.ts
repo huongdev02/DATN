@@ -18,9 +18,6 @@ interface Sizes {
     size: string;
 }
 
-console.log("ok");
-
-
 export interface Product {
     id: string;
     name: string;
