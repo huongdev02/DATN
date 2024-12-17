@@ -50,7 +50,6 @@ class ProductController extends Controller
             ];
 
             return response()->json($response);
-            return response()->json($response);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Không thể lấy danh sách sản phẩm. ' . $e->getMessage()], 500);
         }
