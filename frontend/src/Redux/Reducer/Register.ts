@@ -32,6 +32,7 @@ export const registerUser = createAsyncThunk(
       }
 
       const data = await response.json();
+      const data = await response.json();
       return data; // Dữ liệu trả về từ API
     } catch (error: any) {
       return rejectWithValue(error.message || 'Có lỗi xảy ra');
