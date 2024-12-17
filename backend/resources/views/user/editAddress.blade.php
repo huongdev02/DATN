@@ -6,6 +6,7 @@
 
 @section('content')
     <h1 class="text-center">Sửa địa chỉ</h1>
+    <h1 class="text-center">Sửa địa chỉ</h1>
 
 
     <form action="{{ route('address.update', $address->id) }}" method="POST">
