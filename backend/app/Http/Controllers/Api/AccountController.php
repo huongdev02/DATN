@@ -24,7 +24,7 @@ class AccountController extends Controller
     {
         // Validate incoming request
         $request->validate([
-            'emailsss' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
+            'email' => ['required', 'regex:/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,4}$/', 'unique:users,email'],
             'password' => 'required|string|min:6',
             'confirmPassword' => 'required|same:password', // Ensure confirm_password matches password
         ]);
