@@ -40,6 +40,7 @@ function BlogDetail() {
     });
     const formattedDateTime = `${date} - ${time}`;
   }
+console.log("ok");
 
 
   if (loading)
