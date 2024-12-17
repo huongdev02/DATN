@@ -17,6 +17,7 @@ class CategoryController extends Controller
     {
         try {
             $categories = Category::where('is_active', 1)->get();
+            $categories = Category::where('is_active', 1)->get();
             return response()->json($categories);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Không thể lấy danh sách categories.'], 500);
