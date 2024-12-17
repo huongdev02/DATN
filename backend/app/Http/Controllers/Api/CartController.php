@@ -148,43 +148,58 @@ class CartController extends Controller
     
 
     public function update(Request $request, $itemId)
-    {
-        try {
-            $request->validate([
-                'quantity' => 'required|integer|min:1',
-            ]);
+{
+    try {
+        // Validate only the provided fields
+        $validatedData = $request->validate([
+            'quantity' => 'nullable|integer|min:1',
+            'color_id' => 'nullable|exists:colors,id',
+            'size_id' => 'nullable|exists:sizes,id',
+        ]);
     
-            // Tìm thông tin giỏ hàng
-            $cartItem = CartItem::with(['product', 'color', 'size'])->findOrFail($itemId);
-            $product = Product::findOrFail($cartItem->product_id); // Lấy sản phẩm để tính giá
+        // Find the cart item
+        $cartItem = CartItem::with(['product', 'color', 'size'])->findOrFail($itemId);
+        $product = Product::findOrFail($cartItem->product_id); // Get the product to calculate price
     
-            // Cập nhật số lượng và tính lại tổng
-            $cartItem->quantity = $request->quantity;
+        // Update fields only if provided in the request
+        if (isset($validatedData['quantity'])) {
+            $cartItem->quantity = $validatedData['quantity'];
             $cartItem->total = $cartItem->quantity * $product->price;
-            $cartItem->save();
-    
-            // Lấy thông tin màu sắc và kích thước
-            $colorName = $cartItem->color ? $cartItem->color->name_color : null;
-            $sizeName = $cartItem->size ? $cartItem->size->size : null;
-    
-            // Tạo dữ liệu trả về
-            $responseData = [
-                'id' => $cartItem->id,
-                'product_id' => $cartItem->product_id,
-                'product_name' => $product->name,
-                'color' => $colorName, // Tên màu sắc
-                'size' => $sizeName,   // Tên kích thước
-                'quantity' => $cartItem->quantity,
-                'price' => $product->price,
-                'total' => $cartItem->total,
-                'message' => 'Giỏ hàng đã được cập nhật.'
-            ];
-    
-            return response()->json($responseData, 200); // Trả về mã 200 OK
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Trả về mã 500 Internal Server Error
         }
+
+        if (isset($validatedData['color_id'])) {
+            $cartItem->color_id = $validatedData['color_id'];
+        }
+
+        if (isset($validatedData['size_id'])) {
+            $cartItem->size_id = $validatedData['size_id'];
+        }
+
+        $cartItem->save();
+    
+        // Get color and size names (if available)
+        $colorName = $cartItem->color ? $cartItem->color->name_color : null;
+        $sizeName = $cartItem->size ? $cartItem->size->size : null;
+    
+        // Return response data
+        $responseData = [
+            'id' => $cartItem->id,
+            'product_id' => $cartItem->product_id,
+            'product_name' => $product->name,
+            'color' => $colorName, // Color name
+            'size' => $sizeName,   // Size name
+            'quantity' => $cartItem->quantity,
+            'price' => $product->price,
+            'total' => $cartItem->total,
+            'message' => 'Giỏ hàng đã được cập nhật.'
+        ];
+    
+        return response()->json($responseData, 200); // Return OK response
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Return error response
     }
+}
+
     
 
     public function destroy($itemId)
