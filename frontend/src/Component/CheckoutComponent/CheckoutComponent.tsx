@@ -306,6 +306,8 @@ const CheckoutComponent: React.FC = () => {
       setDiscount(0);
     }
   };
+console.log("ok");
+console.log("ok");
 
 
   useEffect(() => {
