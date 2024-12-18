@@ -61,9 +61,11 @@
                                     </div>
                                 @else
                                     <!-- Product Image -->
+                                    <a href="http://localhost:3000/product-detail/{{ $orderDetail->product->id }}">
                                     <img src="{{ asset('storage/' . ($orderDetail->product->avatar ?? 'default-avatar.png')) }}"
                                         alt="Product Image" class="rounded me-3"
                                         style="width: 80px; height: 80px; object-fit: cover;">
+                                    </a>
                                     <div style="flex: 1;">
                                         <!-- Product Name and Category -->
                                         <h6 class="mb-1 fw-bold">{{ $orderDetail->product->name ?? 'Không rõ' }}</h6>
