@@ -117,6 +117,7 @@ const Header: React.FC = () => {
     GetLogo();
   }, []);
 
+  console.log("Logooooo", isLogo);
 
   useEffect(() => {
     const userLocal = localStorage.getItem("user");
