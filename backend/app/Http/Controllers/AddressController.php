@@ -11,7 +11,8 @@ class AddressController extends Controller
 {
     public function index()
     {
-        $addresses = Ship_address::where('user_id', Auth::id())->get();
+        $addresses = Ship_address::where('user_id', Auth::id())->paginate(2);
+
         return view('user.address', compact('addresses'));
     }
 

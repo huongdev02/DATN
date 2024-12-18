@@ -18,7 +18,7 @@
 
         <div class="mb-3">
             <label for="name">Tên</label>
-            <input type="text" name="name" class="form-control" required>
+            <input type="text" name="name" class="form-control"  value="{{ old('name') }}" required>
         </div>
 
         <div class="mb-3">
@@ -42,22 +42,22 @@
 
         <div class="mb-3">
             <label for="import_price">Giá nhập</label>
-            <input type="number" name="import_price" step="0.01" class="form-control" required>
+            <input type="number" name="import_price" step="0.01"  value="{{ old('import_price') }}" class="form-control" required>
         </div>
 
         <div class="mb-3">
             <label for="price">Giá bán</label>
-            <input type="number" name="price" step="0.01" class="form-control" required>
+            <input type="number" name="price" step="0.01"   value="{{ old('import_price') }}" class="form-control" required>
         </div>
 
         <div class="mb-3">
             <label for="price">Số lượng </label>
-            <input type="number" name="quantity" class="form-control" required>
+            <input type="number" name="quantity"  value="{{ old('quantity') }}"  class="form-control" required>
         </div>
 
         <div class="mb-3">
             <label for="description">Mô tả</label>
-            <textarea name="description" class="form-control" rows="30"></textarea>
+            <textarea name="description" class="form-control" value="{{ old('description') }}"  rows="30"></textarea>
         </div>
 
         <div class="mb-3">

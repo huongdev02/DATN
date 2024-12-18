@@ -9,14 +9,22 @@ import ProductDetailSix from "../../assets/imgs/page/product/img-6.png";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Star from "../../assets/imgs/template/icons/star.svg";
 import api from "../../Axios/Axios";
-import { message } from "antd";
+import { message, Pagination } from "antd";
 import { useState, useEffect } from "react";
 import { IProduct } from "../../types/cart";
+import type { PaginationProps } from "antd";
 import { Link } from "react-router-dom";
 const ProductWithCategories: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [Newproducts, setNewProducts] = useState<IProduct[]>([]);
   const [Topproducts, setTopProducts] = useState<IProduct[]>([]);
+  const pageSize = 8;
+  const [current, setCurrent] = useState(1);
+
+  const onChange: PaginationProps["onChange"] = (page) => {
+    console.log(page);
+    setCurrent(page);
+  };
 
   const GetProductCategory = async () => {
     try {
@@ -27,6 +35,11 @@ const ProductWithCategories: React.FC = () => {
     }
   };
 
+  const paginatedProducts = products.slice(
+    (current - 1) * pageSize,
+    current * pageSize
+  );
+
   const GetNewProducts = async () => {
     try {
       const { data } = await api.get(`/newproduct`);
@@ -36,6 +49,11 @@ const ProductWithCategories: React.FC = () => {
     }
   };
 
+  const paginatedNewProducts = Newproducts.slice(
+    (current - 1) * pageSize,
+    current * pageSize
+  );
+
   const GetTopProducts = async () => {
     try {
       const { data } = await api.get(`/topsell`);
@@ -44,6 +62,11 @@ const ProductWithCategories: React.FC = () => {
       console.log(error);
     }
   };
+
+  const paginatedTopProducts = Topproducts.slice(
+    (current - 1) * pageSize,
+    current * pageSize
+  );
 
   // const boyProducts = products.filter(
   //   (product) => product.categories.name === "Nam"
@@ -125,7 +148,7 @@ const ProductWithCategories: React.FC = () => {
               aria-labelledby="girls-tab"
             >
               <div className="row">
-                {products.map((product) => (
+                {paginatedProducts.map((product) => (
                   <div
                     className="col-xl-3 col-lg-4 col-md-6 col-sm-6 wow animate__animated animate__fadeIn"
                     data-wow-delay=".5s"
@@ -151,10 +174,19 @@ const ProductWithCategories: React.FC = () => {
                           </div>
                         </div>
                         <div className="cardInfo">
-                          <h6 className="font-md-bold cardTitle" style={{fontFamily:'Raleway', fontWeight:'normal'}}>
+                          <h6
+                            className="font-md-bold cardTitle"
+                            style={{
+                              fontFamily: "Raleway",
+                              fontWeight: "normal",
+                            }}
+                          >
                             {product.name}
                           </h6>
-                          <p className="font-lg cardDesc" style={{fontFamily:'Raleway'}}>
+                          <p
+                            className="font-lg cardDesc"
+                            style={{ fontFamily: "Raleway" }}
+                          >
                             {" "}
                             {Math.round(product.price ?? 0).toLocaleString(
                               "vi-VN",
@@ -175,7 +207,7 @@ const ProductWithCategories: React.FC = () => {
               aria-labelledby="boys-tab"
             >
               <div className="row">
-                {Topproducts.map((product) => (
+                {paginatedTopProducts.map((product) => (
                   <div
                     className="col-xl-3 col-lg-4 col-md-6 col-sm-6 wow animate__animated animate__fadeIn"
                     data-wow-delay=".1s"
@@ -201,10 +233,19 @@ const ProductWithCategories: React.FC = () => {
                           </div>
                         </div>
                         <div className="cardInfo">
-                          <h6 className="font-md-bold cardTitle" style={{fontFamily:'Raleway', fontWeight:'normal'}}>
+                          <h6
+                            className="font-md-bold cardTitle"
+                            style={{
+                              fontFamily: "Raleway",
+                              fontWeight: "normal",
+                            }}
+                          >
                             {product.name}
                           </h6>
-                          <p className="font-lg cardDesc" style={{fontFamily:'Raleway'}}>
+                          <p
+                            className="font-lg cardDesc"
+                            style={{ fontFamily: "Raleway" }}
+                          >
                             {" "}
                             {Math.round(product.price ?? 0).toLocaleString(
                               "vi-VN",
@@ -218,6 +259,7 @@ const ProductWithCategories: React.FC = () => {
                 ))}
               </div>
             </div>
+
             <div
               className="tab-pane fade"
               id="accessories"
@@ -225,7 +267,7 @@ const ProductWithCategories: React.FC = () => {
               aria-labelledby="children"
             >
               <div className="row">
-                {Newproducts.map((product) => (
+                {paginatedNewProducts.map((product) => (
                   <div
                     className="col-xl-3 col-lg-4 col-md-6 col-sm-6 wow animate__animated animate__fadeIn"
                     data-wow-delay=".1s"
@@ -251,10 +293,19 @@ const ProductWithCategories: React.FC = () => {
                           </div>
                         </div>
                         <div className="cardInfo">
-                          <h6 className="font-md-bold cardTitle" style={{fontFamily:'Raleway', fontWeight:'normal'}}>
+                          <h6
+                            className="font-md-bold cardTitle"
+                            style={{
+                              fontFamily: "Raleway",
+                              fontWeight: "normal",
+                            }}
+                          >
                             {product.name}
                           </h6>
-                          <p className="font-lg cardDesc" style={{fontFamily:'Raleway'}}>
+                          <p
+                            className="font-lg cardDesc"
+                            style={{ fontFamily: "Raleway" }}
+                          >
                             {" "}
                             {Math.round(product.price ?? 0).toLocaleString(
                               "vi-VN",
@@ -269,6 +320,14 @@ const ProductWithCategories: React.FC = () => {
               </div>
             </div>
           </div>
+          <nav className="box-pagination" style={{ float: "right" }}>
+            <Pagination
+              current={current}
+              onChange={onChange}
+              total={products.length}
+              pageSize={pageSize}
+            />
+          </nav>
         </div>
       </section>
     </>

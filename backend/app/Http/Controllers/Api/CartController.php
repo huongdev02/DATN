@@ -148,57 +148,67 @@ class CartController extends Controller
     
 
     public function update(Request $request, $itemId)
-{
-    try {
-        // Validate only the provided fields
-        $validatedData = $request->validate([
-            'quantity' => 'nullable|integer|min:1',
-            'color_id' => 'nullable|exists:colors,id',
-            'size_id' => 'nullable|exists:sizes,id',
-        ]);
+    {
+        try {
+            // Validate only the provided fields
+            $validatedData = $request->validate([
+                'quantity' => 'nullable|integer|min:1',
+                'color_id' => 'nullable|exists:colors,id',
+                'size_id' => 'nullable|exists:sizes,id',
+            ]);
+        
+            // Find the cart item
+            $cartItem = CartItem::with(['product', 'color', 'size'])->findOrFail($itemId);
+            $product = Product::findOrFail($cartItem->product_id); // Get the product to calculate price
+        
+            // If quantity is provided, check if it's within the available stock
+            if (isset($validatedData['quantity'])) {
+                if ($validatedData['quantity'] > $product->quantity) {
+                    // Return error response if quantity is greater than available stock
+                    return response()->json([
+                        'message' => 'Số lượng yêu cầu vượt quá số lượng còn lại trong kho.',
+                        'available_quantity' => $product->quantity,
+                    ], 400); // Bad Request response
+                }
+                
+                $cartItem->quantity = $validatedData['quantity'];
+                $cartItem->total = $cartItem->quantity * $product->price;
+            }
     
-        // Find the cart item
-        $cartItem = CartItem::with(['product', 'color', 'size'])->findOrFail($itemId);
-        $product = Product::findOrFail($cartItem->product_id); // Get the product to calculate price
+            if (isset($validatedData['color_id'])) {
+                $cartItem->color_id = $validatedData['color_id'];
+            }
     
-        // Update fields only if provided in the request
-        if (isset($validatedData['quantity'])) {
-            $cartItem->quantity = $validatedData['quantity'];
-            $cartItem->total = $cartItem->quantity * $product->price;
+            if (isset($validatedData['size_id'])) {
+                $cartItem->size_id = $validatedData['size_id'];
+            }
+    
+            $cartItem->save();
+        
+            // Get color and size names (if available)
+            $colorName = $cartItem->color ? $cartItem->color->name_color : null;
+            $sizeName = $cartItem->size ? $cartItem->size->size : null;
+        
+            // Return response data
+            $responseData = [
+                'id' => $cartItem->id,
+                'product_id' => $cartItem->product_id,
+                'product_name' => $product->name,
+                'color' => $colorName, // Color name
+                'size' => $sizeName,   // Size name
+                'quantity' => $cartItem->quantity,
+                'price' => $product->price,
+                'total' => $cartItem->total,
+                'message' => 'Giỏ hàng đã được cập nhật.',
+                'available_quantity' => $product->quantity, // Show available quantity
+            ];
+        
+            return response()->json($responseData, 200); // Return OK response
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Return error response
         }
-
-        if (isset($validatedData['color_id'])) {
-            $cartItem->color_id = $validatedData['color_id'];
-        }
-
-        if (isset($validatedData['size_id'])) {
-            $cartItem->size_id = $validatedData['size_id'];
-        }
-
-        $cartItem->save();
-    
-        // Get color and size names (if available)
-        $colorName = $cartItem->color ? $cartItem->color->name_color : null;
-        $sizeName = $cartItem->size ? $cartItem->size->size : null;
-    
-        // Return response data
-        $responseData = [
-            'id' => $cartItem->id,
-            'product_id' => $cartItem->product_id,
-            'product_name' => $product->name,
-            'color' => $colorName, // Color name
-            'size' => $sizeName,   // Size name
-            'quantity' => $cartItem->quantity,
-            'price' => $product->price,
-            'total' => $cartItem->total,
-            'message' => 'Giỏ hàng đã được cập nhật.'
-        ];
-    
-        return response()->json($responseData, 200); // Return OK response
-    } catch (\Exception $e) {
-        return response()->json(['message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500); // Return error response
     }
-}
+    
 
     
 

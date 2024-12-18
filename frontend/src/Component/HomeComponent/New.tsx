@@ -13,11 +13,20 @@ import Promotion from "../../assets/imgs/template/promotion.png";
 import PromotionBanner from "../../assets/imgs/template/promotion-banner.png";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { message, Pagination } from "antd";
+import type { PaginationProps } from "antd";
 import axios from "axios";
 import "./new.css";
 import api from "../../Axios/Axios";
 const New: React.FC = () => {
   const [blog, setBlog] = useState<any[]>([]);
+  const pageSize = 3;
+  const [current, setCurrent] = useState(1);
+
+  const onChange: PaginationProps["onChange"] = (page) => {
+      console.log(page);
+      setCurrent(page);
+    };
 
   useEffect(() => {
     const GetLogo = async () => {
@@ -30,6 +39,11 @@ const New: React.FC = () => {
     };
     GetLogo();
   }, []);
+
+  const paginatedBlog = blog.slice(
+    (current - 1) * pageSize,
+    current * pageSize
+  );
 
   const maxLength = 140;
   const truncateText = (text: any) => {
@@ -59,7 +73,7 @@ const New: React.FC = () => {
             </p>
           </div>
           <div className="row">
-            {blog.map((b, index) => (
+            {paginatedBlog.map((b, index) => (
               <div
                 key={index}
                 className="col-lg-4 col-md-6 wow animate__animated animate__fadeIn"
@@ -107,6 +121,14 @@ const New: React.FC = () => {
               </div>
             ))}
           </div>
+          <nav className="box-pagination" style={{ float: "right" }}>
+            <Pagination
+              current={current}
+              onChange={onChange}
+              total={blog.length}
+              pageSize={pageSize}
+            />
+          </nav>
         </div>
       </section>
       <section className="section block-section-10">

@@ -27,5 +27,9 @@
             </li>
         @endforeach
     </ul>
-    
+
+    <!-- Phân trang -->
+    <div class="mt-3">
+        {{ $addresses->links() }}
+    </div>
 @endsection

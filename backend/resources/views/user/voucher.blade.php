@@ -38,5 +38,10 @@
             @endforeach
         </div>
 
+          <!-- Phân trang -->
+    <div class="mt-3">
+        {{ $vouchers->links() }}
+    </div>
+
     </div>
 @endsection
