@@ -103,18 +103,4 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Get the conversations the user is involved in.
      */
-    public function conversations()
-    {
-        return $this->hasMany(Conversation::class);
-    }
-
-    /**
-     * Get the messages sent by the user.
-     */
-    public function messages()
-    {
-        return $this->hasMany(Message::class);
-    }
-
-
 }

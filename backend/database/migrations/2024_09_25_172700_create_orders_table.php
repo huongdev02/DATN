@@ -26,7 +26,7 @@ return new class extends Migration
             $table->foreignIdFor(Voucher::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(Ship_address::class)->constrained();
             $table->decimal('discount_value', 8, 2)->nullable();
-            $table->tinyInteger('status')->default(0);//0: Đang chờ xử lí, 1: Đã xử lí/ đang chuẩn bị sản phẩm, 2: Đang vận chuyển, 3: Giao hàng thành công, 4: Đơn hàng đã bị hủy, 5: Đơn hàng đã được trả lại bởi người dung
+            $table->tinyInteger('status')->default(0);//0: Đang chờ xử lí, 1: Đã xử lí/ đang chuẩn bị sản phẩm, 2: Đang vận chuyển, 3: Giao hàng thành công, 4: Đơn hàng đã bị hủy
             $table->string('message')->nullable();
             $table->timestamps();
         });

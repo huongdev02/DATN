@@ -9,10 +9,7 @@ use App\Http\Controllers\ColorController;
 use App\Http\Controllers\ManagerUserController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ChatAdminController;
-use App\Http\Controllers\ChatUserController;
 use App\Http\Controllers\LogoBannerController;
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
@@ -89,8 +86,6 @@ Route::controller(AdminController::class)->middleware(['token.auth', 'admin'])->
     //quan li account, route nay chi co quyen admin
     Route::resource('managers', ManagerUserController::class)
         ->middleware(['auth', 'admin']);
-
-    Route::resource('adminchat', ChatAdminController::class);
     //route thong ke
     Route::get('/search', [AdminController::class, 'search'])->name('search');
 
@@ -125,8 +120,6 @@ Route::controller(UserController::class)->middleware(['token.auth', 'user'])->gr
     Route::patch('/orders/{orderId}/done',  [UserOrderController::class, 'done'])->name('done');
 
     Route::post('user/review/{order}', [ReviewController::class, 'store'])->name('review.store');
-
-    Route::resource('userchat', ChatUserController::class);
 });
 
 
