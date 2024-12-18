@@ -69,7 +69,6 @@ const BlogComponent: React.FC = () => {
               <ul>
                 <li>
                   <a href="#">Trang chủ</a>
-                  <a href="#">Trang chủ</a>
                 </li>
                 <li>
                   <a href="#">Tin tức</a>
