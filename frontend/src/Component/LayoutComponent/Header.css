@@ -30,7 +30,7 @@
   color: rgb(159, 134, 217);
 }
 
-.hi-user{
+/* .hi-user{
    position: absolute;
    left: -110px;
    font-family: "Raleway";
@@ -38,7 +38,7 @@
    font-weight: 600;
    top: 5px;
    font-size: 14px;
-}
+} */
 
 .hover-text:hover {
   color: rgb(159, 134, 217);
