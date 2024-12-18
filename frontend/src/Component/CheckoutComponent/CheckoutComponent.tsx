@@ -300,7 +300,6 @@ const CheckoutComponent: React.FC = () => {
   useEffect(() => {
     if (location.search) {
       dispatch(fetchPaymentStatus(location.search));
-      dispatch(fetchPaymentStatus(location.search));
     }
   }, [location.search, dispatch]);
   useEffect(() => {
