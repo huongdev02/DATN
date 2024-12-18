@@ -5,15 +5,15 @@
 @endsection
 
 @section('content_admin')
-    @if (session('success'))
-        <div class="alert alert-success text-center">
-            {{ session('success') }}
-        </div>
-    @endif
-
     @if (session('error'))
         <div class="alert alert-danger">
             {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
         </div>
     @endif
 
@@ -40,7 +40,6 @@
                 <th>Tiêu đề</th>
                 <th>Mô tả</th>
                 <th>Hình ảnh</th>
-                <th>Trạng thái</th>
                 <th>Thao tác</th>
             </tr>
         </thead>
@@ -54,7 +53,7 @@
                     <td>
                         <img src="{{ asset('storage/' . $banner->image) }}" alt="Image" style="width: 50px;">
                     </td>
-                    <td> <span class="badge {{ $banner->is_active ? 'badge-success' : 'badge-danger' }}">
+                    <td> <span hidden class="badge {{ $banner->is_active ? 'badge-success' : 'badge-danger' }}">
                             {{ $banner->is_active ? 'Active' : 'Inactive' }}
                         </span></td>
                     <td>

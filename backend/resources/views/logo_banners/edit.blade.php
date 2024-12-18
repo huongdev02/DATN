@@ -44,11 +44,11 @@
             @endif
         </div>
 
-        <div class="form-group">
+        <div class="form-group" hidden>
             <label for="is_active">Trạng thái</label>
             <select name="is_active" id="is_active" class="form-control">
-                <option value="1" {{ $logoBanner->is_active ? 'selected' : '' }}>Hoạt động</option>
-                <option value="0" {{ !$logoBanner->is_active ? 'selected' : '' }}>Không hoạt động</option>
+                <option value="1" selected></option>
+                <option value="0" ></option>
             </select>
         </div>
 

@@ -17,7 +17,7 @@ class NewProductController extends Controller
             $products = Product::with(['categories:id,name', 'colors:id,name_color', 'sizes:id,size'])
                 ->where('is_active', 1)
                 ->orderBy('created_at', 'desc') // Sắp xếp sản phẩm mới nhất lên đầu
-                ->limit(50) // Giới hạn 30 sản phẩm
+                ->limit(30) // Giới hạn 30 sản phẩm
                 ->get();
 
             // Lấy tất cả màu sắc và kích thước từ bảng colors và sizes

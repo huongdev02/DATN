@@ -95,14 +95,14 @@ class VoucherController extends Controller
                 'total_min' => 'required|numeric',
                 'total_max' => 'required|numeric'
             ]);
-        
+
             // Kiểm tra ngày kết thúc phải lớn hơn ngày bắt đầu
             if ($request->end_day < $request->start_day) {
                 return back()->with('error', 'Ngày kết thúc phải lớn hơn ngày bắt đầu.');
             }
-        
+
             // Tạo voucher mới
-         
+
             Voucher::create([
                 'code' => $request->code,
                 'discount_value' => $request->discount_value,
@@ -115,10 +115,9 @@ class VoucherController extends Controller
                 'total_min' => $request->total_min,
                 'total_max' => $request->total_max,
             ]);
-        
+
             // Trả về thông báo thành công
             return redirect()->route('vouchers.index')->with('success', 'Voucher được thêm mới thành công.');
-        
         } catch (\Illuminate\Database\QueryException $e) {
             // Xử lý lỗi cơ sở dữ liệu, ví dụ như lỗi kết nối, lỗi khi lưu dữ liệu
             return back()->with('error', 'Đã xảy ra lỗi khi lưu voucher. Vui lòng thử lại sau.');
@@ -127,8 +126,8 @@ class VoucherController extends Controller
             return back()->with('error', 'Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.');
         }
     }
-    
-    
+
+
 
 
 
@@ -158,6 +157,12 @@ class VoucherController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // Kiểm tra xem end_day có nhỏ hơn start_day không
+        if ($request->end_day && $request->start_day && $request->end_day < $request->start_day) {
+            return back()->with('error', 'Ngày kết thúc không được nhỏ hơn ngày bắt đầu.');
+        }
+
+        // Validate dữ liệu còn lại
         $request->validate([
             'code' => 'required|max:10|unique:vouchers,code,' . $id,
             'discount_value' => 'required|numeric',
@@ -170,6 +175,7 @@ class VoucherController extends Controller
             'total_max' => 'required|numeric'
         ]);
 
+        // Cập nhật voucher
         $voucher = Voucher::findOrFail($id);
         $voucher->update([
             'code' => $request->code,
@@ -185,6 +191,8 @@ class VoucherController extends Controller
 
         return back()->with('success', 'Voucher đã được cập nhật.');
     }
+
+
 
 
 

@@ -43,7 +43,7 @@ class LogoBannerController extends Controller
         // Tạo mới bản ghi
         LogoBanner::create($data);
 
-        return redirect()->route('logo_banners.index')->with('success', 'Logo/Banner added successfully.');
+        return redirect()->route('logo_banners.index')->with('success', 'Thao tác thành công ');
     }
 
 
@@ -55,31 +55,36 @@ class LogoBannerController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Kiểm tra dữ liệu gửi lên
-        $data = $request->validate([
-            'type' => 'required',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:8192',
-            'image' => 'nullable|image', // Không bắt buộc phải có hình ảnh
-            'is_active' => 'required|boolean', // Đảm bảo is_active được gửi đúng
-        ]);
+        try {
+            // Kiểm tra dữ liệu gửi lên
+            $data = $request->validate([
+                'type' => 'required',
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string|max:8192',
+                'image' => 'nullable|image', // Không bắt buộc phải có hình ảnh
+                'is_active' => 'required|boolean', // Đảm bảo is_active được gửi đúng
+            ]);
 
-        $logoBanner = LogoBanner::findOrFail($id);
+            $logoBanner = LogoBanner::findOrFail($id);
 
-        // Nếu có hình ảnh mới, lưu và cập nhật
-        if ($request->hasFile('image')) {
-            // Xóa hình cũ nếu có
-            if ($logoBanner->image) {
-                Storage::delete('public/' . $logoBanner->image);
+            // Nếu có hình ảnh mới, lưu và cập nhật
+            if ($request->hasFile('image')) {
+                // Xóa hình cũ nếu có
+                if ($logoBanner->image) {
+                    Storage::delete('public/' . $logoBanner->image);
+                }
+
+                // Lưu hình ảnh mới
+                $data['image'] = $request->file('image')->store('logo_banner', 'public');
             }
 
-            // Lưu hình ảnh mới
-            $data['image'] = $request->file('image')->store('logo_banner', 'public');
+            // Cập nhật logoBanner
+            $logoBanner->update($data);
+
+            return redirect()->route('logo_banners.index')->with('success', 'Thao tác thành công ');
+        } catch (\Exception $e) {
+            // Nếu có lỗi, trả về thông báo lỗi
+            return back()->with('error', 'Có lỗi xảy ra khi cập nhật: ');
         }
-
-        // Cập nhật logoBanner
-        $logoBanner->update($data);
-
-        return redirect()->route('logo_banners.index')->with('success', 'Logo/Banner updated successfully.');
     }
 }

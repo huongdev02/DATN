@@ -45,7 +45,7 @@
                 value="{{ $logoBanner->image ?? old('image') }}" required>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" hidden>
             <label for="is_active">Trạng thái</label>
             <select name="is_active" id="is_active" class="form-control">
                 <option value="1" {{ isset($logoBanner) && $logoBanner->is_active ? 'selected' : '' }}>Hoạt động

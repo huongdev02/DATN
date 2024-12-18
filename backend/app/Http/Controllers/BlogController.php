@@ -37,7 +37,7 @@ class BlogController extends Controller
         }
 
         Blog::create($data);
-        return redirect()->route('blog.index')->with('success', 'Blog created successfully.');
+        return redirect()->route('blog.index')->with('success', 'Thêm mới bài viết thành công ');
     }
 
     public function edit($id)
@@ -50,34 +50,40 @@ class BlogController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Validate dữ liệu
-        $data = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|max:1024',
-            'content' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:8192',
-            'is_active' => 'required|boolean',
-        ]);
+        try {
+            // Validate dữ liệu
+            $data = $request->validate([
+                'category_id' => 'required|exists:categories,id',
+                'title' => 'required|string|max:255',
+                'description' => 'required|string|max:1024',
+                'content' => 'required|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:8192',
+                'is_active' => 'required|boolean',
+            ]);
 
-        // Lấy bài viết cần cập nhật
-        $blog = Blog::findOrFail($id);
+            // Lấy bài viết cần cập nhật
+            $blog = Blog::findOrFail($id);
 
-        // Kiểm tra nếu có file ảnh mới thì lưu ảnh
-        if ($request->hasFile('image')) {
-            // Xóa ảnh cũ nếu có
-            if ($blog->image) {
-                Storage::disk('public')->delete($blog->image);
+            // Kiểm tra nếu có file ảnh mới thì lưu ảnh
+            if ($request->hasFile('image')) {
+                // Xóa ảnh cũ nếu có
+                if ($blog->image) {
+                    Storage::disk('public')->delete($blog->image);
+                }
+                $data['image'] = $request->file('image')->store('blogs', 'public');
             }
-            $data['image'] = $request->file('image')->store('blogs', 'public');
+
+            // Cập nhật bài viết
+            $blog->update($data);
+
+            // Quay lại trang danh sách với thông báo thành công
+            return redirect()->route('blog.index')->with('success', 'Cập nhật thành công ');
+        } catch (\Exception $e) {
+            // Nếu có lỗi, trả về thông báo lỗi
+            return back()->with('error', 'Có lỗi xảy ra khi cập nhật bài viết: ');
         }
-
-        // Cập nhật bài viết
-        $blog->update($data);
-
-        // Quay lại trang danh sách với thông báo thành công
-        return redirect()->route('blog.index')->with('success', 'Blog updated successfully.');
     }
+
 
 
     public function destroy(Blog $blog)

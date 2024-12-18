@@ -39,14 +39,14 @@
 
         <div class="mb-3">
             <label for="total_min" class="col-2 col-form-label">Giá trị đơn hàng đạt tối thiểu</label>
-            <input type="text" placeholder="exam: 100.000 VND" class="form-control" name="total_min"
-                id="total_min" value="{{ old('total_min', $voucher->total_min) }}" required />
+            <input type="text" placeholder="exam: 100.000 VND" class="form-control" name="total_min" id="total_min"
+                value="{{ old('total_min', $voucher->total_min) }}" required />
         </div>
 
         <div class="mb-3">
             <label for="total_max" class="col-2 col-form-label">Giá trị đơn hàng đạt tối đa</label>
-            <input type="text" placeholder="exam: 100.000 VND" class="form-control" name="total_max"
-                id="total_max" value="{{ old('total_max', $voucher->total_max) }}" required />
+            <input type="text" placeholder="exam: 100.000 VND" class="form-control" name="total_max" id="total_max"
+                value="{{ old('total_max', $voucher->total_max) }}" required />
         </div>
 
         <div class="mb-3">
@@ -61,10 +61,24 @@
         </div>
 
         <div class="mb-3">
+            <input type="date" class="form-control" name="start_day" id="start_day" hidden
+                value="{{ old('start_day', \Carbon\Carbon::parse($voucher->start_day)->format('Y-m-d')) }}">
+        </div>
+
+        <div class="mb-3">
             <label for="end_day" class="col-2 col-form-label">Ngày kết thúc</label>
             <input type="date" class="form-control" name="end_day" id="end_day"
-                   value="{{ old('end_day', \Carbon\Carbon::parse($voucher->end_day)->format('Y-m-d')) }}">
+                value="{{ old('end_day', \Carbon\Carbon::parse($voucher->end_day)->format('Y-m-d')) }}">
         </div>
+
+        @if (old('end_day') &&
+                old('start_day') &&
+                \Carbon\Carbon::parse(old('end_day'))->lt(\Carbon\Carbon::parse(old('start_day'))))
+            <div class="alert alert-danger">
+                Ngày kết thúc không được nhỏ hơn ngày bắt đầu.
+            </div>
+        @endif
+
 
 
         <div class="mb-3">

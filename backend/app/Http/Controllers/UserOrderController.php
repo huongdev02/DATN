@@ -60,7 +60,7 @@ class UserOrderController extends Controller
 
 
             if (!$order) {
-                return response()->json(['message' => 'Order not found or cannot be canceled.'], 404);
+                return response()->json(['message' => 'Đơn hàng không tồn tại '], 404);
             }
 
             // Retrieve the cancellation reason and add custom message if provided
@@ -94,7 +94,7 @@ class UserOrderController extends Controller
 
             return back()->with('success', 'Hủy đơn hàng thành công, bạn có thể mua sắm lại.');
         } catch (\Exception $e) {
-            return back()->with('error', 'An error occurred: ' . $e->getMessage());
+            return back()->with('error', 'Đã có lỗi xảy ra, vui lòng thử lại sau ');
         }
     }
 

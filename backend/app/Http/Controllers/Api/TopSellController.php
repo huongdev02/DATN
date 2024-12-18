@@ -13,17 +13,19 @@ class TopSellController extends Controller
     public function index()
     {
         try {
-            // Lấy 50 sản phẩm với sell_quantity cao nhất, cùng với thông tin liên quan
+            // Lấy 3030 sản phẩm với sell_quantity cao nhất, cùng với thông tin liên quan
             $products = Product::with(['categories:id,name', 'colors:id,name_color', 'sizes:id,size'])
                 ->where('is_active', 1)
+                ->where('sell_quantity', '>=', 1) // Thêm điều kiện sell_quantity >= 1
                 ->orderBy('sell_quantity', 'desc') // Sắp xếp theo sell_quantity giảm dần
-                ->limit(50) // Giới hạn 50 sản phẩm
+                ->limit(30) // Giới hạn 30 sản phẩm
                 ->get();
-            
+
+
             // Lấy tất cả màu sắc và kích thước từ bảng colors và sizes
             $allColors = Color::all(); // Tất cả các màu sắc
             $allSizes = Size::all();   // Tất cả các kích thước
-    
+
             // Chuyển đổi dữ liệu sản phẩm
             $products = $products->map(function ($product) {
                 return [
@@ -43,13 +45,13 @@ class TopSellController extends Controller
                     'updated_at' => $product->updated_at,
                 ];
             });
-    
+
             $response = [
                 'products' => $products,   // Danh sách sản phẩm
                 'all_colors' => $allColors, // Tất cả các màu sắc
                 'all_sizes' => $allSizes,   // Tất cả các kích thước
             ];
-    
+
             return response()->json($response);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Không thể lấy danh sách sản phẩm. ' . $e->getMessage()], 500);

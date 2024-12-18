@@ -86,11 +86,10 @@ class ColorController extends Controller
 
         try {
             $color->update($data);  // Cập nhật bản ghi cụ thể
-            return redirect('colors')->with('success', true);
+            return redirect('colors')->with('success', 'Thao tác thành công ');
         } catch (\Throwable $th) {
             return back()
-                ->with('success', false)
-                ->with('error', $th->getMessage());
+                ->with('error', 'Đã có lỗi xảy ra vui lòng thử lại ');
         }
     }
 
