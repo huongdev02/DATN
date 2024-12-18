@@ -84,18 +84,7 @@ const CheckoutComponent: React.FC = () => {
     });
   };
 
-  const onChange = (checked: boolean) => {
-    setIsSwitchOn(checked);
-    if (checked) {
-      setRecipientName(isAddress.recipient_name);
-      setPhoneNumber(isAddress.phone_number);
-      setShipAddress(isAddress.ship_address);
-    } else {
-      setRecipientName("");
-      setPhoneNumber("");
-      setShipAddress("");
-    }
-  };
+
 
   const getVouchers = async () => {
     try {
@@ -129,6 +118,19 @@ const CheckoutComponent: React.FC = () => {
 
   const handleModalClose = () => {
     setShowModal(false); 
+  };
+
+  const onChange = (checked: boolean) => {
+    setIsSwitchOn(checked);
+    if (checked) {
+      setRecipientName(isAddress.data.recipient_name);
+      setPhoneNumber(isAddress.data.phone_number);
+      setShipAddress(isAddress.data.ship_address);
+    } else {
+      setRecipientName("");
+      setPhoneNumber("");
+      setShipAddress("");
+    }
   };
 
   const handlePaymentSuccess = async (e: React.FormEvent) => {
