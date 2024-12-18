@@ -34,6 +34,10 @@
                 <div class="card my-4 shadow-sm border-0">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
                         <span><strong>Mall</strong> {{ $order->shop_name ?? 'Shop' }}</span>
+                        <p
+                            class="{{ $order->status == 3 ? 'text-success' : ($order->status == 4 ? 'text-danger' : 'text-muted') }}">
+                            {{ $order->message }}
+                        </p>
                         <span
                             class="badge 
                         @if ($order->status == 3) bg-success 
@@ -50,49 +54,55 @@
                         @endphp
                         @foreach ($order->orderDetails as $orderDetail)
                             <div class="d-flex align-items-start mb-3">
-                                <!-- Product Image -->
-                                <img src="{{ asset('storage/' . ($orderDetail->product->avatar ?? 'default-avatar.png')) }}"
-                                    alt="Product Image" class="rounded me-3"
-                                    style="width: 80px; height: 80px; object-fit: cover;">
-                                <div style="flex: 1;">
-                                    <!-- Product Name and Category -->
-                                    <h6 class="mb-1 fw-bold">{{ $orderDetail->product->name ?? 'Không rõ' }}</h6>
-                                    <p class="mb-1 text-muted"><small>Danh mục:
-                                            {{ $orderDetail->product->categories->name ?? 'Không rõ' }}</small></p>
-                                    <p class="mb-0 text-muted"><small>Số lượng:
-                                            <strong>x{{ $orderDetail->quantity }}</strong></small></p>
-                                </div>
-                                <div style="flex: 1;" class="mt-4">
-                                    <!-- Product Name and Category -->
-                                    <p class="mb-1 text-muted"><small>Màu săc:
-                                            {{ $orderDetail->color->name_color ?? 'Không rõ' }}</small></p>
-                                    <p class="mb-0 text-muted"><small>Kích cỡ:
-                                            {{ $orderDetail->size->size }}</small></p>
-                                </div>
-                                <!-- Unit Price and Total Price for Each Product -->
-                                <div class="d-flex flex-column align-items-center" style="width: 100px;">
-                                    <p class="mb-0">Đơn giá:</p>
-                                    <p class="mb-0 fw-bold">₫{{ number_format($orderDetail->price, 0, ',', '.') }}</p>
-                                </div>
-                                <div class="d-flex flex-column align-items-end" style="width: 120px;">
-                                    <p class="mb-0">Tổng:</p>
-                                    <p class="mb-0 text-danger fw-bold">
-                                        ₫{{ number_format($orderDetail->total, 0, ',', '.') }}</p>
-                                </div>
-
+                                @if ($orderDetail->is_deleted)
+                                    <!-- Hiển thị thông báo sản phẩm đã bị xóa nếu is_deleted = 1 -->
+                                    <div class="d-flex align-items-center">
+                                        <p class="text-danger">Sản phẩm đã bị xóa</p>
+                                    </div>
+                                @else
+                                    <!-- Product Image -->
+                                    <img src="{{ asset('storage/' . ($orderDetail->product->avatar ?? 'default-avatar.png')) }}"
+                                        alt="Product Image" class="rounded me-3"
+                                        style="width: 80px; height: 80px; object-fit: cover;">
+                                    <div style="flex: 1;">
+                                        <!-- Product Name and Category -->
+                                        <h6 class="mb-1 fw-bold">{{ $orderDetail->product->name ?? 'Không rõ' }}</h6>
+                                        <p class="mb-1 text-muted"><small>Danh mục:
+                                                {{ $orderDetail->product->categories->name ?? 'Không rõ' }}</small></p>
+                                        <p class="mb-0 text-muted"><small>Số lượng:
+                                                <strong>x{{ $orderDetail->quantity }}</strong></small></p>
+                                    </div>
+                                    <div style="flex: 1;" class="mt-4">
+                                        <!-- Product Name and Category -->
+                                        <p class="mb-1 text-muted"><small>Màu sắc:
+                                                {{ $orderDetail->color->name_color ?? 'Không rõ' }}</small></p>
+                                        <p class="mb-0 text-muted"><small>Kích cỡ:
+                                                {{ $orderDetail->size->size ?? 'Không rõ' }}</small></p>
+                                    </div>
+                                    <!-- Unit Price and Total Price for Each Product -->
+                                    <div class="d-flex flex-column align-items-center" style="width: 100px;">
+                                        <p class="mb-0">Đơn giá:</p>
+                                        <p class="mb-0 fw-bold">₫{{ number_format($orderDetail->price, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-end" style="width: 120px;">
+                                        <p class="mb-0">Tổng:</p>
+                                        <p class="mb-0 text-danger fw-bold">
+                                            ₫{{ number_format($orderDetail->total, 0, ',', '.') }}</p>
+                                    </div>
+                                @endif
                             </div>
-
-                            <p
-                                class="{{ $order->status == 3 ? 'text-success' : ($order->status == 4 ? 'text-danger' : 'text-muted') }}">
-                                {{ $order->message }}
-                            </p>
 
                             <div class="d-flex">
-                                <p>
-                                    Đã tạo lúc: <p class="ms-3" style="color: green">{{ $order->created_at }}</p>
+                                <p>Đã tạo lúc:
+                                <p class="ms-3" style="color: green">{{ $order->created_at }}</p>
                                 </p>
+                                
                             </div>
+
+                            <hr class="mt-3 mb-3">
+
                         @endforeach
+
                     </div>
 
                     <!-- Display Order Total -->

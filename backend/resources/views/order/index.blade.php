@@ -58,7 +58,7 @@
                             <td>{{ $order->quantity }}</td>
                             <td>{{ number_format($order->total_amount, 2) }} VNĐ</td>
                             <td>
-                                <form action="{{ route('orders.index') }}" method="GET"
+                                <form action="{{ route('orders.index') }}" method="GET"   style="width: 200px;"
                                     id="orderStatusForm-{{ $order->id }}">
                                     <input type="hidden" name="order_id" value="{{ $order->id }}">
                                     <select name="status" class="form-select" onchange="confirmAndSubmit(this)">

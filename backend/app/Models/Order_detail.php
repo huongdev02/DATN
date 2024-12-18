@@ -16,6 +16,7 @@ class Order_detail extends Model
         'size_id',
         'color_id',
         'total',
+        'is_deleted',
     ];
 
     public function order()

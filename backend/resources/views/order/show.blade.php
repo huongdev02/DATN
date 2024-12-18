@@ -37,20 +37,24 @@
                 </thead>
                 <tbody>
                     @foreach ($order->orderDetails as $detail)
-                        <tr>
+                    <tr>
+                        @if ($detail->is_deleted)
+                            <td colspan="8" class="text-center">Sản phẩm đã bị xóa bởi hệ thống</td> <!-- Hiển thị thông báo nếu sản phẩm đã bị xóa -->
+                        @else
                             <td>{{ $detail->product->id }}</td>
                             <td>{{ $detail->product->name }}</td>
                             <td class="text-center">
-                                <img src="{{ asset('storage/' . $detail->product->avatar) }}" alt="image"
-                                    style="width: 50px; height: 50px;">
+                                <img src="{{ asset('storage/' . $detail->product->avatar) }}" alt="image" style="width: 50px; height: 50px;">
                             </td>
                             <td>{{ $detail->quantity }}</td>
                             <td>{{ number_format($detail->price) }} VNĐ</td>
                             <td>{{ $detail->color->name_color }}</td>
                             <td>{{ $detail->size->size }}</td>
                             <td>{{ number_format($detail->total) }} VNĐ</td>
-                        </tr>
-                    @endforeach
+                        @endif
+                    </tr>
+                @endforeach
+                
                 </tbody>
             </table>
         </div>

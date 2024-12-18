@@ -17,13 +17,15 @@ return new class extends Migration
     {
         Schema::create('order_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Order::class)->constrained();
-            $table->foreignIdFor(Product::class)->constrained();
-            $table->unsignedInteger('quantity');
-            $table->decimal('price', 10, 2);
-            $table->foreignIdFor(Size::class)->constrained();
-            $table->foreignIdFor(Color::class)->constrained();
-            $table->decimal('total', 10, 2);
+            $table->unsignedBigInteger('order_id'); // Thay đổi thành unsignedBigInteger
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreignIdFor(Product::class)->nullable()->constrained()->nullOnDelete(); // Cho phép null và null khi xóa sản phẩm
+            $table->unsignedInteger('quantity')->nullable(); // Cho phép null
+            $table->decimal('price', 10, 2)->nullable(); // Cho phép null
+            $table->foreignIdFor(Size::class)->nullable()->constrained()->nullOnDelete(); // Cho phép null
+            $table->foreignIdFor(Color::class)->nullable()->constrained()->nullOnDelete(); // Cho phép null
+            $table->decimal('total', 10, 2)->nullable(); // Cho phép null
+            $table->boolean('is_deleted')->default(false); // Đánh dấu là đã xóa
             $table->timestamps();
         });
     }

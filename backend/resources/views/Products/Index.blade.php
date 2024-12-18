@@ -7,13 +7,13 @@
 @section('content_admin')
 
     @if (session('success'))
-        <div class="alert alert-success text-center">
+        <div class="alert alert-success text-center mt-5">
             {{ session('success') }}
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger">
+        <div class="alert alert-danger mt-5 ">
             {{ session('error') }}
         </div>
     @endif
@@ -148,6 +148,13 @@
                                         onclick="return confirm('Bạn có chắc muốn thay đổi trạng thái ẩn/hiển thị sản phẩm này?')">
                                         {{ $item->is_active == 1 ? 'Ẩn' : 'Hiện' }}
                                     </button>
+                                </form>
+
+                                <form action="{{ route('products.destroy', $item->id) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">Xóa</button>
                                 </form>
                             </td>
                         </tr>

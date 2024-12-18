@@ -8,6 +8,7 @@ use App\Models\Gallery;
 use App\Models\Size;
 use App\Models\Color;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
@@ -203,8 +204,31 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        // Kiểm tra điều kiện: is_active phải là 0 và updated_at ít nhất 7 ngày trước
-        if ($product->is_active == 0 && $product->updated_at <= now()->subDays(7)) {
+        // Kiểm tra nếu có đơn hàng nào chứa sản phẩm này và có trạng thái là 0, 1, hoặc 2
+        $orderDetails = DB::table('order_details')
+            ->join('orders', 'order_details.order_id', '=', 'orders.id')
+            ->where('order_details.product_id', $product->id)
+            ->whereIn('orders.status', [0, 1, 2]) // Kiểm tra trạng thái đơn hàng
+            ->exists();
+
+        if ($orderDetails) {
+            return back()->with('error', 'Không thể xóa sản phẩm này vì có trong đơn hàng đang chờ xử lý, đang chuẩn bị hoặc đang vận chuyển.');
+        }
+
+        DB::table('order_details')
+            ->where('product_id', $product->id)
+            ->update([
+                'product_id' => null,  // Xóa thông tin sản phẩm
+                'price' => null,        // Xóa giá sản phẩm
+                'quantity' => null,     // Xóa số lượng
+                'total' => null,        // Xóa tổng tiền
+                'size_id' => null,      // Xóa size
+                'color_id' => null,     // Xóa màu sắc
+                'is_deleted' => true,   // Đánh dấu là đã xóa
+            ]);
+
+        // Tiến hành xóa sản phẩm nếu không có đơn hàng nào liên quan
+        try {
             // Xóa avatar
             Storage::disk('public')->delete($product->avatar);
 
@@ -217,10 +241,9 @@ class ProductController extends Controller
             // Xóa sản phẩm
             $product->delete();
 
-            return redirect()->route('products.index')->with('success', 'Thao tác thành công');
+            return back()->with('success', 'Thao tác thành công');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
-
-        // Nếu không thỏa mãn điều kiện, trả về thông báo lỗi
-        return redirect()->route('products.index')->with('error', 'Product cannot be deleted. Either it is active or has not reached the 7-day threshold.');
     }
 }
