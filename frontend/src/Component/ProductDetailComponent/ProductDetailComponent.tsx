@@ -146,7 +146,7 @@ const ProductDetailComponent: React.FC = () => {
           sizeId,
           colorId,
         };
-        if (quantity > product.quantity) {
+        if (quantity > product.quantity && quantity > 1) {
           message.error(`Số lượng sản phẩm này chỉ còn ${product.quantity} trong kho !`);
           return;
         }
