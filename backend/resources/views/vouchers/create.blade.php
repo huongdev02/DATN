@@ -5,6 +5,12 @@
 @endsection
 
 @section('content_admin')
+    @if (session('success'))
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
     @if (session('error'))
         <div class="alert alert-danger">
             {{ session('error') }}
@@ -90,8 +96,8 @@
             <label for="is_active" class="col-2 col-form-label">Trạng thái:</label>
 
             <select name="is_active" class="form-control mt-2" id="is_active" required>
-                <option value="1" {{ old('is_active') == 1 ? 'selected' : '' }}>Đang hoạt động</option>
-                <option value="0" {{ old('is_active') == 0 ? 'selected' : '' }}>Không hoạt động</option>
+                <option selected value="1">Đang hoạt động</option>
+                <option value="0" >Không hoạt động</option>
             </select>
 
         </div>

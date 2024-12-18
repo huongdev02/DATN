@@ -227,9 +227,10 @@ class AccountController extends Controller
         );
 
         if ($status === Password::PASSWORD_RESET) {
-            return redirect('http://localhost:3000/login')->with('success', 'Cập nhật mật khẩu thành công, xin mời đăng nhập');
+            return redirect('http://localhost:3000')->with('success', 'Cập nhật mật khẩu thành công, xin mời đăng nhập');
         } else {
-            return back()->withErrors(['errors' => $status]);
+            return back()->withErrors(['errors' => 'Có lỗi xảy ra, vui lòng thử lại!']);
+
         }
     }
 
@@ -267,7 +268,7 @@ class AccountController extends Controller
         $user->markEmailAsVerified();
     }
 
-    return redirect()->route('edit')->with('success', 'Xác minh email thành công');
+    return redirect()->route('user.edit')->with('success', 'Xác minh email thành công');
 }
 
 }

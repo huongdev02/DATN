@@ -17,7 +17,8 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Order::class)->constrained();
+            $table->unsignedBigInteger('order_id'); // Thay đổi thành unsignedBigInteger
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(Product::class)->constrained();
             $table->string('image_path')->nullable();

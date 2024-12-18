@@ -33,29 +33,36 @@ class UserController extends Controller
     }
     public function changepass_(Request $request)
     {
-        // Xác thực dữ liệu đầu vào
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|min:6|confirmed', // Yêu cầu phải xác nhận mật khẩu mới
-        ]);
-
-           /**
-             * @var User $user
-             */
-        $user = Auth::user();
-
-        // Kiểm tra mật khẩu hiện tại có khớp không
-        if (!Hash::check($request->current_password, $user->password)) {
-            return redirect()->back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng.']);
+        try {
+            $request->validate([
+                'current_password' => 'required',
+                'new_password' => 'required|confirmed',
+            ]);
+    
+            $user = Auth::user();
+    
+            // Kiểm tra mật khẩu hiện tại
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng.']);
+            }
+    
+            // Kiểm tra độ dài mật khẩu mới
+            if (strlen($request->new_password) < 6) {
+                return back()->withErrors(['new_password' => 'Mật khẩu mới phải có ít nhất 6 ký tự.']);
+            }
+                 /**
+                 * @var User $user
+                 */
+    
+            // Cập nhật mật khẩu
+            $user->update(['password' => Hash::make($request->new_password)]);
+    
+            return back()->with('success', 'Mật khẩu đã được thay đổi thành công.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Đã xảy ra lỗi. Vui lòng thử lại sau.']);
         }
-
-        // Cập nhật mật khẩu mới
-        $user->password = Hash::make($request->new_password);
-        $user->save();
-
-        // Chuyển hướng với thông báo thành công
-        return redirect()->back()->with('success', 'Mật khẩu đã được thay đổi thành công.');
     }
+    
 
     public function edit()
     {

@@ -81,35 +81,55 @@ class VoucherController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'code' => 'required|string|max:10|unique:vouchers',
-            'discount_value' => 'required|numeric',
-            'description' => 'nullable|string',
-            'quantity' => 'required|integer',
-            'used_times' => 'nullable|integer|min:0',
-            'start_day' => 'nullable|date',
-            'end_day' => 'nullable|date',
-            'is_active' => 'required|boolean', // Trường 'is_active' thay vì 'status'
-            'total_min' => 'required|numeric',
-            'total_max' => 'required|numeric'
-        ]);
-
-        // Tạo voucher mới
-        Voucher::create([
-            'code' => $request->code,
-            'discount_value' => $request->discount_value,
-            'description' => $request->description,
-            'quantity' => $request->quantity,
-            'used_times' => $request->used_times ?? 0, // Đảm bảo giá trị mặc định
-            'start_day' => $request->start_day,
-            'end_day' => $request->end_day,
-            'is_active' => $request->is_active,
-            'total_min' => $request->total_min,
-            'total_max' => $request->total_max,
-        ]);
-
-        return redirect()->route('vouchers.index')->with('success', 'Voucher created successfully.');
+        try {
+            // Xác thực các trường dữ liệu
+            $request->validate([
+                'code' => 'required|string|max:10|unique:vouchers',
+                'discount_value' => 'required|numeric',
+                'description' => 'nullable|string',
+                'quantity' => 'required|integer',
+                'used_times' => 'nullable|integer|min:0',
+                'start_day' => 'nullable|date',
+                'end_day' => 'nullable|date',
+                'is_active' => 'required|boolean', // Trường 'is_active' thay vì 'status'
+                'total_min' => 'required|numeric',
+                'total_max' => 'required|numeric'
+            ]);
+        
+            // Kiểm tra ngày kết thúc phải lớn hơn ngày bắt đầu
+            if ($request->end_day < $request->start_day) {
+                return back()->with('error', 'Ngày kết thúc phải lớn hơn ngày bắt đầu.');
+            }
+        
+            // Tạo voucher mới
+         
+            Voucher::create([
+                'code' => $request->code,
+                'discount_value' => $request->discount_value,
+                'description' => $request->description,
+                'quantity' => $request->quantity,
+                'used_times' => $request->used_times ?? 0, // Đảm bảo giá trị mặc định
+                'start_day' => $request->start_day,
+                'end_day' => $request->end_day,
+                'is_active' => $request->is_active,
+                'total_min' => $request->total_min,
+                'total_max' => $request->total_max,
+            ]);
+        
+            // Trả về thông báo thành công
+            return redirect()->route('vouchers.index')->with('success', 'Voucher được thêm mới thành công.');
+        
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Xử lý lỗi cơ sở dữ liệu, ví dụ như lỗi kết nối, lỗi khi lưu dữ liệu
+            return back()->with('error', 'Đã xảy ra lỗi khi lưu voucher. Vui lòng thử lại sau.');
+        } catch (\Exception $e) {
+            // Xử lý các lỗi khác
+            return back()->with('error', 'Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.');
+        }
     }
+    
+    
+
 
 
 

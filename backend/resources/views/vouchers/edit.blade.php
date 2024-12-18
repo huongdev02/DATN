@@ -61,12 +61,6 @@
         </div>
 
         <div class="mb-3">
-            <label for="start_day" class="col-2 col-form-label">Ngày bắt đầu</label>
-            <input type="date" class="form-control" name="start_day" id="start_day"
-                value="{{ old('start_day', $voucher->start_day) }}">
-        </div>
-
-        <div class="mb-3">
             <label for="end_day" class="col-2 col-form-label">Ngày kết thúc</label>
             <input type="date" class="form-control" name="end_day" id="end_day"
                 value="{{ old('end_day', $voucher->end_day) }}">

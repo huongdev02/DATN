@@ -17,7 +17,8 @@ return new class extends Migration
         Schema::create('voucher_usages', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(Order::class)->constrained();
+            $table->unsignedBigInteger('order_id'); // Thay đổi thành unsignedBigInteger
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreignIdFor(Voucher::class)->constrained();
             $table->decimal('discount_value', 10, 2);
             $table->timestamps();

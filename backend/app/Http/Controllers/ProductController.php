@@ -97,39 +97,49 @@ class ProductController extends Controller
             'image_path' => 'required|array',
             'image_path.*' => 'nullable|image',
         ]);
-
+    
         try {
+            // Kiểm tra nếu không có sizes hoặc colors
+            if (!$request->has('sizes') || count($request->sizes) == 0) {
+                return back()->with('error', 'Thiếu biến thể kích thước (size).');
+            }
+    
+            if (!$request->has('colors') || count($request->colors) == 0) {
+                return back()->with('error', 'Thiếu biến thể màu sắc (color).');
+            }
+    
             $avatarPath = null;
             if ($request->hasFile('avatar')) {
                 $avatarPath = $request->file('avatar')->store('ProductAvatars', 'public');
             }
-
+    
             $productData = $request->all();
             $productData['avatar'] = $avatarPath;
             $productData['status'] = $request->has('is_active') && $request->is_active == 1 ? 1 : 0; // Chuyển thành status 1 hoặc 0
-
+    
             $product = Product::create($productData);
-
+    
             if ($request->has('sizes')) {
                 $product->sizes()->attach($request->sizes);
             }
-
+    
             if ($request->has('colors')) {
                 $product->colors()->attach($request->colors);
             }
-
+    
             if ($request->hasFile('image_path')) {
                 foreach ($request->file('image_path') as $image) {
                     $imagePath = $image->store('ProductGalleries', 'public');
                     Gallery::create(['product_id' => $product->id, 'image_path' => $imagePath]);
                 }
             }
-
+    
             return redirect()->route('products.index')->with('success', 'Thêm mới sản phẩm thành công');
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to create product: ' . $e->getMessage());
+            return back()->with('error', 'Có lỗi vui lòng thử lại sau ');
         }
     }
+    
 
 
     public function edit(Product $product)
