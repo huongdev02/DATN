@@ -142,6 +142,7 @@ const Header: React.FC = () => {
       });
     } finally {
       setIsLoading(false);
+      setIsModalOpen(false);
     }
   };
 
