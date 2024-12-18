@@ -23,8 +23,8 @@ class LogoBannerController extends Controller
     {
         // Kiểm tra xem trong bảng LogoBanner đã có đủ 3 bản ghi chưa
         $bannerCount = LogoBanner::count();
-        if ($bannerCount >= 3) {
-            return back()->with('error', 'Đã đủ 3 bản ghi, không thể thêm mới.');
+        if ($bannerCount >= 5) {
+            return back()->with('error', 'Đã đủ 5 bản ghi, không thể thêm mới.');
         }
 
         // Validate dữ liệu từ request

@@ -4,7 +4,16 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Redux/store";
 import { login } from "../../Redux/Reducer/AuthReducer";
-import { Button, Dropdown, Flex, MenuProps, notification, Space } from "antd";
+import {
+  Button,
+  Dropdown,
+  Flex,
+  MenuProps,
+  notification,
+  Space,
+  Modal,
+  Spin,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "../../Redux/Reducer/CartReducer";
 import { useCart } from "../../context/cartContext";
@@ -21,6 +30,9 @@ import {
 import { message } from "antd";
 import axios from "axios";
 import { registerUser } from "../../Redux/Reducer/Register";
+import { LoadingOutlined } from "@ant-design/icons";
+import Loading from "../../loading/Loading";
+
 interface User {
   id: number;
   email: string;
@@ -65,6 +77,23 @@ const Header: React.FC = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [userLocala, setUserLocala] = useState<any>();
   const [isToken, setIsToken] = useState<any>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+    closeAccountPopup();
+  };
+
+  const handleOk = () => {
+    const formData = getValues();
+    onSubmitEmail(formData);
+    // setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const {
     register,
@@ -87,12 +116,35 @@ const Header: React.FC = () => {
       const errorMessage = error?.response?.data?.message;
       notification.error({
         message: "Đăng ký thất bại",
-        description: errorMessage, 
+        description: errorMessage,
         className: "notice-error",
       });
     }
   };
-  
+
+  const onSubmitEmail: SubmitHandler<any> = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await api.post("/password/email", data);
+      if (response?.status === 200) {
+        notification.success({
+          message: "Thành công !",
+          description: "Xin hãy kiểm tra email của bạn ",
+        });
+      }
+      setIsLoading(true);
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message;
+      notification.error({
+        message: "Thất bại",
+        description: errorMessage,
+        className: "Email không tồn tại hoặc không hợp lệ !",
+      });
+    } finally {
+      setIsLoading(false);
+      setIsModalOpen(false);
+    }
+  };
 
   const GetAllProducts = async () => {
     try {
@@ -191,27 +243,6 @@ const Header: React.FC = () => {
       console.error("Đăng nhập thất bại:", err);
     }
   };
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   if (password !== confirmPassword) {
-  //     notification.error({
-  //       message: "Lỗi đăng ký",
-  //       description: "Mật khẩu và xác nhận mật khẩu không khớp!",
-  //       placement: "topRight",
-  //     });
-  //     return;
-  //   }
-
-  //   const userData = { email, username, password, confirmPassword };
-  //   dispatch(registerUser(userData));
-  //   notification.success({
-  //     message: "Đăng ký thành công",
-  //     description: `Vui lòng đăng nhập để đặt hàng tại website`,
-  //     placement: "topRight",
-  //   });
-  //   setActiveTab("login");
-  // };
 
   const navDashBoard = () => {
     if (isToken) {
@@ -377,10 +408,7 @@ const Header: React.FC = () => {
             >
               <div className="account-icon account">
                 {isLoggedIn && userLocala ? (
-                  <div
-                    onClick={() => handleClick()}
-                    className="dropdown"
-                  >
+                  <div onClick={() => handleClick()} className="dropdown">
                     <img
                       style={{ borderRadius: "50%", marginRight: "8px" }}
                       className="dropbtn"
@@ -656,10 +684,52 @@ const Header: React.FC = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <a className="brand-1 font-sm buttun-forgotpass" href="#">
+                    <a
+                      onClick={showModal}
+                      style={{ cursor: "pointer" }}
+                      className="brand-1 font-sm buttun-forgotpass"
+                    >
                       Quên mật khẩu?
                     </a>
                   </div>
+                  {/* Quên mk */}
+                  <Modal
+                    title="Quên mật khẩu"
+                    open={isModalOpen}
+                    onOk={handleOk}
+                    okText="Gửi"
+                    cancelText="Hủy"
+                    onCancel={handleCancel}
+                  >
+                    <main style={{ display: "flex", justifyContent: "center" }}>
+                      <div>{isLoading && <Loading />}</div>
+                    </main>
+                    {!isLoading && (
+                      <form action="" onSubmit={handleSubmit(onSubmitEmail)}>
+                        {/* <label className="quenmk-email">Email</label> */}
+                        <div className="form-group">
+                          <input
+                            className="input-quenmk"
+                            placeholder="Email của bạn"
+                            type="email"
+                            {...register("email", {
+                              required: "*Không bỏ trống email",
+                              pattern: {
+                                value:
+                                  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                                message: "*Email không hợp lệ",
+                              },
+                            })}
+                          />
+                          {errors.email && (
+                            <p style={{ color: "red", marginTop: "3px" }}>
+                              *email thiếu @ và không hợp lệ
+                            </p>
+                          )}
+                        </div>
+                      </form>
+                    )}
+                  </Modal>
                   <div className="form-group">
                     <button
                       className="btn btn-login d-block"
@@ -708,7 +778,9 @@ const Header: React.FC = () => {
                       })}
                     />
                     {errors.email && (
-                      <p style={{color:'red', marginTop:'3px'}}>*email thiếu @ và không hợp lệ</p>
+                      <p style={{ color: "red", marginTop: "3px" }}>
+                        *email thiếu @ và không hợp lệ
+                      </p>
                     )}
                   </div>
                   <div className="form-group">
@@ -725,7 +797,9 @@ const Header: React.FC = () => {
                       })}
                     />
                     {errors.password && (
-                      <p style={{color:'red', marginTop:'3px'}}>*mật khẩu phải có ít nhất 7 ký tự</p>
+                      <p style={{ color: "red", marginTop: "3px" }}>
+                        *mật khẩu phải có ít nhất 7 ký tự
+                      </p>
                     )}
                   </div>
                   <div className="form-group">
@@ -740,7 +814,9 @@ const Header: React.FC = () => {
                       })}
                     />
                     {errors.confirmPassword && (
-                      <p style={{color:'red', marginTop:'3px'}}>*mật khẩu xác nhận không khớp</p>
+                      <p style={{ color: "red", marginTop: "3px" }}>
+                        *mật khẩu xác nhận không khớp
+                      </p>
                     )}
                   </div>
 
@@ -753,7 +829,7 @@ const Header: React.FC = () => {
                     <p className="body-p2 neutral-medium-dark">
                       Bạn đã có tài khoản rồi?{" "}
                       <a
-                        style={{ color: "red" }}
+                        style={{ color: "red", cursor: "pointer" }}
                         className="neutral-dark login-now"
                         onClick={showLoginForm}
                       >

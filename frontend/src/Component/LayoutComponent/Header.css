@@ -56,6 +56,18 @@
   cursor: pointer;
   font-family: "Raleway";
 }
+.ant-modal-title{
+  font-weight: 700;
+  background: linear-gradient(
+    153deg,
+    rgb(105, 72, 183) 0%,
+    rgb(159, 134, 217) 100%
+  ) !important;
+  background-clip: text !important;
+  color: transparent !important;
+  cursor: pointer;
+  font-family: "Raleway" !important;
+}
 
 .custom-user {
   cursor: pointer;
@@ -119,4 +131,18 @@
 .notice-error {
   border: 1px solid red !important;
   border-left: 4px solid red !important;
+}
+.input-quenmk{
+  width: 100%;
+  height: 40px;
+  border: 1px solid rgb(159,134,220);
+  border-radius: 6px;
+  padding-left: 10px;
+  font-family: "Raleway";
+}
+.quenmk-email{
+  font-size: 16px;
+  font-weight: 500;
+  padding-bottom: 3px;
+  font-family: "Raleway";
 }
