@@ -71,6 +71,7 @@ const Header: React.FC = () => {
     handleSubmit,
     setValue,
     getValues,
+    formState: { errors },
   } = useForm<any>();
 
   const onSubmit: SubmitHandler<any> = async (data) => {
