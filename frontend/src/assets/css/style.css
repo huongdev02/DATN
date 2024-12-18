@@ -3317,6 +3317,8 @@ a.follow-vendor {
 }
 
 .dropbtn {
+  height: 35px;
+  object-fit:cover;
   color: white;
   font-size: 16px;
   border: none;

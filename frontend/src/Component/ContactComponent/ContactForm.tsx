@@ -4,7 +4,23 @@ import IgThree from '../../assets/imgs/page/homepage1/instagram3.png'
 import IgFour from '../../assets/imgs/page/homepage1/instagram4.png'
 import IgTwo from '../../assets/imgs/page/homepage1/instagram2.png'
 import IgFive from '../../assets/imgs/page/homepage1/instagram5.png'
+import { useEffect, useState } from 'react'
+import api from '../../Axios/Axios'
+import axios from 'axios'
 const ContactForm: React.FC = () => {
+
+    const [qr, setQr] = useState<any>()
+    useEffect(() => {
+        const GetQuangCao = async () => {
+          try {
+            const { data } = await axios.get(`http://127.0.0.1:8000/api/logobanner/${5}`);
+            setQr(data);
+          } catch (error) {
+            console.log(error);
+          }
+        };
+        GetQuangCao()
+      }, []);
     return (
         <div className="section block-blog-single block-contact">
             <div className="container-1190">
@@ -13,7 +29,11 @@ const ContactForm: React.FC = () => {
                     <div className="row">
                         <div className="col-lg-6">
                           {/* QR */}
-                          <img src="" alt="" />
+                          <div style={{border:'1px solid rgb(190,155,218)',  borderLeft:'8px solid rgb(190,155,218)',  borderRadius:'8px', display:'flex', justifyContent:'center'}}>
+                            <div>
+                            <img src={qr?.image} alt=""  width={'300px'}/>
+                            </div>
+                          </div>
                         </div>
                         <div className="col-lg-6">
                             <div className="box-contact-right">
