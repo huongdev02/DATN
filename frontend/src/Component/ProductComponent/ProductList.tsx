@@ -19,7 +19,7 @@ const ProductList: React.FC<ProductListProps> = ({ filters }) => {
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [current, setCurrent] = useState(1);
   const [loading, setLoading] = useState(true);
-  const pageSize = 20;
+  const pageSize = 6;
 
   const onChange: PaginationProps['onChange'] = (page) => {
     console.log(page);

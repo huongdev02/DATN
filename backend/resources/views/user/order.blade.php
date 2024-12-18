@@ -57,7 +57,7 @@
                                 @if ($orderDetail->is_deleted)
                                     <!-- Hiển thị thông báo sản phẩm đã bị xóa nếu is_deleted = 1 -->
                                     <div class="d-flex align-items-center">
-                                        <p class="text-danger">Sản phẩm đã bị xóa</p>
+                                        <p class="text-danger" style="color:red;">Sản phẩm đã bị xóa bởi hệ thống </p>
                                     </div>
                                 @else
                                     <!-- Product Image -->

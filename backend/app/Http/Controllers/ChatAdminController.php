@@ -19,27 +19,32 @@ class ChatAdminController extends Controller
         $conversation = Conversation::with(['messages.sender'])->findOrFail($id);
         return response()->json($conversation);
     }
-    public function store(Request $request, $conversationId)
+    public function store(Request $request)
     {
-        // Xác minh yêu cầu có chứa các trường cần thiết
         $request->validate([
-            'message' => 'required|string|max:500',
+            'message' => 'required|string|max:1000',
         ]);
 
-        // Lấy hội thoại theo ID
-        $conversation = Conversation::findOrFail($conversationId);
+        $userId = auth()->id(); // Lấy ID người dùng hiện tại
 
-        // Lấy người gửi từ auth (hoặc có thể từ user_id)
-        $senderId = auth()->id(); // Lấy ID của người dùng hiện tại
+        // Tìm hoặc tạo hội thoại giữa user và admin
+        $conversation = Conversation::firstOrCreate(
+            ['user_id' => $userId],
+            ['staff_id' => 2] // Giả sử admin có role là 2
+        );
 
-        // Tạo và lưu tin nhắn mới
-        $message = new Message();
-        $message->conversation_id = $conversation->id;
-        $message->sender_id = $senderId;
-        $message->message = $request->message;
-        $message->save();
+        // Lưu tin nhắn mới vào bảng messages
+        $message = $conversation->messages()->create([
+            'sender_id' => $userId,
+            'message' => $request->message,
+        ]);
 
-        // Trả về thông tin hội thoại sau khi thêm tin nhắn
-        return response()->json($conversation->load(['messages.sender']));
+        return response()->json([
+            'id' => $message->id,
+            'message' => $message->message,
+            'sender_id' => $message->sender_id,
+            'sender_name' => auth()->user()->fullname ?? auth()->user()->email,
+            'created_at' => $message->created_at->format('H:i d-m-Y'),
+        ]);
     }
 }
