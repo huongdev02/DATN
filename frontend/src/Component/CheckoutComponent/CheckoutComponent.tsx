@@ -242,7 +242,6 @@ const CheckoutComponent: React.FC = () => {
           );
           const total = response.data.cart_items.length;
         } else {
-          console.error("Không tìm thấy thông tin người dùng.");
         }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu giỏ hàng:", error);
