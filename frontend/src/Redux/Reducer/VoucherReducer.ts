@@ -55,6 +55,7 @@ export const fetchVouchers = createAsyncThunk<
         return rejectWithValue('Failed to fetch vouchers');
       }
 
+      const data = await response.json();
       if (data?.status !== true) {
         return rejectWithValue('Failed to fetch vouchers');
       }
