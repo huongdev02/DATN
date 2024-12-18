@@ -69,13 +69,22 @@
                                     <form method="POST" action="{{ route('review.update', $review->id) }}">
                                         @csrf
                                         @method('PUT')
-                                        <button type="submit"
-                                            class="btn {{ $review->is_reviews ? 'btn-warning' : 'btn-success' }} btn-sm"
-                                            onclick="return confirm('Chắc chắn muốn thay đổi trạng thái')">
-                                            {{ $review->is_reviews ? 'Ẩn' : 'Hiển thị' }}
-                                        </button>
+                                        
+                                        @if($review->product_id !== null) <!-- Kiểm tra xem product_id có phải là null hay không -->
+                                            <button type="submit" 
+                                                    class="btn {{ $review->is_reviews ? 'btn-warning' : 'btn-success' }} btn-sm"
+                                                    onclick="return confirm('Chắc chắn muốn thay đổi trạng thái')">
+                                                {{ $review->is_reviews ? 'Ẩn' : 'Hiển thị' }}
+                                            </button>
+                                        @else
+                                            <!-- Nếu product_id là null, không cho phép thay đổi trạng thái -->
+                                            <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                                Sản phẩm đã bị xóa khỏi hệ thống 
+                                            </button>
+                                        @endif
                                     </form>
                                 </td>
+                                
                             </tr>
                         @endforeach
                     </tbody>

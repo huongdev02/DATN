@@ -51,7 +51,7 @@
                     </a>
                     <span class="tooltip">Chăm sóc khách hàng</span>
                 </li>
-                
+
                 <style>
                     /* Vị trí và kiểu dáng của biểu tượng Zalo */
                     .zalo-icon {
@@ -61,24 +61,27 @@
                         z-index: 9999;
                         text-align: center;
                     }
-                
+
                     .zalo-icon a {
                         display: inline-block;
                         width: 60px;
                         height: 60px;
-                        background-color: #25D366; /* Màu xanh của Zalo */
+                        background-color: #25D366;
+                        /* Màu xanh của Zalo */
                         border-radius: 50%;
                         overflow: hidden;
                         position: relative;
                         text-align: center;
-                        line-height: 60px; /* Căn giữa icon trong vòng tròn */
+                        line-height: 60px;
+                        /* Căn giữa icon trong vòng tròn */
                     }
-                
+
                     .zalo-icon i {
-                        font-size: 30px; /* Điều chỉnh kích thước của icon */
+                        font-size: 30px;
+                        /* Điều chỉnh kích thước của icon */
                         color: white;
                     }
-                
+
                     .zalo-icon .tooltip {
                         display: none;
                         position: absolute;
@@ -93,12 +96,12 @@
                         white-space: nowrap;
                         z-index: 10000;
                     }
-                
+
                     .zalo-icon:hover .tooltip {
                         display: block;
                     }
                 </style>
-                
+
                 <li><a href="{{ route('userorder.index') }}" class="btn btn-light w-100 text-start">Đơn Mua</a></li>
                 <li><a href="{{ route('uservouchers.index') }}" class="btn btn-light w-100 text-start">Kho Voucher</a>
                 </li>
@@ -114,13 +117,9 @@
 
         <!-- Phần Content -->
         <div class="content-container p-4 flex-grow-1">
-            @if ($errors->any())
-                <div class="alert alert-danger text-center">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
                 </div>
             @endif
 
@@ -130,11 +129,7 @@
                 </div>
             @endif
 
-            @if (session('info'))
-                <div class="alert alert-info">
-                    {{ session('info') }}
-                </div>
-            @endif
+
 
             @yield('content')
         </div>

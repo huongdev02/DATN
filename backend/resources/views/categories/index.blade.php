@@ -5,7 +5,6 @@
 @endsection
 
 @section('content_admin')
-
     @if (session('success'))
         <div class="alert alert-success text-center">
             {{ session('success') }}
@@ -58,8 +57,8 @@
                             class="btn {{ $category->is_active ? 'btn-outline-secondary' : 'btn-outline-success' }} mb-3">
                             {{ $category->is_active ? 'Ẩn' : 'Hiện' }}
                         </a>
-                        <a href="{{ route('categories.edit', $category->id) }}"
-                            class="btn btn-outline-warning mb-3">Cập nhật</a>
+                        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-outline-warning mb-3">Cập
+                            nhật</a>
                         <form action="{{ route('categories.destroy', $category->id) }}" method="POST"
                             style="display:inline;">
                             @csrf

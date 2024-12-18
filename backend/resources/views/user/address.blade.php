@@ -5,6 +5,9 @@
 @endsection
 
 @section('content')
+
+
+
     <h2 class="text-center"> Địa chỉ của tôi</h2>
     <a href="{{ route('address.create') }}" class="btn btn-success">Thêm mới</a>
 
@@ -23,7 +26,17 @@
                         <button type="submit" class="btn btn-sm btn-outline-primary">Đặt làm địa chỉ mặc định</button>
                     </form>
                 @endif
-                <a href="{{ route('address.edit', $address->id) }}" class="btn btn-sm btn-warning float-end">Cập nhật</a>
+                <a href="{{ route('address.edit', $address->id) }}" class="btn btn-sm btn-warning float-end ms-5 ">Cập
+                    nhật</a>
+
+                <form action="{{ route('address.destroy', $address->id) }}" method="POST" class="d-inline float-end ms-2">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa địa chỉ này?')"
+                        class="btn btn-sm btn-outline-danger">
+                        Xóa
+                    </button>
+                </form>
             </li>
         @endforeach
     </ul>

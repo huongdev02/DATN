@@ -20,9 +20,13 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id'); // Thay đổi thành unsignedBigInteger
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(Product::class)->constrained();
+            $table->foreignId('product_id')
+                ->nullable() // Cho phép null
+                ->constrained('products') // Liên kết với bảng products
+                ->onDelete('set null'); // Đặt null nếu bản ghi liên quan bị xóa
+
             $table->string('image_path')->nullable();
-            $table->tinyInteger('rating')->default(5);//thang 5 điểm 
+            $table->tinyInteger('rating')->default(5); //thang 5 điểm 
             $table->text('comment')->nullable();
             $table->boolean('is_reviews')->default(1);
             $table->timestamps();

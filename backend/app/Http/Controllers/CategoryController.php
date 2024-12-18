@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Ship_address;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -75,19 +76,29 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Category $category)
-{
-    $request->validate([
-        'name' => 'required|unique:categories,name,' . $category->id . '|max:255',
-        'is_active' => 'required|boolean',
-    ]);
-
-    $category->update([
-        'name' => $request->name,
-        'is_active' => $request->is_active,
-    ]);
-
-    return back()->with('success', 'Cập nhật thành công');
-}
+    {
+        // Kiểm tra và validate input
+        $request->validate([
+            'name' => 'required|unique:categories,name,' . $category->id . '|max:255',
+            'is_active' => 'required|boolean',
+        ]);
+    
+        // Kiểm tra nếu địa chỉ được chọn là mặc định
+        if ($request->is_default) {
+            // Cập nhật tất cả các địa chỉ của người dùng thành không mặc định
+            Ship_address::where('user_id', auth()->id()) // Assuming 'user_id' is the column linking the user
+                        ->update(['is_default' => false]);
+        }
+    
+        // Cập nhật danh mục
+        $category->update([
+            'name' => $request->name,
+            'is_active' => $request->is_active,
+        ]);
+    
+        return back()->with('success', 'Cập nhật thành công');
+    }
+    
 
 
     /**
@@ -99,9 +110,15 @@ class CategoryController extends Controller
         if ($category->products()->count() > 0) {
             return back()->with('error', 'Không thể xóa danh mục này vì có sản phẩm liên quan.');
         }
-
-        // Nếu không có sản phẩm liên quan, thực hiện xóa
+    
+        // Kiểm tra xem danh mục có bài blog nào liên quan không
+        if ($category->blogs()->count() > 0) {
+            return back()->with('error', 'Không thể xóa danh mục này vì có bài viết liên quan.');
+        }
+    
+        // Nếu không có sản phẩm hoặc bài blog liên quan, thực hiện xóa
         $category->delete();
         return back()->with('success', 'Xóa thành công');
     }
+    
 }

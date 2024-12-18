@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Color;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ColorController extends Controller
@@ -14,9 +15,19 @@ class ColorController extends Controller
      */
     public function index()
     {
+        // Lấy tất cả màu sắc, kèm theo số lượng sản phẩm sử dụng mỗi màu
         $data = Color::latest('id')->paginate(5);
+
+        // Đếm số lượng sản phẩm sử dụng mỗi màu
+        foreach ($data as $color) {
+            $color->product_count = DB::table('product_color')
+                ->where('color_id', $color->id)
+                ->count();
+        }
+
         return view('bienthe.colors.index', compact('data'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -68,30 +79,39 @@ class ColorController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Color $color)
-{
-    $data = $request->validate([
-        'name_color'      => 'required|max:25',
-    ]);
+    {
+        $data = $request->validate([
+            'name_color'      => 'required|max:25',
+        ]);
 
-    try {
-        $color->update($data);  // Cập nhật bản ghi cụ thể
-        return redirect('colors')->with('success', true);
-    } catch (\Throwable $th) {
-        return back()
-            ->with('success', false)
-            ->with('error', $th->getMessage());
+        try {
+            $color->update($data);  // Cập nhật bản ghi cụ thể
+            return redirect('colors')->with('success', true);
+        } catch (\Throwable $th) {
+            return back()
+                ->with('success', false)
+                ->with('error', $th->getMessage());
+        }
     }
-}
 
 
     /**
      * Remove the specified resource from storage.
-     */
-    public function destroy(Color $color)
+     */ public function destroy(Color $color)
     {
         try {
+            // Kiểm tra xem có sản phẩm nào liên kết với màu sắc này không
+            $isProductUsingColor = DB::table('product_color')
+                ->where('color_id', $color->id)
+                ->exists();
+
+            if ($isProductUsingColor) {
+                return back()->with('error', 'Không thể xóa màu sắc này vì có sản phẩm liên quan.');
+            }
+
+            // Nếu không có sản phẩm nào sử dụng color này, thực hiện xóa
             $color->delete();
-            return back()->with('success', true);
+            return back()->with('success', 'Xóa màu sắc thành công.');
         } catch (\Throwable $th) {
             return back()
                 ->with('success', false)

@@ -54,11 +54,18 @@
                         <tr>
                             <td>{{ $order->id }}</td>
                             <td>{{ $order->user->email }}</td>
-                            <td>{{ $order->shipAddress->ship_address }}</td>
+                            <td>
+                                @if ($order->shipAddress && $order->shipAddress->ship_address)
+                                    {{ $order->shipAddress->ship_address }}
+                                @else
+                                    Không rõ  
+                                @endif
+                            </td>
+
                             <td>{{ $order->quantity }}</td>
                             <td>{{ number_format($order->total_amount, 2) }} VNĐ</td>
                             <td>
-                                <form action="{{ route('orders.index') }}" method="GET"   style="width: 200px;"
+                                <form action="{{ route('orders.index') }}" method="GET" style="width: 200px;"
                                     id="orderStatusForm-{{ $order->id }}">
                                     <input type="hidden" name="order_id" value="{{ $order->id }}">
                                     <select name="status" class="form-select" onchange="confirmAndSubmit(this)">

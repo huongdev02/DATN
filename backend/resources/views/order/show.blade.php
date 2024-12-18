@@ -37,24 +37,26 @@
                 </thead>
                 <tbody>
                     @foreach ($order->orderDetails as $detail)
-                    <tr>
-                        @if ($detail->is_deleted)
-                            <td colspan="8" class="text-center">Sản phẩm đã bị xóa bởi hệ thống</td> <!-- Hiển thị thông báo nếu sản phẩm đã bị xóa -->
-                        @else
-                            <td>{{ $detail->product->id }}</td>
-                            <td>{{ $detail->product->name }}</td>
-                            <td class="text-center">
-                                <img src="{{ asset('storage/' . $detail->product->avatar) }}" alt="image" style="width: 50px; height: 50px;">
-                            </td>
-                            <td>{{ $detail->quantity }}</td>
-                            <td>{{ number_format($detail->price) }} VNĐ</td>
-                            <td>{{ $detail->color->name_color }}</td>
-                            <td>{{ $detail->size->size }}</td>
-                            <td>{{ number_format($detail->total) }} VNĐ</td>
-                        @endif
-                    </tr>
-                @endforeach
-                
+                        <tr>
+                            @if ($detail->is_deleted)
+                                <td colspan="8" class="text-center">Sản phẩm đã bị xóa bởi hệ thống</td>
+                                <!-- Hiển thị thông báo nếu sản phẩm đã bị xóa -->
+                            @else
+                                <td>{{ $detail->product->id }}</td>
+                                <td>{{ $detail->product->name }}</td>
+                                <td class="text-center">
+                                    <img src="{{ asset('storage/' . $detail->product->avatar) }}" alt="image"
+                                        style="width: 50px; height: 50px;">
+                                </td>
+                                <td>{{ $detail->quantity }}</td>
+                                <td>{{ number_format($detail->price) }} VNĐ</td>
+                                <td>{{ $detail->color->name_color }}</td>
+                                <td>{{ $detail->size->size }}</td>
+                                <td>{{ number_format($detail->total) }} VNĐ</td>
+                            @endif
+                        </tr>
+                    @endforeach
+
                 </tbody>
             </table>
         </div>
@@ -110,10 +112,30 @@
             <h4>Người dùng: {{ $order->user->email }}</h4>
             <h4>Địa chỉ giao hàng:</h4>
             <p>
-                <strong>Tên người nhận:</strong> {{ $order->shipAddress->recipient_name }}<br>
-                <strong>Số điện thoại:</strong> {{ $order->shipAddress->phone_number }}<br>
-                <strong>Địa chỉ:</strong> {{ $order->shipAddress->ship_address }}
+                <strong>Tên người nhận:</strong>
+                @if ($order->shipAddress && $order->shipAddress->recipient_name)
+                    {{ $order->shipAddress->recipient_name }}
+                @else
+                    Không rõ
+                @endif
+                <br>
+
+                <strong>Số điện thoại:</strong>
+                @if ($order->shipAddress && $order->shipAddress->phone_number)
+                    {{ $order->shipAddress->phone_number }}
+                @else
+                    Không rõ
+                @endif
+                <br>
+
+                <strong>Địa chỉ:</strong>
+                @if ($order->shipAddress && $order->shipAddress->ship_address)
+                    {{ $order->shipAddress->ship_address }}
+                @else
+                    Không rõ
+                @endif
             </p>
+
             <h4>Trạng thái:
                 @switch($order->status)
                     @case(0)

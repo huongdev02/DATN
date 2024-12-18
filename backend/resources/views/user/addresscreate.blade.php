@@ -21,10 +21,6 @@
             <label for="phone_number">Số điện thoại:</label>
             <input type="text" class="form-control mb-3" id="phone_number" name="phone_number" value="{{old('phone_number')}}" required>
         </div>
-        <div>
-            <label for="is_default">Đặt làm địa chỉ mặc định:</label>
-            <input type="checkbox" id="is_default" name="is_default" value="1">
-        </div>
         <div class="text-center">
             <button type="submit" class="btn btn-success">Thêm địa chỉ</button>
             <a href="{{ route('address.index') }}" class="btn btn-secondary">Quay lại</a>

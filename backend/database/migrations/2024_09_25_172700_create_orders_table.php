@@ -24,7 +24,7 @@ return new class extends Migration
             $table->tinyInteger('payment_method')->default(1);// 0: tiền mặt, 1: chuyển khoản ngân hàng, 2: thanh toán qua thẻ atm
             $table->tinyInteger('ship_method')->default(1);// 0: giao hàng tiêu chuẩn, 1: giao hàng hỏa tốc
             $table->foreignIdFor(Voucher::class)->nullable()->constrained()->nullOnDelete();
-            $table->foreignIdFor(Ship_address::class)->constrained();
+            $table->foreignIdFor(Ship_address::class)->nullable()->constrained();
             $table->decimal('discount_value', 8, 2)->nullable();
             $table->tinyInteger('status')->default(0);//0: Đang chờ xử lí, 1: Đã xử lí/ đang chuẩn bị sản phẩm, 2: Đang vận chuyển, 3: Giao hàng thành công, 4: Đơn hàng đã bị hủy
             $table->string('message')->nullable();
