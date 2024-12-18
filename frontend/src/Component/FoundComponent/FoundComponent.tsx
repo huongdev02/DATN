@@ -9,6 +9,8 @@ const FoundComponent: React.FC = () => {
                         <div className="row align-items-center">
                             <div className="col-lg-6 pr-80">
                                 <div className="text-5xl text-bold mb-10">Page not available</div>
+                                <div className="text-5xl text-bold mb-10">Page not available</div>
+                                <div className="text-5xl text-bold mb-10">Page not available</div>
                                 <div className="text-xl text-bold mb-20">
                                     Sorry, but the page you were looking<br />for could not be Component.</div>
                                 <div className="text-md mb-30">
