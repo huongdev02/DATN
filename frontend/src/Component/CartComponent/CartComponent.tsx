@@ -110,7 +110,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
       await api.put(`/carts/${id}`, { quantity });
       getAllCart();
     } catch (error) {
-      console.log(error);
+      message.error('Vượt quá số lượng có trong kho !')
     }
   };
 

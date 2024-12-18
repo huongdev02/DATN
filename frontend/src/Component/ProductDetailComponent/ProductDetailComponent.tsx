@@ -146,6 +146,10 @@ const ProductDetailComponent: React.FC = () => {
           sizeId,
           colorId,
         };
+        if (quantity > product.quantity) {
+          message.error(`Số lượng sản phẩm này chỉ còn ${product.quantity} trong kho !`);
+          return;
+        }
         if (product.quantity > 0) {
           await dispatch(addToCart(cartData));
           notification.success({

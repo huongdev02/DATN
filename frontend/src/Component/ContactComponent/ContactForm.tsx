@@ -12,40 +12,7 @@ const ContactForm: React.FC = () => {
                     <h3 className="font-4xl-bold mb-40">Liên hệ</h3>
                     <div className="row">
                         <div className="col-lg-6">
-                            <form action="#">
-                                <div className="row">
-                                    <div className="col-lg-6">
-                                        <div className="form-group">
-                                            <input className="form-control" type="text" placeholder="Họ tên*" />
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                        <div className="form-group">
-                                            <input className="form-control" type="text" placeholder="Email*" />
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                        <div className="form-group">
-                                            <input className="form-control" type="text" placeholder="Số điện thoại của bạn*" />
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                        <div className="form-group">
-                                            <input className="form-control" type="text" placeholder="Đối tượng*" />
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-12">
-                                        <div className="form-group">
-                                            <textarea className="form-control" rows={6} placeholder="Nội dung*" defaultValue={""} />
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-12">
-                                        <div className="form-group">
-                                            <button className="btn btn-brand-1-medium">Gửi</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                          {/* QR zalo */}
                         </div>
                         <div className="col-lg-6">
                             <div className="box-contact-right">

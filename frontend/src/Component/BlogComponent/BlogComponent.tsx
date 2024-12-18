@@ -7,9 +7,18 @@ import api from "../../Axios/Axios";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { message, Pagination } from "antd";
+import type { PaginationProps } from "antd";
 const BlogComponent: React.FC = () => {
   const [blog, setBlog] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const pageSize = 5;
+  const [current, setCurrent] = useState(1);
+
+  const onChange: PaginationProps["onChange"] = (page) => {
+    console.log(page);
+    setCurrent(page);
+  };
   useEffect(() => {
     const GetLogo = async () => {
       try {
@@ -23,6 +32,11 @@ const BlogComponent: React.FC = () => {
     };
     GetLogo();
   }, []);
+
+  const paginatedBlog = blog.slice(
+    (current - 1) * pageSize,
+    current * pageSize
+  );
 
   const maxLength = 20;
   const truncateText = (text: any) => {
@@ -82,7 +96,7 @@ const BlogComponent: React.FC = () => {
             <div className="box-blog-column">
               <div className="col-1">
                 <div className="box-inner-blog-padding">
-                  {blog.map((b, index) => (
+                  {paginatedBlog.map((b, index) => (
                     <Link to={`/blog-detail/${b.id}`}>
                       <div key={index} className="cardBlogStyle1">
                         <img src={b.image} alt="kidify" />
@@ -105,6 +119,14 @@ const BlogComponent: React.FC = () => {
                       </div>
                     </Link>
                   ))}
+                  <nav className="box-pagination" style={{ float: "right" }}>
+                    <Pagination
+                      current={current}
+                      onChange={onChange}
+                      total={blog.length}
+                      pageSize={pageSize}
+                    />
+                  </nav>
                 </div>
               </div>
               {/* Aside Blog */}
