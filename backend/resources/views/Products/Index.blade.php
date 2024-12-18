@@ -119,16 +119,13 @@
                             <td>
                                 @if ($item->colors->isNotEmpty())
                                     @foreach ($item->colors as $color)
-                                        @php
-                                            $colorCode = $colorMap[$color->name_color] ?? '#000000';
-                                        @endphp
-                                        <span class="color-circle"
-                                            style="background-color: {{ $colorCode }}; width: 20px; height: 20px; display: inline-block; border-radius: 50%; margin-right: 5px;"></span>
+                                        <span>{{ $color->name_color }}</span>@if (!$loop->last), @endif
                                     @endforeach
                                 @else
                                     không có màu
                                 @endif
                             </td>
+
                             <td class="d-flex gap-2 justify-content-center">
                                 @if ($item->is_active == 1)
                                     <a href="{{ route('products.edit', $item->id) }}"
