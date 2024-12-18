@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Payment; 
+use App\Models\Payment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +10,7 @@ class Order extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'id',
         'user_id',
         'product_id',
         'quantity',
@@ -21,6 +22,10 @@ class Order extends Model
         'voucher_id',
         'discount_value'
     ];
+
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+
 
     public function user()
     {
@@ -54,5 +59,4 @@ class Order extends Model
     {
         return $this->hasOne(Payment::class, 'order_id', 'id');
     }
-
 }

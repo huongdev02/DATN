@@ -16,8 +16,12 @@ class ProductController extends Controller
             // Lấy tất cả sản phẩm với thông tin liên quan
             $products = Product::with(['categories:id,name', 'colors:id,name_color', 'sizes:id,size'])
                 ->where('is_active', 1)
+                ->whereHas('categories', function ($query) {
+                    $query->where('is_active', 1);
+                })
                 ->get();
-            
+
+
 
             // Lấy tất cả màu sắc và kích thước từ bảng colors và sizes
             $allColors = Color::all(); // Tất cả các màu sắc
@@ -133,10 +137,12 @@ class ProductController extends Controller
         try {
             // Lấy danh mục theo ID và tất cả sản phẩm kèm theo màu sắc và kích thước
             $category = Category::with([
-                'products.colors:id,name_color',
-                'products.sizes:id,size',
-                'products.galleries'
+                'products' => function ($query) {
+                    $query->where('is_active', 1) // Điều kiện kiểm tra sản phẩm có is_active = 1
+                        ->with(['colors:id,name_color', 'sizes:id,size', 'galleries']); // Tiếp tục nạp các quan hệ khác
+                }
             ])->findOrFail($categoryId);
+            
 
             // Lấy tất cả màu sắc và kích thước từ bảng colors và sizes
             $allColors = Color::all(); // Lấy tất cả các bản ghi từ bảng colors
