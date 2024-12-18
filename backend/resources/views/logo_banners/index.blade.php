@@ -24,9 +24,9 @@
     <h1 class="text-center mt-5 mb-3">Danh sách Logo - Banner</h1>
 
     <a href="{{ route('logo_banners.create') }}"
-        class="btn btn-primary mb-3 @if ($bannerCount >= 3) disabled @endif">
-        @if ($bannerCount >= 3)
-            Đã đủ 3 bản ghi
+        class="btn btn-primary mb-3 @if ($bannerCount >= 5) disabled @endif">
+        @if ($bannerCount >= 5)
+            Đã đủ 5 bản ghi
         @else
             Thêm mới
         @endif
