@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('user/style.css') }}">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body class="container mt-5">
@@ -45,6 +45,60 @@
                         <li><a href="{{ route('user.changepass.form') }}">Đổi Mật Khẩu</a></li>
                     </ul>
                 </li>
+                <li class="zalo-icon">
+                    <a href="https://zalo.me/g/bqdqdb905" target="_blank" title="Chăm sóc khách hàng">
+                        <i class="fas fa-headset"></i>
+                    </a>
+                    <span class="tooltip">Chăm sóc khách hàng</span>
+                </li>
+                
+                <style>
+                    /* Vị trí và kiểu dáng của biểu tượng Zalo */
+                    .zalo-icon {
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        z-index: 9999;
+                        text-align: center;
+                    }
+                
+                    .zalo-icon a {
+                        display: inline-block;
+                        width: 60px;
+                        height: 60px;
+                        background-color: #25D366; /* Màu xanh của Zalo */
+                        border-radius: 50%;
+                        overflow: hidden;
+                        position: relative;
+                        text-align: center;
+                        line-height: 60px; /* Căn giữa icon trong vòng tròn */
+                    }
+                
+                    .zalo-icon i {
+                        font-size: 30px; /* Điều chỉnh kích thước của icon */
+                        color: white;
+                    }
+                
+                    .zalo-icon .tooltip {
+                        display: none;
+                        position: absolute;
+                        bottom: 80px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background-color: #333;
+                        color: #fff;
+                        padding: 5px 10px;
+                        border-radius: 5px;
+                        font-size: 14px;
+                        white-space: nowrap;
+                        z-index: 10000;
+                    }
+                
+                    .zalo-icon:hover .tooltip {
+                        display: block;
+                    }
+                </style>
+                
                 <li><a href="{{ route('userorder.index') }}" class="btn btn-light w-100 text-start">Đơn Mua</a></li>
                 <li><a href="{{ route('uservouchers.index') }}" class="btn btn-light w-100 text-start">Kho Voucher</a>
                 </li>
