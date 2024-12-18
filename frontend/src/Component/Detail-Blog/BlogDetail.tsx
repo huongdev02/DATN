@@ -66,7 +66,6 @@ function BlogDetail() {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <div>
           <p className="title-blog-detail">{blog?.title}</p>
-          <p className="title-blog-detail">{blog?.title}</p>
           <p style={{marginTop:'10px'}}>
             {blog?.created_at &&
               (() => {
