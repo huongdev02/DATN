@@ -390,6 +390,7 @@ const CheckoutComponent: React.FC = () => {
                   >
                     Thông tin thanh toán
                   </h4>
+                  {isAddress && (
                   <div className="button-address">
                     <EnvironmentOutlined />
                     <span style={{ marginLeft: "5px" }}>
@@ -402,6 +403,7 @@ const CheckoutComponent: React.FC = () => {
                       onChange={onChange}
                     />
                   </div>
+                  )}
                   <div>
                     <div className="col-lg-6" style={{ width: "100%" }}>
                       <div className="form-group">

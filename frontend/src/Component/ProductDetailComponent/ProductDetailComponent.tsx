@@ -297,7 +297,7 @@ const ProductDetailComponent: React.FC = () => {
                     <label style={{ fontFamily: "Raleway" }}>
                       {selectedColor || "Chọn Màu"}
                     </label>
-                    <ul className="list-color">
+                    <ul className="list-color-detail">
                       {product.colors.map((color: any) => (
                         <button
                           className="button-color"
@@ -331,7 +331,7 @@ const ProductDetailComponent: React.FC = () => {
                     <label style={{ fontFamily: "Raleway" }}>
                       {selectedSize || "Chọn Size"}
                     </label>
-                    <div className="list-sizes">
+                    <div className="list-sizes-detail">
                       {product.sizes.map((size: any) => (
                         <button
                           className="button-size"

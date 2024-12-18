@@ -78,9 +78,10 @@
   background-color: white;
   width: 180px;
   height: 80px;
-  top: 85px;
+  top: 75px;
+  z-index: 2;
   color: rgb(47, 37, 44);
-  right: 40px;
+  right: 25px;
   position: absolute;
   font-size: 14px;
   font-weight: 600;

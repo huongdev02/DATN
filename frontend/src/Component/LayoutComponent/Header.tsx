@@ -106,7 +106,7 @@ const Header: React.FC = () => {
   const onSubmit: SubmitHandler<any> = async (data) => {
     try {
       const response = await api.post("/register", data);
-      if (response?.status === 200) {
+      if (response) {
         notification.success({
           message: "Đăng ký tài khoản thành công",
         });

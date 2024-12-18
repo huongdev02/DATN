@@ -12,7 +12,8 @@ const ContactForm: React.FC = () => {
                     <h3 className="font-4xl-bold mb-40">Liên hệ</h3>
                     <div className="row">
                         <div className="col-lg-6">
-                          {/* QR zalo */}
+                          {/* QR */}
+                          <img src="" alt="" />
                         </div>
                         <div className="col-lg-6">
                             <div className="box-contact-right">

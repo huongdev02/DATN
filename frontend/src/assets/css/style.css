@@ -8293,8 +8293,10 @@ h4.brush-bg::after {
 }
 
 .list-color {
-  display: flex;
-  margin: 0px -5px;
+  display: grid;
+  text-align: center;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 8px;
 }
 .list-color li {
   flex: 0 0 auto;
@@ -8883,6 +8885,9 @@ h5.item-collapse.collapsed-item {
 }
 
 .list-sizes {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  text-align: center;
   margin-top: 10px;
 }
 .list-sizes .item-size {
