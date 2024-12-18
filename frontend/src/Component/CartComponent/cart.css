@@ -1,6 +1,6 @@
-:where(.css-dev-only-do-not-override-142vneq).ant-modal-confirm-confirm .ant-modal-confirm-body>.anticon{
-    color: red;
-}
+/* :where(.css-dev-only-do-not-override-142vneq).ant-modal-confirm-confirm .ant-modal-confirm-body>.anticon{
+    color: rgb(255,79,81);
+} */
 :where(.css-dev-only-do-not-override-142vneq).ant-notification .ant-notification-notice-wrapper .ant-notification-notice {
     border: 1px solid #52c41a;
     border-left: 4px solid #52c41a;
@@ -30,4 +30,15 @@
     border: 1px solid rgb(159,134,217);
    
 }
-
+/* :where(.css-dev-only-do-not-override-142vneq).ant-btn-variant-solid {
+    background: linear-gradient(
+    153deg,
+    rgb(105, 72, 183) 0%,
+    rgb(159, 134, 217) 100%
+  );
+}
+.ant-btn-variant-solid:hover{
+   opacity: 0.7 !important;
+   background-color: rgb(105, 72, 183) !important;
+}
+ */

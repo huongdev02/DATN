@@ -73,7 +73,7 @@ const CartComponent: React.FC<CartProps> = ({ userId }) => {
     if (selectedColor && selectedSize) {
       updateVariant(isIdQuantity, selectedColor, selectedSize);
     } else {
-      alert("Vui lòng chọn màu và kích thước!");
+      
     }
   };
 

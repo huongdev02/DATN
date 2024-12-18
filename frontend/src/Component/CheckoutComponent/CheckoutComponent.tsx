@@ -48,6 +48,7 @@ const CheckoutComponent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isAddress, setIsAddress] = useState<any>();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
 
   const navigate = useNavigate(); 
   const location = useLocation();
@@ -84,7 +85,16 @@ const CheckoutComponent: React.FC = () => {
   };
 
   const onChange = (checked: boolean) => {
-    console.log(`switch to ${checked}`);
+    setIsSwitchOn(checked);
+    if (checked) {
+      setRecipientName(isAddress.recipient_name);
+      setPhoneNumber(isAddress.phone_number);
+      setShipAddress(isAddress.ship_address);
+    } else {
+      setRecipientName("");
+      setPhoneNumber("");
+      setShipAddress("");
+    }
   };
 
   const getVouchers = async () => {
@@ -377,7 +387,7 @@ const CheckoutComponent: React.FC = () => {
                   <div className="button-address">
                   <EnvironmentOutlined/>
                   <span style={{marginLeft:'5px'}}>Địa chỉ mặc định của bạn</span>
-                  <Switch size="small" style={{marginLeft:'10px'}} defaultChecked onChange={onChange} />
+                  <Switch size="small" style={{marginLeft:'10px'}} defaultChecked={false} onChange={onChange} />
                   </div>
                   <div>
                     <div className="col-lg-6" style={{ width: "100%" }}>
