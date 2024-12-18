@@ -8190,7 +8190,7 @@ h4.brush-bg::after {
   line-height: 24px;
   font-weight: 400;
   display: inline-block;
-  margin-right: 9px;
+  
 }
 .block-color label, .block-size label {
   color: #1C1D1D;
@@ -8873,7 +8873,7 @@ h5.item-collapse.collapsed-item {
   line-height: 24px;
   font-weight: 400;
   display: inline-block;
-  margin-right: 9px;
+ 
 }
 .block-color label, .block-size label {
   color: #1C1D1D;
@@ -8890,6 +8890,7 @@ h5.item-collapse.collapsed-item {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   text-align: center;
+  gap: 8px;
   margin-top: 10px;
 }
 .list-sizes .item-size {
