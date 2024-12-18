@@ -19,7 +19,7 @@
                 <!-- Dropdown toggle icon -->
                 <span class="mdi mdi-dots-vertical mdi-24px ms-3 mt-5"></span>
             </a>
-            
+
             <!-- Dropdown menu -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item bg-red text-center" href="{{route('admin.edit')}}">
@@ -82,25 +82,25 @@
         <li class="nav-item">
             <a class="nav-link" href="{{route('colors.index')}}">
                 <span class="menu-title">Màu sắc</span>
-                <i class="mdi mdi-format-color-fill menu-icon"></i>
+                <i class="mdi mdi-palette menu-icon"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{route('vouchers.index')}}">
                 <span class="menu-title">Phiếu giảm giá</span>
-                <i class="mdi mdi-format-color-fill menu-icon"></i>
+                <i class="mdi mdi-ticket-percent menu-icon"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{route('logo_banners.index')}}">
                 <span class="menu-title">Banner</span>
-                <i class="mdi mdi-format-color-fill menu-icon"></i>
+                <i class="mdi mdi-billboard menu-icon"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{route('blog.index')}}">
                 <span class="menu-title">Bài viết</span>
-                <i class="mdi mdi-format-color-fill menu-icon"></i>
+                <i class="mdi mdi-post menu-icon"></i>
             </a>
         </li>
     </ul>
