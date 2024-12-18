@@ -63,8 +63,9 @@
         <div class="mb-3">
             <label for="end_day" class="col-2 col-form-label">Ngày kết thúc</label>
             <input type="date" class="form-control" name="end_day" id="end_day"
-                value="{{ old('end_day', $voucher->end_day) }}">
+                   value="{{ old('end_day', \Carbon\Carbon::parse($voucher->end_day)->format('Y-m-d')) }}">
         </div>
+
 
         <div class="mb-3">
             <label for="is_active" class="col-2 col-form-label">Trạng thái:</label>
