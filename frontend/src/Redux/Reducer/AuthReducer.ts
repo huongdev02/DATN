@@ -58,8 +58,6 @@ const AuthReducer = createSlice({
                 state.loading = false;
                 state.user = action.payload;
                 localStorage.setItem('user', JSON.stringify(action.payload));
-                localStorage.setItem('user', JSON.stringify(action.payload));
-                localStorage.setItem('user', JSON.stringify(action.payload));
             })
             .addCase(login.rejected, (state, action) => {
                 state.loading = false;
