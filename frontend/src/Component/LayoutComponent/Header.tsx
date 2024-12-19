@@ -231,17 +231,24 @@ const Header: React.FC = () => {
         localStorage.setItem("user", JSON.stringify(userData));
         localStorage.setItem("token", userData.token);
         window.location.reload();
+
+        console.log(resultAction, 'chhhhhh');
+        
       } else {
         notification.error({
-          message: "Tài khoản không chính khác",
+          message: "Đăng nhập thất bại",
+          description: "Tài khoản đã bị khóa hoặc không chính xác" ,
           className: "notice-error",
         });
+    
         setPassword("");
       }
     } catch (err) {
       console.error("Đăng nhập thất bại:", err);
     }
   };
+
+
 
   const navDashBoard = () => {
     if (isToken) {
@@ -250,19 +257,25 @@ const Header: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-
-    setIsLoggedIn(false);
-    window.location.reload();
-    setTimeout(() => {
-      notification.success({
-        message: "Đăng xuất thành công !",
-        placement: "bottomRight",
-      });
-      nav("/");
-    }, 500);
+  const handleLogout = async () => {
+    try {
+      const { data } = await api.post(`/logout`);
+      if (data) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        window.location.reload();
+        setTimeout(() => {
+          notification.success({
+            message: "Đăng xuất thành công !",
+            placement: "bottomRight",
+          });
+          nav("/");
+        }, 500);
+      }
+    } catch (error) {
+      message.error("Lỗi api!");
+    }
   };
 
   const items: MenuProps["items"] = [
