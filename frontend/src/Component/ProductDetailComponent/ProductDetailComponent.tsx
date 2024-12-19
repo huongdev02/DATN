@@ -294,7 +294,7 @@ const ProductDetailComponent: React.FC = () => {
 
                   <div className="block-color">
                     <span style={{ fontFamily: "Raleway" }}>Color:</span>
-                    <label style={{ fontFamily: "Raleway" }}>
+                    <label style={{ fontFamily: "Raleway", marginLeft:'5px' }}>
                       {selectedColor || "Chọn Màu"}
                     </label>
                     <ul className="list-color-detail">
@@ -328,7 +328,7 @@ const ProductDetailComponent: React.FC = () => {
                   </div>
                   <div className="block-size">
                     <span style={{ fontFamily: "Raleway" }}>Size:</span>
-                    <label style={{ fontFamily: "Raleway" }}>
+                    <label style={{ fontFamily: "Raleway", marginLeft:'5px' }}>
                       {selectedSize || "Chọn Size"}
                     </label>
                     <div className="list-sizes-detail">
@@ -368,6 +368,7 @@ const ProductDetailComponent: React.FC = () => {
                           fontSize: "21px",
                           color: "rgb(159,134,217)",
                           fontStyle: "italic",
+                          marginLeft:'5px'
                         }}
                       >
                         Còn hàng
