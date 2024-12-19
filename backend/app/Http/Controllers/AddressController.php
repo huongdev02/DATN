@@ -86,11 +86,6 @@ class AddressController extends Controller
                 return back()->with('error', 'Địa chỉ giao hàng không tồn tại.');
             }
 
-            // Kiểm tra xem địa chỉ giao hàng có phải là địa chỉ mặc định hay không
-            if ($address->is_default) {
-                return back()->with('error', 'Không thể xóa địa chỉ mặc định.');
-            }
-
             // Kiểm tra xem có đơn hàng nào sử dụng địa chỉ này không và trạng thái đơn hàng
             $orders = Order::where('ship_address_id', $address->id)
                 ->whereIn('status', [0, 1, 2]) // Kiểm tra trạng thái 0, 1, 2

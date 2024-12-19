@@ -3,9 +3,16 @@
 @section('title', 'Sửa Blog')
 
 @section('content_admin')
+
     @if (session('error'))
         <div class="alert alert-danger">
             {{ session('error') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
         </div>
     @endif
 
@@ -14,7 +21,7 @@
         <form action="{{ route('blog.update', $blog->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT') <!-- Để Laravel biết đây là phương thức PUT -->
-            
+
             <div class="form-group">
                 <label for="category_id">Danh mục</label>
                 <select name="category_id" id="category_id" class="form-control" required>
@@ -28,7 +35,8 @@
 
             <div class="form-group">
                 <label for="title">Tiêu đề</label>
-                <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $blog->title) }}" required>
+                <input type="text" name="title" id="title" class="form-control"
+                    value="{{ old('title', $blog->title) }}" required>
             </div>
 
             <div class="form-group">

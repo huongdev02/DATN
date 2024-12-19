@@ -42,8 +42,16 @@
                             class="badge 
                         @if ($order->status == 3) bg-success 
                         @elseif($order->status == 4) bg-danger 
+                        @elseif($order->status == 2) bg-primary 
                         @else bg-info @endif">
-                            {{ $order->status == 3 ? 'Giao hàng thành công' : ($order->status == 4 ? 'Đã hủy' : 'Đang xử lý') }}
+                            {{ $order->status == 2
+                                ? 'Đang vận chuyển'
+                                : ($order->status == 3
+                                    ? 'Giao hàng thành công'
+                                    : ($order->status == 4
+                                        ? 'Đã hủy'
+                                        : 'Đang xử lý')) }}
+
                         </span>
                     </div>
 
@@ -62,9 +70,9 @@
                                 @else
                                     <!-- Product Image -->
                                     <a href="http://localhost:3000/product-detail/{{ $orderDetail->product->id }}">
-                                    <img src="{{ asset('storage/' . ($orderDetail->product->avatar ?? 'default-avatar.png')) }}"
-                                        alt="Product Image" class="rounded me-3"
-                                        style="width: 80px; height: 80px; object-fit: cover;">
+                                        <img src="{{ asset('storage/' . ($orderDetail->product->avatar ?? 'default-avatar.png')) }}"
+                                            alt="Product Image" class="rounded me-3"
+                                            style="width: 80px; height: 80px; object-fit: cover;">
                                     </a>
                                     <div style="flex: 1;">
                                         <!-- Product Name and Category -->
@@ -98,11 +106,10 @@
                                 <p>Đã tạo lúc:
                                 <p class="ms-3" style="color: green">{{ $order->created_at }}</p>
                                 </p>
-                                
+
                             </div>
 
                             <hr class="mt-3 mb-3">
-
                         @endforeach
 
                     </div>

@@ -9,6 +9,12 @@
         </div>
     @endif
 
+    @if (session('success'))
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="container">
         <h1 class="text-center mt-5 mb-3 ">Thêm mới bài viết </h1>
         <form action="{{ route('blog.store') }}" method="POST" enctype="multipart/form-data">
