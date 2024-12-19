@@ -122,6 +122,7 @@ const Header: React.FC = () => {
     }
   };
 
+
   const onSubmitEmail: SubmitHandler<any> = async (data) => {
     setIsLoading(true);
     try {
@@ -278,6 +279,27 @@ const Header: React.FC = () => {
       message.error("Lỗi api!");
     }
   };
+
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('logout') === 'true') {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+      notification.success({
+        message: "Đăng xuất thành công !",
+        placement: "bottomRight",
+      });
+      nav("/");
+  
+      // Xóa param 'logout' khỏi URL mà không reload trang
+      const newUrl = '/'; // Hoặc bạn có thể giữ lại URL khác nếu cần
+      window.history.replaceState({}, "", newUrl);
+    }
+  }, [nav]);
+  
+  
 
   const items: MenuProps["items"] = [
     {
