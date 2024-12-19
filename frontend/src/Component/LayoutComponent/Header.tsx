@@ -105,11 +105,12 @@ const Header: React.FC = () => {
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     try {
-      await api.post("/register", data);
-
-      notification.success({
-        message: "Đăng ký tài khoản thành công",
-      });
+      const res =   await api.post("/register", data);
+      if(res){
+        notification.success({
+          message: "Đăng ký tài khoản thành công",
+        });
+      }
       window.location.href = "/";
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message;
